@@ -75,6 +75,7 @@
 }
 
 %%\renewcommand{\baselinestretch}{1.05} 
+\PassOptionsToPackage{ngerman}{babel}
 \begin{document}
 \pagestyle{fancy}
 
@@ -100,8 +101,9 @@
 %% Literaturverzeichnis
 
 \clearpage\newpage
-\addcontentsline{toc}{chapter}{Literatur- und Quellenverzeichnis}
-\bibliographystyle{myapalike}
-\bibliography{bhtThesis}
+%\addcontentsline{toc}{chapter}{Literatur- und Quellenverzeichnis}
+%\bibliographystyle{myapalike}
+%\bibliography{bhtThesis}
+\printbibliography
 
 \end{document}

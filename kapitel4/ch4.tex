@@ -6,11 +6,15 @@
 %%
 
 \chapter{Technische Anforderungen an Endgeräte}
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
+Die CueLens-App wird für das Betriebssystem Android entwickelt. Als Endgeräte für die Teilnahme an der Studie kommen Smartphones und Tablets infrage.
+
+\section{Grundfunktionen}
+Die grundlegende Funktionalität der App stellt moderate Anforderungen an die Hardware der Endgeräte. Bilddarstellungen im Vollbild und Buttons mit Grafik oder Text sind auf allen gängigen Android-Smartphones möglich. Auch die typischen Displaygrößen gängiger Smartphones sind für den vorgesehenen Zweck akzeptabel. Android-Tablets sind gleich gut oder besser geeignet als Smartphones.
+
+Die Downloadgröße des Android-Packages (APK) liegt unter 50 MB, wenn nur die Grundfunktionen der App enthalten sind. Der Payload aller 20 Übertragungen von Selbstberichten beträgt insgesamt weniger als 200 KB.
+
+\section{KI-Funktionalität}
+Das KI-Feature stellt deutlich höhere Ansprüche an Rechen- und Speicherkapazität. Vortrainierte Classifier-Modelle sind mehrere hundert MB groß und würden die App-Downloadgröße entsprechend erhöhen. Die Klassifizierung eines Bildes dauerte in einem Test mit dem Modell MobileCLIP S2 ungefähr fünf Sekunden auf einem Preis-Leistungs-Smartphone. Es wurden 750~GB Arbeitsspeicher beansprucht, und die Präzision blieb unter den Erwartungen. Ein eigens für diesen Zweck trainiertes Modell würde alle diese Werte verbessern.
+
+In Bezug auf die Android-Version sind die Anforderung des KI-Features ebenfalls moderat. Es wird in jedem Fall LiteRT und somit mindestens das SDK-Level 23 benötigt \cite{google_litert_android_2026}. Diese SDK-Version wurde bereits 2015 veröffentlicht.
+
