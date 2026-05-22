@@ -1,0 +1,195 @@
+Datenschutzerklärung zur CueLens-Studie
+Version: 0.1
+Stand: 22. Mai 2026
+
+1. Zweck dieser Datenschutzerklärung
+
+Diese Datenschutzerklärung informiert Sie darüber, welche personenbezogenen Daten im Rahmen der CueLens-Studie verarbeitet werden, zu welchen Zwecken dies geschieht, auf welcher Rechtsgrundlage die Verarbeitung erfolgt, wer Zugriff auf die Daten erhält, wie lange die Daten gespeichert werden und welche Rechte Sie haben.
+
+Die CueLens-Studie untersucht, ob eine mobile Android-App im Alltag kurzfristige Unterschiede im subjektiven Rauchverlangen nach der Zuordnung von Beschreibungen oder anderen Bildern zu rauchbezogenen Bildern messbar machen kann. Die App ist ein Studienprototyp. Sie ist kein Rauchentwöhnungsprogramm und keine medizinische Behandlung.
+
+2. Verantwortlicher
+
+Verantwortlich für die Verarbeitung personenbezogener Daten im Rahmen der CueLens-Studie ist:
+
+Stefan Berger
+E-Mail: datenschutz@each-and-every.de
+
+Die Studie erfolgt im Rahmen einer Masterarbeit an der Berliner Hochschule für Technik Berlin im Studiengang Medizinische Informatik.
+
+3. Welche Daten werden verarbeitet?
+
+Für die Durchführung, Auswertung und Abrechnung der Studie werden nur Daten verarbeitet, die für diese Zwecke erforderlich sind.
+
+3.1 Organisations- und Kontaktdaten
+
+Hierzu gehören insbesondere:
+
+- Name,
+- E-Mail-Adresse,
+- Angaben zur Kontaktaufnahme im Rahmen der Studie.
+
+Diese Daten werden verwendet, um die Teilnahme zu organisieren, Rückfragen zu klären, technische Unterstützung leisten zu können und Sie bei Bedarf im Zusammenhang mit der Studie zu kontaktieren.
+
+3.2 Angaben zur Prüfung der Teilnahmebedingungen
+
+Hierzu gehören insbesondere:
+
+- Alter,
+- gewöhnlicher Aufenthalt in Deutschland oder in der Schweiz,
+- Sprachverständnis Deutsch oder Englisch,
+- Vorhandensein eines Android-Smartphones oder Android-Tablets mit Internetzugang,
+- Angabe, mindestens zehn Zigaretten pro Tag zu rauchen,
+- Bestätigung, nur einmal an der CueLens-Studie teilzunehmen.
+
+Diese Angaben werden grundsätzlich anhand Ihrer Selbstauskunft geprüft. Eine Ausweisprüfung und medizinische Tests zum Rauchstatus werden nicht durchgeführt.
+
+3.3 Studiendaten
+
+Hierzu gehören insbesondere:
+
+- Selbstberichte zum aktuellen Rauchverlangen auf einer Skala von 0 bis 100,
+- Angabe, ob der Selbstbericht im Zusammenhang mit der Zuordnung einer Beschreibung oder eines anderen Bildes abgegeben wurde,
+- Anzahl der bisher übermittelten Selbstberichte,
+- ein technisches Teilnahme- oder Abrechnungstoken zur Überprüfung der Anzahl übermittelter Berichte.
+
+Es werden höchstens 20 Selbstberichte pro Teilnahme übermittelt. Die wissenschaftliche Auswertung erfolgt anhand anonymisierter Studienergebnisse.
+
+3.4 Zahlungsdaten
+
+Wenn eine Aufwandsentschädigung ausgezahlt wird, werden die hierfür erforderlichen Zahlungsdaten verarbeitet. Dazu kann insbesondere eine Bankverbindung gehören.
+
+Zahlungsdaten werden nur zur Auszahlung und Dokumentation der Aufwandsentschädigung verwendet und getrennt von den anonymisierten Studienergebnissen behandelt.
+
+3.5 Technische Daten
+
+Bei der Nutzung des Web-Formulars, der App und der Serverinfrastruktur können technische Daten verarbeitet werden, die für den sicheren und funktionsfähigen Betrieb erforderlich sind. Dazu können insbesondere gehören:
+
+- Zeitpunkt von Datenübermittlungen,
+- technische Statusinformationen zur Übermittlung von Selbstberichten,
+- sicherheitsbezogene Protokolldaten,
+- Informationen zur Prüfung der Integrität der App oder zur Verhinderung missbräuchlicher Serveranfragen.
+
+Diese technischen Daten werden nicht verwendet, um ein umfassendes Nutzungsprofil über Sie zu erstellen.
+
+4. Werden Bilder oder Kameradaten übertragen?
+
+Die App und der Studienserver tauschen nur Angaben zum Rauchverlangen, zur Art der Studiensituation und zur Anzahl bisher übermittelter Selbstberichte aus.
+
+Wenn die App optional eigene Bilddateien oder Kamerabilder für eine lokale Bilderkennung verwendet, werden diese Bilder nur innerhalb der App verarbeitet. Sie werden nicht an den Studienserver übertragen und nicht dauerhaft gespeichert. Nach der jeweiligen Verarbeitung werden sie verworfen.
+
+5. Zwecke der Verarbeitung
+
+Die personenbezogenen Daten werden zu folgenden Zwecken verarbeitet:
+
+- Information und Organisation der Studienteilnahme,
+- Prüfung der Teilnahmebedingungen,
+- Durchführung der App-Studie,
+- Übermittlung und Plausibilisierung der Selbstberichte,
+- wissenschaftliche Auswertung anonymisierter Studienergebnisse,
+- technische Sicherung des Studienablaufs,
+- Auszahlung und Dokumentation der Aufwandsentschädigung,
+- Nachweis erteilter Einwilligungen,
+- Bearbeitung von Rückfragen, Abbrüchen und Widerrufen.
+
+Eine Verarbeitung zu anderen Zwecken erfolgt nicht.
+
+6. Rechtsgrundlagen der Verarbeitung
+
+Die Teilnahme an der Studie ist freiwillig.
+
+Für Teilnehmende in der Europäischen Union erfolgt die Verarbeitung personenbezogener Daten auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO. Soweit Angaben zum Rauchstatus und zum Rauchverlangen verarbeitet werden, handelt es sich um Gesundheitsdaten. Deren Verarbeitung erfolgt auf Grundlage Ihrer ausdrücklichen Einwilligung nach Art. 9 Abs. 2 lit. a DSGVO.
+
+Für Teilnehmende in der Schweiz erfolgt die Bearbeitung personenbezogener Daten und besonders schützenswerter Personendaten auf Grundlage Ihrer informierten und freiwilligen Einwilligung sowie unter Beachtung der Grundsätze des schweizerischen Datenschutzgesetzes.
+
+Soweit Daten zur Auszahlung der Aufwandsentschädigung, zur Dokumentation der Teilnahme oder zur Erfüllung gesetzlicher Aufbewahrungs- und Nachweispflichten erforderlich sind, kann die Verarbeitung zusätzlich auf der Erfüllung rechtlicher oder vertraglicher Pflichten beruhen.
+
+7. Einwilligung und Widerruf
+
+Sie geben Ihre Einwilligungen vor Beginn der Studie über ein Web-Formular ab. Dabei bestätigen Sie insbesondere, dass Sie die Studieninformation und diese Datenschutzerklärung gelesen haben, freiwillig teilnehmen und in die erforderliche Verarbeitung personenbezogener und gesundheitsbezogener Daten einwilligen.
+
+Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen. Der Widerruf kann per E-Mail an datenschutz@each-and-every.de erklärt werden.
+
+Durch den Widerruf wird die Rechtmäßigkeit der Verarbeitung, die bis zum Widerruf auf Grundlage Ihrer Einwilligung erfolgt ist, nicht berührt.
+
+8. Unterschied zwischen Abbruch der Teilnahme und Widerruf der Einwilligung
+
+Sie können die Nutzung der App und Ihre Teilnahme an der Studie jederzeit abbrechen. In diesem Fall werden keine weiteren Selbstberichte erhoben.
+
+Ein Abbruch der App-Nutzung ist jedoch nicht automatisch dasselbe wie ein Widerruf der datenschutzrechtlichen Einwilligung. Wenn Sie zusätzlich möchten, dass personenbezogene Daten nicht weiter auf Grundlage Ihrer Einwilligung verarbeitet werden, müssen Sie Ihre Einwilligung ausdrücklich widerrufen, zum Beispiel per E-Mail an datenschutz@each-and-every.de.
+
+Bei einem Widerruf wird geprüft, welche personenbezogenen Daten gelöscht werden können und welche Daten aus rechtlichen, organisatorischen oder abrechnungsbezogenen Gründen noch aufbewahrt werden müssen. Bereits anonymisierte Studienergebnisse können Ihnen in der Regel nicht mehr zugeordnet und deshalb nicht gezielt gelöscht werden.
+
+9. Empfänger und Dienstleister
+
+Personenbezogene Daten werden nur an Empfänger weitergegeben, soweit dies für die Durchführung der Studie, die technische Bereitstellung der Infrastruktur, die Auszahlung der Aufwandsentschädigung oder die Erfüllung rechtlicher Pflichten erforderlich ist.
+
+Zu den Empfängern oder Kategorien von Empfängern können gehören:
+
+- der Studienverantwortliche,
+- technische Hosting- und Infrastruktur-Dienstleister,
+- Zahlungsdienstleister oder Banken zur Auszahlung der Aufwandsentschädigung,
+- die betreuende Hochschule oder Prüfende, soweit dies für die Bewertung der Masterarbeit erforderlich ist und nur in anonymisierter oder zusammengefasster Form,
+- Behörden oder Gerichte, soweit hierzu eine rechtliche Verpflichtung besteht.
+
+Die Studienergebnisse werden in der Masterarbeit nur anonymisiert oder zusammengefasst dargestellt. Einzelne Teilnehmende sollen daraus nicht identifizierbar sein.
+
+10. Speicherorte und grenzüberschreitende Datenübermittlung
+
+Die Studiendaten werden auf Servern in Deutschland verarbeitet. Eine Sicherungskopie kann auf Servern in der Schweiz gespeichert werden.
+
+Damit kann eine Übermittlung personenbezogener Daten zwischen Deutschland, der Europäischen Union und der Schweiz verbunden sein. Für die Schweiz besteht aus Sicht der Europäischen Union ein Angemessenheitsbeschluss. Umgekehrt gelten auch nach schweizerischem Datenschutzrecht Schutzanforderungen für die Bearbeitung von Personendaten.
+
+11. Technische und organisatorische Schutzmaßnahmen
+
+Es werden technische und organisatorische Maßnahmen eingesetzt, um die Daten vor unbefugtem Zugriff, Verlust, Veränderung und missbräuchlicher Verwendung zu schützen.
+
+Dazu gehören insbesondere:
+
+- verschlüsselte Datenübertragung über HTTPS oder andere geeignete verschlüsselte Verbindungen,
+- Beschränkung der Zugriffsrechte nach dem Prinzip der geringsten Privilegien,
+- getrennte Behandlung von Kontakt-, Zahlungs- und Studiendaten,
+- Begrenzung der übermittelten Selbstberichte auf höchstens 20 Berichte pro Teilnahme,
+- keine Übertragung eigener Bilddateien oder Kamerabilder an den Studienserver,
+- Anonymisierung oder Zusammenfassung der Daten für die wissenschaftliche Auswertung,
+- Maßnahmen zur Erkennung oder Verhinderung missbräuchlicher Serveranfragen.
+
+12. Speicherdauer und Löschung
+
+Personenbezogene Daten werden nur so lange gespeichert, wie es für die jeweiligen Zwecke erforderlich ist.
+
+Kontakt- und Organisationsdaten werden nach Abschluss der Studie gelöscht, soweit sie nicht mehr für Rückfragen, Dokumentation oder Nachweispflichten benötigt werden.
+
+Zahlungsdaten werden so lange gespeichert, wie dies für die Auszahlung, Abrechnung und gesetzliche Aufbewahrungspflichten erforderlich ist.
+
+Nachweise über erteilte Einwilligungen können zur Dokumentation der Rechtmäßigkeit der Verarbeitung aufbewahrt werden. Für Teilnehmende aus Deutschland wird dabei die regelmäßige Verjährungsfrist von drei Jahren berücksichtigt. Für Teilnehmende aus der Schweiz kann eine längere Aufbewahrung erforderlich sein.
+
+Anonymisierte Studienergebnisse können dauerhaft für die wissenschaftliche Auswertung, die Masterarbeit und die Dokumentation der Forschungsergebnisse verwendet werden, weil sie keiner einzelnen Person mehr zugeordnet werden sollen.
+
+13. Ihre Rechte
+
+Sie haben nach Maßgabe der anwendbaren Datenschutzvorschriften insbesondere folgende Rechte:
+
+- Recht auf Auskunft über die zu Ihrer Person verarbeiteten Daten,
+- Recht auf Berichtigung unrichtiger Daten,
+- Recht auf Löschung personenbezogener Daten,
+- Recht auf Einschränkung der Verarbeitung,
+- Recht auf Datenübertragbarkeit, soweit die gesetzlichen Voraussetzungen erfüllt sind,
+- Recht auf Widerruf erteilter Einwilligungen mit Wirkung für die Zukunft,
+- Recht auf Beschwerde bei einer zuständigen Datenschutzaufsichtsbehörde.
+
+Zur Ausübung Ihrer Rechte können Sie sich an datenschutz@each-and-every.de wenden.
+
+14. Bereitstellung der Daten
+
+Die Bereitstellung der für die Studie erforderlichen Daten ist freiwillig. Ohne die in der Studieninformation genannten Mindestangaben ist eine Teilnahme an der CueLens-Studie jedoch nicht möglich, weil die Teilnahmebedingungen nicht geprüft, die App-Studie nicht durchgeführt oder die Aufwandsentschädigung nicht ausgezahlt werden kann.
+
+15. Keine automatisierte Entscheidungsfindung
+
+Es findet keine automatisierte Entscheidungsfindung statt, die Ihnen gegenüber rechtliche Wirkung entfaltet oder Sie in ähnlicher Weise erheblich beeinträchtigt.
+
+Technische Plausibilitätsprüfungen können verwendet werden, um offensichtlich fehlerhafte, unvollständige oder missbräuchliche Angaben zu erkennen. Eine endgültige Entscheidung über Ausschluss, Abrechnung oder Auswertung erfolgt nicht ausschließlich automatisiert.
+
+16. Änderung dieser Datenschutzerklärung
+
+Diese Datenschutzerklärung kann angepasst werden, wenn sich der Studienablauf, die technische Umsetzung oder rechtliche Anforderungen ändern. Für die Teilnahme gilt die Fassung, die Ihnen vor Abgabe Ihrer Einwilligungen bereitgestellt wurde, soweit nicht eine erneute Information oder Einwilligung erforderlich wird.
