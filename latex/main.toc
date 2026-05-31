@@ -21,5 +21,12 @@
 \contentsline {section}{\numberline {4.2}KI-Funktionalität}{27}{}%
 \contentsline {chapter}{\numberline {5}Appentwicklung}{29}{}%
 \contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{35}{}%
+\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{35}{}%
+\contentsline {section}{\numberline {6.2}Studiendesign}{35}{}%
+\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{36}{}%
+\contentsline {section}{\numberline {6.4}Ablauf der Teilnahme}{36}{}%
+\contentsline {section}{\numberline {6.5}Datenflüsse im Studienbetrieb}{37}{}%
+\contentsline {section}{\numberline {6.6}Studienbetrieb, Monitoring und Support}{37}{}%
+\contentsline {section}{\numberline {6.7}Qualitätssicherung und Auswertungsvorbereitung}{37}{}%
 \contentsline {chapter}{\numberline {7}Auswertung der Berichte}{39}{}%
 \contentsline {chapter}{\numberline {8}Fazit und Ausblick}{47}{}%

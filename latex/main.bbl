@@ -54,6 +54,179 @@
       \verb https://ai.google.dev/edge/litert/android?hl=de
       \endverb
     \endentry
+    \entry{tabibnia_cue_labeling_2026}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=93c7f015a28fbcd8aa00dbe50eb6cda2}{%
+           family={Tabibnia},
+           familyi={T\bibinitperiod},
+           given={Golnaz},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \strng{fullhash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \strng{bibnamehash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \strng{authorbibnamehash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \strng{authornamehash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \strng{authorfullhash}{07cd59aafd1bc9e19229ffb5067f554c}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0893-133X, 1740-634X}
+      \field{journaltitle}{Neuropsychopharmacology}
+      \field{month}{4}
+      \field{number}{5}
+      \field{title}{Cue Labeling Reduces Cigarette Craving and Associated Neural Activity}
+      \field{urlday}{6}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{51}
+      \field{year}{2026}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{822\bibrangedash 830}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1038/s41386-025-02297-8
+      \endverb
+      \verb{urlraw}
+      \verb https://www.nature.com/articles/s41386-025-02297-8
+      \endverb
+      \verb{url}
+      \verb https://www.nature.com/articles/s41386-025-02297-8
+      \endverb
+    \endentry
+    \entry{weinfurt_clarifying_2019}{article}{}
+      \name{author}{1}{}{%
+        {{hash=c4ca1c27883f501a7a3511954f439325}{%
+           family={Weinfurt},
+           familyi={W\bibinitperiod},
+           given={Kevin\bibnamedelima P.},
+           giveni={K\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{fullhash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{bibnamehash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{authorbibnamehash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{authornamehash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{authorfullhash}{c4ca1c27883f501a7a3511954f439325}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{24}
+      \field{issn}{0098-7484}
+      \field{journaltitle}{JAMA}
+      \field{month}{12}
+      \field{number}{24}
+      \field{title}{Clarifying the Meaning of Clinically Meaningful Benefit in Clinical Research: Noticeable Change vs Valuable Change}
+      \field{urlday}{12}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{322}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2381}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1001/jama.2019.18496
+      \endverb
+      \verb{urlraw}
+      \verb https://jamanetwork.com/journals/jama/fullarticle/2757036
+      \endverb
+      \verb{url}
+      \verb https://jamanetwork.com/journals/jama/fullarticle/2757036
+      \endverb
+    \endentry
+    \entry{cohen_statistical_2013}{book}{}
+      \name{author}{1}{}{%
+        {{hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Routledge}%
+      }
+      \strng{namehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{bibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorbibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{13}
+      \field{edition}{0}
+      \field{isbn}{978-1-134-74270-7}
+      \field{month}{5}
+      \field{title}{Statistical Power Analysis for the Behavioral Sciences}
+      \field{urlday}{26}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.4324/9780203771587
+      \endverb
+      \verb{urlraw}
+      \verb https://www.taylorfrancis.com/books/9781134742707
+      \endverb
+      \verb{url}
+      \verb https://www.taylorfrancis.com/books/9781134742707
+      \endverb
+    \endentry
+    \entry{giner_sorolla_power_2024}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=1c3802f3df95f698d5d72a0fb200f311}{%
+           family={Giner-Sorolla},
+           familyi={G\bibinithyphendelim S\bibinitperiod},
+           given={Roger},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \strng{fullhash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \strng{bibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \strng{authorbibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \strng{authornamehash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \strng{authorfullhash}{65087b4783f4ae43d53f25722e1eb2fa}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1088-8683, 1532-7957}
+      \field{journaltitle}{Personality and Social Psychology Review}
+      \field{month}{8}
+      \field{number}{3}
+      \field{title}{Power to Detect What? Considerations for Planning and Evaluating Sample Size}
+      \field{urlday}{26}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{28}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{276\bibrangedash 301}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1177/10888683241228328
+      \endverb
+      \verb{urlraw}
+      \verb https://journals.sagepub.com/doi/10.1177/10888683241228328
+      \endverb
+      \verb{url}
+      \verb https://journals.sagepub.com/doi/10.1177/10888683241228328
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  18 MAY 2026 20:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  31 MAY 2026 09:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -877,23 +877,23 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.95pt on input line 40.
+(Font)              scaled to size 10.95pt on input line 44.
  [5] [6
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 43--48
+Underfull \hbox (badness 10000) in paragraph at lines 47--52
 
  []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 50.
+(Font)              scaled to size 10.0pt on input line 54.
 [1] [2
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 24.88pt on input line 54.
+(Font)              scaled to size 24.88pt on input line 58.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 24.88pt on input line 54.
+(Font)              scaled to size 24.88pt on input line 58.
  (./main.toc)
 \tf@toc=\write6
 \openout6 = `main.toc'.
@@ -942,11 +942,11 @@ Kapitel 5.
 Kapitel 6.
 [35
 
-] [36] [37]) (./kapitel7/ch7.tex [38]
-Kapitel 7.
-[39
+] [36]) (./kapitel7/ch7.tex [37] [38
 
-] [40] [41] [42] [43] [44] [45]) (./kapitel8/ch8.tex [46]
+]
+Kapitel 7.
+[39] [40] [41] [42] [43] [44] [45]) (./kapitel8/ch8.tex [46]
 Kapitel 8.
 [47
 
@@ -962,7 +962,12 @@ File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 (Font)              scaled to size 9.08852pt on input line 107.
- [53] (./main.aux)
+
+Overfull \hbox (33.96217pt too wide) in paragraph at lines 108--108
+\T1/LinuxLibertineT-TLF/m/n/10.95 2013. \T1/LinuxLibertineT-TLF/m/sc/10.95 isbn\T1/LinuxLibertineT-TLF/m/n/10.95 : 978-1-134-74270-7. \T1/LinuxLibertineT-TLF/m/sc/10.95 doi\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 10 . 4324 / 9780203771587$\T1/LinuxLibertineT-TLF/m/n/10.95 . \T1/LinuxLibertineT-TLF/m/sc/10.95 url\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 https : / / www . taylorfrancis .
+ []
+
+[53] (./main.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -971,18 +976,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 20557 strings out of 478287
- 410192 string characters out of 5849289
- 1125317 words of memory out of 5000000
- 38406 multiletter control sequences out of 15000+600000
+ 20572 strings out of 478287
+ 410920 string characters out of 5849289
+ 1126629 words of memory out of 5000000
+ 38421 multiletter control sequences out of 15000+600000
  562218 words of font info for 88 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  86i,12n,93p,1129b,2457s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on main.pdf (63 pages, 320895 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on main.pdf (63 pages, 372459 bytes).
 PDF statistics:
- 256 PDF objects out of 1000 (max. 8388607)
- 172 compressed objects within 2 object streams
+ 276 PDF objects out of 1000 (max. 8388607)
+ 184 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
