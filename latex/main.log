@@ -1,4 +1,8 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  18 MAY 2026 20:18
+<<<<<<< Updated upstream
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  1 JUN 2026 21:10
+=======
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  31 MAY 2026 09:27
+>>>>>>> Stashed changes
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -877,23 +881,41 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.95pt on input line 40.
+<<<<<<< Updated upstream
+(Font)              scaled to size 10.95pt on input line 45.
  [5] [6
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 43--48
+Underfull \hbox (badness 10000) in paragraph at lines 48--53
+=======
+(Font)              scaled to size 10.95pt on input line 44.
+ [5] [6
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 47--52
+>>>>>>> Stashed changes
 
  []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 50.
+<<<<<<< Updated upstream
+(Font)              scaled to size 10.0pt on input line 55.
+=======
+(Font)              scaled to size 10.0pt on input line 54.
+>>>>>>> Stashed changes
 [1] [2
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 24.88pt on input line 54.
+<<<<<<< Updated upstream
+(Font)              scaled to size 24.88pt on input line 59.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 24.88pt on input line 54.
+(Font)              scaled to size 24.88pt on input line 59.
+=======
+(Font)              scaled to size 24.88pt on input line 58.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 24.88pt on input line 58.
+>>>>>>> Stashed changes
  (./main.toc)
 \tf@toc=\write6
 \openout6 = `main.toc'.
@@ -914,15 +936,29 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 20.74pt on input line 8.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 20.74pt on input line 8.
-[9] [10] [11] [12] [13] [14] [15]) (./kapitel2/ch2.tex [16]
+
+Overfull \hbox (15.85065pt too wide) in paragraph at lines 12--13
+\T1/LinuxLibertineT-TLF/m/n/10.95 Deut-sche Krebs-for-schungs-zen-trum be-zif-fert die di-rek-ten jähr-li-chen Kos-ten des Rau-chens in Deutsch-
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [11] [12] [13] [14] [15]) (./kapitel2/ch2.tex [16
+
+]
 Kapitel 2.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 12.0pt on input line 12.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 12.0pt on input line 12.
-[17
-
-]
+[17]
 
 LaTeX Warning: Reference `DatenschutzerklÃ¤rung' on page 18 undefined on input line 40.
 
@@ -930,39 +966,74 @@ LaTeX Warning: Reference `DatenschutzerklÃ¤rung' on page 18 undefined on input l
 
 ]
 Kapitel 3.
-[21] [22] [23] [24]) (./kapitel4/ch4.tex [25] [26
-
-]
+[21] [22] [23] [24] [25]) (./kapitel4/ch4.tex [26]
 Kapitel 4.
-) (./kapitel5/ch5.tex [27] [28
+) (./kapitel5/ch5.tex [27
+
+] [28
 
 ]
 Kapitel 5.
-[29] [30] [31] [32] [33]) (./kapitel6/ch6.tex [34]
+[29] [30] [31] [32] [33] [34] [35]) (./kapitel6/ch6.tex [36]
 Kapitel 6.
-[35
+[37
 
-] [36] [37]) (./kapitel7/ch7.tex [38]
+] [38] [39]) (./kapitel7/ch7.tex [40]
 Kapitel 7.
-[39
+[41
 
-] [40] [41] [42] [43] [44] [45]) (./kapitel8/ch8.tex [46]
+] [42] [43] [44] [45] [46] [47]) (./kapitel8/ch8.tex [48]
 Kapitel 8.
-[47
+[49
 
-] [48] [49] [50]) [51] [52
+] [50] [51] [52]) [53] [54
 
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.95pt on input line 107.
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 107.
+(Font)              scaled to size 10.95pt on input line 108.
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 108.
  (/usr/share/texlive/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 9.08852pt on input line 107.
- [53] (./main.aux)
+(Font)              scaled to size 9.08852pt on input line 108.
+
+Overfull \hbox (107.37926pt too wide) in paragraph at lines 109--109
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Bundesministerium für Ge-sund-heit. \T1/LinuxLibertineT-TLF/m/it/10.95 Rau-chen\T1/LinuxLibertineT-TLF/m/n/10.95 . 18. Feb. 2026. \T1/LinuxLibertineT-TLF/m/sc/10.95 url\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 https : / / www . bundesgesundheitsministerium .
+ []
+
+
+Overfull \hbox (0.15764pt too wide) in paragraph at lines 109--109
+\T1/LinuxLibertineT-TLF/m/it/10.95 Ta-bak, Was-ser-pfei-fen und al-ter-na-ti-ven Ni-ko-tin-ab-ga-be-sys-te-men in Deutsch-land un-ter Er-wach-
+ []
+
+
+Overfull \hbox (23.20683pt too wide) in paragraph at lines 109--109
+\T1/LinuxLibertineT-TLF/m/it/10.95 Adults\T1/LinuxLibertineT-TLF/m/n/10.95 . Ge-ne-va: World He-alth Or-ga-ni-za-ti-on, 2024. \T1/LinuxLibertineT-TLF/m/sc/10.95 url\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 https : / / www . who . int / publications /
+ []
+
+
+Overfull \hbox (36.24255pt too wide) in paragraph at lines 109--109
+\T1/LinuxLibertineT-TLF/m/n/10.95 2025. \T1/LinuxLibertineT-TLF/m/sc/10.95 url\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 https : / / www . bundesgesundheitsministerium . de / themen / krankenversicherung /
+ []
+
+
+Overfull \hbox (15.48476pt too wide) in paragraph at lines 109--109
+\T1/fvm/m/n/10.95 online -[] ratgeber -[] krankenversicherung / medizinische -[] versorgung -[] und -[] leistungen -[]
+ []
+
+
+Overfull \hbox (4.76643pt too wide) in paragraph at lines 109--109
+\T1/LinuxLibertineT-TLF/m/n/10.95 16. März 2026. \T1/LinuxLibertineT-TLF/m/sc/10.95 url\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 https : / / www . handelsblatt . com / vergleich / gkv -[] bonusprogramme/$
+ []
+
+[55]
+Overfull \hbox (36.62874pt too wide) in paragraph at lines 109--109
+\T1/LinuxLibertineT-TLF/m/it/10.95 ma-ti-on Re-trie-val\T1/LinuxLibertineT-TLF/m/n/10.95 . Cam-bridge: Cam-bridge Uni-ver-si-ty Press, 2008. \T1/LinuxLibertineT-TLF/m/sc/10.95 doi\T1/LinuxLibertineT-TLF/m/n/10.95 : $\T1/fvm/m/n/10.95 10 . 1017 / CBO9780511809071$\T1/LinuxLibertineT-TLF/m/n/10.95 .
+ []
+
+[56] (./main.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -971,18 +1042,30 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
+<<<<<<< Updated upstream
+ 20612 strings out of 478287
+ 413173 string characters out of 5849289
+ 1129657 words of memory out of 5000000
+ 38461 multiletter control sequences out of 15000+600000
+ 562218 words of font info for 88 fonts, out of 8000000 for 9000
+ 1143 hyphenation exceptions out of 8191
+ 86i,12n,93p,1829b,2457s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on main.pdf (66 pages, 392469 bytes).
+=======
  20557 strings out of 478287
  410192 string characters out of 5849289
- 1125317 words of memory out of 5000000
+ 1124317 words of memory out of 5000000
  38406 multiletter control sequences out of 15000+600000
  562218 words of font info for 88 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  86i,12n,93p,1129b,2457s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on main.pdf (63 pages, 320895 bytes).
+Output written on main.pdf (63 pages, 321629 bytes).
+>>>>>>> Stashed changes
 PDF statistics:
- 256 PDF objects out of 1000 (max. 8388607)
- 172 compressed objects within 2 object streams
+ 285 PDF objects out of 1000 (max. 8388607)
+ 190 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
