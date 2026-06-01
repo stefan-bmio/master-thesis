@@ -1,15 +1,11 @@
 [0] Config.pm:307> INFO - This is Biber 2.17
 [0] Config.pm:310> INFO - Logfile is 'main.blg'
-[41] biber:340> INFO - === Mon May 18, 2026, 20:18:01
-[49] Biber.pm:418> INFO - Reading 'main.bcf'
-[77] Biber.pm:972> INFO - Found 1 citekeys in bib section 0
-[83] Biber.pm:4383> INFO - Processing section 0
-[89] Biber.pm:4574> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
-[90] bibtex.pm:1713> INFO - LaTeX decoding ...
-[91] bibtex.pm:1518> INFO - Found BibTeX data source 'bhtThesis.bib'
-[114] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
-[114] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[114] Biber.pm:4203> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'de-DE'
-[114] Biber.pm:4209> INFO - No sort tailoring available for locale 'de-DE'
-[122] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[123] bbl.pm:757> INFO - Output to main.bbl
+[38] biber:340> INFO - === Mon Jun  1, 2026, 21:35:29
+[47] Biber.pm:418> INFO - Reading 'main.bcf'
+[78] Biber.pm:972> INFO - Found 20 citekeys in bib section 0
+[84] Biber.pm:4383> INFO - Processing section 0
+[88] Biber.pm:4574> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
+[89] bibtex.pm:1713> INFO - LaTeX decoding ...
+[97] bibtex.pm:1518> INFO - Found BibTeX data source 'bhtThesis.bib'
+[125] Utils.pm:398> ERROR - BibTeX subsystem: /tmp/biber_tmp_VFyM/5a550aae852911a5488c2acb3305bb21_49212.utf8, line 74, syntax error: found "urldate", expected end of entry ("}" or ")") (skipping to next "@")
+[125] Biber.pm:135> INFO - ERRORS: 1

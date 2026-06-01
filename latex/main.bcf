@@ -2344,8 +2344,54 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">bhtThesis.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="2">google_litert_android_2026</bcf:citekey>
+    <bcf:citekey order="1">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
+    <bcf:citekey order="2">bmg_rauchen_2026</bcf:citekey>
+    <bcf:citekey order="3">olk_esa_tabak_2026</bcf:citekey>
+    <bcf:citekey order="4">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="5">bmg_gesund_bleiben_praevention_2025</bcf:citekey>
+    <bcf:citekey order="6">gba_tabakentwoehnung_2025</bcf:citekey>
+    <bcf:citekey order="7">baecke_gkv_bonusprogramme_2026</bcf:citekey>
+    <bcf:citekey order="8">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="9">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="10">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="11">addiction_research_center_qsu</bcf:citekey>
+    <bcf:citekey order="12">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="13">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="14">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="15">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="16">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="17">dougan_ar_smoking_cessation_2025</bcf:citekey>
+    <bcf:citekey order="18">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="19">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="20">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="21">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="22">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="23">manning_ir_2008</bcf:citekey>
+    <bcf:citekey order="24">google_litert_android_2026</bcf:citekey>
+    <bcf:citekey order="25">tabibnia_cue_labeling_2026</bcf:citekey>
+    <bcf:citekey order="25">weinfurt_clarifying_2019</bcf:citekey>
+    <bcf:citekey order="26">cohen_statistical_2013</bcf:citekey>
+    <bcf:citekey order="26">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="27">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
+    <bcf:citekey order="28">bmg_rauchen_2026</bcf:citekey>
+    <bcf:citekey order="29">olk_esa_tabak_2026</bcf:citekey>
+    <bcf:citekey order="30">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="31">bmg_gesund_bleiben_praevention_2025</bcf:citekey>
+    <bcf:citekey order="32">gba_tabakentwoehnung_2025</bcf:citekey>
+    <bcf:citekey order="33">baecke_gkv_bonusprogramme_2026</bcf:citekey>
+    <bcf:citekey order="34">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="35">addiction_research_center_qsu</bcf:citekey>
+    <bcf:citekey order="36">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="37">dougan_ar_smoking_cessation_2025</bcf:citekey>
+    <bcf:citekey order="38">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="39">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="40">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="41">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="42">manning_ir_2008</bcf:citekey>
+    <bcf:citekey order="43">google_litert_android_2026</bcf:citekey>
+    <bcf:citekey order="44">tabibnia_cue_labeling_2026</bcf:citekey>
+    <bcf:citekey order="45">weinfurt_clarifying_2019</bcf:citekey>
+    <bcf:citekey order="46">cohen_statistical_2013</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
