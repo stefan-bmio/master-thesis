@@ -6,9 +6,56 @@
 %%
 
 \chapter{Planung und Durchführung der App-Studie}
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
+
+\section{Zielsetzung und Studienlogik}
+In der App-Studie soll untersucht werden, ob der im Labor beschriebene kurzfristige Unterschied zwischen Cue-Matching und Cue-Labeling mit einer mobilen App auch unter Alltagsbedingungen beobachtet werden kann. Dazu werden Probanden und Probandinnen Selbstberichte zu subjektivem Rauchverlangen nach der Bearbeitung rauchbezogener Auslöserreize abgenommen. 
+
+Die wichtigste Variable ist das Rauchverlangen der Teilnehmenden auf einer Skala von 0~bis~100. Diese Skala wurde gewählt, weil sie intuitiv anwendbar und durch ein Standardsteuerelement in einer Smartphone-App repräsentiert werden kann. Sie erlaubt eine feinere Abstufung als die im zugrunde liegenden Laborversuch verwendete fünfstufige Skala. Für den Vergleich mit der Laborarbeit kann eine lineare Umrechnung erfolgen. Der dort berichtete Mittelwertunterschied von 0,1 Punkten auf einer Skala von 1 bis 5 entspricht auf der hier verwendeten Skala einem Unterschied von
+\begin{equation}
+    \Delta = 0{,}1 \times 25 = 2{,}5
+\end{equation}
+Punkten. Die umgerechnete Standardabweichung der paarweisen Differenzen beträgt
+\begin{equation}
+    s_D = 0{,}3279 \times 25 = 8{,}1968.
+\end{equation}
+Die Teilnehmenden werden jeweils direkt im Anschluss an die Studienaufgaben nach ihrem Rauchverlangen gefragt. Damit wird die Studie auf einen kurzfristigen Effekt ausgerichtet. Eine mögliche statistische Signifikanz wäre daher nicht automatisch mit einem klinisch bedeutsamen Nutzen gleichzusetzen. Für die Interpretation wird zwischen einer wahrnehmbaren Veränderung und einem für Betroffene tatsächlich wertvollen Nutzen unterschieden \cite{tabibnia_cuelabeling_2026,weinfurt_clinically_meaningful_2019}.
+
+\section{Studiendesign}
+Geplant ist eine quantitative Pilotstudie mit Primärdatenerhebung und Within-Subject-Design. Alle Teilnehmenden erhalten die gleichen Aufgaben, die sowohl Cue-Matching als auch Cue-Labeling einschließen. Die App führt die Teilnehmenden über einen Zeitraum von bis zu zwei Wochen durch 20 Studiensituationen. In jeder Studiensituation werden fünf Bilder mit Auslöserreizen gezeigt. Anschließend ordnen die Teilnehmenden entweder dem Bild ein anderes rauchbezogenes Bild zu, oder sie wählen eine passende Beschreibung des gezeigten Auslöserreizes. Nach der Aufgabenbearbeitung wird das aktuelle Rauchverlangen auf der Skala von 0~bis~100 abgefragt. Es sind insgesamt 50 Zuordnungen im Cue-Matching, 50 Zuordnungen im Cue-Labeling und 20 Selbstberichte zum Rauchverlangen vorgesehen.
+
+Die App erlaubt das Bearbeiten der Studienaufgaben in Zeitabständen von drei Stunden. Dadurch werden unmittelbar aufeinanderfolgende Selbstberichte vermieden. Gleichzeitig ermöglicht es die Integration der Studie in den Alltag der Teilnehmenden. Die Zeitvorgabe zur Erledigung der Aufgaben lautet zwei Wochen. Bei täglich drei durchgeführten Studiensituationen sind aber bereits nach sieben Tagen alle Aufgaben bearbeitet. Optionale Benachrichtigungen erinnern an die Erledigung der Aufgaben.
+
+Angelehnt an das Laborexperiment treten beide Aufgabentypen gleich oft und in der stets gleichen Reihenfolge auf. Praktisch kann das durch zwei vorbereitete Listen mit jeweils 10 Studiensituationen erfolgen. Die erste Liste enthält Studiensituationen für Cue-Matching und die zweite Liste Studiensituationen für Cue-Labeling. Diese Vorgehensweise kommt ohne serverseitige Sitzungssteuerung aus, und der individuelle Fortschritt wird lokal gespeichert. Übermittelt werden nur die für die Studienauswertung erforderlichen Selbstberichte.
+
+\section{Einschluss, Rekrutierung und Teilnahmeprüfung}
+
+Aufgrund der rechtlichen Anforderungen an eine medizinische Studie wird der entsprechende Geltungsbereich möglichst eingeschränkt. An der Studie dürfen Personen mit gewöhnlichem Aufenthalt in Deutschland oder der Schweiz teilnehmen. Um für die Auswertung nutzbare Daten zu erhalten, müssen die Teilnehmenden zwischen 30 und 65 Jahre alt sind, derzeit mindestens zehn Zigaretten pro Tag rauchen, Deutsch oder Englisch lesen können und ein Android-Smartphone oder Android-Tablet mit Internetzugang besitzen. Sie müssen sich bereit erklären, die App im Studienzeitraum zu verwenden und insgesamt 20 Selbstberichte abzugeben. Jede Person darf nur einmal teilnehmen.
+
+Die Rekrutierung kann über Online-Plattformen, thematisch passende Online-Communities sowie Flyer oder Aushänge in Apotheken, Arztpraxen und Beratungsstellen erfolgen. In allen Rekrutierungsmaterialien muss deutlich erkennbar sein, dass es sich um eine wissenschaftliche Studie mit einem App-Prototyp handelt. Formulierungen, die eine therapeutische Wirksamkeit, eine Unterstützung beim Rauchstopp oder einen individuellen Gesundheitsnutzen versprechen, werden vermieden.
+
+\section{Ablauf der Teilnahme}
+
+Vor der Nutzung erhalten Interessierte eine Studieninformation und eine Datenschutzerklärung. Beiden Dokumenten muss zugestimmt werden. Die Studieninformation beschreibt Ziel, Verantwortlichkeit, Teilnahmebedingungen, Ablauf, Datenkategorien, lokale Bildverarbeitung, mögliche Belastungen, Freiwilligkeit, Abbruchmöglichkeit und Aufwandsentschädigung. Erst nach Einwilligung und Prüfung der Teilnahmebedingungen wird die App zur Nutzung freigeschaltet.
+
+Für Installation und Nutzung ist eine Internetverbindung erforderlich. Die Größe der eigentlichen Studienübermittlungen ist gering, weil im Studienbetrieb nur Selbstberichte und technische Zählerstände übertragen werden. Die App-Installation kann größer sein, wenn KI-Modelle auf dem Gerät bereitgestellt werden. Deshalb wird den Teilnehmenden empfohlen, Installation und Nutzung nach Möglichkeit über WLAN vorzunehmen.
+
+Eine Studiensituation besteht aus vier Schritten. Zuerst prüft die App, ob der vorgesehene Zeitabstand zur vorherigen Situation eingehalten wurde und ob die App-Nutzung für die verknüpfte E-Mail-Adresse freigegeben ist. Im zweiten Schritt präsentiert sie die Bilder von Auslöserreizen. Daraufhin führen die Teilnehmenden das Cue-Matching beziehungsweise das Cue-Labeling durch. Zum Schluss geben sie ihr aktuelles Rauchverlangen auf der Skala von 0 bis 100 an. Nach erfolgreicher Übermittlung wird der lokale Fortschritt aktualisiert. Nach 20 verwertbaren Selbstberichten ist die Teilnahme vollständig.
+
+Die Teilnahme ist freiwillig und kann jederzeit abgebrochen werden. Ein Abbruch führt zu keinen Nachteilen. Das serverseitige E-Mail-Adressverzeichnis besitzt einen Aktivierungsschalter, der Übertragungen der verknüpften App sperrt, wenn eine Einwilligung fehlt oder widerrufen wurde. Da die Aufwandsentschädigung an eine vollständige und verwertbare Teilnahme gebunden ist, wird sie nur ausgezahlt, wenn die Teilnahmebedingungen erfüllt sind und alle erforderlichen Selbstberichte vorliegen. Vorgesehen sind 15,00 Euro für Teilnehmende aus Deutschland und 15,00 Schweizer Franken für Teilnehmende aus der Schweiz. Bei technischen Problemen können sich Teilnehmende an den Studienverantwortlichen wenden, um die Ursachen zu beheben und gegebenenfalls einen angemessenen Aufschub für die Übermittlung der Berichte zu gewähren.
+
+\section{Datenflüsse im Studienbetrieb}
+
+Der Studienbetrieb folgt dem Grundsatz der Datensparsamkeit. Für Organisation und Abrechnung speichern die Betreibenden der Studie E-Mail-Adresse, Wohnsitzland und Bankverbindung der Teilnehmenden. Für die Sicherung der Datenqualität werden Alter und Rauchstatus verarbeitet. Die wissenschaftliche Auswertung erfolgt anhand der Selbstberichte zum Rauchverlangen und die experimentelle Bedingung. Fortschrittsinformationen werden ausschließlich lokal bei den Teilnehmenden gespeichert.
+
+\section{Studienbetrieb, Monitoring und Support}
+Während der Durchführung wird die Funktion der technischen Infrastruktur überwacht. Dazu gehören die Erreichbarkeit des Servers und die erfolgreiche Annahme von Selbstberichten. Weiterhin werden Anfragen zu technischen Problemen beantwortet. Der Support muss so gestaltet werden, dass der Datenschutz gewahrt bleibt und die Studiendaten nicht verfälscht werden. 
+
+\section{Qualitätssicherung und Auswertungsvorbereitung}
+
+Die Auswertung setzt voraus, dass die 20 Selbstberichte zumindest der meisten Teilnehmenden vollständig, eindeutig einer Aufgabenbedingung zugeordnet und im Wertebereich von 0 bis 100 liegen. Bei der Datenerfassung werden deshalb sowohl in der App als auch serverseitig technische Validierungen eingesetzt. Werte außerhalb des zulässigen Bereichs, doppelte Übermittlungen oder unvollständige Datensätze werden in der Studiendatenbank entsprechend gekennzeichnet.
+
+Für die wissenschaftliche Auswertung sollen die paarweisen Differenzen zwischen den Werten des Rauchverlangens nach Cue-Labeling und denen nach Cue-Matching gebildet werden. Mit dem aus der Laborarbeit abgeleiteten standardisierten Effekt
+\begin{equation}
+    d = \frac{2{,}5}{8{,}1968} \approx 0{,}305
+\end{equation}
+ergibt sich bei einem gepaarten Test, einer einseitigen Alternativhypothese und einer angestrebten Teststärke von 80\,\% eine Zielgröße von 68 verwertbaren Teilnehmenden. Da bei einer App-Studie mit Abbrüchen, technischen Problemen und unvollständigen Datensätzen zu rechnen ist, werden 25\,\% mehr Teilnehmende rekrutiert. Daraus ergibt sich ein Rekrutierungsziel von 85 Teilnehmenden \cite{cohen_power_2013,giner_sorolla_power_2024}.

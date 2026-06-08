@@ -940,9 +940,9 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tl
 INPUT ./main.toc
 INPUT main.toc
 INPUT main.toc
-OUTPUT main.toc
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinLibertineTB-tlf-t1.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1--base.tfm
+OUTPUT main.toc
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinLibertineTI-tlf-t1.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1--base.tfm
 INPUT ./main.lof
@@ -1016,6 +1016,11 @@ INPUT /usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb

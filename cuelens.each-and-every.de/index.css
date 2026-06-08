@@ -1,0 +1,21 @@
+body {
+	background-color: #C2F5F0;
+	font-family: Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    font-style: normal;
+	text-align: center;
+}
+
+a {
+	color: #006269;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 8px;
+}
+
+td:first-child {
+	text-align: left;
+}
