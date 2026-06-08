@@ -2368,9 +2368,9 @@
     <bcf:citekey order="22">james_islr_2021</bcf:citekey>
     <bcf:citekey order="23">manning_ir_2008</bcf:citekey>
     <bcf:citekey order="24">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="25">tabibnia_cue_labeling_2026</bcf:citekey>
-    <bcf:citekey order="25">weinfurt_clarifying_2019</bcf:citekey>
-    <bcf:citekey order="26">cohen_statistical_2013</bcf:citekey>
+    <bcf:citekey order="25">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="25">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="26">cohen_power_2013</bcf:citekey>
     <bcf:citekey order="26">giner_sorolla_power_2024</bcf:citekey>
     <bcf:citekey order="27">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
     <bcf:citekey order="28">bmg_rauchen_2026</bcf:citekey>
@@ -2389,9 +2389,6 @@
     <bcf:citekey order="41">james_islr_2021</bcf:citekey>
     <bcf:citekey order="42">manning_ir_2008</bcf:citekey>
     <bcf:citekey order="43">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="44">tabibnia_cue_labeling_2026</bcf:citekey>
-    <bcf:citekey order="45">weinfurt_clarifying_2019</bcf:citekey>
-    <bcf:citekey order="46">cohen_statistical_2013</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
