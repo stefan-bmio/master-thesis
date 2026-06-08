@@ -1,0 +1,10 @@
+\phantomsection
+\refstepcounter{chapter}
+\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}Flyer}
+\label{flyer}
+\includepdf[
+  pages=-,
+  angle=-90,
+  pagecommand={\thispagestyle{empty}},
+  fitpaper=true
+]{anhang/flyer.pdf}

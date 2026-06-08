@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  1 JUN 2026 21:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  8 JUN 2026 21:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -707,28 +707,198 @@ Package biblatex Info: ... and expl3
 Package: xparse 2022-01-12 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2022/02/02 v3.17 expl3 case changing code for biblatex
-)) (/usr/share/texlive/texmf-dist/tex/latex/silence/silence.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty
+Package: xurl 2022/01/09 v 0.10 modify URL breaks
+
+xurl: Set penalties for biblatex
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
+ (/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+) (/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+\@linkdim=\dimen184
+\Hy@linkcounter=\count469
+\Hy@pagecounter=\count470
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def
+File: hyperref-langpatches.def 2021-06-07 v7.00m Hyperref: patches for babel languages
+) (/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count471
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4192.
+Package hyperref Info: Link nesting OFF on input line 4197.
+Package hyperref Info: Hyper index ON on input line 4200.
+Package hyperref Info: Plain pages OFF on input line 4207.
+Package hyperref Info: Backreferencing OFF on input line 4212.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4445.
+\c@Hy@tempcnt=\count472
+LaTeX Info: Redefining \url on input line 4804.
+\XeTeXLinkMargin=\dimen185
+ (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count473
+\Field@Width=\dimen186
+\Fld@charsize=\dimen187
+Package hyperref Info: Hyper figures OFF on input line 6076.
+Package hyperref Info: Link nesting OFF on input line 6081.
+Package hyperref Info: Hyper index ON on input line 6084.
+Package hyperref Info: backreferencing OFF on input line 6091.
+Package hyperref Info: Link coloring OFF on input line 6096.
+Package hyperref Info: Link coloring with OCG OFF on input line 6101.
+Package hyperref Info: PDF/A mode OFF on input line 6106.
+LaTeX Info: Redefining \ref on input line 6146.
+LaTeX Info: Redefining \pageref on input line 6150.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count474
+\c@Item=\count475
+\c@Hfootnote=\count476
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2021-06-07 v7.00m Hyperref driver for pdfTeX
+ (/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+)
+\Fld@listcount=\count477
+\c@bookmark@seq@number=\count478
+ (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 286.
+)
+\Hy@SectionHShift=\skip108
+) (/usr/share/texlive/texmf-dist/tex/latex/silence/silence.sty
 Package: silence 2012/07/02 v1.5b Selective filtering of warnings and error messages
-\sl@Save=\count469
-\sl@StateNumber=\count470
-\sl@MessageCount=\count471
-\sl@Casualties=\count472
+\sl@Save=\count479
+\sl@StateNumber=\count480
+\sl@MessageCount=\count481
+\sl@Casualties=\count482
 \sl@Filter=\toks30
 \sl@Message=\toks31
 \sl@UnexpandedMessage=\toks32
 \sl@Mess@ge=\toks33
-\sl@WarningCount=\count473
-\sl@WarningNumber=\count474
-\sl@WarningCasualties=\count475
+\sl@WarningCount=\count483
+\sl@WarningNumber=\count484
+\sl@WarningCasualties=\count485
 \sl@TempBOW=\toks34
 \sl@BankOfWarnings=\toks35
 LaTeX Info: Redefining \GenericWarning on input line 433.
-\sl@ErrorCount=\count476
-\sl@ErrorNumber=\count477
-\sl@ErrorCasualties=\count478
+\sl@ErrorCount=\count486
+\sl@ErrorNumber=\count487
+\sl@ErrorCasualties=\count488
 \sl@TempBOE=\toks36
 \sl@BankOfErrors=\toks37
 LaTeX Info: Redefining \GenericError on input line 601.
+) (/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+Package: pdfpages 2022/01/29 v0.5u Insert pages of external PDF documents (AM)
+ (/usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2020/10/14 v3.0a eso-pic (RN)
+\ESO@tempdima=\dimen188
+\ESO@tempdimb=\dimen189
+)
+\AM@pagewidth=\dimen190
+\AM@pageheight=\dimen191
+\AM@fboxrule=\dimen192
+ (/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pppdftex.def
+File: pppdftex.def 2022/01/29 v0.5u Pdfpages driver for pdfTeX (AM)
+)
+\pdfpages@includegraphics@status=\count489
+\AM@pagebox=\box112
+\AM@global@opts=\toks38
+\AM@pagecnt=\count490
+\AM@toc@title=\toks39
+\c@AM@survey=\count491
+\AM@templatesizebox=\box113
+) (/usr/share/texlive/texmf-dist/tex/latex/xltabular/xltabular.sty
+Package: xltabular 2020/11/04 v0.2e `xltabular' package (hv,RN)
+ (/usr/share/texlive/texmf-dist/tex/latex/ltablex/ltablex.sty
+Package: ltablex 2014/08/13 v1.1 Modified tabularx
+ (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
+\LTleft=\skip109
+\LTright=\skip110
+\LTpre=\skip111
+\LTpost=\skip112
+\LTchunksize=\count492
+\LTcapwidth=\dimen193
+\LT@head=\box114
+\LT@firsthead=\box115
+\LT@foot=\box116
+\LT@lastfoot=\box117
+\LT@gbox=\box118
+\LT@cols=\count493
+\LT@rows=\count494
+\c@LT@tables=\count495
+\c@LT@chunks=\count496
+\LT@p@ftn=\toks40
+))) (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen194
+\lightrulewidth=\dimen195
+\cmidrulewidth=\dimen196
+\belowrulesep=\dimen197
+\belowbottomsep=\dimen198
+\aboverulesep=\dimen199
+\abovetopsep=\dimen256
+\cmidrulesep=\dimen257
+\cmidrulekern=\dimen258
+\defaultaddspace=\dimen259
+\@cmidla=\count497
+\@cmidlb=\count498
+\@aboverulesep=\dimen260
+\@belowrulesep=\dimen261
+\@thisruleclass=\count499
+\@lastruleclass=\count500
+\@thisrulewidth=\dimen262
+)) (/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
+ (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+\captionmargin=\dimen263
+\captionmargin@=\dimen264
+\captionwidth=\dimen265
+\caption@tempdima=\dimen266
+\caption@indent=\dimen267
+\caption@parindent=\dimen268
+\caption@hangindent=\dimen269
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count501
+\c@continuedfloat=\count502
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+ (/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 ))
 -----------------------------------------------------------
 ----> main.tex ---- Zentrales Dokument---------------------
@@ -754,19 +924,23 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 79.
 LaTeX Font Info:    ... okay on input line 79.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 79.
 LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
  (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count479
-\scratchdimen=\dimen184
-\scratchbox=\box112
-\nofMPsegments=\count480
-\nofMParguments=\count481
-\everyMPshowfont=\toks38
-\MPscratchCnt=\count482
-\MPscratchDim=\dimen185
-\MPnumerator=\count483
-\makeMPintoPDFobject=\count484
-\everyMPtoPDFconversion=\toks39
+\scratchcounter=\count503
+\scratchdimen=\dimen270
+\scratchbox=\box119
+\nofMPsegments=\count504
+\nofMParguments=\count505
+\everyMPshowfont=\toks41
+\MPscratchCnt=\count506
+\MPscratchDim=\dimen271
+\MPnumerator=\count507
+\makeMPintoPDFobject=\count508
+\everyMPtoPDFconversion=\toks42
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -776,9 +950,9 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 File: translations-basic-dictionary-german.trsl (german translation file `translations-basic-dictionary')
 )
 Package translations Info: loading dictionary `translations-basic-dictionary' for `german'. on input line 79.
-\c@mv@tabular=\count485
-\c@mv@boldtabular=\count486
-\c@lstlisting=\count487
+\c@mv@tabular=\count509
+\c@mv@boldtabular=\count510
+\c@lstlisting=\count511
 Package biblatex Info: Trying to load language 'ngerman'...
 Package biblatex Info: ... file 'ngerman.lbx' found.
  (/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/ngerman.lbx
@@ -803,55 +977,81 @@ Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl)
 Package biblatex Info: Reference section=0 on input line 79.
 Package biblatex Info: Reference segment=0 on input line 79.
+Package hyperref Info: Link coloring OFF on input line 79.
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+ (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count512
+)
+LaTeX Info: Redefining \ref on input line 79.
+LaTeX Info: Redefining \pageref on input line 79.
+LaTeX Info: Redefining \nameref on input line 79.
+ (./main.out) (./main.out)
+\@outlinefile=\write6
+\openout6 = `main.out'.
+
+ (/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+)
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
  (./titelseiten.tex
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 8.
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 9.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 )
-Underfull \hbox (badness 1448) in paragraph at lines 8--8
+Underfull \hbox (badness 1448) in paragraph at lines 9--9
 []\T1/phv/b/n/14.4 Kon-zep-ti-on, Ent-wick-lung und Wirksamkeits-
  []
 
-<pictures//BHT-Logo-vertikal.pdf, id=1, 53.01094pt x 126.0707pt>
+<pictures//BHT-Logo-vertikal.pdf, id=136, 53.01094pt x 126.0707pt>
 File: pictures//BHT-Logo-vertikal.pdf Graphic file (type pdf)
 <use pictures//BHT-Logo-vertikal.pdf>
-Package pdftex.def Info: pictures//BHT-Logo-vertikal.pdf  used on input line 8.
+Package pdftex.def Info: pictures//BHT-Logo-vertikal.pdf  used on input line 9.
 (pdftex.def)             Requested size: 64.01935pt x 152.25937pt.
 
-Overfull \hbox (1.82535pt too wide) in paragraph at lines 8--8
+Overfull \hbox (1.82535pt too wide) in paragraph at lines 9--9
 [][] [] 
  []
 
-<BHT-Elements.pdf, id=2, 32.04338pt x 161.86708pt>
+<BHT-Elements.pdf, id=137, 32.04338pt x 161.86708pt>
 File: BHT-Elements.pdf Graphic file (type pdf)
 <use BHT-Elements.pdf>
-Package pdftex.def Info: BHT-Elements.pdf  used on input line 8.
+Package pdftex.def Info: BHT-Elements.pdf  used on input line 9.
 (pdftex.def)             Requested size: 32.04329pt x 161.86667pt.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 9.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 9.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+trsy on input line 8.
+LaTeX Font Info:    Trying to load font information for U+trsy on input line 9.
  (/usr/share/texlive/texmf-dist/tex/latex/trsym/utrsy.fd
 File: utrsy.fd 2000/06/25v1.0transformation symbol font definitions
 )
-Overfull \hbox (56.63962pt too wide) in paragraph at lines 8--8
+Overfull \hbox (56.63962pt too wide) in paragraph at lines 9--9
 []  []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 8--8
+Underfull \hbox (badness 10000) in paragraph at lines 9--9
 
  []
 
-<BHT-Studiere-vertikal.pdf, id=3, 8.48169pt x 86.94461pt>
+<BHT-Studiere-vertikal.pdf, id=138, 8.48169pt x 86.94461pt>
 File: BHT-Studiere-vertikal.pdf Graphic file (type pdf)
 <use BHT-Studiere-vertikal.pdf>
-Package pdftex.def Info: BHT-Studiere-vertikal.pdf  used on input line 8.
+Package pdftex.def Info: BHT-Studiere-vertikal.pdf  used on input line 9.
 (pdftex.def)             Requested size: 11.87424pt x 121.7216pt.
 [1
 
@@ -877,36 +1077,60 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.95pt on input line 45.
+(Font)              scaled to size 10.95pt on input line 50.
  [5] [6
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 48--53
+Underfull \hbox (badness 10000) in paragraph at lines 53--58
 
  []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 55.
+(Font)              scaled to size 10.0pt on input line 60.
 [1] [2
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 24.88pt on input line 59.
+(Font)              scaled to size 24.88pt on input line 64.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 24.88pt on input line 59.
+(Font)              scaled to size 24.88pt on input line 64.
  (./main.toc [3])
-\tf@toc=\write6
-\openout6 = `main.toc'.
+\tf@toc=\write7
+\openout7 = `main.toc'.
 
  [4] (./main.lof)
-\tf@lof=\write7
-\openout7 = `main.lof'.
+\tf@lof=\write8
+\openout8 = `main.lof'.
 
-) (./einfÃ¼hrung/einfÃ¼hrung.tex [1
+) (./einfÃ¼hrung/einfÃ¼hrung.texpdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.8 \chapter
+            *{EinfÃ¼hrung} [1
 
-] [2
+]pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.8 \chapter
+            *{EinfÃ¼hrung} [2
 
-] [3] [4] [5] [6] [7]) (./kapitel1/ch1.tex [8
+]pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.11 \newpage
+              [3]pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.13 \newpage
+              [4]pdfTeX warning (ext4): destination with the same identifier (name{page.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.15 \newpage
+              [5]pdfTeX warning (ext4): destination with the same identifier (name{page.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.17 \newpage
+              [6] [7]) (./kapitel1/ch1.tex [8
 
 ]
 Kapitel 1.
@@ -915,207 +1139,411 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 20.74pt on input line 8.
 
-LaTeX Warning: Citation 'effertz_viarisio_kosten_rauchens_2015' on page 9 undefined on input line 12.
-
-
 Overfull \hbox (15.85065pt too wide) in paragraph at lines 12--13
 \T1/LinuxLibertineT-TLF/m/n/10.95 Deut-sche Krebs-for-schungs-zen-trum be-zif-fert die di-rek-ten jähr-li-chen Kos-ten des Rau-chens in Deutsch-
  []
 
 
-Overfull \hbox (93.70822pt too wide) in paragraph at lines 12--13
-\T1/LinuxLibertineT-TLF/m/n/10.95 die volks-wirt-schaft-li-che Last noch um ein Viel-fa-ches hö-her ver-an-schlagt [[]].
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
-LaTeX Warning: Citation 'bmg_rauchen_2026' on page 9 undefined on input line 14.
-
-
-LaTeX Warning: Citation 'olk_esa_tabak_2026' on page 9 undefined on input line 14.
-
-
-LaTeX Warning: Citation 'who_tobacco_cessation_guideline_2024' on page 9 undefined on input line 16.
-
-
-Overfull \hbox (29.46553pt too wide) in paragraph at lines 16--17
-\T1/LinuxLibertineT-TLF/m/n/10.95 ven-tio-nen, für die die Ge-wiss-heit der Evi-denz ge-rin-ger ist [[]].
- []
-
-
-LaTeX Warning: Citation 'bmg_gesund_bleiben_praevention_2025' on page 9 undefined on input line 18.
-
-
-LaTeX Warning: Citation 'gba_tabakentwoehnung_2025' on page 9 undefined on input line 18.
-
-
-LaTeX Warning: Citation 'baecke_gkv_bonusprogramme_2026' on page 9 undefined on input line 18.
-
-
-Overfull \hbox (159.12334pt too wide) in paragraph at lines 18--19
-\T1/LinuxLibertineT-TLF/m/n/10.95 ta-le Prä-ven-ti-ons-an-ge-bo-te als Teil des Zu-gangs zu ge-sund-heits-för-dern-den Maÿ-nah-men [[]].
- []
-
-[9]
-
-LaTeX Warning: Citation 'tabibnia_cuelabeling_2026' on page 10 undefined on input line 24.
-
-
-LaTeX Warning: Citation 'tabibnia_cuelabeling_2026' on page 10 undefined on input line 26.
-
-
-LaTeX Warning: Citation 'tabibnia_cuelabeling_2026' on page 10 undefined on input line 28.
-
-
-LaTeX Warning: Citation 'addiction_research_center_qsu' on page 10 undefined on input line 32.
-
-
-LaTeX Warning: Citation 'who_tobacco_cessation_guideline_2024' on page 10 undefined on input line 36.
-
-
-Underfull \vbox (badness 3396) has occurred while \output is active []
+ [9]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-LaTeX Warning: Citation 'pericot_valverde_vr_smoking_cessation_2019' on page 11 undefined on input line 38.
-
-
-LaTeX Warning: Citation 'pericot_valverde_vr_smoking_cessation_2019' on page 11 undefined on input line 40.
-
-
-LaTeX Warning: Citation 'pericot_valverde_vr_smoking_cessation_2019' on page 11 undefined on input line 40.
-
-
-LaTeX Warning: Citation 'pericot_valverde_vr_smoking_cessation_2019' on page 11 undefined on input line 40.
-
-
-Overfull \hbox (98.86304pt too wide) in paragraph at lines 40--41
-\T1/LinuxLibertineT-TLF/m/n/10.95 VR-basierte Cue-Exposure-Sitzungen (CBT+CET, $\OML/cmm/m/it/10.95 n \OT1/cmr/m/n/10.95 = 50$\T1/LinuxLibertineT-TLF/m/n/10.95 ) ver-teilt [[]].
- []
-
-
-LaTeX Warning: Citation 'dougan_ar_smoking_cessation_2025' on page 11 undefined on input line 42.
-
-[11]
-
-LaTeX Warning: Citation 'tabibnia_cuelabeling_2026' on page 12 undefined on input line 48.
-
-
-LaTeX Warning: Citation 'cohen_power_2013' on page 12 undefined on input line 50.
-
-
-LaTeX Warning: Citation 'giner_sorolla_power_2024' on page 12 undefined on input line 50.
-
-
-Overfull \hbox (38.49847pt too wide) in paragraph at lines 50--51
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Stich-pro-ben-pla-nung ori-en-tiert sich an klas-si-scher Power-Analyse nach Co-hen [[]].
- []
-
-
-LaTeX Warning: Citation 'weinfurt_clinically_meaningful_2019' on page 12 undefined on input line 52.
-
-
-Overfull \hbox (135.30666pt too wide) in paragraph at lines 52--53
-\T1/LinuxLibertineT-TLF/m/n/10.95 bar ist, und ei-ner Ver-än-de-rung, die im je-wei-li-gen Kon-text als wert-voll be-ur-teilt wird [[]].
- []
-
-[12] [13] [14] [15]) (./kapitel2/ch2.tex [16
+ [11] [12] [13] [14] [15]) (./kapitel2/ch2.tex [16
 
 ]
 Kapitel 2.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 12.0pt on input line 12.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 12.0pt on input line 12.
 [17]
+Underfull \vbox (badness 7740) has occurred while \output is active []
 
-LaTeX Warning: Reference `DatenschutzerklÃ¤rung' on page 18 undefined on input line 40.
-
-[18]) (./kapitel3/ch3.tex [19] [20
+ [18]) (./kapitel3/ch3.tex [19] [20
 
 ]
 Kapitel 3.
-
-LaTeX Warning: Citation 'james_islr_2021' on page 21 undefined on input line 15.
-
-
-LaTeX Warning: Citation 'manning_ir_2008' on page 21 undefined on input line 17.
-
 [21] [22] [23] [24] [25]) (./kapitel4/ch4.tex [26]
 Kapitel 4.
-
-LaTeX Warning: Citation 'google_litert_android_2026' on page 27 undefined on input line 19.
-
-
-Overfull \hbox (45.06845pt too wide) in paragraph at lines 19--20
-\T1/LinuxLibertineT-TLF/m/n/10.95 wird in je-dem Fall Li-teRT und so-mit min-des-tens das SDK-Level 23 be-nö-tigt [[]].
- []
-
 ) (./kapitel5/ch5.tex [27
 
 ] [28
 
 ]
 Kapitel 5.
-[29] [30] [31] [32] [33] [34] [35]) (./kapitel6/ch6.tex [36]
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 13.
+(/usr/share/texlive/texmf-dist/tex/latex/bera/t1fvm.fd
+File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
+)
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 9.08852pt on input line 13.
+ [29]
+
+Package caption Warning: \captionsetup{type*=...} or \captionof
+(caption)                outside box or environment on input line 44.
+See the caption package documentation for explanation.
+
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 44.
+See the caption package documentation for explanation.
+
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 63.
+See the caption package documentation for explanation.
+
+) (./kapitel6/ch6.tex [30]
 Kapitel 6.
+[31
 
-LaTeX Warning: Citation 'tabibnia_cue_labeling_2026' on page 37 undefined on input line 21.
-
-
-LaTeX Warning: Citation 'weinfurt_clarifying_2019' on page 37 undefined on input line 21.
-
-
-Overfull \hbox (26.45668pt too wide) in paragraph at lines 20--22
-\T1/LinuxLibertineT-TLF/m/n/10.95 und ei-nem für Be-trof-fe-ne tat-säch-lich wert-vol-len Nut-zen un-ter-schie-den [[],
- []
-
-[37
-
-] [38]
-
-LaTeX Warning: Citation 'cohen_statistical_2013' on page 39 undefined on input line 61.
-
-
-LaTeX Warning: Citation 'giner_sorolla_power_2024' on page 39 undefined on input line 61.
-
-) (./kapitel7/ch7.tex [39] [40
+]
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 34.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 34.
+ [32]) (./kapitel7/ch7.tex [33] [34
 
 ]
 Kapitel 7.
-[41] [42] [43] [44] [45] [46] [47]) (./kapitel8/ch8.tex [48]
+[35] [36] [37] [38] [39] [40] [41]) (./kapitel8/ch8.tex [42]
 Kapitel 8.
-[49
+[43
 
-] [50] [51] [52]) [53]
+] [44] [45] [46]) (./anhang/anhang.tex [47] [48
 
-LaTeX Warning: Empty bibliography on input line 107.
+] [49]) (./anhang/adressen.tex [50
 
-(./main.aux)
+]
+Anhang A.
 
-LaTeX Warning: There were undefined references.
+Overfull \hbox (19.45595pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung.prenzlau@krankenhaus- 
+ []
 
 
-Package biblatex Warning: Please (re)run Biber on the file:
-(biblatex)                main
-(biblatex)                and rerun LaTeX afterwards.
+Overfull \hbox (19.79591pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 Suchtberatung.Kaiserslautern@Caritas- 
+ []
 
+
+Overfull \hbox (25.80591pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 Suchtberatung.Kaiserslautern@diakonie- 
+ []
+
+
+Overfull \hbox (21.63591pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 kurfuerstendamm@oberbergkliniken.de|  
+ []
+
+
+Overfull \hbox (15.78587pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatungteterow@sozialwerk.net|  
+ []
+
+
+Overfull \hbox (28.28593pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 katrin.johanna.kuegler@gelsenkirchen.de|  
+ []
+
+
+Overfull \hbox (28.28593pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 katrin.johanna.kuegler@gelsenkirchen.de|  
+ []
+
+
+Overfull \hbox (0.54596pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung@diakoniewerk.com|  
+ []
+
+
+Overfull \hbox (5.2959pt too wide) in paragraph at lines 357--357
+\T1/LinuxLibertineT-TLF/m/n/10 boeckmannstrasse@therapiehilfe.de|  
+ []
+
+
+Overfull \hbox (7.50595pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung.pinneberg@diakonie- 
+ []
+
+
+Overfull \hbox (8.22597pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 beratung@suchtberatungszentrum2- 
+ []
+
+
+Overfull \hbox (15.856pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtfachambulanz.augsburg@caritas- 
+ []
+
+
+Overfull \hbox (15.72592pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 verbundwohnen@frausuchtzukunft.de|  
+ []
+
+
+Overfull \hbox (0.90598pt too wide) in paragraph at lines 357--357
+[]|\T1/LinuxLibertineT-TLF/m/n/10 violettaclean@frausuchtzukunft.de|  
+ []
+
+[51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64]
+Overfull \hbox (11.36598pt too wide) in paragraph at lines 519--519
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung.andelfingen@ajb.zh.ch|  
+ []
+
+
+Overfull \hbox (5.11598pt too wide) in paragraph at lines 519--519
+[]|\T1/LinuxLibertineT-TLF/m/n/10 kontakt@selbsthilfegraubuenden.ch|  
+ []
+
+
+Overfull \hbox (4.75595pt too wide) in paragraph at lines 519--519
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtfachstelle.rorschach@stiftung- 
+ []
+
+
+Overfull \hbox (4.75595pt too wide) in paragraph at lines 519--519
+[]|\T1/LinuxLibertineT-TLF/m/n/10 suchtfachstelle.rorschach@stiftung- 
+ []
+
+
+Overfull \hbox (9.10596pt too wide) in paragraph at lines 519--519
+[]|\T1/LinuxLibertineT-TLF/m/n/10 rauchstoppberatung.bss@spital.so.ch|  
+ []
+
+[65] [66] [67] [68] [69] [70] [71]) (./anhang/flyer.tex
+
+pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/flyer.pdf, id=598, 845.0471pt x 597.50829pt>
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf>
+Package pdftex.def Info: anhang/flyer.pdf  used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf>
+Package pdftex.def Info: anhang/flyer.pdf  used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+
+
+pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/flyer.pdf, id=601, page=1, 845.0471pt x 597.50829pt>
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 1>
+Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 1>
+Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+[72]
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 1>
+Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 1>
+Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 1>
+Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+ [73 <./anhang/flyer.pdf>]
+
+pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/flyer.pdf, id=689, page=2, 845.0471pt x 597.50829pt>
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 2>
+Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 2>
+Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+File: anhang/flyer.pdf Graphic file (type pdf)
+<use anhang/flyer.pdf, page 2>
+Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
+(pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
+[74 <./anhang/flyer.pdf>]) (./anhang/studieninformation.tex
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/studieninformation.pdf, id=730, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf>
+Package pdftex.def Info: anhang/studieninformation.pdf  used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf>
+Package pdftex.def Info: anhang/studieninformation.pdf  used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/studieninformation.pdf, id=733, page=1, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 1>
+Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 1>
+Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 1>
+Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 1>
+Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 1>
+Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[75 <./anhang/studieninformation.pdf>]
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/studieninformation.pdf, id=760, page=2, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[76 <./anhang/studieninformation.pdf>]
+
+pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/studieninformation.pdf, id=765, page=3, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[77 <./anhang/studieninformation.pdf>]) (./anhang/datenschutzerklaerung.tex
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/datenschutzerklaerung.pdf, id=770, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf  used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf  used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/datenschutzerklaerung.pdf, id=773, page=1, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 1>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 1>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 1>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 1>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 1>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[78 <./anhang/datenschutzerklaerung.pdf>]
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/datenschutzerklaerung.pdf, id=799, page=2, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[79 <./anhang/datenschutzerklaerung.pdf>]
+
+pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<anhang/datenschutzerklaerung.pdf, id=804, page=3, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+[80 <./anhang/datenschutzerklaerung.pdf>])
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
+(Font)              scaled to size 10.95pt on input line 112.
+ [81
+
+
+] [82] (./main.aux)
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: BD233B31A16002284B7B86884F31436D;6161.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 20496 strings out of 478287
- 408925 string characters out of 5849289
- 1128331 words of memory out of 5000000
- 38352 multiletter control sequences out of 15000+600000
- 557370 words of font info for 84 fonts, out of 8000000 for 9000
+ 29289 strings out of 478287
+ 557139 string characters out of 5849289
+ 1655424 words of memory out of 5000000
+ 46823 multiletter control sequences out of 15000+600000
+ 572251 words of font info for 112 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 86i,12n,93p,1829b,2457s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on main.pdf (63 pages, 387023 bytes).
+ 86i,19n,120p,1829b,2559s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on main.pdf (92 pages, 2632316 bytes).
 PDF statistics:
- 272 PDF objects out of 1000 (max. 8388607)
- 181 compressed objects within 2 object streams
- 0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 953 PDF objects out of 1000 (max. 8388607)
+ 768 compressed objects within 8 object streams
+ 158 named destinations out of 1000 (max. 500000)
+ 365 words of extra memory for PDF output out of 10000 (max. 10000000)
 
