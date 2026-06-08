@@ -6,17 +6,103 @@
 %%
 
 \chapter{Appentwicklung}
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
-\newpage
-\null
+
+\section{Sicherheitsorientierte Softwaredokumentation des Prototyps}
+Der aktuelle CueLens-Prototyp ist als schlanke Android-Anwendung mit einem einfachen PHP-Backend umgesetzt. Im Mittelpunkt stehen noch nicht alle später denkbaren Funktionen einer KI-gestützten App, sondern ein Minimalumfang für die Studiendurchführung: Präsentation von Rauchreizen, Auswahlhandlungen in zwei nacheinander durchlaufenen Aufgabenphasen und anschließende Erfassung eines Selbstberichts zum Rauchverlangen. Der Projektplan beschreibt diesen Umfang ausdrücklich als MVP: zunächst werden Bild-Matching-Aufgaben mit lokal vorhandenen Ressourcen angezeigt, danach Word-Matching-Aufgaben mit einem kleinen Wörterbuch, und am Ende wird ein Craving-Wert auf einer Skala von 0 bis 100 an einen Server übertragen. Der Plan beschränkt sich bewusst auf diese Kernfunktionalität; eine formale Teststrategie und weitergehende Sicherheitsmaßnahmen werden dort als nachgelagerte Arbeiten eingeordnet.
+
+Für die sicherheitsbezogene Einordnung wird die Anwendung als Kombination aus mobiler Anwendung, Web-Anwendung und Hintergrundsystem betrachtet. Die Struktur orientiert sich an den Prüfaspekten der BSI TR-03161 für mobile Anwendungen, Web-Anwendungen und Hintergrundsysteme \cite{bsi_tr03161_mobile_2024,bsi_tr03161_web_2024,bsi_tr03161_backend_2024}. Für den Prototyp ist daraus kein formaler Konformitätsnachweis abzuleiten. Die Richtlinie dient vielmehr als fachlich geeignete Checkliste, um Datensparsamkeit, Eingabevalidierung, Transportabsicherung, sichere Speicherung, Fehlerbehandlung und den Umgang mit Drittanbieterbibliotheken nachvollziehbar zu dokumentieren.
+
+\subsection{Android-App}
+Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Der Einstiegspunkt liegt in \texttt{MainActivity.kt}. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Compose-Oberfläche. Die wesentlichen Zustandsvariablen sind die aktuelle Phase, der aktuelle Aufgabenindex und der im Craving-Screen ausgewählte Zahlenwert. Eine dauerhafte lokale Speicherung von Selbstberichten, Namen, Zahlungsdaten oder Bildern ist im aktuellen Stand nicht implementiert. Das reduziert die Risiken bei Geräteverlust und vereinfacht den Datenlebenszyklus, bedeutet aber auch, dass Offline-Fälle und Wiederholungsversuche noch nicht robust behandelt werden.
+
+Die Aufgabenlogik ist ressourcenbasiert und folgt einem deterministischen Namensschema. Für die Bild-Matching-Phase werden lokale Drawables mit den Namen \texttt{cue\_0nn}, \texttt{match\_a\_0nn} und \texttt{match\_b\_0nn} aufsteigend gesucht. Eine Aufgabe wird nur aufgenommen, wenn alle drei Ressourcen vorhanden sind. Für die Word-Matching-Phase werden Ressourcen \texttt{cue\_1nn} mit Wörterbucheinträgen desselben numerischen Suffixes kombiniert. Derzeit ist ein Wörterbucheintrag für \texttt{100} mit den Optionen \enquote{Paff} und \enquote{Klick} vorhanden. Diese dynamische Ressourcenauflösung vermeidet eine lange fest codierte Aufgabenliste und erleichtert die spätere Erweiterung durch neue Stimuli. Sicherheitsrelevant ist dabei, dass ausschließlich gebündelte App-Ressourcen geladen werden; ein Nachladen fremder Bilddateien oder Codebestandteile aus dem Netzwerk findet im MVP nicht statt.
+
+Die Interaktion ist bewusst einfach gehalten. Ein Tippen auf eines der beiden Bilder oder Wörter führt zur nächsten Aufgabe. Die getroffene Auswahl wird im aktuellen Stand nicht gespeichert und nicht an den Server übertragen. Dadurch entstehen aus den Auswahlhandlungen derzeit keine zusätzlichen Studiendaten. Der einzige von der App übermittelte Messwert ist der Craving-Wert. Dieser wird im UI als ganzzahliger Wert zwischen 0 und 100 geführt, standardmäßig mit 50 vorbelegt und per \texttt{application/x-www-form-urlencoded} als Parameter \texttt{craving} an \texttt{https://cuelens.each-and-every.de/submit} gesendet. Die Netzwerkanfrage läuft in einem Coroutine-Kontext für I/O-Operationen und blockiert daher nicht den UI-Thread. Positiv ist, dass der Transport-Endpunkt bereits als HTTPS-URL festgelegt ist und dass keine personenbezogenen Registrierungsdaten aus der App übertragen werden.
+
+Im Android-Manifest ist nur die Berechtigung \texttt{INTERNET} deklariert. Kamera-, Standort-, Kontakt- oder Speichermedienberechtigungen sind für den MVP nicht erforderlich und werden nicht angefordert. Die Activity ist als Launcher exportiert und auf Portrait-Orientierung festgelegt. Der Verzicht auf weitere Berechtigungen ist ein wichtiger Beitrag zur Datensparsamkeit und reduziert die Angriffsfläche. Zu beachten ist allerdings, dass \texttt{android:allowBackup} derzeit aktiviert ist und die Dateien \texttt{backup\_rules.xml} sowie \texttt{data\_extraction\_rules.xml} noch Beispielregeln enthalten. Solange keine sensiblen lokalen Daten persistiert werden, ist das Risiko praktisch begrenzt. Sobald Tokens, Zwischenspeicher oder Studiendaten lokal abgelegt werden, müssen Backups explizit deaktiviert oder präzise ausgeschlossen werden.
+
+\subsection{PHP-Endpunkt für Selbstberichte}
+Der Endpunkt \texttt{submit.php} ist für den Empfang des Craving-Selbstberichts zuständig. Er setzt den Antworttyp auf JSON, akzeptiert ausschließlich HTTP-POST und liefert bei anderen Methoden den Statuscode 405. Fehlt der Parameter \texttt{craving}, wird ein Fehler mit Statuscode 400 zurückgegeben. Der Wert wird serverseitig als Integer validiert und zusätzlich auf den fachlich erwarteten Bereich 0 bis 100 begrenzt. Damit wird die clientseitige Slider-Begrenzung nicht als alleinige Sicherheitsmaßnahme verwendet. Diese doppelte Validierung ist wesentlich, weil HTTP-Anfragen unabhängig von der Android-App direkt gegen den Endpunkt gesendet werden könnten.
+
+Für den Datenbankzugriff wird PDO mit \texttt{utf8mb4}, Exceptions und deaktivierter Emulation vorbereiteter Statements verwendet. Der Insert in die Tabelle \texttt{self\_reports} erfolgt über ein vorbereitetes Statement; der Craving-Wert wird als Integer gebunden. Datenbankfehler werden nach außen nur als generische Fehlermeldung ausgegeben, sodass keine SQL-Details an Clients gelangen. Bereits umgesetzt sind damit zentrale Basismaßnahmen gegen SQL-Injection und unnötige technische Informationspreisgabe.
+
+Noch nicht ausreichend gelöst ist die Trennung von Programmcode und Geheimnissen. Der Formularbereich nutzt bereits das Muster einer Konfigurationsdatei unter \texttt{config/db.php}, die laut Kommentar direkt auf dem Server angepasst werden soll. Der Craving-Endpunkt enthält Datenbankzugangsdaten im Quelltext beziehungsweise in einer weiteren Konfigurationsdatei. Konkrete Zugangsdaten werden in dieser Arbeit nicht wiedergegeben. Für den Produktivbetrieb müssen alle Geheimnisse aus dem Repository entfernt, rotiert und außerhalb des Webroots oder über eine geeignete Serverkonfiguration bereitgestellt werden. Außerdem fehlt dem Endpunkt bisher ein Studien- oder Installationstoken. Dadurch kann der Server zwar anonyme Craving-Werte speichern, aber weder die maximale Zahl von 20 Selbstberichten pro Installation noch die Zuordnung zu einer berechtigten Studienteilnahme zuverlässig prüfen.
+
+\subsection{Web-Anmeldeformular}
+Das Anmeldeformular \texttt{index.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Zusätzlich müssen die Teilnehmenden clientseitig bestätigen, dass sie die Studieninformation gelesen und die Datenschutzerklärung akzeptiert haben. Die Formularseite stellt eine Verbindung zur Datenbank über PDO her, validiert E-Mail-Adressen mit \texttt{FILTER\_VALIDATE\_EMAIL} und Alter sowie Zigarettenanzahl mit \texttt{FILTER\_VALIDATE\_INT}. Die Speicherung erfolgt über ein vorbereitetes Insert in die Tabelle \texttt{register}. Rückmeldungen an Nutzende werden mit \texttt{htmlspecialchars} ausgegeben; dadurch wird verhindert, dass Datenbank- oder Eingabemeldungen ungefiltert als HTML interpretiert werden. Für doppelte E-Mail-Adressen ist eine gesonderte Rückmeldung vorgesehen, sofern die Datenbank einen entsprechenden Unique-Constraint erzwingt.
+
+Auch hier sind die wichtigsten Basisschutzmaßnahmen bereits erkennbar: Konfigurationsdaten werden aus einer separaten Datei geladen, SQL wird vorbereitet ausgeführt, und Ausgaben werden HTML-escaped. Für Studiendaten mit Gesundheitsbezug reicht dieser Stand jedoch noch nicht aus. Die Checkboxen für Studieninformation und Datenschutzerklärung werden im HTML als \texttt{required} markiert, aber nicht serverseitig geprüft oder mit Zeitstempel dokumentiert. IBAN und BIC werden nur über Maximallängen begrenzt, nicht formal validiert. Außerdem fehlen ein CSRF-Token, strengere Alters- und Rauchstatusgrenzen gemäß Einschlusskriterien sowie eine klare Trennung zwischen Registrierungs-/Abrechnungsdaten und späteren Messdaten. Diese Trennung ist datenschutzrechtlich zentral, weil die App-Selbstberichte nicht unmittelbar mit Name oder Bankverbindung zusammengeführt werden sollen.
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{|p{0.17\textwidth}|p{0.19\textwidth}|p{0.22\textwidth}|p{0.22\textwidth}|p{0.12\textwidth}|}
+\hline
+\textbf{Daten oder Artefakt} & \textbf{Herkunft} & \textbf{Verarbeitung} & \textbf{Speicherort / Übertragung} & \textbf{Schutzbewertung} \\
+\hline
+Cue- und Matching-Bilder & lokal gebündelte App-Ressourcen & Anzeige in Bild- und Wortphase; keine Netzwerkübertragung & \texttt{app/src/main/res/drawable} innerhalb der APK & niedrig bis mittel; urheberrechtlich relevant \\
+\hline
+Wortoptionen & fest codiertes Wörterbuch in der App & Anzeige als zwei Schaltflächen in der Word-Matching-Phase & nur im App-Quelltext beziehungsweise in der APK & niedrig \\
+\hline
+Auswahlhandlungen & Tippen auf Bild- oder Wortoption & derzeit nur Navigation zur nächsten Aufgabe & keine persistente Speicherung, keine Serverübertragung & derzeit niedrig; später Studiendatum \\
+\hline
+Craving-Wert & Slider in der Android-App & Integer 0--100; POST an Backend; serverseitige Bereichsprüfung & temporär im App-Speicher; danach Tabelle \texttt{self\_reports} & gesundheitsbezogen; hoch \\
+\hline
+Registrierungsdaten & Webformular & Trimming, einfache Validierung, prepared Insert & Tabelle \texttt{register} auf Webspace-Datenbank & personenbezogen und teils zahlungsbezogen; hoch \\
+\hline
+Einwilligungsbestätigung & Checkboxen im Webformular & derzeit clientseitige Pflichtfelder & noch keine nachweisbare serverseitige Speicherung mit Zeitstempel & hoch, weil Nachweisfunktion \\
+\hline
+Datenbankzugangsdaten & Serverkonfiguration & für PDO-Verbindungen genutzt & teils Konfigurationsdatei, teils noch Quelltext; produktiv außerhalb des Repositorys erforderlich & sehr hoch \\
+\hline
+Technische Logs & Android-Logcat und Webserver/PHP & App protokolliert HTTP-Status; Server liefert generische Fehler & Gerätelog beziehungsweise Hosting-Logs & mittel; keine sensiblen Werte loggen \\
+\hline
+\end{tabular}
+\caption{Datenherkunft, Verarbeitung und Speicherorte im aktuellen CueLens-Prototyp}
+\label{tab:cuelens-datenfluss}
+\end{table}
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{|p{0.24\textwidth}|p{0.16\textwidth}|p{0.24\textwidth}|p{0.26\textwidth}|}
+\hline
+\textbf{Bibliothek / Plugin} & \textbf{Version} & \textbf{Verwendung im Prototyp} & \textbf{Sicherheitsrelevanz} \\
+\hline
+Android Gradle Plugin & 9.1.1 & Build-System für die Android-App & reproduzierbarer Build und zentrale Build-Konfiguration; Updates sicherheitsrelevant \\
+\hline
+Kotlin Compose Plugin & 2.2.10 & Kotlin/Compose-Compilerintegration & Compiler- und Sprachtooling; Versionspflege erforderlich \\
+\hline
+\texttt{androidx.core:core-ktx} & 1.18.0 & Kotlin-Erweiterungen für Android APIs & keine eigene Datenspeicherung; geringe zusätzliche Angriffsfläche \\
+\hline
+\texttt{androidx.lifecycle:lifecycle-runtime-ktx} & 2.10.0 & Lifecycle-Anbindung und Coroutine-Nutzung & verhindert fehleranfällige manuelle Nebenläufigkeit \\
+\hline
+\texttt{androidx.activity:activity-compose} & 1.13.0 & Compose-Einstieg in der Activity & UI-Integration; keine zusätzlichen Berechtigungen \\
+\hline
+Compose BOM & 2026.02.01 & gemeinsame Versionsverwaltung für Compose-Artefakte & konsistente Compose-Versionen, geringeres Abhängigkeitsrisiko \\
+\hline
+Compose UI und UI Graphics & über BOM & Darstellung der Cue-Bilder und Layouts & lokale Anzeige ohne Netzwerkzugriff \\
+\hline
+Compose Material3 & über BOM & Buttons, Slider, Textkomponenten & standardisierte UI-Komponenten, weniger Eigenimplementierung \\
+\hline
+Compose Tooling / Preview & über BOM & Vorschau und Debug-Unterstützung & nur Entwicklung/Debug; nicht für sensible Produktivlogs verwenden \\
+\hline
+JUnit, AndroidX JUnit, Espresso, Compose UI Test & 4.13.2 / 1.3.0 / 3.7.0 / BOM & Unit-, Instrumentierungs- und UI-Tests & Grundlage für spätere Regressions- und Sicherheitstests \\
+\hline
+\end{tabular}
+\caption{Im Android-Projekt deklarierte Bibliotheken und Plugins}
+\label{tab:cuelens-android-bibliotheken}
+\end{table}
+
+\subsection{Noch zu implementierende Sicherheitsmaßnahmen}
+Aus dem aktuellen Quelltextstand ergeben sich die folgenden nächsten Umsetzungsschritte:
+
+\begin{itemize}
+    \item \textbf{Geheimnisse bereinigen:} Datenbankpasswörter aus Repository und Webroot entfernen, Zugangsdaten rotieren und Konfiguration konsistent über nicht versionierte Serverdateien oder Umgebungsvariablen laden.
+    \item \textbf{Studien- beziehungsweise Installationstoken einführen:} App-Übermittlungen nur mit zufälligem, nicht vorhersagbarem Token akzeptieren und die maximale Zahl gültiger Selbstberichte begrenzen.
+    \item \textbf{Backup und lokale Speicherung festlegen:} \texttt{allowBackup} deaktivieren oder Ausschlussregeln definieren, bevor Tokens oder Studiendaten lokal persistiert werden.
+    \item \textbf{Fehlerbehandlung der App verbessern:} Netzwerkfehler nicht still verwerfen, sondern nutzerarm melden, Wiederholversuche ermöglichen und Duplikate serverseitig verhindern.
+    \item \textbf{Webformular härten:} CSRF-Token, serverseitige Prüfung der Einwilligungs-Checkboxen, Zeitstempel, IBAN-/BIC-Prüfung sowie Alters- und Rauchstatusgrenzen ergänzen.
+    \item \textbf{Transport- und Serverkonfiguration prüfen:} HTTPS erzwingen, Klartextverkehr in der App-Konfiguration ausschließen, Sicherheitsheader und restriktive Dateirechte für PHP-Konfigurationen setzen.
+    \item \textbf{Protokollierung minimieren:} keine Craving-Werte, vollständigen Tokens, Bankdaten oder personenbezogenen Angaben in App-, PHP- oder Webserver-Logs schreiben.
+    \item \textbf{Tests ergänzen:} Unit- und Integrationstests für Wertebereich, ungültige Requests, Datenbankfehler, Formularvalidierung und Mehrfachübermittlungen erstellen.
+\end{itemize}
