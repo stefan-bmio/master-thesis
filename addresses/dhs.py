@@ -11,7 +11,7 @@ BASE_URL = "https://www.dhs.de/service/suchthilfeverzeichnis/"
 
 PARAMS = {
     "tx_wwdhseinrichtung2_fe1[action]": "list",
-    "tx_wwdhseinrichtung2_fe1[angebot]": "1",
+    "tx_wwdhseinrichtung2_fe1[angebot]": "0",
     "tx_wwdhseinrichtung2_fe1[bland]": "0",
     "tx_wwdhseinrichtung2_fe1[controller]": "Entry",
     "tx_wwdhseinrichtung2_fe1[do]": "search",

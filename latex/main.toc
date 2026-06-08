@@ -27,7 +27,7 @@
 \contentsline {chapter}{\numberline {8}Fazit und Ausblick}{49}{chapter.8}%
 \contentsline {chapter}{\numberline {A}Adressen}{57}{appendix.A}%
 \contentsline {section}{\numberline {A.1}Suchthilfeverzeichnis der DHS}{57}{section.A.1}%
-\contentsline {section}{\numberline {A.2}infodrog Suchtindex}{63}{section.A.2}%
-\contentsline {chapter}{\numberline {B}Flyer}{70}{appendix.B}%
-\contentsline {chapter}{\numberline {C}Studieninformation}{73}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Datenschutzerklärung}{76}{appendix.D}%
+\contentsline {section}{\numberline {A.2}infodrog Suchtindex}{71}{section.A.2}%
+\contentsline {chapter}{\numberline {B}Flyer}{78}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Studieninformation}{81}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Datenschutzerklärung}{84}{appendix.D}%

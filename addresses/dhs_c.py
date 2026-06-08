@@ -4,16 +4,16 @@ from urllib.parse import urlencode, urljoin
 
 BASE = "https://www.dhs.de/service/suchthilfeverzeichnis/"
 PARAMS = {
-    "tx_wwdhseinrichtung2_fe1[action]": "list",
-    "tx_wwdhseinrichtung2_fe1[angebot]": "1",
-    "tx_wwdhseinrichtung2_fe1[bland]": "0",
-    "tx_wwdhseinrichtung2_fe1[controller]": "Entry",
-    "tx_wwdhseinrichtung2_fe1[do]": "search",
-    "tx_wwdhseinrichtung2_fe1[plzort]": "",
-    "tx_wwdhseinrichtung2_fe1[spezi]": "0",
-    "tx_wwdhseinrichtung2_fe1[sprache]": "0",
-    "tx_wwdhseinrichtung2_fe1[umkreis]": "0",
-    "tx_wwdhseinrichtung2_fe1[zielgruppe]": "1",
+    "x_wwdhseinrichtung2_fe1[action : list",
+    "tx_wwdhseinrichtung2_fe1[angebot : 0",
+    "tx_wwdhseinrichtung2_fe1[bland : 0",
+    "tx_wwdhseinrichtung2_fe1[controller : Entry",
+    "tx_wwdhseinrichtung2_fe1[do : search",
+    "tx_wwdhseinrichtung2_fe1[plzort : ",
+    "tx_wwdhseinrichtung2_fe1[spezi : 0",
+    "tx_wwdhseinrichtung2_fe1[sprache : 0",
+    "tx_wwdhseinrichtung2_fe1[umkreis : 0",
+    "tx_wwdhseinrichtung2_fe1[zielgruppe : 1",
 }
 
 def text(x):
