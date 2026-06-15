@@ -41,13 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		empty($_SESSION['csrf_token']) ||
 		!hash_equals($_SESSION['csrf_token'], $csrfToken)
 	) {
-		$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
+		$message = 'The request could not be processed. Please reload the form.';
 	} else {
 		if (
 			empty($_SESSION['csrf_token']) ||
 			!hash_equals($_SESSION['csrf_token'], $csrfToken)
 		) {
-			$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
+			$message = 'The request could not be processed. Please reload the form.';
 		} else {
 			$email = trim($_POST['email'] ?? '');
 			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -72,14 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$studyinfoAccepted === false ||
 				$dataprotAccepted === false
 			) {
-				$message = 'Bitte nutzen Sie das Webformular';
+				$message = 'Please use the web form';
 			} else {
 				$csrfToken = $_POST['csrf_token'] ?? '';
 				if (
 					empty($_SESSION['csrf_token']) ||
 					!hash_equals($_SESSION['csrf_token'], $csrfToken)
 				) {
-					$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
+					$message = 'The request could not be processed. Please reload the form.';
 				} else {
 					$doiToken = bin2hex(random_bytes(32));
 					$doiTokenHash = hash('sha256', $doiToken);
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						]);
 						
 						try {
-							$confirmUrl = 'https://cuelens.each-and-every.de/confirm.php?' . http_build_query([
+							$confirmUrl = 'https://cuelens.each-and-every.de/confirm-en.php?' . http_build_query([
 								'doiToken' => $doiToken,
 							]);
 
@@ -121,36 +121,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							$mail->CharSet = $smtpConfig['charset'];
 							$mail->setFrom($smtpConfig['from'], $smtpConfig['fromName']);
 							$mail->addReplyTo($smtpConfig['replyTo'], $smtpConfig['replyToName']);
-							$mail->Subject = $smtpConfig['subject'];
 							$mail->addAddress($email, $name);
 
+							$mail->Subject = 'Please confirm your registration for the CueLens study';
 							$mail->Body =
-								"Guten Tag,\n\n"
-								. "vielen Dank für Ihr Interesse an der CueLens-Studie.\n\n"
-								. "Bitte bestätigen Sie Ihre E-Mail-Adresse über den folgenden Link:\n\n"
+								"Hello,\n\n"
+								. "Thank you for your interest in the CueLens study.\n\n"
+								. "Please confirm your email address by clicking the following link:\n\n"
 								. $confirmUrl . "\n\n"
-								. "Falls Sie sich nicht zur CueLens-Studie angemeldet haben, können Sie diese E-Mail ignorieren.\n\n"
-								. "Mit freundlichen Grüßen";
+								. "If you did not register for the CueLens study, you can ignore this email.\n\n"
+								. "Kind regards";
 
 							$mail->send();
 
 							$_SESSION['email'] = $email;
 							$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-							header('Location: double.php');
+							header('Location: double-en.php');
 							exit;
 						} catch (Exception $e) {
 							error_log('PHPMailer: ' . $mail->ErrorInfo);
-							$message = 'Die Bestätigungs-E-Mail konnte nicht versendet werden.';
+							$message = 'The confirmation email could not be sent.';
 						} catch (Throwable $e) {
 							error_log('Double-Opt-In: ' . $e->getMessage());
-							$message = 'Beim Vorbereiten der Bestätigungs-E-Mail ist ein Fehler aufgetreten.';
+							$message = 'An error occured when preparing the confirmation email.';
 						}
 
 					} catch (PDOException $e) {
 						if ($e->errorInfo[1] == 1062) {
-							$message = 'Diese E-Mail-Adresse ist bereits registriert.';
+							$message = 'This email address is already registered.';
 						} else {
-							$message = 'Beim Speichern ist ein Fehler aufgetreten.';
+							$message = 'An error occured when saving.';
 						}
 					}
 				}
@@ -169,21 +169,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Anmeldung</title>
+    <title>Registration</title>
 	
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-<h1>Anmeldung zur CueLens-Studie</h1>
-<p>Vielen Dank für Ihr Interesse an der Teilnahme. Bitte lesen Sie die <a href="/info">Studieninformation</a>.</p>
+<h1>CueLens-Study Registration</h1>
+<p>Thank you for your interest in participating. Please read the <a href="/studyinformation.pdf">study information</a>.</p>
 
-<p>Wir benötigen diese Angaben über Sie:</p>
+<p>We need the following information from you::</p>
 
 <form method="post" action="">
 <table>
 <tr>
-    <td><label for="email">E-Mail:</label></td>
+    <td><label for="email">Email:</label></td>
     <td><input type="email" id="email" name="email" required></td>
 </tr>
 <tr>
@@ -199,22 +199,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <td><input type="text" id="bic" name="bic" maxlength="11" required></td>
 </tr>
 <tr>
-    <td><label for="age">Alter:</label></td>
+    <td><label for="age">Age:</label></td>
     <td><input type="number" id="age" name="age" min="30" max="65" step="1" required></td>
 </tr>
 <tr>
-    <td><label for="cigarettes">Zigaretten/Tag:</label></td>
+    <td><label for="cigarettes">Cigarettes/day:</label></td>
     <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required></td>
 </tr>
 </table>
 <table>
 <tr>
     <td><input type="checkbox" id="studyinfo" name="studyinfo" required></td>
-    <td><label for="studyinfo">Ich habe die <a href="/info">Studieninformation</a> gelesen</label></td>
+    <td><label for="studyinfo">I have read the <a href="/studyinformation.pdf">study information</a></label></td>
 </tr>
 <tr>
     <td><input type="checkbox" id="dataprot" name="dataprot" required></td>
-    <td><label for="dataprot">Ich akzeptiere die <a href="/ds">Datenschutzerklärung</a></label></td>
+    <td><label for="dataprot">I accept the <a href="/privacypolicy.pdf">privacy policy</a></label></td>
 </tr>
 <input
     type="hidden"
@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
 >
 </table>
-<p><button type="submit">Absenden</button></p>
+<p><button type="submit">Submit</button></p>
 </form>
 
 <?php if (!empty($message)): ?>

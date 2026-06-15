@@ -17,7 +17,7 @@ table {
 	margin-bottom: 8px;
 }
 
-td:first-child {
+td {
 	text-align: left;
 }
 
@@ -32,4 +32,17 @@ input {
 
 .success {
 	margin-top: 75px;
+}
+
+table.international {
+	border-spacing: 40pt 0;
+}
+
+table.international td {
+	font-size: 50px;
+	text-align: center;
+}
+
+table.international>tbody>tr:last-child>td>a {
+	text-decoration: none;
 }
