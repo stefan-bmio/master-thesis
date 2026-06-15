@@ -32,7 +32,38 @@ Die Registrierung wird über ein Double-Opt-In abgesichert. Beim Absenden des Fo
 
 Nach erfolgreichem Versand leitet \texttt{index.php} auf \texttt{double.php} weiter. Diese Seite liest die E"~Mail-Adresse aus der Session, validiert sie erneut und entfernt sie anschließend aus der Session. Die Datei \texttt{confirm.php} verarbeitet den Bestätigungslink. Sie akzeptiert nur Token im erwarteten Hex-Format, hasht den übergebenen Token erneut und sucht einen noch nicht bestätigten Datensatz. Die Abfrage verwendet eine Transaction, damit paral\-lele Bestätigungsaufrufe denselben Datensatz nicht gleichzeitig verarbeiten. Bei erfolgreicher Bestätigung wird das entsprechende Feld in der Datenbank gesetzt. Doppelte E-Mail-Adressen werden über einen Unique-Constraint der Datenbank abgefangen. Der Mailversand erfolgt nur nach erfolgreichem Insert.
 
+\section{Backup}
+Die Studiendatenbanken für Teilnahmedaten und anonymisierte Selbstberichte sind bei United Domains auf Servern in Deutschland gehostet. Der Zugriff auf die MySQL-Instanzen ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenprogramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
+
+Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Studie wird damit wöchentlich ein manuelles Backup durchgeführt. Die SQL-Skripte, die dabei für jede Datenbanktabelle entstehen, werden mit AES-256 verschlüsselt als ZIP-Datei bei Infomaniak abgelegt. Die folgende Tabelle zeigt den Backup-Zeitplan:
+
 \vspace{2em}
+  \label{tab:Backup-Zeitplan}
+\begin{tabularx}{\textwidth} {
+ >{\centering\arraybackslash}p{3cm}
+ >{\raggedright\arraybackslash}X
+}
+  \toprule
+\textbf{Datum} & \textbf{Dateien} \\
+\midrule
+15.6.2026 & register-2026-06-15.zip \\
+22.6.2026 & \\
+29.6.2026 & \\
+6.7.2026 & \\
+13.7.2026 & \\
+20.7.2026 & \\
+27.7.2026 & \\
+3.8.2026 & \\
+10.8.2026 & \\
+17.8.2026 & \\
+24.8.2026 & \\
+31.8.2026 & \\
+\bottomrule
+\end{tabularx}
+\captionof{table}{Backup-Zeitplan}
+
+\vspace{2em}
+
 \small
 \label{tab:cuelens-datenfluss}
 \begin{tabularx}{\textwidth} {
