@@ -1,12 +1,13 @@
 body {
-	background-color: #C2F5F0;
+	background-color: #D7ECE9;
+	color: black;
 	font-family: Helvetica, Arial, sans-serif;
     font-weight: 100;
     font-style: normal;
 	text-align: center;
 }
 
-a {
+a, strong {
 	color: #006269;
 }
 
@@ -18,4 +19,17 @@ table {
 
 td:first-child {
 	text-align: left;
+}
+
+input {
+	width: 100%;
+}
+
+.error {
+	color: #7A2E3A;
+	font-weight: bold;
+}
+
+.success {
+	margin-top: 75px;
 }

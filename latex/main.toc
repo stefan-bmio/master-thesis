@@ -16,19 +16,19 @@
 \contentsline {section}{\numberline {4.2}KI-Funktionalität}{27}{section.4.2}%
 \contentsline {chapter}{\numberline {5}Appentwicklung}{29}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Sicherheit}{29}{section.5.1}%
-\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{31}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{31}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Studiendesign}{31}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{32}{section.6.3}%
-\contentsline {section}{\numberline {6.4}Ablauf der Teilnahme}{32}{section.6.4}%
-\contentsline {section}{\numberline {6.5}Datenflüsse im Studienbetrieb}{33}{section.6.5}%
-\contentsline {section}{\numberline {6.6}Studienbetrieb, Monitoring und Support}{33}{section.6.6}%
-\contentsline {section}{\numberline {6.7}Qualitätssicherung und Auswertungsvorbereitung}{33}{section.6.7}%
-\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{35}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{43}{chapter.8}%
-\contentsline {chapter}{\numberline {A}Adressen}{51}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Suchthilfeverzeichnis der DHS}{51}{section.A.1}%
-\contentsline {section}{\numberline {A.2}infodrog Suchtindex}{65}{section.A.2}%
-\contentsline {chapter}{\numberline {B}Flyer}{72}{appendix.B}%
-\contentsline {chapter}{\numberline {C}Studieninformation}{75}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Datenschutzerklärung}{78}{appendix.D}%
+\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{33}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{33}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Studiendesign}{33}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{34}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Ablauf der Teilnahme}{34}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Datenflüsse im Studienbetrieb}{35}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Studienbetrieb, Monitoring und Support}{35}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Qualitätssicherung und Auswertungsvorbereitung}{35}{section.6.7}%
+\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{37}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{45}{chapter.8}%
+\contentsline {chapter}{\numberline {A}Adressen}{53}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Suchthilfeverzeichnis der DHS}{53}{section.A.1}%
+\contentsline {section}{\numberline {A.2}infodrog Suchtindex}{67}{section.A.2}%
+\contentsline {chapter}{\numberline {B}Flyer}{74}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Studieninformation}{77}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Datenschutzerklärung}{80}{appendix.D}%

@@ -42,20 +42,15 @@ if ($craving < 0 || $craving > 100) {
     exit;
 }
 
-$dbHost = 'database-5020594779.ud-webspace.de';
-$dbName = 'dbs15741593';
-$dbUser = 'dbu5084604';
-$dbPass = 'Anchovy8-Saved5';
-
+$config = require __DIR__ . '/config/cuelens-craving.php';
 try {
     $pdo = new PDO(
-        "mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4",
-        $dbUser,
-        $dbPass,
+        "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
+        $config['user'],
+        $config['pass'],
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
         ]
     );
 

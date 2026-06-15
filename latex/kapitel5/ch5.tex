@@ -10,17 +10,27 @@
 \section{Sicherheit}
 Die Anwendung ist eine Kombination aus mobiler App, Web-Anwendung und Hintergrundsystem. Die Struktur orientiert sich an den Prüfaspekten der BSI TR-03161 für mobile Anwendungen, Web-Anwendungen und Hintergrundsysteme \cite{bsi_tr03161_mobile_2024,bsi_tr03161_web_2024,bsi_tr03161_backend_2024}. Die Richtlinie dient als fachlich geeignete Checkliste, um Datensparsamkeit, Eingabevalidierung, Transportabsicherung, Speichersicherheit, Fehlerbehandlung und den Umgang mit Drittanbieterbibliotheken nachvollziehbar zu dokumentieren.
 
-Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Der Einstiegspunkt liegt in \texttt{MainActivity.kt}. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Compose-Oberfläche. Die wesentlichen Zustandsvariablen sind die aktuelle Phase, der aktuelle Aufgabenindex und der im Craving-Screen ausgewählte Zahlenwert.
+Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Com\-pose-Ober\-fl"a\-che. Die wesentlichen Zustandsvariablen sind die aktuelle Phase, der aktuelle Aufgabenindex und der im Craving-Screen ausgewählte Zahlenwert.
 
-Die Aufgabenlogik ist ressourcenbasiert und folgt einem deterministischen Namensschema. Für die Bild-Matching-Phase werden lokale Drawables mit den Namen \texttt{cue\_0nn}, \texttt{match\_a\_0nn} und \texttt{match\_b\_0nn} aufsteigend gesucht. Eine Aufgabe wird aufgenommen, wenn alle drei Ressourcen vorhanden sind. Für die Word-Matching-Phase werden Ressourcen \texttt{cue\_1nn} mit Wörterbucheinträgen desselben numerischen Suffixes kombiniert. Diese dynamische Ressourcenauflösung vermeidet eine lange fest codierte Aufgabenliste und erleichtert die Verwaltung des Bildmaterials.
+Die Aufgabenlogik ist ressourcenbasiert und folgt einem deterministischen Namensschema. Für die Cue-Matching-Phase werden Drawables mit den Namen \texttt{cue\_0nn.png}, \texttt{match\_a\_0nn.png} und \texttt{match\_b\_0nn.png} aufsteigend gesucht. Eine Aufgabe wird aufgenommen, wenn alle drei Ressourcen vorhanden sind. Für die Cue-Labeling-Phase werden Ressourcen \texttt{cue\_1nn.png} mit Wörterbucheinträgen desselben numerischen Suffixes kombiniert. Diese dynamische Ressourcenauflösung vermeidet eine lange fest codierte Aufgabenliste und erleichtert die Arbeit mit dem Bildmaterial.
 
-Die Interaktion ist bewusst einfach gehalten. Ein Tippen auf eines der beiden Bilder oder Wörter führt zur nächsten Aufgabe. Der einzige von der App übermittelte Messwert ist der Craving-Wert. Dieser wird im UI als ganzzahliger Wert zwischen 0 und 100 geführt, standardmäßig mit 50 vorbelegt und per \texttt{application/x-www-form-urlencoded} als Parameter \texttt{craving} an den Endpoint gesendet. Die Netzwerkanfrage läuft in einem Coroutine-Kontext für I/O-Operationen und blockiert daher nicht den UI-Thread. Der Transport-Endpunkt ist als HTTPS-URL festgelegt.
+Die Interaktion ist bewusst einfach gehalten. Ein Tippen auf eines der beiden Bilder oder Wörter führt zur nächsten Aufgabe. Der einzige von der App übermittelte Messwert ist der Craving-Wert. Dieser wird in der Benutzeroberfläche als ganzzahliger Wert zwischen 0 und 100 geführt, standardmäßig mit 50 vorbelegt und per \texttt{application/x-www-form-urlencoded} als Parameter \texttt{craving} an den Endpoint gesendet. Die Netzwerkanfrage läuft in einem Coroutine-Kontext für I/O-Operationen und blockiert daher nicht den UI-Thread. Der Transport-Endpunkt ist als HTTPS-URL festgelegt.
 
 Der Endpunkt \texttt{submit.php} ist für den Empfang des Craving-Selbstberichts zuständig. Er setzt den Antworttyp auf JSON, akzeptiert ausschließlich HTTP-POST und liefert bei anderen Methoden den Statuscode 405. Fehlt der Parameter \texttt{craving}, wird ein Fehler mit Statuscode 400 zurückgegeben. Der Wert wird serverseitig als Ganzzahl validiert und zusätzlich auf den erwarteten Bereich 0 bis 100 begrenzt. Die doppelte Validierung in der App und auf dem Server ist wichtig, da HTTP-Anfragen unabhängig von der Android-App direkt gegen den Endpunkt gesendet werden könnten.
 
-Für den Datenbankzugriff wird PDO mit \texttt{utf8mb4}, Exceptions und deaktivierter Emulation vorbereiteter Statements verwendet. Der Insert in die Tabelle \texttt{self\_reports} erfolgt über ein Prepared Statement. Der Craving-Wert wird als Integer gebunden. Datenbankfehler werden nach außen nur als generische Fehlermeldung ausgegeben, sodass keine SQL-Details an Clients gelangen. Damit sind die Basismaßnahmen zur Datensparsamkeit und gegen SQL-Injection bereits umgesetzt.
+Für den Datenbankzugriff wird PDO mit deaktivierter Emulation vorbereiteter Statements verwendet. Der Insert in die Tabelle \texttt{self\_reports} erfolgt über ein Prepared Statement. Der Craving-Wert wird als Integer gebunden. Datenbankfehler werden nach außen nur als generische Fehlermeldung ausgegeben, sodass keine SQL-Details an Clients gelangen. Damit sind die grundlegenden Maßnahmen zur Datensparsamkeit und gegen SQL-Injection bereits umgesetzt.
 
-Das Anmeldeformular \texttt{index.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Zusätzlich müssen die Teilnehmenden clientseitig bestätigen, dass sie die Studieninformation gelesen und die Datenschutzerklärung akzeptiert haben. Die Formularseite stellt eine Verbindung zur Datenbank über PDO her, validiert mit \texttt{FILTER\_VALIDATE\_EMAIL} E"~Mail-Adressen sowie mit \texttt{FILTER\_VALIDATE\_INT} Alter und Zigarettenanzahl. Die Speicherung erfolgt über ein Prepared Statement in der Tabelle \texttt{register}. Rückmeldungen an Nutzende werden mit \texttt{htmlspecialchars} ausgegeben; dadurch wird verhindert, dass Datenbank- oder Eingabemeldungen ungefiltert als HTML interpretiert werden. Für doppelte E-Mail-Adressen ist eine gesonderte Rückmeldung vorgesehen, die bei Kollision eines Unique-Constraints der Datenbank gesendet wird.
+Die Zugangsdaten zur MySQL-Datenbank sind im Webspace in Dateien im Verzeichnis \texttt{config} abgelegt. Das Verzeichnis ist durch eine Datei \texttt{.htaccess} abgesichert. Das Verzeichnis und Dateien mit denselben Namen existieren auch im Git-Repository. Die Dateien enthalten aber nicht die Zugangsdaten, sondern nur einen Hinweis darauf, dass diese ausschließlich auf dem Webspace vorgehalten und bearbeitet werden dürfen. 
+
+Das Anmeldeformular \texttt{index.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Browsermeldungen durch passendere Hinweise, etwa zur Altersgrenze von 30 bis 65 Jahren und zur Mindestmenge von 10 Zigaretten pro Tag. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die E-Mail-Adresse mit \texttt{FILTER\_VALIDATE\_EMAIL} und die numerischen Eingaben mit \texttt{FILTER\_VALIDATE\_INT} validiert. Anschließend werden die Alters- und Konsumgrenzen und die Einwilligungen in Studieninformation und Datenschutzerklärung erneut geprüft. Dadurch sind gültige Eingaben auch dann sichergestellt, wenn HTTP-Anfragen außerhalb des Browsers oder mit manipulierten Formularattributen gestellt werden.
+
+Die Werte \texttt{studyinfo} und \texttt{dataprot} für die Einwilligungen in Studieninformation und Datenschutzerklärung werden ebenfalls beim Insert in die Tabelle \texttt{register} persistiert. Damit ist technisch nachvollziehbar, dass die Anmeldung nur nach aktiver Bestätigung beider Dokumente verarbeitet wurde.
+
+Der Registrierungsendpunkt verwendet zusätzlich einen CSRF-Token, der in der PHP-Session erzeugt, als verstecktes Formularfeld ausgegeben und bei POST-Anfragen mit \texttt{hash\_equals} geprüft wird. Nach erfolgreichem Versand der Bestätigungs-E-Mail wird der Token erneuert, sodass derselbe Formular-POST nicht ohne erneutes Laden der Seite wiederverwendet werden kann. Rückmeldungen an Nutzende werden mit \texttt{htmlspecialchars} ausgegeben, um schädliche Interpretation von HTML-Sonderzeichen aus Eingaben oder Meldungen zu verhindern.
+
+Die Registrierung wird über ein Double-Opt-In abgesichert. Beim Absenden des Formulars erzeugt \texttt{index.php} mit \texttt{random\_bytes(32)} einen 256-Bit-Token und speichert einen SHA-256-Hash davon in der Datenbank. Anschließend wird eine E-Mail mit dem Klartext-Token im URL-Parameter eines Bestätigungslinks zu \texttt{confirm.php} an die angegebene Adresse versendet. Für den Mailversand wird PHPMailer mit einem authentifizierten SMTP-Zugang des Do\-main-Post\-fachs verwendet. Empfängeradresse, Betreff und Nachrichtentext sind serverseitig vorgegeben. Dadurch kann das Formular nicht als frei adressierbarer Mailversender verwendet werden. Die SMTP-Zugangsdaten liegen wie die MySQL-Zugangsdaten in Konfigurationsdateien im geschützten Verzeichnis \texttt{config}.
+
+Nach erfolgreichem Versand leitet \texttt{index.php} auf \texttt{double.php} weiter. Diese Seite liest die E"~Mail-Adresse aus der Session, validiert sie erneut und entfernt sie anschließend aus der Session. Die Datei \texttt{confirm.php} verarbeitet den Bestätigungslink. Sie akzeptiert nur Token im erwarteten Hex-Format, hasht den übergebenen Token erneut und sucht einen noch nicht bestätigten Datensatz. Die Abfrage verwendet eine Transaction, damit paral\-lele Bestätigungsaufrufe denselben Datensatz nicht gleichzeitig verarbeiten. Bei erfolgreicher Bestätigung wird das entsprechende Feld in der Datenbank gesetzt. Doppelte E-Mail-Adressen werden über einen Unique-Constraint der Datenbank abgefangen. Der Mailversand erfolgt nur nach erfolgreichem Insert.
 
 \vspace{2em}
 \small
@@ -33,11 +43,14 @@ Das Anmeldeformular \texttt{index.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, A
 \textbf{Artefakt} & \textbf{Herkunft} & \textbf{Speicherort / Übertragung} \\
 \midrule
 Cue-Bilder & lokal gebündelte App-Ressourcen & innerhalb des APK \\
-Wortoptionen & fest codiertes Wörterbuch in der App & nur im App-Quelltext beziehungsweise in der APK \\
+Wortoptionen & fest codiertes Wörterbuch in der App & nur im App-Quelltext beziehungsweise im APK \\
 Craving-Wert & Slider in der Android-App & App-Speicher (temporär),\newline Tabelle \texttt{self\_reports} \\
 Registrierungsdaten & Webformular & Tabelle \texttt{register} \\
-Einwilligungsbestätigung & Checkboxen im Webformular & Tabelle \texttt{register} \\
-Datenbankzugangsdaten & Serverkonfiguration & Konfigurationsdateien \\
+Bestätigung von Studieninformation und Datenschutzerklärung & Pflicht-Checkboxen im Webformular & Felder \texttt{studyinfo} und \texttt{dataprot} in Tabelle \texttt{register} \\
+Double-Opt-In-Token & serverseitig mit \texttt{random\_bytes(32)} erzeugt & Klartext im E-Mail-Link,\newline SHA-256-Hash in \texttt{doi\_token} \\
+CSRF-Token & PHP-Session & Hidden Field im Formular,\newline Session-Speicher des Webservers \\
+SMTP-Zugangsdaten & Serverkonfiguration & Konfigurationsdatei \texttt{noreply-smtp.php} \\
+Datenbankzugangsdaten & Serverkonfiguration & Konfigurationsdatei \texttt{cuelens-signup.php} \\
 technische Logs & Android-Logcat und Webserver/PHP & Gerätelog beziehungsweise Server-Logs \\
 \bottomrule
 \end{tabularx}
@@ -58,6 +71,7 @@ Kotlin Compose Plugin & 2.2.10 \\
 \texttt{androidx.lifecycle:lifecycle-runtime-ktx} & 2.10.0 \\
 \texttt{androidx.activity:activity-compose} & 1.13.0 \\
 Compose BOM & 2026.02.01 \\
+\texttt{PHPMailer} & 7.1.1 \\
 \bottomrule
 \end{tabularx}
 \captionof{table}{Verwendete Bibliotheken und Plugins}

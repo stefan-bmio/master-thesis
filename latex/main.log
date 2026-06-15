@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  8 JUN 2026 21:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.1.30)  15 JUN 2026 16:52
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1077,23 +1077,23 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.95pt on input line 50.
+(Font)              scaled to size 10.95pt on input line 52.
  [5] [6
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 53--58
+Underfull \hbox (badness 10000) in paragraph at lines 55--60
 
  []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 60.
+(Font)              scaled to size 10.0pt on input line 62.
 [1] [2
 
 ]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 24.88pt on input line 64.
+(Font)              scaled to size 24.88pt on input line 66.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 24.88pt on input line 64.
+(Font)              scaled to size 24.88pt on input line 66.
  (./main.toc [3])
 \tf@toc=\write7
 \openout7 = `main.toc'.
@@ -1171,48 +1171,61 @@ Kapitel 4.
 
 ]
 Kapitel 5.
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 13.
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 15.
 (/usr/share/texlive/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 9.08852pt on input line 13.
- [29]
+(Font)              scaled to size 9.08852pt on input line 15.
+
+Overfull \hbox (2.32765pt too wide) in paragraph at lines 21--22
+\T1/LinuxLibertineT-TLF/m/n/10.95 wen-det. Der In-sert in die Ta-bel-le \T1/fvm/m/n/10.95 self_reports \T1/LinuxLibertineT-TLF/m/n/10.95 er-folgt über ein Pre-pa-red State-ment. Der Craving-
+ []
+
+[29]
+Overfull \hbox (2.03824pt too wide) in paragraph at lines 31--32
+\T1/LinuxLibertineT-TLF/m/n/10.95 SMTP-Zugangsdaten lie-gen wie die MySQL-Zugangsdaten in Kon-fi-gu-ra-ti-ons-da-tei-en im ge-schütz-
+ []
+
 
 Package caption Warning: \captionsetup{type*=...} or \captionof
-(caption)                outside box or environment on input line 44.
+(caption)                outside box or environment on input line 57.
 See the caption package documentation for explanation.
 
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 44.
+(caption)                particular \caption on input line 57.
 See the caption package documentation for explanation.
 
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [30]
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 63.
+(caption)                particular \caption on input line 77.
 See the caption package documentation for explanation.
 
-) (./kapitel6/ch6.tex [30]
-Kapitel 6.
-[31
+) (./kapitel6/ch6.tex [31] [32
 
 ]
+Kapitel 6.
+[33]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 7.0pt on input line 34.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 9.0pt on input line 34.
- [32]) (./kapitel7/ch7.tex [33] [34
+ [34]) (./kapitel7/ch7.tex [35] [36
 
 ]
 Kapitel 7.
-[35] [36] [37] [38] [39] [40] [41]) (./kapitel8/ch8.tex [42]
+[37] [38] [39] [40] [41] [42] [43]) (./kapitel8/ch8.tex [44]
 Kapitel 8.
-[43
+[45
 
-] [44] [45] [46]) (./anhang/anhang.tex [47] [48
+] [46] [47] [48]) (./anhang/anhang.tex [49] [50
 
-] [49]) (./anhang/adressen.tex [50
+] [51]) (./anhang/adressen.tex [52
 
 ]
 Anhang A.
@@ -1286,7 +1299,7 @@ Overfull \hbox (0.90598pt too wide) in paragraph at lines 357--357
 []|\T1/LinuxLibertineT-TLF/m/n/10 violettaclean@frausuchtzukunft.de|  
  []
 
-[51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64]
+[53] [54] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64] [65] [66]
 Overfull \hbox (11.36598pt too wide) in paragraph at lines 519--519
 []|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung.andelfingen@ajb.zh.ch|  
  []
@@ -1311,10 +1324,10 @@ Overfull \hbox (9.10596pt too wide) in paragraph at lines 519--519
 []|\T1/LinuxLibertineT-TLF/m/n/10 rauchstoppberatung.bss@spital.so.ch|  
  []
 
-[65] [66] [67] [68] [69] [70] [71]) (./anhang/flyer.tex
+[67] [68] [69] [70] [71] [72] [73]) (./anhang/flyer.tex
 
 pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/flyer.pdf, id=598, 845.0471pt x 597.50829pt>
+<anhang/flyer.pdf, id=606, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf>
 Package pdftex.def Info: anhang/flyer.pdf  used on input line 10.
@@ -1332,7 +1345,7 @@ pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF ver
 
 
 pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/flyer.pdf, id=601, page=1, 845.0471pt x 597.50829pt>
+<anhang/flyer.pdf, id=609, page=1, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
@@ -1341,7 +1354,7 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
-[72]
+[74]
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
@@ -1354,10 +1367,10 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
- [73 <./anhang/flyer.pdf>]
+ [75 <./anhang/flyer.pdf>]
 
 pdfTeX warning: pdflatex (file ./anhang/flyer.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/flyer.pdf, id=689, page=2, 845.0471pt x 597.50829pt>
+<anhang/flyer.pdf, id=698, page=2, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 2>
 Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
@@ -1370,10 +1383,10 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 2>
 Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
-[74 <./anhang/flyer.pdf>]) (./anhang/studieninformation.tex
+[76 <./anhang/flyer.pdf>]) (./anhang/studieninformation.tex
 
 pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/studieninformation.pdf, id=730, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=739, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf>
 Package pdftex.def Info: anhang/studieninformation.pdf  used on input line 9.
@@ -1391,7 +1404,7 @@ pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: 
 
 
 pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/studieninformation.pdf, id=733, page=1, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=742, page=1, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 1>
 Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
@@ -1412,10 +1425,10 @@ File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 1>
 Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[75 <./anhang/studieninformation.pdf>]
+[77 <./anhang/studieninformation.pdf>]
 
 pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/studieninformation.pdf, id=760, page=2, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=768, page=2, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 2>
 Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
@@ -1428,10 +1441,10 @@ File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 2>
 Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[76 <./anhang/studieninformation.pdf>]
+[78 <./anhang/studieninformation.pdf>]
 
 pdfTeX warning: pdflatex (file ./anhang/studieninformation.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/studieninformation.pdf, id=765, page=3, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=773, page=3, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 3>
 Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
@@ -1444,10 +1457,10 @@ File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 3>
 Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[77 <./anhang/studieninformation.pdf>]) (./anhang/datenschutzerklaerung.tex
+[79 <./anhang/studieninformation.pdf>]) (./anhang/datenschutzerklaerung.tex
 
 pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/datenschutzerklaerung.pdf, id=770, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=778, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf  used on input line 9.
@@ -1465,7 +1478,7 @@ pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusio
 
 
 pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/datenschutzerklaerung.pdf, id=773, page=1, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=781, page=1, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 1>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
@@ -1486,10 +1499,10 @@ File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 1>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[78 <./anhang/datenschutzerklaerung.pdf>]
+[80 <./anhang/datenschutzerklaerung.pdf>]
 
 pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/datenschutzerklaerung.pdf, id=799, page=2, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=807, page=2, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 2>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
@@ -1502,10 +1515,10 @@ File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 2>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[79 <./anhang/datenschutzerklaerung.pdf>]
+[81 <./anhang/datenschutzerklaerung.pdf>]
 
 pdfTeX warning: pdflatex (file ./anhang/datenschutzerklaerung.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<anhang/datenschutzerklaerung.pdf, id=804, page=3, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=813, page=3, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 3>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
@@ -1518,13 +1531,13 @@ File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 3>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-[80 <./anhang/datenschutzerklaerung.pdf>])
+[82 <./anhang/datenschutzerklaerung.pdf>])
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
 (Font)              scaled to size 10.95pt on input line 112.
- [81
+ [83
 
 
-] [82] (./main.aux)
+] [84] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: BD233B31A16002284B7B86884F31436D;6161.
 Package logreq Info: Writing requests to 'main.run.xml'.
@@ -1532,18 +1545,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29289 strings out of 478287
- 557139 string characters out of 5849289
+ 29291 strings out of 478287
+ 557153 string characters out of 5849289
  1655424 words of memory out of 5000000
  46823 multiletter control sequences out of 15000+600000
  572251 words of font info for 112 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  86i,19n,120p,1829b,2559s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on main.pdf (92 pages, 2632316 bytes).
+Output written on main.pdf (94 pages, 2635933 bytes).
 PDF statistics:
- 953 PDF objects out of 1000 (max. 8388607)
- 768 compressed objects within 8 object streams
- 158 named destinations out of 1000 (max. 500000)
+ 961 PDF objects out of 1000 (max. 8388607)
+ 774 compressed objects within 8 object streams
+ 160 named destinations out of 1000 (max. 500000)
  365 words of extra memory for PDF output out of 10000 (max. 10000000)
 
