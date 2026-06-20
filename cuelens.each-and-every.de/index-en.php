@@ -8,6 +8,7 @@ require __DIR__ . '/lib/PHPMailer/SMTP.php';
 
 $dbConfig = require __DIR__ . '/config/cuelens-signup.php';
 $smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
+$hostConfig = require __DIR__ . '/config/host.php';
 
 $message = '';
 
@@ -105,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						]);
 						
 						try {
-							$confirmUrl = 'https://cuelens.each-and-every.de/confirm-en.php?' . http_build_query([
+							$confirmUrl = $hostConfig['root'] . '/confirm-en.php?' . http_build_query([
 								'doiToken' => $doiToken,
 							]);
 
@@ -166,9 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registration</title>
 	
 	<link rel="stylesheet" href="index.css">
@@ -181,47 +183,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p>We need the following information from you::</p>
 
 <form method="post" action="">
-<table>
+<table class="form-fields">
 <tr>
     <td><label for="email">Email:</label></td>
-    <td><input type="email" id="email" name="email" required></td>
+    <td><input type="email" id="email" name="email" required data-validation-required="Please enter your email address."></td>
 </tr>
 <tr>
     <td><label for="name">Name:</label></td>
-    <td><input type="text" id="name" name="name" required></td>
+    <td><input type="text" id="name" name="name" required data-validation-required="Please enter your name."></td>
 </tr>
 <tr>
     <td><label for="iban">IBAN:</label></td>
-    <td><input type="text" id="iban" name="iban" maxlength="34" required></td>
+    <td><input type="text" id="iban" name="iban" maxlength="34" required data-validation-required="Please enter your IBAN."></td>
 </tr>
 <tr>
     <td><label for="bic">BIC:</label></td>
-    <td><input type="text" id="bic" name="bic" maxlength="11" required></td>
+    <td><input type="text" id="bic" name="bic" maxlength="11" required data-validation-required="Please enter your BIC."></td>
 </tr>
 <tr>
     <td><label for="age">Age:</label></td>
-    <td><input type="number" id="age" name="age" min="30" max="65" step="1" required></td>
+    <td><input type="number" id="age" name="age" min="30" max="65" step="1" required data-validation-required="Please enter your age." data-validation-range="Participation is only possible between the ages of 30 and 65." data-validation-step="Please enter a whole number."></td>
 </tr>
 <tr>
     <td><label for="cigarettes">Cigarettes/day:</label></td>
-    <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required></td>
+    <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required data-validation-required="Please enter the number of cigarettes you smoke per day." data-validation-range="Participation is only possible if you smoke at least 10 cigarettes per day." data-validation-step="Please enter a whole number."></td>
 </tr>
 </table>
-<table>
+<table class="agreements">
 <tr>
-    <td><input type="checkbox" id="studyinfo" name="studyinfo" required></td>
+    <td><input type="checkbox" id="studyinfo" name="studyinfo" required data-validation-required="Please confirm that you have read the study information."></td>
     <td><label for="studyinfo">I have read the <a href="/studyinformation.pdf">study information</a></label></td>
 </tr>
 <tr>
-    <td><input type="checkbox" id="dataprot" name="dataprot" required></td>
+    <td><input type="checkbox" id="dataprot" name="dataprot" required data-validation-required="Please confirm that you accept the privacy policy."></td>
     <td><label for="dataprot">I accept the <a href="/privacypolicy.pdf">privacy policy</a></label></td>
 </tr>
+</table>
 <input
     type="hidden"
     name="csrf_token"
     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
 >
-</table>
+<p id="form-validation-message" class="error form-validation-message" role="alert" hidden></p>
 <p><button type="submit">Submit</button></p>
 </form>
 
