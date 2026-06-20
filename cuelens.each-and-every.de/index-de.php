@@ -8,6 +8,7 @@ require __DIR__ . '/lib/PHPMailer/SMTP.php';
 
 $dbConfig = require __DIR__ . '/config/cuelens-signup.php';
 $smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
+$hostConfig = require __DIR__ . '/config/host.php';
 
 $message = '';
 
@@ -104,8 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							':dataprot' => $dataprotAccepted,
 						]);
 						
+						error_log(print_r($hostConfig, true));
 						try {
-							$confirmUrl = 'https://cuelens.each-and-every.de/confirm-de.php?' . http_build_query([
+							$confirmUrl = $hostConfig['root'] . '/confirm-de.php?' . http_build_query([
 								'doiToken' => $doiToken,
 							]);
 
@@ -169,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Anmeldung</title>
 	
 	<link rel="stylesheet" href="index.css">
@@ -181,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p>Wir benötigen diese Angaben über Sie:</p>
 
 <form method="post" action="">
-<table>
+<table class="form-fields">
 <tr>
     <td><label for="email">E-Mail:</label></td>
     <td><input type="email" id="email" name="email" required></td>
@@ -207,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required></td>
 </tr>
 </table>
-<table>
+<table class="agreements">
 <tr>
     <td><input type="checkbox" id="studyinfo" name="studyinfo" required></td>
     <td><label for="studyinfo">Ich habe die <a href="/info">Studieninformation</a> gelesen</label></td>
@@ -216,12 +219,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <td><input type="checkbox" id="dataprot" name="dataprot" required></td>
     <td><label for="dataprot">Ich akzeptiere die <a href="/ds">Datenschutzerklärung</a></label></td>
 </tr>
+</table>
 <input
     type="hidden"
     name="csrf_token"
     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
 >
-</table>
 <p><button type="submit">Absenden</button></p>
 </form>
 

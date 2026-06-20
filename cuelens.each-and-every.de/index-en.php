@@ -8,6 +8,7 @@ require __DIR__ . '/lib/PHPMailer/SMTP.php';
 
 $dbConfig = require __DIR__ . '/config/cuelens-signup.php';
 $smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
+$hostConfig = require __DIR__ . '/config/host.php';
 
 $message = '';
 
@@ -105,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						]);
 						
 						try {
-							$confirmUrl = 'https://cuelens.each-and-every.de/confirm-en.php?' . http_build_query([
+							$confirmUrl = $hostConfig['root'] . '/confirm-de.php?' . http_build_query([
 								'doiToken' => $doiToken,
 							]);
 
@@ -169,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registration</title>
 	
 	<link rel="stylesheet" href="index.css">
@@ -181,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p>We need the following information from you::</p>
 
 <form method="post" action="">
-<table>
+<table class="form-fields">
 <tr>
     <td><label for="email">Email:</label></td>
     <td><input type="email" id="email" name="email" required></td>
@@ -207,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required></td>
 </tr>
 </table>
-<table>
+<table class="agreements">
 <tr>
     <td><input type="checkbox" id="studyinfo" name="studyinfo" required></td>
     <td><label for="studyinfo">I have read the <a href="/studyinformation.pdf">study information</a></label></td>
@@ -216,12 +218,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <td><input type="checkbox" id="dataprot" name="dataprot" required></td>
     <td><label for="dataprot">I accept the <a href="/privacypolicy.pdf">privacy policy</a></label></td>
 </tr>
+</table>
 <input
     type="hidden"
     name="csrf_token"
     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
 >
-</table>
 <p><button type="submit">Submit</button></p>
 </form>
 

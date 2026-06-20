@@ -6,5 +6,6 @@ return [
 	'user' = 'dein_benutzer',
 	'pass' = 'dein_passwort',
 	'smtpSecure' => 'protocol',
-	'port' = 0,
+	'port' => 0,
+	'from' => 'from@example.com',
 ];
