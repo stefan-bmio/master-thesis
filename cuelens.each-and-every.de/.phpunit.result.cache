@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"FormValidationBrowserTest::testGermanEmailRequiredMessageIsShownInBrowser":0.768,"GetRequestTest::testRegistrationFormGetRequestDoesNotRequireDatabase#German registration form":0.004,"GetRequestTest::testRegistrationFormGetRequestDoesNotRequireDatabase#English registration form":0.003}}

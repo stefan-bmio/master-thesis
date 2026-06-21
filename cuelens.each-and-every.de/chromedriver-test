@@ -1,0 +1,30 @@
+set -u
+rm -f /tmp/cuelens-chromedriver.log
+chromedriver --port=9516 --verbose > /tmp/cuelens-chromedriver.log 2>&1 &
+cdpid=$!
+
+cleanup() {
+  kill "$cdpid" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+for i in $(seq 1 30); do
+  if curl -s http://127.0.0.1:9516/status >/dev/null 2>&1; then
+    break
+  fi
+  sleep 0.1
+done
+
+response=$(curl -s -X POST \
+  -H 'Content-Type: application/json' \
+  --data '{"capabilities":{"alwaysMatch":{"browserName":"chrome","goog:chromeOptions":{"binary":"/snap/bin/chromium","args":["--headless=new","--disable-gpu","--no-sandbox","--window-size=390,844"]}}}}' \
+  http://127.0.0.1:9516/session)
+
+printf '%s\n' "$response" | head -c 800
+printf '\n--- log ---\n'
+tail -n 100 /tmp/cuelens-chromedriver.log
+
+session=$(printf '%s' "$response" | sed -n 's/.*"sessionId":"\([^"]*\)".*/\1/p')
+if [ -n "$session" ]; then
+  curl -s -X DELETE "http://127.0.0.1:9516/session/$session" >/dev/null 2>&1 || true
+fi
