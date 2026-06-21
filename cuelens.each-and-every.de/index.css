@@ -99,16 +99,30 @@ button {
 }
 
 table.international {
-	border-spacing: 40pt 0;
+	border-spacing: 0;
+	max-width: 32rem;
+	table-layout: fixed;
+	width: 100%;
 }
 
 table.international td {
-	font-size: clamp(2rem, 13vw, 50px);
+	font-size: clamp(1.75rem, 9vw, 3rem);
+	padding: 0 12px;
 	text-align: center;
+	vertical-align: middle;
+	width: 50%;
 }
 
-table.international>tbody>tr:last-child>td>a {
+table.international a {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	line-height: 1.1;
+	min-height: 1.2em;
+	overflow-wrap: anywhere;
+	text-align: center;
 	text-decoration: none;
+	width: 100%;
 }
 
 @media (max-width: 520px) {
@@ -150,8 +164,9 @@ table.international>tbody>tr:last-child>td>a {
 		padding-right: 8px;
 	}
 
-	table.international {
-		border-spacing: 18px 0;
+	table.international td {
+		font-size: clamp(1.5rem, 11vw, 2.5rem);
+		padding: 0 6px;
 	}
 
 	.success {

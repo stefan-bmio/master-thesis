@@ -187,36 +187,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <table class="form-fields">
 <tr>
     <td><label for="email">E-Mail:</label></td>
-    <td><input type="email" id="email" name="email" required></td>
+    <td><input type="email" id="email" name="email" required data-validation-required="Bitte geben Sie Ihre E-Mail-Adresse ein."></td>
 </tr>
 <tr>
     <td><label for="name">Name:</label></td>
-    <td><input type="text" id="name" name="name" required></td>
+    <td><input type="text" id="name" name="name" required data-validation-required="Bitte geben Sie Ihren Namen ein."></td>
 </tr>
 <tr>
     <td><label for="iban">IBAN:</label></td>
-    <td><input type="text" id="iban" name="iban" maxlength="34" required></td>
+    <td><input type="text" id="iban" name="iban" maxlength="34" required data-validation-required="Bitte geben Sie Ihre IBAN ein."></td>
 </tr>
 <tr>
     <td><label for="bic">BIC:</label></td>
-    <td><input type="text" id="bic" name="bic" maxlength="11" required></td>
+    <td><input type="text" id="bic" name="bic" maxlength="11" required data-validation-required="Bitte geben Sie Ihre BIC ein."></td>
 </tr>
 <tr>
     <td><label for="age">Alter:</label></td>
-    <td><input type="number" id="age" name="age" min="30" max="65" step="1" required></td>
+    <td><input type="number" id="age" name="age" min="30" max="65" step="1" required data-validation-required="Bitte geben Sie Ihr Alter ein." data-validation-range="Eine Teilnahme ist nur im Alter von 30 bis 65 Jahren möglich." data-validation-step="Bitte geben Sie eine ganze Zahl ein."></td>
 </tr>
 <tr>
     <td><label for="cigarettes">Zigaretten/Tag:</label></td>
-    <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required></td>
+    <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required data-validation-required="Bitte geben Sie die Anzahl der Zigaretten pro Tag ein." data-validation-range="Eine Teilnahme ist nur bei mindestens 10 Zigaretten pro Tag möglich." data-validation-step="Bitte geben Sie eine ganze Zahl ein."></td>
 </tr>
 </table>
 <table class="agreements">
 <tr>
-    <td><input type="checkbox" id="studyinfo" name="studyinfo" required></td>
+    <td><input type="checkbox" id="studyinfo" name="studyinfo" required data-validation-required="Bitte bestätigen Sie, dass Sie die Studieninformation gelesen haben."></td>
     <td><label for="studyinfo">Ich habe die <a href="/info">Studieninformation</a> gelesen</label></td>
 </tr>
 <tr>
-    <td><input type="checkbox" id="dataprot" name="dataprot" required></td>
+    <td><input type="checkbox" id="dataprot" name="dataprot" required data-validation-required="Bitte bestätigen Sie, dass Sie die Datenschutzerklärung akzeptieren."></td>
     <td><label for="dataprot">Ich akzeptiere die <a href="/ds">Datenschutzerklärung</a></label></td>
 </tr>
 </table>
@@ -225,6 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     name="csrf_token"
     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
 >
+<p id="form-validation-message" class="error form-validation-message" role="alert" hidden></p>
 <p><button type="submit">Absenden</button></p>
 </form>
 

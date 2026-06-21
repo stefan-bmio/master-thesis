@@ -1,4 +1,4 @@
 <?php
 return [
-	'root' => 'http://localhost:8080/cuelens',
+	'root' => 'http://127.0.0.1',
 ];
