@@ -1,0 +1,346 @@
+Exposé:
+Mobile App zur Reduktion von Rauch-
+verlangen durch Cue-Labeling im Alltag
+Konzeption, Entwicklung und Wirksamkeits-
+studie einer KI-gestützten App zur Benennung
+von Rauchreizen
+
+
+
+
+vorgelegt von
+
+Stefan Berger
+Matrikelnummer: 401000
+
+dem Fachbereich VI – Informatik und Medien
+der Berliner Hochschule für Technik Berlin – Fernstudieninstitut
+zur Erlangung des akademischen Grades
+Master of Science
+im Studiengang
+Medizinische Informatik
+
+
+Tag der Abgabe 10. Mai 2026
+
+
+
+
+Version 1.0
+letzte Änderung: 10. Mai 2026
+                                                                                                1
+
+1        Thema der Arbeit
+Jährlich entstehen dem deutschen Gesundheitssystem mehr als 25 Milliarden Euro direkte Kosten
+durch Tabakrauch [1]. Krankenkassen und das Bundesministerium für Gesundheit unterstützen
+Versicherte aktiv beim Rauchausstieg, damit Folgeschäden verhindert und frühzeitig erfolgreich
+behandelt werden können. Digitale Angebote werden hierbei besonders hervorgehoben [2, 3, 4].
+Derzeit gibt es im Verzeichnis des BfArM zwei digitale Gesundheitsanwendungen (DiGAs), die
+durch Verhaltensänderungen die Behandlung von Tabakabhängigkeit unterstützen1 . Die Präsen-
+tation von Informationen und motivierende Rückmeldungen zur gezielten Veränderung hin zu
+einer gesünderen Lebensweise sind ein sinnvoller Einsatz moderner elektronischer Heim- und
+Mobilgeräte, nutzen jedoch bei Weitem nicht die heutigen Möglichkeiten der Geräte aus. Andere
+Ansätze verwenden Augmented-Reality-Techniken, um durch die wiederholte Darbietung von
+Auslöserreizen (Cue Exposure) das dadurch entstehende Rauchverlangen abzuschwächen [5]. Der
+Erfolg dieser Methode wird aber auch bestritten [6].
+Für diese Arbeit soll eine App für Android-Endgeräte konzipiert und entwickelt sowie ihre
+Wirksamkeit nach wissenschaftlichen Maßstäben bei der Abstinenzförderung von Tabak kon-
+sumierenden Nutzenden bewertet werden. Während der Nutzung soll die App Auslöserreize
+präsentieren und den Benutzenden zur Zuweisung einer einfachen Beschreibung des Auslöser-
+reizes auffordern. Zum Vergleich soll die App Auslöserreize präsentieren und den Benutzenden
+zur Zuweisung eines weiteren Auslöserreizes auffordern. Ein Laborversuch hat gezeigt, dass
+Cue-Labeling geeignet ist, das durch die Auslöserreize entstehende Rauchverlangen im Vergleich
+zum Cue-Matching zu reduzieren [7].
+
+
+2        Datenschutz
+Mit dem Beginn der App-Herstellung und während der gesamten Dauer der Studie ist die Einhal-
+tung der rechtlichen Rahmenbedingungen zu beachten. Insbesondere der Schutz der Teilnahme-
+daten und der Urheberrechte von Medieninhalten muss frühzeitig in die Planung aufgenommen
+werden.
+Für diese Arbeit werden personenbezogene Daten zu Gesundheitsverhalten und Nikotinabhän-
+gigkeit gesammelt. Artikel 5 und 9 der DSGVO (EU) wie auch Artikel 6 des DSG (CH) erfordern
+hierfür die ausdrückliche Einwilligung der einzelnen Teilnehmenden. Die Verwendung der Daten
+erfolgt ausschließlich für den Zweck, für den die Einwilligung vorliegt. Außerdem müssen die
+personenbezogenen Daten nach Abschluss der Auswertung gelöscht werden.
+Es steht Webspace des Anbieters www.united- domains.de, dessen Hosting-Server alle in
+Deutschland stehen, unter der Adresse each-and-every.de zur Verfügung. Der Webspace kann mit
+einer MySQL-Datenbank kombiniert und mit PHP um eigene Funktionalität erweitert werden, um
+ihn für den Empfang der App-Daten einzurichten. Für die Auswertung werden paarweise Werte
+zum Rauchverlangen zwischen 0 und 100 gespeichert. Die Anzahl der übermittelten Wertepaare
+wird mittels inkrementeller Übermittlung eines zufällig generierten Abrechnungstokens verifiziert,
+ohne die Zuordnung zu konkreten Wertepaaren zu speichern.
+Die Rekrutierung und Erfassung der Teilnehmenden und die abschließende Abrechnung erfolgt
+über andere Kanäle. Name, Alter und Kontaktdaten der Teilnehmenden werden ausschließlich für
+die Prüfung der Einschlusskriterien und Zahlungsverbindungen nur für die Abrechnung benötigt.
+Die Teilnahme wird auf Personen aus der EU und der Schweiz beschränkt, um die rechtlichen
+Fragen nicht unnötig zu verkomplizieren. Die Übertragung der Daten in die Schweiz ist zum
+    1
+        https://diga.bfarm.de/de/verzeichnis?search=Tabak
+                                                                                                     2
+
+Zweck der Auswertung und Aufbereitung gemäß Artikel 45 DSGVO zulässig.
+
+
+3        Forschungsfrage
+3.1       Hauptfrage
+Es soll ermittelt werden, ob eine mobile App das durch Auslöserreize entstehende Rauchverlangen
+im Alltag signifikant reduzieren kann. Nutzende können nach Zuweisung von Auslöserreizen
+zu anderen Auslöserreizen (Cue-Matching) und nach Zuweisung von Reizbeschreibungen zu
+Auslöserreizen (Cue-Labeling) die subjektive Stärke des Rauchverlangens angeben. Die Angabe
+erfolgt auf einer Skala von 0 bis 100 [8], vergleichbar mit einer visuellen Analogskala 2 . Diese Skala
+wird mit Blick auf die Machbarkeit im Zeitrahmen dieser Arbeit und die Durchhaltemotivation
+der Teilnehmenden bewusst einfach gewählt. Sie ist außerdem leicht auf die Skala von 1 bis 5
+umzurechnen, die im zugrundeliegenden Laborversuch verwendet wurde.
+
+3.2       Unterfragen
+Der Effekt von Cue-Labeling ist in einem Labor festgestellt worden. Die klinische Bedeutung
+wurde abhängig vom Lebensalter der Teilnehmenden unterschiedlich bewertet. Nach Möglichkeit
+soll auch in dieser Arbeit eine Aussage zur klinischen Bedeutung des Studienergebnisses gemacht
+werden. [7, 9]
+
+3.3       Abgrenzung
+Der in diesem Experiment enstehende Prototyp wird bestmöglich für den Betrieb auf einem mobi-
+len Endgerät, z.B. Smartphone, entwickelt. Sollten zusätzliche Ressourcen eines weiteren Gerätes
+erforderlich werden, stellt dies aber keine Einschränkung in Bezug auf die Alltagstauglichkeit im
+Sinne dieser Arbeit dar.
+In dieser Arbeit ist die medizinische Nutzung der App weder eigenständig noch begleitend in der
+Behandlung von Tabakabhängigkeit vorgesehen. Eine Auswertung des langfristigen Abstinenzer-
+folgs wäre, wenn überhaupt, ebenfalls erst nach dem Abgabetermin sinnvoll.
+
+
+4        Bedeutung und theoretischer Rahmen
+Rauchen ist das größte vermeidbare Gesundheitsrisiko in Deutschland. Zwar geht der Anteil
+der rauchenden Bevölkerung seit vielen Jahren kontinuierlich zurück, trotzdem rauchen immer
+noch über ein Fünftel der Deutschen. Die Verringerung des Tabakkonsums ist ein vordringliches
+gesundheitspolitisches Ziel. [10, 11]
+Die WHO clinical treatment guideline for tobacco cessation in adults empfiehlt digitale Interventio-
+nen zur Tabakentwöhnung. Textnachrichten (SMS) werden mit hoher, Smartphone-Anwendungen
+und KI-basierte Interventionen mit geringer Gewissheit empfohlen. Ein erklärtes Ziel der Leitlinie
+ist es, den Zugang zu Angeboten für diejenigen, die mit dem Rauchen aufhören möchten, zu
+verbessern. Von den 1,25 Milliarden Rauchenden weltweit sind das demnach über 60%. [12]
+Die Wirksamkeit von Cue-Labeling gegen Rauchverlangen war im Laborexperiment bei Teilneh-
+menden im Alter von 46 bis 63 Jahren am größten [7]. Der Anteil an Rauchenden in der deutschen
+Bevölkerung ist in den Altersklassen von 30 bis 59 Jahren am höchsten [11].
+    2
+        https://www.pschyrembel.de/Visuelle%20Analogskala/K0Q0H
+                                                                                                3
+
+5        Gliederung der Arbeit (vorläufig)
+    1. Einführung
+    2. Grundlagen und verwandte Arbeiten
+    3. Rechtliche Rahmenbedingungen
+    4. Evaluation geeigneter KI-Modelle
+    5. Technische Anforderungen an Endgeräte
+    6. Appentwicklung
+    7. Planung und Durchführung der App-Studie
+    8. Auswertung der Berichte und Darstellung der Ergebnisse
+    9. Fazit und Ausblick
+
+
+6        Methodik
+Für die Durchführung des Projekts werden etablierte Methoden und Werkzeuge, KI-Tools und KI-
+Modelle verwendet, um den Prozess und die Ergebnisse modern, effizient und sicher zu gestalten.
+
+6.1       Softwareerstellung
+Es kann auf einen bestehenden ChatGPT-Business-Account und somit auf den Coding-Agent
+Codex zugegriffen werden. Dadurch ist es möglich, nicht nur das Grundgerüst der Android-App,
+sondern auch Implementierungen von Standardfeatures, wie beispielsweise Pushnachrichten,
+generieren zu lassen. Durch Überarbeitung und lückenlose Dokumentation der generierten
+Dateien werden Verständlichkeit, Sicherheit und Wartbarkeit des Quelltextes gewährleistet.
+
+6.2       Bilderstellung und Klassifizierung
+Es werden 5.000 bis 10.000 verschiedene Bilder mit Zigaretten, Rauch, Utensilien und rauchenden
+Personen benötigt. Frei verfügbare Datasets mit Rauchbildern sind aufgrund von Urheberrechtsver-
+letzungen oft problematisch. Die benötigten Bilder werden deshalb mit generativen KI-Modellen
+wie FLUX.1-dev3 , Juggernaut-XL-v94 oder mit Blender erstellt, damit keine Zigaretten gekauft oder
+geraucht werden müssen, um diese Dateien herzustellen. Ergänzend können bei Bedarf mit Adobe
+Firefly, Sora oder anderen multimodalen GenAI-Tools rauchbezogene Elemente nachträglich in
+selbst erstellte Bild- und Videoaufnahmen eingefügt werden.
+Den Benutzenden werden für Cue-Matching und Cue-Labeling ausgewählte Bilder präsentiert.
+Alternativ haben sie die Möglichkeit, eigene Bilddateien und auch Kamerabilder zu verwenden.
+Um die jeweiligen Auslöserreize in den Bildern der Benutzenden zu erkennen und die Auswahl der
+Beschreibungen bestimmen zu können, erscheinen zunächst zwei verschieden Ansätze sinnvoll.
+Der Android-Leitfaden zu KI-/ML-Lösungen5 nennt das ML Kit als Mittel für die Integration gängi-
+ger Computer-Vision-Funktionen und die LiteRT-APIs für die ressourcensparende Klassifizierung
+mit eigenen Modellen. Nur falls das ML Kit die Aufgabe nicht zufriedenstellend erledigen kann,
+wird ein Classifier anhand der generierten Bilder und einer Auswahl von geeigneten Bildern aus
+frei verfügbaren Datasets trainiert.
+    3
+        https://huggingface.co/black-forest-labs/FLUX.1-dev
+    4
+        https://huggingface.co/RunDiffusion/Juggernaut-XL-v9
+    5
+        https://developer.android.com/ai/overview?hl=de#ai-solution-guide
+6.3   Studiendesign                                                                          4
+
+Es werden für jede Klasse ungefähr gleich viele Bilder benötigt. Vorläufig sind die Klassen
+„cigarette“, „smoke“, „pack of cigarettes“, „full ashtray“, „one person smoking“ und „group of
+people smoking“ vorgesehen. Diese Liste kann im Verlauf der Softwareerstellung noch angepasst
+werden. Die Negativbeispiele für das Training müssen viele Szenen ohne Rauchbezug und harte
+Negative wie Schornsteine und Grills enthalten, um auch False Positives bei der Klassifizierung
+zu minimieren.
+Die KI-Lösungen werden anhand der Metriken Recall, Precision und F-Measure [13, 14] bewertet
+und gegebenenfalls verglichen und optimiert. Für die Nutzung der Android-APIs müssen Teilneh-
+mende entsprechend aktuelle Versionen des Betriebssystems installiert haben. Um auch ältere
+Smartphones zu unterstützen, wird zunächst eine Version ohne KI-Funktionen und danach ein
+optionales Update an die Endgeräte ausgeliefert.
+
+6.3   Studiendesign
+Die Arbeit folgt einem quantitativen Forschungsdesign auf Basis einer Primärdatenerhebung. In
+einer Pilotstudie mit einem Within-Subject-Ansatz verwenden die Teilnehmenden die App bis zu
+zwei Wochen lang im Alltag und bewerten bis zu dreimal täglich in einem Abstand von mindes-
+tens drei Stunden nach Darbietung von Auslöserreizen ihr aktuelles Rauchverlangen. In diesen
+Nutzungssituationen werden durch die App nacheinander fünf Auslöserreize präsentiert und die
+Benutzenden jeweils entweder zur Zuweisung eines anderen Auslöserreizes oder einer einfachen
+Beschreibung des dargebotenen Auslöserreizes sowie anschließend zu einem Selbstbericht zum
+Rauchverlangen aufgefordert. Insgesamt werden die Benutzenden so jeweils zu 50 Zuweisungen
+von Auslöserreizen, 50 Zuweisungen von Beschreibungen und 20 Selbstberichten aufgefordert.
+Für die Studie werden Personen gesucht, die zwischen 30 und 65 Jahre alt sind, mindestens
+10 Zigaretten pro Tag rauchen, ihr Rauchverlangen über einen Zeitraum von zwei Wochen
+beobachten möchten, ein Smartphone oder Tablet mit Android-Betriebssystem und Internetzugang
+zur Verfügung haben und deutsch oder englisch lesen können. Die Teilnehmenden können auf
+entsprechenden Online-Plattformen wie www.prolific.com oder www.testable.org rekrutiert
+werden. Dabei muss unmissverständlich auf das Einhalten der Einschlusskriterien hingewiesen
+werden. Kostengünstiger sind Veröffentlichungen auf www.rauchfrei-info.de/forum und in
+ähnlichen Online-Communities, in denen das Thema Rauchentwöhnung diskutiert wird. Durch
+Flyer oder Aushänge in Suchtberatungsstellen, Apotheken und Arztpraxen können auch gezielt
+relevante Personen angesprochen werden.
+Mindestens die Anzahl Teilnehmende, die der Anzahl der 47 Jahre alten oder älteren Teilnehmen-
+den des Laborversuchs entspricht, also 23 Teilnehmende, sollten für einen sinnvollen Vergleich
+ausgewertet werden können. Für belastbare Statistiken wird die Anzahl von 68 verwertbaren
+Stichproben angestrebt. Im Laborversuch unterschieden sich die Mittelwerte des Rauchverlangens
+nach Cue-Matching und Cue-Labeling um ∆=0,1 Punkte auf der verwendeten Skala von 1-5.
+Die Standardabweichung der paarweisen Differenzen betrug sD =0,3279. Auf die für diese Arbeit
+verwendete Skala von 0-100 hochgerechnet wären
+
+                                     ∆ = 0, 1 × 25 = 2, 5
+
+und
+                                sD = 0, 3279 × 25 = 8, 1968.
+
+Um die Effektgröße von umgerechnet 2,5 Punkten auf der Skala 0-100 im Alltag zu prüfen, wird
+mit Blick auf den Pilotcharakter dieser Studie im Rahmen einer Masterarbeit ein Power-Niveau
+von 80% festgelegt [15, 16]. Die R-Funktion
+  pwr.t.test(d=2.5/8.1968, power=0.8, type="paired", alternative="greater")
+                                                                                             5
+
+liefert für n gerundet 68. Um Ausfälle wegen Abbruchs oder technischer Probleme in Höhe von
+geschätzt 25% abzufedern, sollten insgesamt 85 Teilnehmende rekrutiert werden.
+Die Auswertung erfolgt mit R. Anhand der berichteten Werte zum Rauchverlangen wird statistisch
+geprüft, ob sich das subjektive Rauchverlangen in Situationen mit Cue-Labeling signifikant von
+dem in den Situationen mit Cue-Matching unterscheidet. Nach Möglichkeit wird eine Aussage
+zum therapeutischen Nutzen der Ergebnisse gemacht [9].
+
+
+7     Projektbeschreibung
+Für den Projektablauf wurden drei Meilensteine festgelegt.
+
+7.1   1. Meilenstein: Software-Prototyp
+Das Projekt beginnt mit der Konzipierung einer multimedialen KI-gestützten App. In der Anfangs-
+phase werden in einem iterativen Prozess die therapeutischen Anforderungen an die Unterstüt-
+zung bei der Rauchentwöhnung, die Anforderungen an ein KI-Modell und die Möglichkeiten der
+infrage kommenden Endgeräte wiederholt gegeneinander bewertet und prototypisch umgesetzt.
+Ein weiterer Schwerpunkt werden hierbei die rechtlichen Anforderungen sein.
+
+7.2   2. Meilenstein: Durchführung der App-Studie
+Im zweiten Schritt werden Teilnehmende für die App-Studie angeworben und erfasst. Dabei
+entsteht ein Anreizmodell, dass die Teilnahme einer ausreichenden Anzahl Probanden und Pro-
+bandinnen über den gesamten Zeitraum der Studie erreicht. Es werden außerdem effektive
+Werbeplätze für die Kontaktaufnahme zu Teilnehmenden identifiziert und genutzt.
+Während der Durchführung der App-Studie wird die Funktion der Infrastruktur genau über-
+wacht und gegebenenfalls Nutzungsfeedback umgesetzt. Die Berichte zum Rauchverlangen, die
+Teilnehmende in diesem Zeitraum übermitteln, werden für die spätere Aufbereitung gespeichert.
+
+7.3   3. Meilenstein: Auswertung
+Ziel des Projekts ist die erste Bewertung der Wirksamkeit der Android-App, und ob der im Labor
+beobachtete Effekt des Cue-Labeling auch im Alltag festgestellt werden kann. Die abschließende
+Auswertung wird beschreiben, inwieweit die bewusste Benennung der Auslöserreize, die die App
+den Benutzenden präsentiert, das subjektive Rauchverlangen im Alltag direkt messbar reduzieren
+konnte.
+                                                                                         6
+
+8   Zeitplan
+Die nachstehende Tabelle zeigt den vorläufigen Zeitplan.
+
+
+       Woche     Aufgabe                                   Meilenstein
+           1     Anforderungsanalyse für Endgeräte         Software-Prototyp
+           2     Anreizmodell festlegen,                   Durchführung der App-Studie
+                 Werbematerial erstellen und verteilen
+          3-10   Entwicklung des Prototyps,                Software-Prototyp
+                 Test und Überarbeitung,                   (wöchentliche Iterationen)
+         11-14   Ablaufplan für Teilnehmende,              Durchführung der App-Studie
+                 Support bei App-Installation,
+                 je nach Bedarf App-Erweiterungen
+         15,16   Nutzungssupport,                          Durchführung der App-Studie
+                 Monitoring der Infrastruktur
+         17-20   Statistische Auswertung,                  Auswertung
+                 Interpretation der Ergebnisse,
+                 Aufbereitung der Erkenntnisse
+LITERATUR                                                                                        7
+
+Literatur
+ [1] Tobias Effertz und Verena Viarisio. Die Kosten Des Rauchens in Deutschland. Heidelberg:
+     Deutsches Krebsforschungszentrum, 2015. url: https://www.dkfz.de/fileadmin/user
+       _ upload/Krebspraevention/Download/pdf/AdWfdP/AdWfdP _ 2015 _ Die-Kosten-des-
+       Rauchens-in-Deutschland.pdf (besucht am 06. 04. 2026).
+ [2] Bundesministerium für Gesundheit. Gesund Bleiben: Gesundheitsförderung Und Prävention.
+     2025. url: https://www.bundesgesundheitsministerium.de/themen/krankenversi
+       cherung/online-ratgeber-krankenversicherung/medizinische-versorgung-und-
+       leistungen-der-krankenversicherung/gesundheitsfoerderung-und-praevention
+       (besucht am 06. 04. 2026).
+ [3] Gemeinsamer Bundesausschuss. G-BA Definiert Details Des Neuen Leistungsanspruchs Auf
+     Arzneimittel Zur Tabakentwöhnung. 2025-05-15, 2025. url: https://www.g-ba.de/press
+     e/pressemitteilungen-meldungen/1256/ (besucht am 06. 04. 2026).
+ [4] Frank Baecke. GKV Bonusprogramme: Welche Kasse Zahlt Wie Viel Zurück? 2026-03-16, 2026.
+     url: https://www.handelsblatt.com/vergleich/gkv-bonusprogramme/ (besucht am
+     06. 04. 2026).
+ [5] Skye O. Dougan u. a. „TIP25-241: Utilizing Augmented Reality as an Adjunct for Smoking
+     Cessation: Trial in Progress“. In: Journal of the National Comprehensive Cancer Network
+     23.3.5 (28. März 2025), TIP25–241. issn: 1540-1405, 1540-1413. doi: 10.6004/jnccn.2024
+     .7326. url: https://jnccn.org/view/journals/jnccn/23/3.5/article-TIP25-241
+     .xml (besucht am 06. 04. 2026).
+ [6] Irene Pericot-Valverde, Roberto Secades-Villa und José Gutiérrez-Maldonado. „A Rando-
+     mized Clinical Trial of Cue Exposure Treatment through Virtual Reality for Smoking
+     Cessation“. In: Journal of Substance Abuse Treatment 96 (Jan. 2019), S. 26–32. issn: 07405472.
+     doi: 10.1016/j.jsat.2018.10.003. url: https://linkinghub.elsevier.com/retrie
+     ve/pii/S0740547218301648 (besucht am 06. 04. 2026).
+ [7] Golnaz Tabibnia u. a. „Cue Labeling Reduces Cigarette Craving and Associated Neural
+     Activity“. In: Neuropsychopharmacology 51.5 (Apr. 2026), S. 822–830. issn: 0893-133X, 1740-
+     634X. doi: 10.1038/s41386-025-02297-8. url: https://www.nature.com/articles
+     /s41386-025-02297-8 (besucht am 06. 04. 2026).
+ [8] Addiction Research Center. Questionnaire on Smoking Urges (QSU). url: https://arc.p
+     sych.wisc.edu/self-report/questionnaire-on-smoking-urges-qsu/ (besucht am
+     11. 04. 2026).
+ [9] Kevin P. Weinfurt. „Clarifying the Meaning of Clinically Meaningful Benefit in Clinical
+     Research: Noticeable Change vs Valuable Change“. In: JAMA 322.24 (24. Dez. 2019), S. 2381.
+     issn: 0098-7484. doi: 10.1001/jama.2019.18496. url: https://jamanetwork.com/jou
+     rnals/jama/fullarticle/2757036 (besucht am 12. 04. 2026).
+[10]   Bundesministerium für Gesundheit. Rauchen. 18. Feb. 2026. url: https://www.bundes
+       gesundheitsministerium.de/service/begriffe- von- a- z/r/rauchen (besucht am
+       06. 04. 2026).
+[11]   Kilian Olk u. a. Kurzbericht Epidemiologischer Suchtsurvey 2024. Tabellenband: Konsum
+       von Tabak, Wasserpfeifen und alternativen Nikotinabgabesystemen in Deutschland unter
+       Erwachsenen (18–85 Jahre) nach Geschlecht und Alter im Jahr 2024. Report. Version v1. IFT
+       Institut für Therapieforschung München, 10. März 2026. doi: 10.5281/zenodo.18847143.
+       url: https://doi.org/10.5281/zenodo.18847143.
+[12]   World Health Organization. WHO Clinical Treatment Guideline for Tobacco Cessation in
+       Adults. Geneva, Switzerland: World Health Organization, 2024. 1 S. isbn: 978-92-4-009643-1.
+LITERATUR                                                                                            8
+
+[13]   Gareth James u. a. An Introduction to Statistical Learning: With Applications in R. Second
+       edition. Springer Texts in Statistics. New York: Springer, 2021. 1 S. isbn: 978-1-0716-1417-4
+       978-1-0716-1418-1.
+[14]   Christopher D. Manning, Prabhakar Raghavan und Hinrich Schütze. Introduction to Infor-
+       mation Retrieval. 1. Aufl. Cambridge University Press, 7. Juli 2008. isbn: 978-0-521-86571-5
+       978-0-511-80907-1. doi: 10.1017/CBO9780511809071. url: https://www.cambridge.or
+       g/core/product/identifier/9780511809071/type/book (besucht am 08. 05. 2026).
+[15]   Jacob Cohen. Statistical Power Analysis for the Behavioral Sciences. 0. Aufl. Routledge, 13. Mai
+       2013. isbn: 978-1-134-74270-7. doi: 10.4324/9780203771587. url: https://www.taylor
+       francis.com/books/9781134742707 (besucht am 26. 04. 2026).
+[16]   Roger Giner-Sorolla u. a. „Power to Detect What? Considerations for Planning and Evalua-
+       ting Sample Size“. In: Personality and Social Psychology Review 28.3 (Aug. 2024), S. 276–301.
+       issn: 1088-8683, 1532-7957. doi: 10.1177/10888683241228328. url: https://journals
+       .sagepub.com/doi/10.1177/10888683241228328 (besucht am 26. 04. 2026).
+
