@@ -332,6 +332,14 @@ private fun CountdownIndicator(remainingSeconds: Int) {
 
 @Composable
 private fun WordMatchScreen(item: WordMatchItem, onChoiceTapped: () -> Unit) {
+    val choices = remember(item.cueResId, item.wordA, item.wordB) {
+        if (Random.nextBoolean()) {
+            listOf(item.wordA, item.wordB)
+        } else {
+            listOf(item.wordB, item.wordA)
+        }
+    }
+
     CueScreen(cueResId = item.cueResId) {
         Row(
             modifier = Modifier
@@ -342,11 +350,11 @@ private fun WordMatchScreen(item: WordMatchItem, onChoiceTapped: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(onClick = onChoiceTapped) {
-                Text(text = item.wordA)
+                Text(text = choices[0])
             }
             Spacer(modifier = Modifier.width(24.dp))
             Button(onClick = onChoiceTapped) {
-                Text(text = item.wordB)
+                Text(text = choices[1])
             }
         }
     }
@@ -431,19 +439,14 @@ private fun loadImageMatchItems(context: Context): List<ImageMatchItem> {
 }
 
 private fun loadWordMatchItems(context: Context): List<WordMatchItem> {
-    val wordChoices = mapOf(
-        100 to WordChoices("Paff", "Klick")
-    )
-    val items = mutableListOf<WordMatchItem>()
-    var index = 100
-    while (true) {
-        val cue = context.drawableId("cue_$index")
-        val choices = wordChoices[index]
-        if (cue == 0 || choices == null) break
-        items += WordMatchItem(cue, choices.wordA, choices.wordB)
-        index += 1
+    return cueLabelMappings.mapNotNull { mapping ->
+        val cue = context.drawableId(mapping.cueName)
+        if (cue == 0) {
+            null
+        } else {
+            WordMatchItem(cue, mapping.germanFittingLabel, mapping.germanLessFittingLabel)
+        }
     }
-    return items
 }
 
 private fun Context.drawableId(name: String): Int =
@@ -534,9 +537,65 @@ private data class WordMatchItem(
     val wordB: String
 )
 
-private data class WordChoices(
-    val wordA: String,
-    val wordB: String
+private data class CueLabelMapping(
+    val cueName: String,
+    val germanFittingLabel: String,
+    val germanLessFittingLabel: String,
+    val englishFittingLabel: String? = null,
+    val englishLessFittingLabel: String? = null
+)
+
+private val cueLabelMappings = listOf(
+    CueLabelMapping("cue_000", "Rauchschleier", "Abendlicht"),
+    CueLabelMapping("cue_001", "Aschegeruch", "Regenschirmmoment"),
+    CueLabelMapping("cue_002", "Kaffee dazu", "Handy in der Hand"),
+    CueLabelMapping("cue_003", "nachglimmen", "Tischrunde"),
+    CueLabelMapping("cue_004", "ausdrücken", "Nachtluft"),
+    CueLabelMapping("cue_005", "abaschen", "Packung öffnen"),
+    CueLabelMapping("cue_006", "Zigarette nehmen", "Rauchkringel"),
+    CueLabelMapping("cue_007", "Packung klopfen", "Fensterpause"),
+    CueLabelMapping("cue_008", "Zigarette nehmen", "gemeinsam draußen"),
+    CueLabelMapping("cue_009", "Stadtluft", "Balkonmoment"),
+    CueLabelMapping("cue_010", "Packungsrascheln", "Rauchschleier"),
+    CueLabelMapping("cue_011", "Wegbegleiter", "Tischrunde"),
+    CueLabelMapping("cue_012", "Feuer suchen", "Wolke"),
+    CueLabelMapping("cue_013", "Klick", "Geselligkeit"),
+    CueLabelMapping("cue_014", "Haltestellenpause", "Glutmoment"),
+    CueLabelMapping("cue_015", "Papiergeschmack", "Hofpause"),
+    CueLabelMapping("cue_016", "Gewohnheitsgriff", "Kneipenluft"),
+    CueLabelMapping("cue_017", "Fingergefühl", "Feuerzeugklick"),
+    CueLabelMapping("cue_018", "Aufglimmen", "gemeinsam draußen"),
+    CueLabelMapping("cue_019", "Tischrunde", "Filtergeschmack"),
+    CueLabelMapping("cue_020", "Gesprächspause", "erster Zug"),
+    CueLabelMapping("cue_021", "Nachtluft", "verbrannter Geruch"),
+    CueLabelMapping("cue_022", "rauchige Luft", "Kaffee dazu"),
+    CueLabelMapping("cue_023", "Tischrunde", "Glutpunkt"),
+    CueLabelMapping("cue_024", "Gewohnheitsgriff", "trockener Tabak"),
+    CueLabelMapping("cue_025", "Dazugehören", "Filter an den Lippen"),
+    CueLabelMapping("cue_026", "gemeinsam draußen", "Papiergeschmack"),
+    CueLabelMapping("cue_027", "Flamme", "Asche abstreifen"),
+    CueLabelMapping("cue_028", "leiser Moment", "Mundzug"),
+    CueLabelMapping("cue_029", "Wartezeit", "herber Duft"),
+    CueLabelMapping("cue_030", "kleine Ruhe", "Feuerzeugklick"),
+    CueLabelMapping("cue_031", "Jetzt eine", "Mundzug"),
+    CueLabelMapping("cue_032", "Nachtluft", "Filtergeschmack"),
+    CueLabelMapping("cue_033", "Anzündmoment", "Stadtluft"),
+    CueLabelMapping("cue_034", "Fensterpause", "Flamme"),
+    CueLabelMapping("cue_035", "Schreibtischpause", "Regenschirmmoment"),
+    CueLabelMapping("cue_036", "Halskratzen", "Balkonmoment"),
+    CueLabelMapping("cue_037", "runterkommen", "Knistern"),
+    CueLabelMapping("cue_038", "dichter Zug", "Packung klopfen"),
+    CueLabelMapping("cue_039", "Feierabendzug", "Folie öffnen"),
+    CueLabelMapping("cue_040", "vertrauter Moment", "Flamme"),
+    CueLabelMapping("cue_041", "draußen stehen", "Schreibtischpause"),
+    CueLabelMapping("cue_042", "Haltestellenpause", "würziges Aroma"),
+    CueLabelMapping("cue_043", "vor die Tür", "Nachgeschmack"),
+    CueLabelMapping("cue_044", "ziehen", "Dazugehören"),
+    CueLabelMapping("cue_045", "nur kurz", "Feierabendzug"),
+    CueLabelMapping("cue_046", "Automatismus", "Aschegeruch"),
+    CueLabelMapping("cue_047", "Lust auf Zug", "Knistern"),
+    CueLabelMapping("cue_048", "Feierabendzug", "Tabakduft"),
+    CueLabelMapping("cue_049", "Rauchkringel", "Aufglimmen")
 )
 
 private const val TAG = "CueLens"
