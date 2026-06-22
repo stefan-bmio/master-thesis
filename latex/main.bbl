@@ -844,6 +844,36 @@
       \verb https://www.cambridge.org/core/product/identifier/9780511809071/type/book
       \endverb
     \endentry
+    \entry{bsi_tr03161_mobile_2024}{report}{}
+      \name{author}{1}{}{%
+        {{hash=c61cd4100327b033030a8fe0fadc5c54}{%
+           family={{Bundesamt für Sicherheit in der Informationstechnik}},
+           familyi={B\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Bundesamt für Sicherheit in der Informationstechnik}%
+      }
+      \list{location}{1}{%
+        {Bonn}%
+      }
+      \strng{namehash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{fullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{bibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authorbibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authornamehash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \field{extraname}{1}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{25}
+      \field{langid}{german}
+      \field{month}{3}
+      \field{title}{Technische Richtlinie {{TR-03161}}: Anforderungen an Anwendungen im Gesundheitswesen. Teil 1: Mobile Anwendungen. Version 3.0}
+      \field{year}{2024}
+      \field{dateera}{ce}
+    \endentry
     \entry{google_litert_android_2026}{online}{}
       \name{author}{1}{}{%
         {{hash=8b36e9207c24c76e6719268e49201d94}{%
@@ -878,36 +908,6 @@
       \verb{url}
       \verb https://ai.google.dev/edge/litert/android?hl=de
       \endverb
-    \endentry
-    \entry{bsi_tr03161_mobile_2024}{report}{}
-      \name{author}{1}{}{%
-        {{hash=c61cd4100327b033030a8fe0fadc5c54}{%
-           family={{Bundesamt für Sicherheit in der Informationstechnik}},
-           familyi={B\bibinitperiod}}}%
-      }
-      \list{institution}{1}{%
-        {Bundesamt für Sicherheit in der Informationstechnik}%
-      }
-      \list{location}{1}{%
-        {Bonn}%
-      }
-      \strng{namehash}{c61cd4100327b033030a8fe0fadc5c54}
-      \strng{fullhash}{c61cd4100327b033030a8fe0fadc5c54}
-      \strng{bibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
-      \strng{authorbibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
-      \strng{authornamehash}{c61cd4100327b033030a8fe0fadc5c54}
-      \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
-      \field{extraname}{1}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{day}{25}
-      \field{langid}{german}
-      \field{month}{3}
-      \field{title}{Technische Richtlinie {{TR-03161}}: Anforderungen an Anwendungen im Gesundheitswesen. Teil 1: Mobile Anwendungen. Version 3.0}
-      \field{year}{2024}
-      \field{dateera}{ce}
     \endentry
     \entry{bsi_tr03161_web_2024}{report}{}
       \name{author}{1}{}{%
