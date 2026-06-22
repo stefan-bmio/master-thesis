@@ -6,7 +6,6 @@ require __DIR__ . '/lib/PHPMailer/Exception.php';
 require __DIR__ . '/lib/PHPMailer/PHPMailer.php';
 require __DIR__ . '/lib/PHPMailer/SMTP.php';
 
-$dbConfig = require __DIR__ . '/config/cuelens-signup.php';
 $smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
 $hostConfig = require __DIR__ . '/config/host.php';
 
@@ -15,25 +14,6 @@ $message = '';
 session_start();
 
 $csrfToken = $_POST['csrf_token'] ?? '';
-
-try {
-	$pdo = new PDO(
-		"mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4",
-		$dbConfig['user'],
-		$dbConfig['pass'],
-		[
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-			PDO::ATTR_EMULATE_PREPARES => false,
-		]
-	);
-} catch (PDOException $e) {
-	http_response_code(500);
-	echo json_encode([
-		'success' => false,
-		'error' => 'Database error.'
-	]);
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$csrfToken = $_POST['csrf_token'] ?? '';
@@ -86,6 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$doiTokenHash = hash('sha256', $doiToken);
 					
 					try {
+						$dbConfig = require __DIR__ . '/config/cuelens-signup.php';
+						$pdo = new PDO(
+							"mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4",
+							$dbConfig['user'],
+							$dbConfig['pass'],
+							[
+								PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+								PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+								PDO::ATTR_EMULATE_PREPARES => false,
+							]
+						);
+
 						$stmt = $pdo->prepare("
 							INSERT INTO `register`
 							(`email`, `name`, `iban`, `bic`, `age`, `cigarettes`, `doi_token`, `studyinfo`, `dataprot`)
@@ -148,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						}
 
 					} catch (PDOException $e) {
-						if ($e->errorInfo[1] == 1062) {
+						if (($e->errorInfo[1] ?? null) == 1062) {
 							$message = 'This email address is already registered.';
 						} else {
 							$message = 'An error occured when saving.';
