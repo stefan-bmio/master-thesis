@@ -58,6 +58,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -499,7 +500,7 @@ private fun formatDuration(durationMillis: Long): String {
 private suspend fun submitCraving(craving: Int) {
     withContext(Dispatchers.IO) {
         val body = "craving=${URLEncoder.encode(craving.toString(), Charsets.UTF_8.name())}"
-        val connection = URL("https://cuelens.each-and-every.de/submit").openConnection() as HttpURLConnection
+        val connection = URL(BuildConfig.CRAVING_SUBMIT_URL).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
             connection.doOutput = true
@@ -509,9 +510,22 @@ private suspend fun submitCraving(craving: Int) {
                 writer.write(body)
             }
             Log.i(TAG, "submitCraving response: ${connection.responseCode} ${connection.responseMessage}")
-            connection.inputStream.close()
-        } catch (_: Exception) {
-            // MVP behavior: ignore request failures and keep the slider visible.
+            val responseStream = if (connection.responseCode in 200..299) {
+                connection.inputStream
+            } else {
+                connection.errorStream
+            }
+            responseStream?.bufferedReader(Charsets.UTF_8)?.use { reader ->
+                val responseJson = JSONObject(reader.readText())
+                if (responseJson.has("success")) {
+                    Log.i(TAG, "submitCraving success: ${responseJson.getBoolean("success")}")
+                }
+                if (responseJson.has("error")) {
+                    Log.i(TAG, "submitCraving error: ${responseJson.getString("error")}")
+                }
+            }
+        } catch (exception: Exception) {
+            Log.e(TAG, "Error submitting value", exception)
         } finally {
             connection.disconnect()
         }
@@ -608,5 +622,7 @@ private const val TRIALS_PER_SITUATION = 5
 private const val MATCHING_SITUATION_COUNT = 10
 private const val LABELING_SITUATION_COUNT = 10
 private const val TOTAL_SITUATION_COUNT = MATCHING_SITUATION_COUNT + LABELING_SITUATION_COUNT
-private const val IMAGE_MATCH_WAIT_SECONDS = 4
-private const val RUN_COOLDOWN_MILLIS = 3L * 60L * 60L * 1000L
+//private const val IMAGE_MATCH_WAIT_SECONDS = 4
+private const val IMAGE_MATCH_WAIT_SECONDS = 1
+//private const val RUN_COOLDOWN_MILLIS = 3L * 60L * 60L * 1000L
+private const val RUN_COOLDOWN_MILLIS = 3L

@@ -30,12 +30,36 @@ android {
             )
         }
     }
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("staging") {
+            dimension = "environment"
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = "-staging"
+            buildConfigField(
+                "String",
+                "CRAVING_SUBMIT_URL",
+                "\"http://192.168.1.203:8080/cuelens/submit\""
+            )
+        }
+        create("production") {
+            dimension = "environment"
+            buildConfigField(
+                "String",
+                "CRAVING_SUBMIT_URL",
+                "\"https://cuelens.each-and-every.de/submit\""
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
