@@ -1,92 +1,76 @@
 # CueLens: Implementierungsanweisungen fuer Codex
 
-Diese Datei beschreibt den Soll-Zustand der Android-App im Verzeichnis `cuelens` und dient zugleich als arbeitsnahe Vorlage fuer die spaetere technische Dokumentation der Masterarbeit. Die Reihenfolge orientiert sich zuerst an der bisherigen Git-Historie des Prototyps und anschliessend an den Anforderungen aus Expose, aktuellem LaTeX-Stand der Masterarbeit und Studienlogik.
+Diese Datei beschreibt den Soll-Zustand der Android-App im Verzeichnis `cuelens` und dient zugleich als Vorlage fuer die spaetere technische Dokumentation. Die Reihenfolge orientiert sich zuerst an der bisherigen Git-Historie und anschliessend an Expose, aktuellem Masterarbeitsstand und Studienlogik.
 
-## 1. Grundprinzipien fuer alle Aenderungen
+## 1. Grundprinzipien
 
-- Arbeite inkrementell und halte die App als nativen Android-Prototyp in Kotlin mit Jetpack Compose einfach, wartbar und testbar.
-- Behandle die App als Studienprototyp, nicht als Therapie-App. UI-Texte duerfen keine Heilungs-, Entwoehnungs- oder Wirksamkeitsversprechen enthalten.
-- Priorisiere Datensparsamkeit, robuste Studienlogik, reproduzierbare Reizpraesentation, nachvollziehbare Zustandsuebergaenge und geringe technische Anforderungen an reale Android-Endgeraete.
-- Nutze keine zusaetzlichen Berechtigungen, solange sie nicht fuer eine konkrete Funktion zwingend erforderlich sind. Jede neue Berechtigung muss im Quelltext, in dieser Datei und spaeter in der Arbeit begruendet werden.
-- Verarbeite sensible Daten nur zweckgebunden. Personenbezogene Registrierungs- und Abrechnungsdaten gehoeren nicht in die Android-App und nicht in die wissenschaftlichen Selbstberichte.
-- Halte alle Endpunkte, Build-Varianten und Konstanten so strukturiert, dass lokale Tests, Staging und Produktion getrennt nachvollziehbar bleiben.
-- Behandle Idempotenz als zentrale Anforderung der Studiendatenuebertragung. Ein Netzwerkfehler nach erfolgreicher serverseitiger Speicherung darf nicht zu doppelten Craving-Werten, falschem Fortschritt oder einem verlorenen Abrechnungstoken fuehren.
+- Implementiere inkrementell, einfach, wartbar und testbar.
+- Behandle CueLens als Studienprototyp, nicht als Therapie-App. UI-Texte duerfen keine Wirksamkeitsversprechen enthalten.
+- Priorisiere Datensparsamkeit, robuste Studienlogik, reproduzierbare Reizpraesentation, nachvollziehbare Zustandsuebergaenge und geringe Anforderungen an reale Android-Endgeraete.
+- Fuege Berechtigungen nur hinzu, wenn sie fuer eine konkrete Funktion zwingend erforderlich sind.
+- Personenbezogene Registrierungs- und Abrechnungsdaten gehoeren nicht in die Android-App und nicht in die wissenschaftlichen Selbstberichte.
+- Behandle Idempotenz als zentrale Anforderung. Netzwerkfehler duerfen nicht zu doppelten Craving-Werten, falschem Fortschritt oder einem verlorenen Abschluss-Token fuehren.
+- Trenne den Abschluss- und Auszahlungstoken dauerhaft von den auswertbaren Craving-Werten. Eine temporaere Verbindung ist nur in der kurzlebigen Tabelle `submission` fuer den Drei-Wege-Handshake zulaessig.
 
 ## 2. Bisherige Git-Historie als Umsetzungsreihenfolge
 
 ### 2.1 Projektgeruest, Android-App und Craving-Endpunkt
 
-Der erste relevante Entwicklungsschritt ist der Commit `1c27c1e6ade4c597ae56c6beb5ba6c6f228cb0b0` mit der Nachricht `CueLens Android app basic functionality, PHP craving endpoint`. Daraus ergibt sich fuer die Android-App folgender Soll-Zustand:
+Der erste relevante Entwicklungsschritt ist der Commit `1c27c1e6ade4c597ae56c6beb5ba6c6f228cb0b0` mit der Nachricht `CueLens Android app basic functionality, PHP craving endpoint`.
 
-- Das Verzeichnis `cuelens` enthaelt ein eigenstaendiges Android-Projekt mit Gradle-Konfiguration, App-Modul, Android-Manifest und Kotlin-Quelltext.
-- Die App ist eine native Android-Anwendung mit einer einzigen `MainActivity`.
-- Die Benutzeroberflaeche wird mit Jetpack Compose aufgebaut.
-- Die App darf im Studienprototyp nur die Internet-Berechtigung benoetigen.
-- Die App ist fuer Hochformat ausgelegt, damit Bilddarstellung, Antwortoptionen und Craving-Slider unter kontrollierten Layoutbedingungen verwendet werden.
-- Die automatische Android-Sicherung ist deaktiviert, damit lokale Fortschrittsdaten nicht ueber allgemeine Geraete- oder Cloud-Backups in weitere Kontexte uebertragen werden.
-- Der Craving-Wert wird als ganzzahliger Wert im Bereich 0 bis 100 erhoben und per `PUT` an den konfigurierten Submit-Endpunkt uebertragen.
-- Die Netzwerkanfrage laeuft ausserhalb des UI-Threads, damit die App bedienbar bleibt.
+Soll-Zustand:
 
-### 2.2 Studien-MVP: Cue-Matching, Cue-Labeling und Craving-Abfrage
+- Eigenstaendiges Android-Projekt im Verzeichnis `cuelens`.
+- Native Android-App in Kotlin mit einer `MainActivity` und Jetpack Compose.
+- Nur die fuer den Studienbetrieb erforderlichen Berechtigungen, im Grundbetrieb insbesondere Internet.
+- Hochformat, damit Bilddarstellung, Antwortoptionen und Craving-Slider kontrolliert bleiben.
+- Android-Backup deaktiviert, damit lokale Fortschrittsdaten nicht in allgemeine Geraete- oder Cloud-Backups gelangen.
+- Craving-Werte werden ganzzahlig im Bereich 0 bis 100 erfasst.
+- Produktive Uebertragungen an `submit.php` erfolgen per `PUT`, nicht per `POST`.
+- Netzwerkanfragen laufen nicht auf dem UI-Thread.
 
-Die MVP-Logik folgt dem vorhandenen Projektplan und wird als deterministischer, ressourcenbasierter Ablauf verstanden:
+### 2.2 Studien-MVP
 
-- Ein Durchgang besteht aus mehreren Reizaufgaben und einer anschliessenden Craving-Abfrage.
-- In der Cue-Matching-Bedingung wird ein Zielbild angezeigt und die teilnehmende Person waehlt zwischen zwei Bildoptionen.
-- In der Cue-Labeling-Bedingung wird ein Zielbild angezeigt und die teilnehmende Person waehlt zwischen zwei Wortoptionen.
-- Nach jeder Auswahl wechselt die App ohne weitere Bestaetigung zur naechsten Aufgabe.
-- Nach Abschluss der Aufgaben erscheint die Craving-Abfrage mit der Frage `Wie hoch ist in diesem Moment Ihr Rauchverlangen?`, einem Slider von 0 bis 100, dem Standardwert 50 und dem Button `Absenden`.
-- Cue-Bilder fuellen den sichtbaren Bildschirm durch eine Cover-Darstellung. Horizontales Zuschneiden ist zulaessig, leere Raender sind zu vermeiden.
-- Match-Bilder bleiben vollstaendig sichtbar und werden ueber dem Cue-Bild im unteren Bildschirmbereich dargestellt.
-- Wortoptionen werden ebenfalls ueber dem Cue-Bild im unteren Bildschirmbereich dargestellt.
+Ein Durchgang besteht aus mehreren Reizaufgaben und einer anschliessenden Craving-Abfrage. In der Cue-Matching-Bedingung wird ein Zielbild mit zwei Bildoptionen kombiniert. In der Cue-Labeling-Bedingung wird ein Zielbild mit zwei Wortoptionen kombiniert. Nach jeder Auswahl wechselt die App zur naechsten Aufgabe. Nach Abschluss der Aufgaben erscheint die Craving-Abfrage mit Slider von 0 bis 100, Standardwert 50 und Button `Absenden`.
 
-### 2.3 Dynamische Ressourcen und Aufgabenlisten
+Cue-Bilder fuellen den sichtbaren Bildschirm durch eine Cover-Darstellung. Match-Bilder und Wortoptionen werden ueber dem Cue-Bild im unteren Bildschirmbereich dargestellt.
 
-Die Aufgabenlogik soll nicht von einer manuell gepflegten Vollstaendigkeitsliste der Drawables abhaengen:
+### 2.3 Ressourcen und Aufgabenlisten
 
-- Cue-Matching-Items werden aus Drawables mit dem Namensschema `cue_0nn`, `match_a_0nn` und `match_b_0nn` erzeugt.
-- Ein Cue-Matching-Item ist nur gueltig, wenn Cue-Bild und beide Match-Bilder vorhanden sind.
+- Cue-Matching-Items werden aus `cue_0nn`, `match_a_0nn` und `match_b_0nn` erzeugt.
+- Ein Cue-Matching-Item ist nur gueltig, wenn alle drei Drawables vorhanden sind.
 - Cue-Labeling-Items werden aus einem Cue-Bild und einem Labelpaar erzeugt.
-- Die Labelpaare enthalten jeweils ein besser passendes und ein weniger passendes Label.
-- Die Datenstruktur fuer Labelpaare muss spaeter ohne grundlegende Aenderung der UI auf weitere Sprachen, Kategorien, Scores oder externe Metadaten erweitert werden koennen.
-- Bild- und Wortoptionen werden innerhalb eines Items zufaellig links/rechts beziehungsweise in der Reihenfolge vertauscht, um Positionsartefakte zu reduzieren.
+- Labelpaare enthalten ein besser passendes und ein weniger passendes Label.
+- Bild- und Wortoptionen werden innerhalb eines Items zufaellig links/rechts beziehungsweise in ihrer Reihenfolge vertauscht.
 
 ### 2.4 Studienfortschritt, Sperrzeit und Randomisierung
 
-Die App fuehrt die Teilnehmenden durch einen Within-Subject-Ablauf mit wiederholten Studiensituationen:
-
-- Die App darf den Studienfortschritt lokal zwischenspeichern, betrachtet `completed_situation_count` aber nicht als autoritative Quelle. Der autoritative Fortschritt ergibt sich aus der vom Server verifizierten Anzahl akzeptierter Craving-Uebertragungen und der Anzahl gueltiger Token-Komponenten, die die App erhalten hat.
-- Die App speichert lokal den Zeitpunkt der naechsten freigegebenen Situation, die Reihenfolge der Cue-Matching-Aufgaben und die bereits erhaltenen Token-Komponenten. Diese Werte sind ein Cache fuer Bedienbarkeit und Offline-Faelle, nicht die alleinige Grundlage der Auswertbarkeit.
-- Die App stellt vor Beginn eines Durchgangs dar, ob die naechste Studiensituation gestartet werden kann. Die Freigabe ist nur dann produktiv gueltig, wenn der lokale Zustand mit dem serverseitig verifizierten Token- und Fortschrittszustand vereinbar ist.
+- Lokaler Fortschritt ist nur ein Cache. Autoritativ ist der serverseitig verifizierte und von der App bestaetigte Token-Fortschritt.
+- Die App speichert lokal den naechsten erlaubten Startzeitpunkt, die zufaellige Cue-Matching-Reihenfolge und die bereits bestaetigten Token-Komponenten.
 - Zwischen zwei Studiensituationen liegt im Produktivbetrieb ein Mindestabstand von drei Stunden.
 - Insgesamt sind 20 Studiensituationen vorgesehen: zehn Cue-Matching-Situationen und zehn Cue-Labeling-Situationen.
-- Jede Studiensituation enthaelt immer fuenf Aufgaben, sodass insgesamt 50 Cue-Matching-Zuweisungen, 50 Cue-Labeling-Zuweisungen und 20 Craving-Selbstberichte entstehen.
-- Die zufaellige Reihenfolge der Cue-Matching-Aufgaben wird einmal erzeugt und lokal gespeichert, damit sie ueber App-Neustarts hinweg stabil bleibt.
-- Fuer Entwicklungs- oder Demonstrationszwecke duerfen kuerzere Wartezeiten nur ueber eindeutig benannte Debug- oder Staging-Konfigurationen aktiviert werden. Die Produktionswerte bleiben fachlich konsistent: vier Sekunden Betrachtungs-Countdown beim Cue-Matching und drei Stunden Sperrzeit zwischen Studiensituationen.
+- Jede Studiensituation enthaelt immer fuenf Aufgaben.
+- Production-Werte bleiben fachlich konsistent: vier Sekunden Betrachtungs-Countdown beim Cue-Matching und drei Stunden Sperrzeit.
 
 ### 2.5 Build-Varianten und Endpunkte
 
-Die Android-Konfiguration unterscheidet Umgebungen:
+- `staging` verwendet lokale oder interne Test-Endpunkte.
+- `production` verwendet `https://cuelens.each-and-every.de/submit`.
+- Endpunkte werden ueber `BuildConfig` oder eine vergleichbare Build-Konfiguration bereitgestellt.
+- Klartextverkehr ist nur als abgegrenzte Staging-Ausnahme zulaessig.
 
-- `staging` verwendet einen lokalen oder internen Test-Endpunkt und darf eine abweichende Application-ID erhalten.
-- `production` verwendet den produktiven HTTPS-Endpunkt `https://cuelens.each-and-every.de/submit`.
-- Der Submit-Endpunkt wird nicht hart im UI-Code dupliziert, sondern ueber `BuildConfig` oder eine vergleichbare Build-Konfiguration bereitgestellt.
-- Produktivvarianten duerfen keine Klartext-Kommunikation benoetigen. Falls Staging temporar HTTP verwendet, muss dies im Manifest und in der Dokumentation als lokale Testausnahme klar abgrenzbar sein.
-- Craving-Uebertragungen an `submit.php` erfolgen per `PUT`. `POST` wird fuer die auswertbare App-Uebertragung nicht mehr verwendet.
-
-## 3. Soll-Zustand der aktuellen Android-App
+## 3. Soll-Zustand der Android-App
 
 ### 3.1 Architektur
 
-- `MainActivity` initialisiert die Compose-App und delegiert die Studienlogik an klar getrennte Composables und Hilfsfunktionen.
-- Die Phasen werden explizit modelliert, beispielsweise als `StartGate`, `ImageMatching`, `WordMatching` und `CravingSubmission`.
-- UI-Komponenten erhalten nur die fuer ihre Darstellung und Rueckmeldung notwendigen Daten.
-- Netzwerk-, Ressourcen- und Persistenzlogik werden so gekapselt, dass sie spaeter in ViewModel-, Repository- oder Service-Klassen ausgelagert werden koennen, ohne das Studienverhalten zu veraendern.
-- Der aktuelle Prototyp darf kompakt bleiben; neue Funktionalitaet soll jedoch nicht weiter in eine monolithische `MainActivity.kt` wachsen, wenn dadurch Testbarkeit und Dokumentierbarkeit leiden.
+- `MainActivity` initialisiert die Compose-App.
+- Studienphasen werden explizit modelliert, zum Beispiel `StartGate`, `ImageMatching`, `WordMatching` und `CravingSubmission`.
+- UI-Komponenten erhalten nur die fuer Darstellung und Rueckmeldung notwendigen Daten.
+- Netzwerk-, Ressourcen- und Persistenzlogik sollen so gekapselt werden, dass sie spaeter in ViewModel-, Repository- oder Service-Klassen ausgelagert werden koennen.
 
-### 3.2 Datenmodell fuer Reizaufgaben
+### 3.2 Datenmodell
 
-Verwende fuer die interne Studienlogik explizite Datenklassen. Mindestens erforderlich sind:
+Mindestens erforderliche Datenklassen:
 
 ```kotlin
 data class ImageMatchItem(
@@ -101,51 +85,45 @@ data class WordMatchItem(
     val lessFittingLabel: String,
     val language: String = "de"
 )
-```
-
-Fuer die auswertbare Studienfassung soll das Datenmodell um stabile IDs erweitert werden:
-
-```kotlin
-data class StudyTrial(
-    val trialId: String,
-    val situationIndex: Int,
-    val condition: StudyCondition,
-    val cueId: String,
-    val optionAId: String,
-    val optionBId: String,
-    val correctOrFittingOptionId: String?
-)
 
 enum class StudyCondition { CUE_MATCHING, CUE_LABELING }
 ```
 
-Die stabile ID ist fuer Dokumentation, Plausibilitaetspruefung und Auswertung wichtiger als die aktuelle Drawable-ID, weil Drawable-IDs nicht als dauerhafte wissenschaftliche Kennungen geeignet sind.
+Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Trials ergaenzt werden. Drawable-IDs sind keine dauerhaften wissenschaftlichen Kennungen.
 
 ### 3.3 Lokaler Zustand
 
-Der lokale Zustand dient nur der Durchfuehrung der Studie, der Wiederaufnahme nach App-Neustarts und der Vermeidung ungueltiger Mehrfachdurchlaeufe. Er ist nicht die autoritative Quelle fuer Auszahlung oder Auswertung:
+Persistiere nur kleine, zweckgebundene Werte:
 
-- `verified_completed_situation_count`: Anzahl der vom Server akzeptierten Craving-Uebertragungen. Dieser Wert wird aus Serverantworten abgeleitet und darf nicht allein durch lokale UI-Aktionen erhoeht werden.
 - `next_situation_available_at_millis`: fruehester Startzeitpunkt der naechsten Situation.
 - `matching_order`: stabile zufaellige Reihenfolge der Cue-Matching-Aufgaben.
-- `token_components`: die vom Server bereits zurueckgelieferten Token-Komponenten. Vor der ersten erfolgreichen Uebertragung ist diese Liste leer. Nach 20 erfolgreichen Uebertragungen besteht sie aus 20 Komponenten mit jeweils drei alphanumerischen Zeichen.
-- `pending_submission`: ein abgeschlossener Durchgang, dessen Serverantwort noch nicht erfolgreich verarbeitet wurde.
+- `token_components`: vom Server zurueckgelieferte und von der App bestaetigte Token-Komponenten.
+- `pending_submission`: abgeschlossener Durchgang, dessen initiale Serverantwort noch fehlt.
+- `pending_confirmation_token`: Tokenstand oder Token-Komponente, die noch mit dem zweiten PUT bestaetigt werden muss.
 
-Der bisherige Begriff `participant_app_token` wird fuer die produktive App nicht mehr als vorab vergebener Teilnehmenden-Token verwendet. Die App erhaelt den Auszahlungstoken komponentenweise vom Submit-Endpunkt. Dieser Token ist ein serverseitig verifizierter Nachweis der abgeschlossenen App-Uebertragungen, aber keine direkte Relation zu den Craving-Werten.
+`completed_situation_count` und `participant_app_token` sind nicht als autoritative lokale Zustaende zu verwenden. Der Abschlussstand wird aus den bestaetigten Token-Komponenten abgeleitet. Lokale Daten duerfen keine Namen, E-Mail-Adressen, Zahlungsdaten oder Freitexte enthalten.
 
-Lokale Daten sollen klein bleiben und keine Namen, E-Mail-Adressen, IBANs, BICs oder Freitexte enthalten. Fuer produktive Studiendaten ist zu pruefen, ob `EncryptedSharedPreferences` oder ein anderes Jetpack-Security-Verfahren erforderlich und mit dem Studienprototyp vereinbar ist. Fuer besonders sensible Bildschirmansichten, insbesondere die abschliessende Token-Anzeige, ist `FLAG_SECURE` zu pruefen.
+### 3.4 Netzwerkanbindung und Drei-Wege-Handshake
 
-### 3.4 Netzwerkanbindung und serverseitig verifizierter Token-Fortschritt
+Die auswertbare Uebertragung besteht aus drei Schritten:
 
-Die App sendet Studienereignisse ausschliesslich an definierte Backend-Endpunkte:
+1. **Initialer PUT der App**
+   - Die App sendet Craving-Wert und technische Studienmetadaten an `submit.php`.
+   - Die App sendet alle bisher bestaetigten Token-Komponenten mit. Beim ersten Wert ist die Liste leer.
+   - Der Server validiert den Request, erzeugt beziehungsweise prueft den Token-Fortschritt und speichert Craving-Wert und Tokenbezug zunaechst nur temporaer in `submission`.
+   - Der Server antwortet mit der naechsten Token-Komponente.
 
-- Craving-Selbstberichte werden per `PUT` uebertragen.
-- Die Payload ist maschinenlesbar und enthaelt nur die fuer Studienauswertung, Idempotenz und Token-Fortschritt erforderlichen Angaben.
-- Jede Uebertragung wird clientseitig und serverseitig validiert.
-- Die App zeigt keine internen Server-, SQL- oder Stacktrace-Details an.
-- Der UI-Zustand nach einem Netzwerkfehler muss eindeutig sein: Ein abgeschlossener Durchgang bleibt als noch nicht bestaetigt gespeichert, bis der Server entweder eine neue Token-Komponente oder bei Retry dieselbe ausstehende Token-Komponente erneut zurueckliefert.
+2. **Bestaetigungs-PUT der App**
+   - Nach Erhalt der naechsten Token-Komponente sendet die App einen zweiten PUT.
+   - Dieser Request enthaelt keine Craving- oder Studiendaten, sondern nur den erhaltenen Tokenstand beziehungsweise die erhaltene Token-Komponente gemaess Backend-Vertrag.
+   - Der Bestaetigungs-PUT resultiert immer in HTTP 204, auch bei Wiederholung.
 
-Fuer die auswertbare Studienfassung wird der bisherige reine `craving`-Request durch ein strukturiertes PUT-Ereignis ersetzt. Der fachlich benoetigte Payload umfasst:
+3. **Serverseitige Finalisierung**
+   - Erst nach dem Bestaetigungs-PUT speichert der Server den Craving-Wert aus `submission` in `self_reports`.
+   - Danach loescht der Server den zugehoerigen Eintrag aus `submission`.
+   - Damit wird die temporaere Verbindung zwischen Token und Craving-Wert wieder verworfen.
+
+Initialer Payload, bis zur naechsten Redundanzbereinigung:
 
 ```json
 {
@@ -159,36 +137,31 @@ Fuer die auswertbare Studienfassung wird der bisherige reine `craving`-Request d
 }
 ```
 
-Bedeutung der Felder:
+Bestaetigungspayload in der robusten Variante:
 
-- `token_components`: alle Token-Komponenten, die die App bis zu diesem Zeitpunkt vom Server erhalten hat. Beim ersten Craving-Wert ist die Liste leer.
-- `situation_index`: Index der abgeschlossenen Studiensituation. Die Zaehlweise muss in App, Backend und Auswertung identisch dokumentiert werden.
-- `condition`: experimentelle Bedingung der abgeschlossenen Situation.
-- `trial_count`: immer `5`; das Feld wird dennoch uebertragen, damit unvollstaendige oder manipulierte Durchgaenge serverseitig erkannt werden koennen.
-- `craving`: ganzzahliger Wert von 0 bis 100.
-- `client_timestamp`: technischer Zeitstempel der App zur Plausibilitaetspruefung, nicht als medizinisch exakter Ereigniszeitpunkt zu interpretieren.
-- `app_version`: Version der App zur Nachvollziehbarkeit technischer Aenderungen.
+```json
+{
+  "confirm_token_components": ["A1b", "9xQ", "m7P"]
+}
+```
 
-Die konkrete Ausgestaltung folgt dem datensparsamen Token-Konzept: Craving-Werte und Token-Tabelle duerfen nicht relational miteinander verknuepft werden. Der Token dient der spaeteren Teilnahme- und Auszahlungspruefung, nicht der wissenschaftlichen Analyse des Rauchverlangens.
+Der Bestaetigungspayload enthaelt bewusst keinen Craving-Wert, keine Bedingung, keinen Situationsindex und keine sonstigen Studiendaten.
 
-## 4. Noch zu entwickelnde Anforderungen aus Expose und aktuellem Masterarbeitsstand
+## 4. Noch zu entwickelnde Anforderungen
 
 ### 4.1 Studienfreischaltung, Teilnahmeberechtigung und Tokenausgabe
 
-Implementiere die Teilnahmefreischaltung so, dass die App keine personenbezogenen Registrierungsdaten speichern muss und der Abschlussnachweis erst nach erfolgreicher App-Nutzung entsteht:
+- Die App verwendet keinen personenbezogenen Account und keinen vorab fest zugeteilten `participant_app_token`.
+- Die Teilnahmeberechtigung wird organisatorisch ueber Registrierung, Einwilligung und Bereitstellung der App beziehungsweise Studienanleitung hergestellt.
+- Der serverseitig verifizierte Token entsteht erst durch erfolgreiche Craving-Uebertragungen und deren Bestaetigung.
+- `submit.php` erzeugt fuer eine neue App-Installation beim ersten gueltigen Craving-PUT einen Token aus 20 Komponenten mit jeweils drei alphanumerischen Zeichen.
+- Die erste Komponente muss unter maximal 85 geplanten Teilnehmenden eindeutig sein.
+- Die App zeigt den Token erst nach Erhalt und Bestaetigung aller 20 Komponenten an.
+- Der Token ist Abschluss- und Abrechnungsnachweis, aber kein Auswertungsschluessel.
 
-1. Die App bietet beim ersten Start keine Eingabe eines personenbezogenen Accounts und keinen vorab fest zugeteilten `participant_app_token` an.
-2. Die Teilnahmeberechtigung wird organisatorisch ueber Registrierung, Einwilligung und Bereitstellung der App beziehungsweise Studienanleitung hergestellt. Die App selbst verarbeitet dafuer keine Namen, E-Mail-Adressen oder Zahlungsdaten.
-3. Der serverseitig verifizierte Token entsteht erst durch erfolgreiche Craving-Uebertragungen an `submit.php`.
-4. `submit.php` erzeugt fuer eine neue App-Installation beim ersten gueltigen Craving-PUT einen Token aus 20 Komponenten mit jeweils drei alphanumerischen Zeichen.
-5. Die erste Token-Komponente muss unter den maximal 85 geplanten Teilnehmenden eindeutig sein. Die Datenbank erzwingt diese Eindeutigkeit, und der Server generiert bei Kollisionen neu.
-6. Der Server gibt bei der ersten gueltigen Uebertragung die erste Token-Komponente zurueck.
-7. Bei jeder folgenden Uebertragung sendet die App alle bisher erhaltenen Token-Komponenten mit. Der Server prueft diese Komponenten gegen die Token-Tabelle und gibt die jeweils naechste Komponente zurueck.
-8. Die App zeigt den Token den Teilnehmenden erst nach Abschluss aller 20 Studiensituationen beziehungsweise nach Erhalt aller 20 Komponenten an.
-9. Die abschliessende Token-Anzeige muss kopier- und abschreibbar sein, aber keine Craving-Werte, Bedingungen oder Zeitpunkte enthalten.
-10. Der Token ist ein Abschluss- und Abrechnungsnachweis. Er darf in der wissenschaftlichen Craving-Tabelle nicht als Fremdschluessel, Teilnehmer-ID oder Auswertungsschluessel gespeichert werden.
+### 4.2 Serverseitige Tabellen
 
-Empfohlene serverseitige Token-Tabelle, ohne Relation zur Craving-Tabelle:
+Token-Tabelle ohne dauerhafte Relation zur Craving-Tabelle:
 
 ```sql
 CREATE TABLE app_tokens (
@@ -215,180 +188,148 @@ CREATE TABLE app_tokens (
     component_19 CHAR(3) NOT NULL,
     component_20 CHAR(3) NOT NULL,
     delivered_component_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    confirmed_component_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CHECK (delivered_component_count BETWEEN 0 AND 20)
+    CHECK (delivered_component_count BETWEEN 0 AND 20),
+    CHECK (confirmed_component_count BETWEEN 0 AND 20),
+    CHECK (confirmed_component_count <= delivered_component_count)
 );
 ```
 
-Hinweis zur Datensparsamkeit: Die Tabelle enthaelt keine E-Mail-Adresse, keinen Namen, keine Zahlungsdaten, keine Craving-Werte, keinen Fremdschluessel zur Craving-Tabelle und keinen Durchgangsinhalt. `delivered_component_count` speichert ausschliesslich, wie viele Komponenten an die App ausgeliefert wurden, damit eine verlorene Serverantwort idempotent wiederholt werden kann.
+Temporaere Zwischentabelle fuer den Handshake:
 
-### 4.2 Uebermittlung auswertbarer Studienmetadaten
+```sql
+CREATE TABLE submission (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    token_id BIGINT UNSIGNED NOT NULL,
+    component_index TINYINT UNSIGNED NOT NULL,
+    token_prefix_hash CHAR(64) NOT NULL,
+    craving TINYINT UNSIGNED NOT NULL,
+    situation_index TINYINT UNSIGNED NOT NULL,
+    condition_code ENUM('CUE_MATCHING', 'CUE_LABELING') NOT NULL,
+    app_version VARCHAR(32) NULL,
+    client_timestamp DATETIME NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    UNIQUE KEY uq_submission_token_component (token_id, component_index),
+    CHECK (craving BETWEEN 0 AND 100),
+    CHECK (component_index BETWEEN 1 AND 20)
+);
+```
 
-Erweitere die Datenerfassung so, dass die statistische Auswertung die Bedingungen eindeutig unterscheiden kann und der Server gleichzeitig die App-Uebertragungen verifiziert:
-
-1. Jeder Craving-Selbstbericht wird per `PUT` gesendet.
-2. Jeder Craving-Selbstbericht enthaelt eine Bedingung (`CUE_MATCHING` oder `CUE_LABELING`).
-3. Jeder Selbstbericht enthaelt den Studiensituationsindex von 0 bis 19 oder 1 bis 20. Die Zaehlweise muss in App, Backend und Auswertung identisch sein.
-4. Jeder Selbstbericht enthaelt `trial_count = 5`. Andere Werte werden serverseitig abgelehnt oder als nicht verwertbar markiert.
-5. Die App sendet bei jeder Uebertragung alle bisher erhaltenen Token-Komponenten. Beim ersten Selbstbericht ist diese Liste leer.
-6. Optional werden Trial-IDs oder Cue-IDs uebermittelt, wenn dies fuer Plausibilitaetspruefung und Dokumentation erforderlich ist. Diese IDs duerfen keine Relation zur Token-Tabelle herstellen.
-7. Der Server verhindert doppelte Craving-Speicherung durch die Token-Komponentenlogik und den gespeicherten `delivered_component_count`.
-8. Die App aktualisiert `verified_completed_situation_count` und die lokale Token-Komponentenliste erst nach einer gueltigen Serverantwort.
-9. Nach 20 gueltigen Uebertragungen zeigt die App den aus 20 Komponenten bestehenden Token an und markiert die Studie lokal als abgeschlossen.
+`submission` enthaelt keine personenbezogenen Daten. Sie verbindet Tokenbezug und Craving-Wert nur bis zur App-Bestaetigung. Nach erfolgreichem Bestaetigungs-PUT wird der Craving-Wert in `self_reports` gespeichert und der `submission`-Eintrag geloescht. Abgelaufene Eintraege werden per Cleanup entfernt oder als abgebrochen behandelt, ohne nach `self_reports` uebernommen zu werden.
 
 ### 4.3 Idempotente Serverlogik fuer `submit.php`
 
-`submit.php` ist fuer die auswertbare App-Uebertragung von POST auf PUT umzustellen. Der Endpunkt liest den Request-Body, validiert JSON und gibt JSON zurueck. Die serverseitige Logik folgt diesen Regeln:
-
 1. **Erster gueltiger PUT ohne Token-Komponenten**
-   - Voraussetzung: `token_components` ist eine leere Liste, `craving` liegt zwischen 0 und 100, `trial_count` ist 5, Bedingung und Situationsindex sind plausibel.
-   - Der Server generiert 20 Token-Komponenten mit jeweils drei alphanumerischen Zeichen.
-   - Die erste Komponente ist in `app_tokens.first_component` eindeutig. Bei Kollision generiert der Server einen neuen Token.
-   - Der Server speichert den Craving-Wert in der Craving-Tabelle.
-   - Der Server legt den Token in `app_tokens` an, setzt `delivered_component_count = 1` und gibt Komponente 1 zurueck.
+   - Server erzeugt 20 Token-Komponenten.
+   - Erste Komponente ist eindeutig.
+   - Craving wird temporaer in `submission` gespeichert, nicht in `self_reports`.
+   - `delivered_component_count = 1`, `confirmed_component_count = 0`.
+   - Server gibt Komponente 1 zurueck.
 
-2. **Normaler Folge-PUT mit `n` bisher erhaltenen Komponenten**
-   - Voraussetzung: Der uebermittelte Komponenten-Prefix existiert in `app_tokens`, und `n == delivered_component_count`.
-   - Der Server speichert den neuen Craving-Wert.
-   - Der Server erhoeht `delivered_component_count` auf `n + 1`.
-   - Der Server gibt die Komponente `n + 1` zurueck.
+2. **Normaler Folge-PUT mit `n` bisher bestaetigten Komponenten**
+   - Voraussetzung: Prefix existiert und `n == confirmed_component_count`.
+   - Server legt einen `submission`-Eintrag fuer Komponente `n + 1` an.
+   - Server setzt `delivered_component_count = n + 1`.
+   - Server gibt Komponente `n + 1` zurueck.
 
 3. **Retry nach verlorener Token-Antwort**
-   - Voraussetzung: Der uebermittelte Komponenten-Prefix existiert in `app_tokens`, und `n == delivered_component_count - 1`.
-   - Der Server speichert den Craving-Wert nicht erneut.
-   - Der Server veraendert `delivered_component_count` nicht.
-   - Der Server gibt erneut die Komponente `n + 1` zurueck.
+   - Voraussetzung: Prefix existiert, `n == delivered_component_count - 1`, und passende unbestaetigte `submission` existiert.
+   - Server speichert Craving nicht erneut.
+   - Server gibt Komponente `n + 1` erneut zurueck.
 
-4. **Ungueltige oder nicht aus der App ableitbare Uebertragung**
-   - Token-Prefix existiert nicht.
-   - Token ist kuerzer als nach `delivered_component_count` zulaessig, also `n < delivered_component_count - 1`.
-   - Token ist laenger als serverseitig ausgeliefert, also `n > delivered_component_count`.
-   - Einzelne Komponenten haben nicht exakt drei alphanumerische Zeichen.
-   - `trial_count` ist nicht 5 oder der Craving-Wert liegt ausserhalb 0 bis 100.
-   - Ergebnis: HTTP 400 `Bad Request`, ohne Craving-Speicherung und ohne Aenderung der Token-Tabelle.
+4. **Bestaetigungs-PUT**
+   - Request enthaelt nur Tokenstand beziehungsweise erhaltene Komponente, keine Craving- oder Studiendaten.
+   - Server gibt immer HTTP 204 zurueck.
+   - Falls passende unbestaetigte `submission` existiert, wird der Craving-Wert nach `self_reports` uebernommen, `confirmed_component_count` erhoeht und `submission` geloescht.
+   - Falls keine passende `submission` existiert, ist der Request ein idempotenter No-op mit HTTP 204.
 
-5. **Abschlussfall**
-   - Nach Rueckgabe der 20. Komponente ist die App-Teilnahme aus Sicht des Tokenmechanismus vollstaendig.
-   - Weitere PUTs mit 20 Komponenten werden nicht als neue Craving-Werte gespeichert.
-   - Die konkrete Serverantwort fuer bereits abgeschlossene Tokens ist in `ASSUMPTIONS.md` festzuhalten, bis sie implementiert ist.
+5. **Ungueltiger initialer PUT**
+   - Nicht existente Prefixe, malformed Token-Komponenten, zu kurze oder zu lange Tokenstaende, ungueltige Craving-Werte oder unplausible Studienfelder resultieren in HTTP 400 `Bad Request`.
+   - Dabei wird weder `submission` noch `self_reports` beschrieben.
 
-Die Craving-Tabelle speichert nur wissenschaftlich erforderliche Werte, zum Beispiel Craving-Wert, Bedingung, Situationsindex, Trial-Count, technische Zeitstempel und App-Version. Sie enthaelt keinen Fremdschluessel auf `app_tokens` und keine Token-Komponente. Dadurch bleibt der spaetere Abrechnungsnachweis technisch von den Craving-Werten getrennt.
+6. **Abschlussfall**
+   - Nach Bestaetigung der 20. Komponente ist die Teilnahme aus Sicht des Tokenmechanismus vollstaendig.
+   - Weitere initiale PUTs mit 20 bestaetigten Komponenten speichern keine neuen Craving-Werte.
+   - Bestaetigungs-PUTs bleiben idempotent und liefern HTTP 204.
 
-### 4.4 Robuste Offline- und Retry-Logik der App
+### 4.4 App-Retry-Logik
 
-Alltagstauglichkeit erfordert, dass kurzzeitige Netzwerkprobleme nicht zu Datenverlust oder unklarer Studienteilnahme fuehren:
-
-1. Ein abgeschlossener Durchgang wird lokal als `PendingSubmission` gespeichert, bevor die App den PUT sendet.
-2. `PendingSubmission` enthaelt Craving-Wert, Bedingung, Situationsindex, `trial_count = 5`, App-Version, Zeitstempel und die zum Zeitpunkt der Uebertragung lokal bekannten Token-Komponenten.
-3. Wenn der Server eine neue oder erneut ausgelieferte Token-Komponente zurueckgibt, fuegt die App diese Komponente lokal an, loescht `PendingSubmission` und erhoeht `verified_completed_situation_count` auf die Anzahl der lokalen Token-Komponenten.
-4. Wenn die Verbindung abbricht oder die Serverantwort nicht verarbeitet werden kann, bleibt `PendingSubmission` erhalten und wird unveraendert erneut gesendet.
-5. Die App versucht die erneute Uebertragung beim naechsten Start und vor Beginn einer neuen Studiensituation.
-6. Der Nutzer oder die Nutzerin sieht einen knappen Status, ohne technische Details.
-7. Der Server behandelt wiederholte Uebertragungen idempotent ueber den Komponenten-Prefix und `delivered_component_count`, nicht ueber eine direkte Relation zwischen Token und Craving-Wert.
+- Vor dem initialen PUT legt die App lokal ein `PendingSubmission` an.
+- Wenn vor der Tokenantwort ein Fehler auftritt, wird derselbe initiale PUT wiederholt.
+- Wenn die Tokenantwort eintrifft, speichert die App die Komponente als `pending_confirmation_token` und sendet den Bestaetigungs-PUT.
+- Wenn vor oder nach dem Bestaetigungs-PUT ein Fehler auftritt, wiederholt die App nur den Bestaetigungs-PUT.
+- Erst nach HTTP 204 wird die Komponente dauerhaft in `token_components` uebernommen und `PendingSubmission` geloescht.
+- Die App startet beim naechsten App-Start und vor einer neuen Studiensituation ausstehende Wiederholungen.
 
 ### 4.5 Mehrsprachigkeit Deutsch/Englisch
 
-Die Studie setzt Deutsch- oder Englischkenntnisse voraus. Die App soll deshalb mehrsprachig dokumentierbar und nutzbar sein:
+- Sichtbare UI-Texte aus Kotlin in Android-Stringressourcen verschieben.
+- Mindestens `values/strings.xml` und `values-en/strings.xml` pflegen.
+- Labelpaare erhalten Sprachzuordnung oder getrennte Ressourcen.
+- Studienbegriffe bleiben zwischen App, Studieninformation und Datenschutzerklaerung konsistent.
 
-1. Verschiebe sichtbare UI-Texte aus Kotlin in Android-Stringressourcen.
-2. Fuehre mindestens `values/strings.xml` fuer Deutsch und `values-en/strings.xml` fuer Englisch.
-3. Labelpaare erhalten eine Sprachzuordnung oder getrennte Ressourcen fuer Deutsch und Englisch.
-4. Die App folgt der Systemsprache, sofern Deutsch oder Englisch verfuegbar ist.
-5. Bei nicht unterstuetzter Systemsprache verwendet die App Deutsch oder eine klar definierte Standardsprache.
-6. Studienrelevante Begriffe bleiben zwischen App, Studieninformation und Datenschutzerklaerung konsistent.
+### 4.6 Benachrichtigungen
 
-### 4.6 Benachrichtigungen als optionale Erinnerungsfunktion
+Lokale Benachrichtigungen koennen nach stabiler Datenerfassung und Token-Idempotenz implementiert werden. Texte bleiben neutral und enthalten keine Angaben zu Rauchverlangen, Rauchstatus oder medizinischen Aussagen.
 
-Push- beziehungsweise lokale Benachrichtigungen sind als Standardfeature im Expose genannt und koennen die Durchfuehrung der Studie unterstuetzen. Implementiere sie erst nach stabiler Datenerfassung und Token-Idempotenz:
+### 4.7 Tests
 
-1. Verwende lokale Android-Benachrichtigungen, keine externen Push-Dienste, solange kein serverseitiger Push-Zweck erforderlich ist.
-2. Frage die Benachrichtigungsberechtigung nur an, wenn die App die Erinnerungsfunktion erklaert.
-3. Plane Erinnerungen anhand von `next_situation_available_at_millis`.
-4. Benachrichtigungstexte bleiben neutral und stigmatisierungsarm, zum Beispiel `CueLens: Eine neue Studiensituation ist verfuegbar.`
-5. Benachrichtigungen duerfen keine sensiblen Details wie Rauchverlangen, Rauchstatus oder medizinische Aussagen enthalten.
-6. Die App funktioniert auch ohne Benachrichtigungsberechtigung.
+Vor produktiver Nutzung sind mindestens zu testen:
 
-### 4.7 Produktionskonstanten und Build-Absicherung
+- Studiensequenz ueber 20 Situationen.
+- Vollstaendigkeit der Bild- und Labelressourcen.
+- Slider-Grenzen 0 bis 100.
+- Erster PUT ohne Token-Komponenten.
+- Folge-PUTs mit bestaetigtem Prefix.
+- Retry nach verlorener Tokenantwort ohne doppelte `submission`.
+- Bestaetigungs-PUT mit HTTP 204.
+- Uebernahme nach `self_reports` und Loeschung aus `submission`.
+- Wiederholte Bestaetigungs-PUTs ohne doppelte Craving-Speicherung.
+- HTTP 400 fuer ungueltige initiale PUTs.
 
-Stelle sicher, dass Debug- und Produktionsverhalten nicht versehentlich vermischt werden:
+### 4.8 Sicherheits- und Datenschutzhaertung
 
-1. Fuehre Konstanten fuer Countdown, Sperrzeit, Situationszahl und Aufgabenanzahl zentral zusammen.
-2. Lege produktive Werte in der Production-Variante fest: 4 Sekunden Cue-Betrachtung vor aktiven Bildoptionen, 3 Stunden Sperrzeit, 20 Situationen, 5 Aufgaben pro Situation.
-3. Erlaube kuerzere Werte nur in Staging- oder Debug-Varianten.
-4. Schreibe Unit-Tests oder Build-Konfigurationschecks, die Production-Werte pruefen.
-5. Dokumentiere jede Abweichung in `ASSUMPTIONS.md` oder in dieser Datei.
+- Kein produktives Logging von Tokens, Craving-Werten, Serverantworten oder personenbezogenen Angaben.
+- HTTPS in Production; Klartext nur als Staging-Ausnahme.
+- Lokale Token-Komponenten, `PendingSubmission` und `pending_confirmation_token` verschluesseln, wenn sie als sensibel eingestuft werden.
+- Keine sensiblen Daten in Zwischenablage, Screenshots, externem Speicher oder Mediengalerie, solange dies nicht ausdruecklich vorgesehen ist.
+- Datenkategorien, Speicherorte und Uebertragungen parallel in der Masterarbeit dokumentieren.
 
-### 4.8 Tests fuer Studienlogik, Tokenlogik und Ressourcenintegritaet
+### 4.9 Optionale KI-gestuetzte Bildklassifikation
 
-Die App soll vor produktiver Nutzung automatisiert pruefen lassen, ob die Studienlogik konsistent ist:
-
-1. Unit-Test fuer `canStartSituation` ueber alle 20 Situationen.
-2. Unit-Test fuer die Randomisierungs- und Persistenzlogik der Cue-Matching-Reihenfolge.
-3. Test fuer die Vollstaendigkeit der Cue-Matching-Tripletts.
-4. Test fuer die Vollstaendigkeit der Cue-Labeling-Labelpaare.
-5. Test fuer die Slider-Grenzen 0 bis 100 und Integer-Rundung.
-6. Test fuer die Zuordnung von Bedingung, Situationsindex und `trial_count = 5` in der Payload.
-7. Test fuer den ersten PUT ohne Token-Komponenten und die Rueckgabe der ersten Token-Komponente.
-8. Test fuer normale Folge-PUTs mit `n == delivered_component_count`.
-9. Test fuer Retry-PUTs mit `n == delivered_component_count - 1`, ohne doppelte Craving-Speicherung.
-10. Test fuer ungueltige Token-Prefixe, zu kurze Tokens und zu lange Tokens mit HTTP 400.
-11. Instrumentierter Smoke-Test fuer Startbildschirm, eine Matching-Aufgabe, eine Labeling-Aufgabe, Craving-Screen und abschliessende Token-Anzeige.
-
-### 4.9 Sicherheits- und Datenschutzhaertung der Android-App
-
-Setze die fuer eine Gesundheits- beziehungsweise Studiendaten-App angemessenen Mindestmassnahmen um:
-
-1. Entferne produktiv unnoetiges Logging oder reduziere es auf nicht-sensitive technische Statusmeldungen.
-2. Keine Ausgabe von Tokens, Craving-Werten, Serverantworten oder personenbezogenen Angaben in Logcat.
-3. Verwende HTTPS in Production und begrenze Klartextverkehr auf Staging, idealerweise ueber `network_security_config`.
-4. Pruefe `FLAG_SECURE` fuer Bildschirme, auf denen sensible Studiendaten, Token oder persoenliche Hinweise angezeigt werden.
-5. Speichere lokale Token-Komponenten und Pending-Submissions verschluesselt, wenn sie als sensibel eingestuft werden.
-6. Keine sensiblen Daten in Zwischenablage, Screenshots, externem Speicher oder Mediengalerie, solange dies fuer die Tokenuebergabe nicht ausdruecklich vorgesehen und dokumentiert ist.
-7. Bei spaeterer Kamera- oder Dateinutzung muessen Metadaten mit Datenschutzbezug entfernt und Zugriffe anderer Apps vermieden werden.
-8. Dokumentiere alle Datenkategorien, Speicherorte und Uebertragungen parallel in der Masterarbeitstabelle `Datenherkunft und Speicherorte`.
-
-### 4.10 Optionale KI-gestuetzte Bildklassifikation
-
-Die KI-Funktion wird nachrangig gegenueber der auswertbaren Studienfassung behandelt. Implementiere sie nur, wenn die Grundstudie stabil laeuft:
-
-1. Fuehre eine Schnittstelle fuer Reizerkennung ein, zum Beispiel `CueDetector` mit `detect(image): List<CueDetection>`.
-2. Beginne mit einem Stub oder regelbasierten Mock, damit UI und Datenmodell testbar bleiben.
-3. Kapsle ML Kit, LiteRT oder ein eigenes TFLite-Modell hinter derselben Schnittstelle.
-4. Dokumentiere fuer jedes Modell mindestens Modellgroesse, Inferenzzeit, Speicherbedarf, Android-Mindestversion, Precision, Recall und F1.
-5. Nutze KI-Ergebnisse nur zur Auswahl von Labels oder Vergleichsreizen, nicht zur Speicherung selbst aufgenommener Bilder, solange dies nicht datenschutzrechtlich explizit vorgesehen ist.
-6. Verarbeite Kamerabilder moeglichst lokal auf dem Geraet.
-7. Entferne EXIF- und Standortmetadaten, falls Dateien verarbeitet oder zwischengespeichert werden.
-8. Biete weiterhin einen Studienmodus mit lokal gebuendelten Reizbildern ohne KI an, damit auch aeltere oder leistungsschwaechere Endgeraete teilnehmen koennen.
+Die KI-Funktion ist nachrangig gegenueber der stabilen Studienfassung. Beginne mit einer austauschbaren Schnittstelle, zum Beispiel `CueDetector`, und dokumentiere fuer jedes Modell Modellgroesse, Inferenzzeit, Speicherbedarf, Android-Mindestversion, Precision, Recall und F1.
 
 ## 5. Vorgeschlagene naechste Implementierungsreihenfolge
 
-1. **Produktionskonstanten und Build-Profile bereinigen**: Production-Werte fuer 4 Sekunden und 3 Stunden absichern; Staging-Werte getrennt halten.
-2. **PUT-Vertrag fuer `submit.php` festlegen**: JSON-Request, JSON-Response, Statuscodes, Token-Komponentenformat und Fehlerfaelle definieren.
-3. **Serverseitige Token-Tabelle einfuehren**: 20 Komponenten erzeugen, erste Komponente eindeutig halten, `delivered_component_count` speichern, keine Relation zu Craving-Werten herstellen.
-4. **Payload fuer auswertbare Selbstberichte erweitern**: Bedingung, Situationsindex, `trial_count = 5`, App-Version und bisherige Token-Komponenten ergaenzen.
-5. **Idempotente Submit-Logik implementieren**: Erstuebertragung, Folgeuebertragung, Retry nach verlorener Antwort und HTTP-400-Faelle sauber trennen.
-6. **App-Zustand auf serverseitige Verifikation umstellen**: `verified_completed_situation_count` aus erhaltenen Token-Komponenten ableiten und lokale Fortschrittserhoehung erst nach gueltiger Serverantwort durchfuehren.
-7. **Retry-Logik in der App einfuehren**: `PendingSubmission` lokal speichern, unveraendert erneut senden und nach Tokenantwort bereinigen.
-8. **Mehrsprachigkeit umsetzen**: UI-Texte und Labelpaare fuer Deutsch und Englisch strukturieren.
-9. **Tests fuer Studienlogik, Tokenlogik und Ressourcenintegritaet ergaenzen**: Unit-, Backend- und Instrumentierungstests fuer die Studiensequenz.
-10. **Sicherheits- und Datenschutzhaertung abschliessen**: Logging, Klartextverkehr, lokale Speicherung, Screenshots und Netzwerkregeln pruefen.
-11. **Optionale Erinnerungen implementieren**: lokale Benachrichtigungen anhand des naechsten freigegebenen Durchgangs.
-12. **KI-Schnittstelle vorbereiten**: erst Stub, dann ML Kit oder LiteRT hinter austauschbarer Schnittstelle evaluieren.
-13. **Dokumentationsabgleich**: Nach jeder technischen Aenderung diese Datei, `PROJECT_PLAN.md`, `ASSUMPTIONS.md`, relevante Tabellen in Kapitel 5 und die Studienlogik in Kapitel 6 synchronisieren.
+1. Production-Konstanten und Build-Profile bereinigen.
+2. PUT-Vertrag fuer initiale Uebertragung und Bestaetigungs-PUT festlegen.
+3. Tabellen `app_tokens` und `submission` einfuehren.
+4. Drei-Wege-Handshake implementieren.
+5. Payload fuer auswertbare Selbstberichte erweitern und danach Redundanzen gezielt bereinigen.
+6. Idempotente Serverlogik fuer Erstuebertragung, Folgeuebertragung, Retry, Bestaetigung und HTTP-400-Faelle implementieren.
+7. App-Zustand auf bestaetigte Token-Komponenten umstellen.
+8. Retry-Logik fuer `PendingSubmission` und `pending_confirmation_token` implementieren.
+9. Mehrsprachigkeit umsetzen.
+10. Tests fuer Studienlogik, Tokenlogik und Ressourcenintegritaet ergaenzen.
+11. Sicherheits- und Datenschutzhaertung abschliessen.
+12. Optionale Erinnerungen implementieren.
+13. KI-Schnittstelle vorbereiten.
+14. Dokumentationsabgleich mit `PROJECT_PLAN.md`, `ASSUMPTIONS.md`, Kapitel 5 und Kapitel 6.
 
-## 6. Definition of Done fuer Codex-Aenderungen
+## 6. Definition of Done
 
 Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
 
-- Die App baut in mindestens einer Staging- und einer Production-Variante.
-- Die Aenderung veraendert die Studienlogik nicht unbeabsichtigt.
-- Neue Datenfelder sind im Code benannt, im Backend-Vertrag beschrieben und fuer die Auswertung begruendet.
+- Die App baut in Staging und Production.
+- Die Studienlogik wurde nicht unbeabsichtigt veraendert.
+- Neue Datenfelder sind im Code, Backend-Vertrag und in der Dokumentation beschrieben.
 - Neue lokale Speicherungen sind nach Zweck, Lebensdauer und Schutzbedarf dokumentiert.
-- Neue Berechtigungen sind technisch notwendig und dokumentiert.
-- UI-Texte sind stigmatisierungsarm und enthalten keine Therapie- oder Wirksamkeitsversprechen.
 - Fehlerfaelle fuehren zu einem eindeutigen UI-Zustand.
 - Tests oder manuelle Acceptance Checks decken den Kernpfad ab.
 - Craving-Werte werden bei Retry-Faellen nicht doppelt gespeichert.
-- Die Token-Tabelle enthaelt keine Relation zur Craving-Tabelle.
-- Die Dokumentation vermeidet Formulierungen wie `nur vorlaeufig`, `TODO` oder `spaeter klaeren`, wenn stattdessen eine konkrete Annahme, Begrenzung oder naechste Implementierung angegeben werden kann.
+- Craving-Werte werden erst nach Bestaetigungs-PUT in `self_reports` uebernommen.
+- Die temporaere Tabelle `submission` wird nach erfolgreicher Uebernahme in `self_reports` bereinigt.
+- Die Token-Tabelle enthaelt keine dauerhafte Relation zur Craving-Tabelle.
