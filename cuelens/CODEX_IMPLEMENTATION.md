@@ -9,9 +9,10 @@ Diese Datei beschreibt den Soll-Zustand der Android-App im Verzeichnis `cuelens`
 - Priorisiere Datensparsamkeit, robuste Studienlogik, reproduzierbare Reizpraesentation, nachvollziehbare Zustandsuebergaenge und geringe Anforderungen an reale Android-Endgeraete.
 - Fuege Berechtigungen nur hinzu, wenn sie fuer eine konkrete Funktion zwingend erforderlich sind.
 - Personenbezogene Registrierungs- und Abrechnungsdaten gehoeren nicht in die Android-App und nicht in die wissenschaftlichen Selbstberichte.
-- Behandle Idempotenz als zentrale Anforderung. Netzwerkfehler duerfen nicht zu doppelten Selbstberichten, falschem Fortschritt oder einem verlorenen Abschluss-Token fuehren.
-- Trenne den Abschluss- und Auszahlungstoken dauerhaft von den auswertbaren Selbstberichten. Eine temporaere Verbindung ist nur in der kurzlebigen Tabelle `submission` fuer den Drei-Wege-Handshake zulaessig.
-- Uebertrage keine Felder, die serverseitig deterministisch ableitbar sind. Der Server leitet Situation, Bedingung und feste Trial-Anzahl aus dem bestaetigten Token-Fortschritt und der Studienkonfiguration ab.
+- Behandle Idempotenz als zentrale Anforderung. Netzwerkfehler duerfen nicht zu doppelten Selbstberichten, falschem Fortschritt oder einem verlorenen Abschlussnachweis fuehren.
+- Trenne die Registrierung dauerhaft von den auswertbaren Selbstberichten. Eine temporaere Verbindung zwischen gueltigem Hash und Selbstbericht ist nur in der kurzlebigen Tabelle `submission` fuer den Drei-Wege-Handshake zulaessig.
+- Uebertrage keine Felder, die serverseitig deterministisch ableitbar sind. Der Server leitet Situation, Bedingung und feste Trial-Anzahl aus dem gueltigen HMAC-Kettenschritt und der Studienkonfiguration ab.
+- Speichere das HMAC-Secret ausschliesslich serverseitig im geschuetzten Verzeichnis `config`. Das App-Token wird nur in der App gespeichert und nicht dauerhaft auf dem Server persistiert.
 
 ## 2. Bisherige Git-Historie als Umsetzungsreihenfolge
 
@@ -46,9 +47,9 @@ Cue-Bilder fuellen den sichtbaren Bildschirm durch eine Cover-Darstellung. Match
 
 ### 2.4 Studienfortschritt, Sperrzeit und Randomisierung
 
-- Lokaler Fortschritt ist nur ein Cache. Autoritativ ist der serverseitig verifizierte und von der App bestaetigte Token-Fortschritt.
-- Die App speichert lokal den naechsten erlaubten Startzeitpunkt, die zufaellige Cue-Matching-Reihenfolge und die bereits bestaetigten Token-Komponenten.
-- Der Abschlussstand wird aus `token_components.size` abgeleitet. Ein separates persistentes `completed_situation_count` wird nicht verwendet.
+- Lokaler Fortschritt ist nur ein App-Cache. Autoritativ ist, ob die App den naechsten gueltigen HMAC-Kettenwert besitzt.
+- Die App speichert lokal den naechsten erlaubten Startzeitpunkt, die zufaellige Cue-Matching-Reihenfolge, das App-Token und den aktuell vorzulegenden Hash.
+- Ein separates persistentes `completed_situation_count` wird nicht verwendet.
 - Zwischen zwei Studiensituationen liegt im Produktivbetrieb ein Mindestabstand von drei Stunden.
 - Insgesamt sind 20 Studiensituationen vorgesehen: zehn Cue-Matching-Situationen und zehn Cue-Labeling-Situationen.
 - Jede Studiensituation enthaelt immer fuenf Aufgaben. Diese Trial-Anzahl wird nicht uebertragen und nicht gespeichert, solange keine unvollstaendigen Situationen zugelassen werden.
@@ -97,39 +98,94 @@ Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Tr
 
 Persistiere nur kleine, zweckgebundene Werte:
 
+- `app_token`: UUID, die beim initialen Freischaltungsrequest vom Server ausgeliefert und nur in der App persistiert wird.
+- `current_hash`: aktuell gueltiger, beim naechsten Selbstbericht vorzulegender HMAC-Kettenwert.
 - `next_situation_available_at_millis`: fruehester Startzeitpunkt der naechsten Situation.
 - `matching_order`: stabile zufaellige Reihenfolge der Cue-Matching-Aufgaben.
-- `token_components`: vom Server zurueckgelieferte und von der App bestaetigte Token-Komponenten.
 - `pending_submission`: abgeschlossener Durchgang, dessen initiale Serverantwort noch fehlt.
-- `pending_confirmation_token_components`: Token-Prefix inklusive neu erhaltener Komponente, der noch mit dem zweiten PUT bestaetigt werden muss.
+- `pending_confirmation_hash`: vom Server neu ausgelieferter Hash, der noch mit dem zweiten PUT bestaetigt werden muss.
 
-`completed_situation_count` und `participant_app_token` sind nicht als autoritative lokale Zustaende zu verwenden. Der Abschlussstand wird aus den bestaetigten Token-Komponenten abgeleitet. Lokale Daten duerfen keine Namen, E-Mail-Adressen, Zahlungsdaten oder Freitexte enthalten.
+`completed_situation_count` und `participant_app_token` sind nicht als autoritative lokale Zustaende zu verwenden. Lokale Daten duerfen keine Namen, Zahlungsdaten oder Freitexte enthalten. Die E-Mail-Adresse wird nur fuer den initialen Freischaltungsrequest verwendet und danach nicht in der App als Studienzustand benoetigt.
 
-### 3.4 Netzwerkanbindung und Drei-Wege-Handshake
+### 3.4 HMAC-Hash-Chain
+
+Der bisherige 20-teilige Token wird durch ein App-Token in Form einer UUID und eine HMAC-Hash-Chain ersetzt:
+
+```text
+h_1 = HMAC(secret, app_token)
+h_i = HMAC(secret, h_(i-1) || app_token) fuer i = 2..20
+```
+
+Anforderungen:
+
+- Die Hashes werden nicht auf drei Zeichen begrenzt. Verwende einen ausreichend langen kodierten HMAC-Wert, zum Beispiel einen vollstaendigen SHA-256-HMAC als Hex- oder Base64url-Wert.
+- Das Secret wird nur serverseitig im geschuetzten Verzeichnis `config` gespeichert.
+- Das App-Token wird serverseitig nicht persistiert.
+- Der Server speichert immer nur den naechsten gueltigen, von der App vorzulegenden Hash in `valid_hashes`.
+- Eine Tabelle `final_hashes` wird nicht verwendet. Ob ein uebertragener Hash `h_20` ist, wird waehrend der Pruefung gegen die aus dem App-Token berechnete Kette festgestellt.
+- Der uebermittelte Hash wird zeitkonstant gegen die erwarteten Kettenwerte geprueft, zum Beispiel mit `hash_equals` oder einer vergleichbaren konstantzeitnahen Vergleichsfunktion. Die Pruefschleife soll alle 20 moeglichen Kettenwerte berechnen und nicht nach dem ersten Treffer abbrechen.
+
+### 3.5 Initiale Freischaltung per E-Mail-Adresse
+
+Der allererste Request dient nur der Ausgabe des App-Tokens und des ersten gueltigen Hashs:
+
+```json
+{
+  "email": "participant@example.org"
+}
+```
+
+Serververhalten:
+
+- Der Server prueft, ob die E-Mail-Adresse in `register` vorhanden und die Teilnahme freigegeben ist.
+- Wenn die E-Mail-Adresse nicht vorhanden, nicht freigegeben oder bereits als tokenisiert markiert ist, wird kein App-Token ausgeliefert.
+- Wenn die E-Mail-Adresse gueltig ist, erzeugt der Server ein neues `app_token` als UUID und berechnet `h_1 = HMAC(secret, app_token)`.
+- Der Server gibt `app_token` und `h_1` an die App zurueck, persistiert aber weder das App-Token noch `h_1` in Bezug zur E-Mail-Adresse.
+- Die App bestaetigt den Erhalt von App-Token und `h_1` in einem zweiten PUT. Erst nach dieser Bestaetigung wird in `register` gespeichert, dass ein App-Token ausgeliefert wurde. Der Token selbst wird dort nicht gespeichert.
+- Nach erfolgreicher Bestaetigung speichert der Server `h_1` in `valid_hashes`. Damit ist `h_1` der gueltige Nachweis fuer den ersten Selbstbericht.
+
+Bestaetigung der initialen Freischaltung:
+
+```json
+{
+  "email": "participant@example.org",
+  "app_token": "550e8400-e29b-41d4-a716-446655440000",
+  "confirmed_hash": "h_1"
+}
+```
+
+Der Server prueft, ob `confirmed_hash` zeitkonstant dem aus `app_token` berechneten `h_1` entspricht. Anschliessend setzt er ein technisches Flag oder einen Zeitstempel in `register`, zum Beispiel `app_token_issued_at`, ohne das App-Token zu speichern.
+
+## 4. Drei-Wege-Handshake fuer Selbstberichte
 
 Die auswertbare Uebertragung besteht aus drei Schritten:
 
 1. **Initialer PUT der App**
-   - Die App sendet den Selbstbericht und die bisher bestaetigten Token-Komponenten an `submit.php`.
-   - Beim ersten Wert ist die Komponentenliste leer.
-   - Der Server validiert den Request, erzeugt beziehungsweise prueft den Token-Fortschritt und speichert Selbstbericht und Tokenbezug zunaechst nur temporaer in `submission`.
-   - Der Server antwortet mit der naechsten Token-Komponente.
+   - Die App sendet `app_token`, den aktuell gueltigen Hash und den Selbstbericht an `submit.php`.
+   - Der Server sucht den uebermittelten Hash in `valid_hashes`.
+   - Der Server berechnet mit dem uebermittelten App-Token die HMAC-Kette `h_1` bis `h_20` und prueft zeitkonstant, ob der uebermittelte Hash zu dieser Kette gehoert.
+   - Der Server leitet aus dem gefundenen Kettenindex Situation und Bedingung ab.
+   - Der Server speichert Selbstbericht, Kettenindex und den naechsten Hash zunaechst nur temporaer in `submission`.
+   - Der Server loescht den verbrauchten Hash aus `valid_hashes` und antwortet mit dem naechsten Hash. Bei `h_20` antwortet der Server mit einem Abschlussstatus und speichert keinen weiteren gueltigen Hash.
 
 2. **Bestaetigungs-PUT der App**
-   - Nach Erhalt der naechsten Token-Komponente sendet die App einen zweiten PUT.
-   - Dieser Request enthaelt keine Studiendaten, sondern nur den Token-Prefix inklusive der neu erhaltenen Komponente.
+   - Nach Erhalt des naechsten Hashs sendet die App einen zweiten PUT.
+   - Dieser Request enthaelt keine Studiendaten, sondern `app_token` und den neu erhaltenen Hash. Bei Abschluss nach `h_20` enthaelt der Request den Abschlussnachweis gemaess Backend-Vertrag.
    - Der Bestaetigungs-PUT resultiert immer in HTTP 204, auch bei Wiederholung.
 
 3. **Serverseitige Finalisierung**
    - Erst nach dem Bestaetigungs-PUT speichert der Server den Selbstbericht aus `submission` in `self_reports`.
+   - Fuer die Schritte 1 bis 19 speichert der Server den neu bestaetigten Hash in `valid_hashes`; dieser Hash ist beim naechsten Selbstbericht vorzulegen.
+   - Fuer Schritt 20 wird kein weiterer Hash gespeichert.
    - Danach loescht der Server den zugehoerigen Eintrag aus `submission`.
-   - Damit wird die temporaere Verbindung zwischen Token und Selbstbericht wieder verworfen.
+   - Damit wird die temporaere Verbindung zwischen Hash und Selbstbericht wieder verworfen.
 
-Initialer Payload:
+Initialer Payload fuer einen Selbstbericht:
 
 ```json
 {
-  "token_components": ["A1b", "9xQ"],
+  "app_token": "550e8400-e29b-41d4-a716-446655440000",
+  "hash": "current_valid_hash",
   "craving": 50,
   "app_version": "1.0"
 }
@@ -137,80 +193,55 @@ Initialer Payload:
 
 Optional kann ein Client-Zeitstempel ergaenzt werden, wenn er fuer Plausibilitaetspruefung oder Support benoetigt wird. Er ist nicht als vertrauenswuerdiger Ereigniszeitpunkt zu behandeln.
 
-Bestaetigungspayload:
+Bestaetigungspayload fuer Schritt 1 bis 19:
 
 ```json
 {
-  "confirm_token_components": ["A1b", "9xQ", "m7P"]
+  "app_token": "550e8400-e29b-41d4-a716-446655440000",
+  "confirmed_hash": "next_valid_hash"
 }
 ```
 
-Der Server leitet aus der Laenge des bestaetigten Token-Prefixes ab:
+Der Server leitet aus dem Kettenindex ab:
 
-- `situation_index = token_components.size` fuer den initialen PUT.
+- `situation_index = chain_index - 1` bei nullbasierter Speicherung.
 - `condition = CUE_MATCHING` fuer die ersten zehn Situationen, danach `CUE_LABELING`.
 - `trial_count = 5` aus der festen Studienkonfiguration.
 
-Diese Werte werden nicht von der App uebertragen. Der Server kann `situation_index` und `condition` materialisiert in `submission` und `self_reports` speichern, weil sie fuer Auswertung und Plausibilitaet nuetzlich sind. Quelle der Wahrheit bleibt aber der serverseitig validierte Token-Fortschritt.
+Diese Werte werden nicht von der App uebertragen. Der Server kann `situation_index` und `condition` materialisiert in `submission` und `self_reports` speichern, weil sie fuer Auswertung und Plausibilitaet nuetzlich sind. Quelle der Wahrheit bleibt aber die serverseitig validierte HMAC-Kette.
 
-## 4. Noch zu entwickelnde Anforderungen
+## 5. Serverseitige Tabellen
 
-### 4.1 Studienfreischaltung, Teilnahmeberechtigung und Tokenausgabe
+### 5.1 Registrierung
 
-- Die App verwendet keinen personenbezogenen Account und keinen vorab fest zugeteilten `participant_app_token`.
-- Die Teilnahmeberechtigung wird organisatorisch ueber Registrierung, Einwilligung und Bereitstellung der App beziehungsweise Studienanleitung hergestellt.
-- Der serverseitig verifizierte Token entsteht erst durch erfolgreiche Uebertragungen und deren Bestaetigung.
-- `submit.php` erzeugt fuer eine neue App-Installation beim ersten gueltigen initialen PUT einen Token aus 20 Komponenten mit jeweils drei alphanumerischen Zeichen.
-- Die erste Komponente muss unter maximal 85 geplanten Teilnehmenden eindeutig sein.
-- Die App zeigt den Token erst nach Erhalt und Bestaetigung aller 20 Komponenten an.
-- Der Token ist Abschluss- und Abrechnungsnachweis, aber kein Auswertungsschluessel.
+Die bestehende Tabelle `register` erhaelt ein technisches Feld, das festhaelt, ob fuer diese registrierte E-Mail-Adresse bereits ein App-Token ausgeliefert und bestaetigt wurde. Das App-Token selbst wird nicht gespeichert.
 
-### 4.2 Serverseitige Tabellen
-
-Token-Tabelle ohne dauerhafte Relation zur Berichtstabelle:
+Beispiel:
 
 ```sql
-CREATE TABLE app_tokens (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    component_01 CHAR(3) NOT NULL UNIQUE,
-    component_02 CHAR(3) NOT NULL,
-    component_03 CHAR(3) NOT NULL,
-    component_04 CHAR(3) NOT NULL,
-    component_05 CHAR(3) NOT NULL,
-    component_06 CHAR(3) NOT NULL,
-    component_07 CHAR(3) NOT NULL,
-    component_08 CHAR(3) NOT NULL,
-    component_09 CHAR(3) NOT NULL,
-    component_10 CHAR(3) NOT NULL,
-    component_11 CHAR(3) NOT NULL,
-    component_12 CHAR(3) NOT NULL,
-    component_13 CHAR(3) NOT NULL,
-    component_14 CHAR(3) NOT NULL,
-    component_15 CHAR(3) NOT NULL,
-    component_16 CHAR(3) NOT NULL,
-    component_17 CHAR(3) NOT NULL,
-    component_18 CHAR(3) NOT NULL,
-    component_19 CHAR(3) NOT NULL,
-    component_20 CHAR(3) NOT NULL,
-    delivered_component_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
-    confirmed_component_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CHECK (delivered_component_count BETWEEN 0 AND 20),
-    CHECK (confirmed_component_count BETWEEN 0 AND 20),
-    CHECK (confirmed_component_count <= delivered_component_count)
+ALTER TABLE register
+ADD COLUMN app_token_issued_at TIMESTAMP NULL;
+```
+
+### 5.2 Gueltige Hashes
+
+```sql
+CREATE TABLE valid_hashes (
+    hash_value CHAR(64) NOT NULL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-Die separate Spalte `first_component` wird nicht verwendet, weil `component_01` bereits die erste Komponente enthaelt und eindeutig ist.
+`valid_hashes` enthaelt nur den jeweils naechsten gueltigen, vorzulegenden Hash. Es gibt keine Spalte fuer App-Token, E-Mail-Adresse, Teilnehmenden-ID, Situation oder Bedingung. Aus der Tabelle allein soll der Fortschritt 1 bis 19 nicht nachvollziehbar sein.
 
-Temporaere Zwischentabelle fuer den Handshake:
+### 5.3 Temporaere Submission-Tabelle
 
 ```sql
 CREATE TABLE submission (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    token_id BIGINT UNSIGNED NOT NULL,
-    component_index TINYINT UNSIGNED NOT NULL,
+    consumed_hash CHAR(64) NOT NULL UNIQUE,
+    next_hash CHAR(64) NULL,
+    chain_index TINYINT UNSIGNED NOT NULL,
     craving TINYINT UNSIGNED NOT NULL,
     situation_index TINYINT UNSIGNED NOT NULL,
     condition_code ENUM('CUE_MATCHING', 'CUE_LABELING') NOT NULL,
@@ -218,116 +249,121 @@ CREATE TABLE submission (
     client_timestamp DATETIME NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NOT NULL,
-    UNIQUE KEY uq_submission_token_component (token_id, component_index),
-    CHECK (craving BETWEEN 0 AND 100),
-    CHECK (component_index BETWEEN 1 AND 20)
+    CHECK (chain_index BETWEEN 1 AND 20),
+    CHECK (craving BETWEEN 0 AND 100)
 );
 ```
 
-`submission` enthaelt keine personenbezogenen Daten. Sie verbindet Tokenbezug und Selbstbericht nur bis zur App-Bestaetigung. Nach erfolgreichem Bestaetigungs-PUT wird der Selbstbericht in `self_reports` gespeichert und der `submission`-Eintrag geloescht. Abgelaufene Eintraege werden per Cleanup entfernt oder als abgebrochen behandelt, ohne nach `self_reports` uebernommen zu werden.
+`submission` enthaelt keine personenbezogenen Daten und kein App-Token. Sie verbindet Hashbezug und Selbstbericht nur bis zur App-Bestaetigung. Nach erfolgreichem Bestaetigungs-PUT wird der Selbstbericht in `self_reports` gespeichert und der `submission`-Eintrag geloescht. Abgelaufene Eintraege werden per Cleanup entfernt oder als abgebrochen behandelt, ohne nach `self_reports` uebernommen zu werden.
 
-### 4.3 Idempotente Serverlogik fuer `submit.php`
+## 6. Idempotente Serverlogik fuer `submit.php`
 
-1. **Erster gueltiger PUT ohne Token-Komponenten**
-   - Server erzeugt 20 Token-Komponenten.
-   - `component_01` ist eindeutig.
-   - Der Selbstbericht wird temporaer in `submission` gespeichert, nicht in `self_reports`.
-   - `delivered_component_count = 1`, `confirmed_component_count = 0`.
-   - Server gibt Komponente 1 zurueck.
+1. **Freischaltungsrequest mit E-Mail-Adresse**
+   - Voraussetzung: E-Mail-Adresse existiert in `register`, Teilnahme ist freigegeben, `app_token_issued_at` ist noch leer.
+   - Server erzeugt ein UUID-App-Token und berechnet `h_1`.
+   - Server gibt App-Token und `h_1` zurueck, speichert das App-Token aber nicht.
+   - Nach Bestaetigung setzt der Server `app_token_issued_at` und speichert `h_1` in `valid_hashes`.
 
-2. **Normaler Folge-PUT mit `n` bisher bestaetigten Komponenten**
-   - Voraussetzung: Prefix existiert und `n == confirmed_component_count`.
-   - Der Server leitet Situation und Bedingung aus `n` ab.
-   - Server legt einen `submission`-Eintrag fuer Komponente `n + 1` an.
-   - Server setzt `delivered_component_count = n + 1`.
-   - Server gibt Komponente `n + 1` zurueck.
+2. **Initialer Selbstbericht mit gueltigem Hash**
+   - Voraussetzung: Der uebermittelte Hash existiert in `valid_hashes` und passt zeitkonstant geprueft zur aus `app_token` berechneten Kette.
+   - Server bestimmt den Kettenindex durch vollstaendige Pruefung der 20 Kettenwerte.
+   - Server legt einen `submission`-Eintrag an, loescht den verbrauchten Hash aus `valid_hashes` und gibt fuer Index 1 bis 19 den naechsten Hash zurueck.
+   - Bei Index 20 wird kein naechster Hash erzeugt; die Antwort enthaelt einen Abschlussstatus.
 
-3. **Retry nach verlorener Token-Antwort**
-   - Voraussetzung: Prefix existiert, `n == delivered_component_count - 1`, und passende unbestaetigte `submission` existiert.
-   - Server speichert den Selbstbericht nicht erneut.
-   - Server gibt Komponente `n + 1` erneut zurueck.
+3. **Retry nach verlorener Serverantwort**
+   - Wenn der uebermittelte Hash nicht mehr in `valid_hashes`, aber als `consumed_hash` in einer offenen `submission` vorhanden ist, speichert der Server nichts erneut.
+   - Der Server gibt denselben `next_hash` beziehungsweise denselben Abschlussstatus erneut zurueck.
 
 4. **Bestaetigungs-PUT**
-   - Request enthaelt nur den Token-Prefix inklusive neu erhaltener Komponente, keine Studiendaten.
-   - Server gibt immer HTTP 204 zurueck.
-   - Falls passende unbestaetigte `submission` existiert, wird der Selbstbericht nach `self_reports` uebernommen, `confirmed_component_count` erhoeht und `submission` geloescht.
-   - Falls keine passende `submission` existiert, ist der Request ein idempotenter No-op mit HTTP 204.
+   - Fuer Index 1 bis 19 enthaelt die Bestaetigung den neu erhaltenen Hash. Der Server sucht diesen Hash als `next_hash` in einer offenen `submission`.
+   - Fuer Index 20 bestaetigt die App den Abschlussstatus gemaess Backend-Vertrag; der Server sucht die offene `submission` mit `chain_index = 20`.
+   - Falls eine passende offene `submission` existiert, wird der Selbstbericht nach `self_reports` uebernommen, der `next_hash` fuer Index 1 bis 19 in `valid_hashes` gespeichert und `submission` geloescht.
+   - Falls keine passende `submission` existiert, ist der Request ein idempotenter No-op.
+   - Der Server gibt immer HTTP 204 zurueck.
 
-5. **Ungueltiger initialer PUT**
-   - Nicht existente Prefixe, falsch formatierte Token-Komponenten, zu kurze oder zu lange Tokenstaende oder ungueltige Selbstbericht-Werte resultieren in HTTP 400 `Bad Request`.
+5. **Ungueltiger initialer Selbstbericht**
+   - Nicht vorhandene Hashes, falsch formatierte Hashes, nicht zur HMAC-Kette passende Hashes, fehlende App-Tokens oder ungueltige Selbstbericht-Werte resultieren in HTTP 400 `Bad Request`.
    - Dabei wird weder `submission` noch `self_reports` beschrieben.
 
 6. **Abschlussfall**
-   - Nach Bestaetigung der 20. Komponente ist die Teilnahme aus Sicht des Tokenmechanismus vollstaendig.
-   - Weitere initiale PUTs mit 20 bestaetigten Komponenten speichern keine neuen Selbstberichte.
-   - Bestaetigungs-PUTs bleiben idempotent und liefern HTTP 204.
+   - Nach Bestaetigung von `h_20` ist die Teilnahme aus Sicht des Tokenmechanismus vollstaendig.
+   - Es wird kein weiterer gueltiger Hash gespeichert.
+   - Weitere Selbstberichte mit verbrauchten oder unbekannten Hashes speichern keine neuen Selbstberichte.
 
-### 4.4 App-Retry-Logik
+## 7. App-Retry-Logik
 
-- Vor dem initialen PUT legt die App lokal ein `PendingSubmission` an.
-- Wenn vor der Tokenantwort ein Fehler auftritt, wird derselbe initiale PUT wiederholt.
-- Wenn die Tokenantwort eintrifft, speichert die App den neuen Prefix als `pending_confirmation_token_components` und sendet den Bestaetigungs-PUT.
+- Vor dem initialen Selbstbericht-PUT legt die App lokal ein `PendingSubmission` an.
+- Wenn vor der Serverantwort ein Fehler auftritt, wird derselbe initiale PUT wiederholt.
+- Wenn die Serverantwort eintrifft, speichert die App den neu erhaltenen Hash als `pending_confirmation_hash` und sendet den Bestaetigungs-PUT.
 - Wenn vor oder nach dem Bestaetigungs-PUT ein Fehler auftritt, wiederholt die App nur den Bestaetigungs-PUT.
-- Erst nach HTTP 204 wird die neue Komponente dauerhaft in `token_components` uebernommen und `PendingSubmission` geloescht.
+- Erst nach HTTP 204 wird `current_hash` auf den neu bestaetigten Hash gesetzt und `PendingSubmission` geloescht.
+- Beim Abschluss nach `h_20` markiert die App die Studie nach HTTP 204 als abgeschlossen und zeigt den vorgesehenen Abschlussnachweis gemaess UI-Konzept an.
 - Die App startet beim naechsten App-Start und vor einer neuen Studiensituation ausstehende Wiederholungen.
 
-### 4.5 Mehrsprachigkeit Deutsch/Englisch
+## 8. Mehrsprachigkeit Deutsch/Englisch
 
 - Sichtbare UI-Texte aus Kotlin in Android-Stringressourcen verschieben.
 - Mindestens `values/strings.xml` und `values-en/strings.xml` pflegen.
 - Labelpaare erhalten Sprachzuordnung oder getrennte Ressourcen.
 - Studienbegriffe bleiben zwischen App, Studieninformation und Datenschutzerklaerung konsistent.
 
-### 4.6 Benachrichtigungen
+## 9. Benachrichtigungen
 
 Lokale Benachrichtigungen koennen nach stabiler Datenerfassung und Token-Idempotenz implementiert werden. Texte bleiben neutral und enthalten keine Angaben zu Rauchverlangen, Rauchstatus oder medizinischen Aussagen.
 
-### 4.7 Tests
+## 10. Tests
 
 Vor produktiver Nutzung sind mindestens zu testen:
 
+- Freischaltungsrequest nur fuer in `register` vorhandene und freigegebene E-Mail-Adressen.
+- Keine dauerhafte Speicherung des App-Tokens auf dem Server.
+- Bestaetigung der Freischaltung setzt `app_token_issued_at` und speichert `h_1` in `valid_hashes`.
+- HMAC-Kettenberechnung fuer `h_1` bis `h_20`.
+- Zeitkonstante Pruefung des uebermittelten Hashs gegen alle 20 moeglichen Kettenwerte.
 - Studiensequenz ueber 20 Situationen.
 - Vollstaendigkeit der Bild- und Labelressourcen.
 - Slider-Grenzen 0 bis 100.
-- Initialer PUT ohne Token-Komponenten.
-- Folge-PUTs mit bestaetigtem Prefix.
-- Retry nach verlorener Tokenantwort ohne doppelte `submission`.
+- Initialer Selbstbericht mit gueltigem Hash.
+- Retry nach verlorener Serverantwort ohne doppelte `submission`.
 - Bestaetigungs-PUT mit HTTP 204.
 - Uebernahme nach `self_reports` und Loeschung aus `submission`.
-- Wiederholte Bestaetigungs-PUTs ohne doppelte Speicherung.
-- HTTP 400 fuer ungueltige initiale PUTs.
-- Ableitung von Situation und Bedingung aus der Prefix-Laenge.
+- Speicherung des naechsten gueltigen Hashs erst nach Bestaetigung.
+- Kein weiterer gueltiger Hash nach `h_20`.
+- HTTP 400 fuer ungueltige Selbstbericht-PUTs.
+- Ableitung von Situation und Bedingung aus dem Kettenindex.
 
-### 4.8 Sicherheits- und Datenschutzhaertung
+## 11. Sicherheits- und Datenschutzhaertung
 
-- Kein produktives Logging von Tokens, Selbstbericht-Werten, Serverantworten oder personenbezogenen Angaben.
+- Kein produktives Logging von E-Mail-Adressen, App-Tokens, Hashes, Selbstbericht-Werten, Serverantworten oder personenbezogenen Angaben.
 - HTTPS in Production; Klartext nur als Staging-Ausnahme.
-- Lokale Token-Komponenten, `PendingSubmission` und `pending_confirmation_token_components` verschluesseln, wenn sie als sensibel eingestuft werden.
+- HMAC-Secret nur serverseitig in `config`, nicht im Repository und nicht in Web-auslieferbaren Verzeichnissen.
+- Lokale App-Werte wie App-Token, aktueller Hash, `PendingSubmission` und `pending_confirmation_hash` verschluesseln, wenn sie als sensibel eingestuft werden.
 - Keine sensiblen Daten in Zwischenablage, Screenshots, externem Speicher oder Mediengalerie, solange dies nicht ausdruecklich vorgesehen ist.
 - Datenkategorien, Speicherorte und Uebertragungen parallel in der Masterarbeit dokumentieren.
 
-### 4.9 Optionale KI-gestuetzte Bildklassifikation
+## 12. Optionale KI-gestuetzte Bildklassifikation
 
 Die KI-Funktion ist nachrangig gegenueber der stabilen Studienfassung. Beginne mit einer austauschbaren Schnittstelle, zum Beispiel `CueDetector`, und dokumentiere fuer jedes Modell Modellgroesse, Inferenzzeit, Speicherbedarf, Android-Mindestversion, Precision, Recall und F1.
 
-## 5. Vorgeschlagene naechste Implementierungsreihenfolge
+## 13. Vorgeschlagene naechste Implementierungsreihenfolge
 
 1. Production-Konstanten und Build-Profile bereinigen.
-2. PUT-Vertrag fuer initiale Uebertragung und Bestaetigungs-PUT festlegen.
-3. Tabellen `app_tokens` und `submission` einfuehren.
-4. Drei-Wege-Handshake implementieren.
-5. Serverseitige Ableitung von Situation und Bedingung aus dem Token-Fortschritt implementieren.
-6. Idempotente Serverlogik fuer Erstuebertragung, Folgeuebertragung, Retry, Bestaetigung und HTTP-400-Faelle implementieren.
-7. App-Zustand auf bestaetigte Token-Komponenten umstellen.
-8. Retry-Logik fuer `PendingSubmission` und `pending_confirmation_token_components` implementieren.
-9. Mehrsprachigkeit umsetzen.
-10. Tests fuer Studienlogik, Tokenlogik und Ressourcenintegritaet ergaenzen.
-11. Sicherheits- und Datenschutzhaertung abschliessen.
-12. Optionale Erinnerungen implementieren.
-13. KI-Schnittstelle vorbereiten.
-14. Dokumentationsabgleich mit `PROJECT_PLAN.md`, `ASSUMPTIONS.md`, Kapitel 5 und Kapitel 6.
+2. HMAC-Secret-Verwaltung in `config` festlegen.
+3. Freischaltungsrequest mit E-Mail-Pruefung gegen `register` implementieren.
+4. HMAC-Kette mit UUID-App-Token implementieren.
+5. Tabellen `valid_hashes` und `submission` einfuehren; `final_hashes` nicht anlegen.
+6. Drei-Wege-Handshake fuer Freischaltung und Selbstberichte implementieren.
+7. Zeitkonstante Hash-Pruefung und Ableitung von Kettenindex, Situation und Bedingung implementieren.
+8. Idempotente Serverlogik fuer Erstuebertragung, Retry, Bestaetigung und HTTP-400-Faelle implementieren.
+9. App-Zustand auf App-Token, aktuellen Hash und Pending-Zustaende umstellen.
+10. Mehrsprachigkeit umsetzen.
+11. Tests fuer Studienlogik, HMAC-Logik und Ressourcenintegritaet ergaenzen.
+12. Sicherheits- und Datenschutzhaertung abschliessen.
+13. Optionale Erinnerungen implementieren.
+14. KI-Schnittstelle vorbereiten.
+15. Dokumentationsabgleich mit `PROJECT_PLAN.md`, `ASSUMPTIONS.md`, Kapitel 5 und Kapitel 6.
 
-## 6. Definition of Done
+## 14. Definition of Done
 
 Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
 
@@ -340,4 +376,4 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Selbstberichte werden bei Retry-Faellen nicht doppelt gespeichert.
 - Selbstberichte werden erst nach Bestaetigungs-PUT in `self_reports` uebernommen.
 - Die temporaere Tabelle `submission` wird nach erfolgreicher Uebernahme in `self_reports` bereinigt.
-- Die Token-Tabelle enthaelt keine dauerhafte Relation zur Berichtstabelle.
+- Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token, HMAC-Kette und Berichtstabelle.
