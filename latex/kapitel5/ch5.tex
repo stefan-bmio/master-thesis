@@ -10,7 +10,6 @@
 \section{Sicherheit}
 Die Anwendung ist eine Kombination aus mobiler App, Web-Anwendung und Hintergrundsystem. Die Struktur orientiert sich an den Prüfaspekten der BSI TR-03161 für mobile Anwendungen, Web-Anwendungen und Hintergrundsysteme \cite{bsi_tr03161_mobile_2024,bsi_tr03161_web_2024,bsi_tr03161_backend_2024}. Die Richtlinie dient als fachlich geeignete Checkliste, um Datensparsamkeit, Eingabevalidierung, Transportabsicherung, Speichersicherheit, Fehlerbehandlung und den Umgang mit Drittanbieterbibliotheken nachvollziehbar zu dokumentieren.
 
-\begin{neu}
 Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Com\-pose-Ober\-fl"a\-che. Die wesentlichen Zustandsvariablen sind die aktuelle Phase, der aktuelle Aufgabenindex, die für den aktuellen Durchgang ausgewählte Aufgabenliste, die Zahl bereits abgeschlossener Studiensituationen, der Zeitpunkt der nächsten freigegebenen Studiensituation und der im Craving-Screen ausgewählte Zahlenwert. Für die Persistenz des lokalen Fortschritts wird \texttt{SharedPreferences} verwendet. Gespeichert werden insbesondere die Anzahl abgeschlossener Studiensituationen, der nächste erlaubte Startzeitpunkt und die zufällig erzeugte Reihenfolge der Cue-Matching-Aufgaben.
 
 Die App ist als sequenzieller Studienprototyp modelliert. Sie beginnt mit einem Startbildschirm, der den Studienfortschritt, die verbleibende Sperrzeit und den Start des nächsten Durchgangs darstellt. Ein Durchgang besteht aus fünf Zuordnungsaufgaben und der anschließenden Angabe des aktuellen Rauchverlangens. Die ersten zehn Durchgänge verwenden Cue-Matching, die folgenden zehn Durchgänge Cue-Labeling. Nach jedem Durchgang wird eine Sperrzeit von drei Stunden gesetzt. Dadurch wird verhindert, dass mehrere Selbstberichte unmittelbar hintereinander entstehen.
@@ -28,7 +27,6 @@ Für den Datenbankzugriff wird PDO mit deaktivierter Emulation vorbereiteter Sta
 Die Zugangsdaten zur MySQL-Datenbank sind im Webspace in Dateien im Verzeichnis \texttt{config} abgelegt. Das Verzeichnis ist durch eine Datei \texttt{.htaccess} abgesichert. Das Verzeichnis und Dateien mit denselben Namen existieren auch im Git-Repository. Die Dateien enthalten aber nicht die Zugangsdaten, sondern nur einen Hinweis darauf, dass diese ausschließlich auf dem Webspace vorgehalten und bearbeitet werden dürfen. Die Host-Konfiguration für Bestätigungslinks ist ebenfalls als Konfigurationsdatei ausgelagert. Im Versionskontrollsystem enthält sie nur einen Platzhalter, der in der lokalen Testumgebung und im Produktivsystem unterschiedlich angepasst werden muss.
 
 Das Anmeldeformular \texttt{index-de.php} beziehungsweise \texttt{index-en.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Browsermeldungen durch passendere Hinweise, etwa zur Altersgrenze von 30 bis 65 Jahren und zur Mindestmenge von 10 Zigaretten pro Tag. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die E-Mail-Adresse mit \texttt{FILTER\_VALIDATE\_EMAIL} und die numerischen Eingaben mit \texttt{FILTER\_VALIDATE\_INT} validiert. Anschließend werden die Alters- und Konsumgrenzen und die Einwilligungen in Studieninformation und Datenschutzerklärung erneut geprüft. Dadurch werden HTTP-Anfragen außerhalb eines Browsers oder mit manipulierten Formularattributen erkannt.
-\end{neu}
 
 Die Werte \texttt{studyinfo} und \texttt{dataprot} für die Einwilligungen in Studieninformation und Datenschutzerklärung werden ebenfalls beim Insert in die Tabelle \texttt{register} persistiert. Damit ist technisch nachvollziehbar, dass die Anmeldung nur nach aktiver Bestätigung beider Dokumente verarbeitet wurde.
 
@@ -38,12 +36,10 @@ Die Registrierung wird über ein Double-Opt-In abgesichert. Beim Absenden des Fo
 
 Nach erfolgreichem Versand leitet das Formular auf die Double-Opt-In-Hinweisseite weiter. Diese Seite liest die E"~Mail-Adresse aus der Session, validiert sie erneut und entfernt sie anschließend aus der Session. Die Bestätigungsseite verarbeitet den Bestätigungslink. Sie akzeptiert nur Token im erwarteten Hex-Format, hasht den übergebenen Token erneut und sucht einen noch nicht bestätigten Datensatz. Die Abfrage verwendet eine Transaction, damit paral\-lele Bestätigungsaufrufe denselben Datensatz nicht gleichzeitig verarbeiten. Bei erfolgreicher Bestätigung wird das entsprechende Feld in der Datenbank gesetzt. Doppelte E-Mail-Adressen werden über einen Unique-Constraint der Datenbank abgefangen. Der Mailversand erfolgt nur nach erfolgreichem Insert.
 
-\begin{neu}
 Die automatische Android-Sicherung ist für die App deaktiviert. Damit werden lokal gespeicherte Fortschrittsinformationen nicht über die allgemeine Gerätesicherung in weitere Cloud- oder Gerätekontexte übertragen. Diese Entscheidung ist für eine Gesundheitsanwendung mit Studiendaten angemessen, weil sie der lokalen Datenbegrenzung und den Schutzzielen Vertraulichkeit und Integrität entspricht \cite{bsi_tr03161_mobile_2024}.
 
 \section{Qualitätssicherung und Testbarkeit}
 Für die Web-Anwendung wurde eine PHPUnit-basierte Testumgebung ergänzt. Die Entwicklungsabhängigkeiten umfassen PHPUnit und eine WebDriver-Bibliothek. Eine Testsuite prüft, ob die deutschen und englischen Registrierungsformulare per GET ohne Datenbankverbindung geladen werden können, keinen Serverfehler erzeugen und ein Formular enthalten. Ein browserbasierter Test startet bei erreichbarer lokaler Testumgebung einen WebDriver, setzt eine typische mobile Fenstergröße und prüft die deutsche Pflichtfeldmeldung für eine fehlende E-Mail-Adresse sowohl im nativen Validierungszustand des Feldes als auch im sichtbaren Validierungselement der Seite. Die Testkonfiguration ist außerdem so angelegt, dass sie in einer lokalen Umgebung mit abweichender Host-Konfiguration ausgeführt werden kann.
-\end{neu}
 
 \section{Backup}
 Die Studiendatenbanken für Teilnahmedaten und anonymisierte Selbstberichte sind bei United Domains auf Servern in Deutschland gehostet. Der Zugriff auf die MySQL-Instanzen ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenprogramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
@@ -60,8 +56,8 @@ Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Stu
 \textbf{Datum} & \textbf{Dateien} \\
 \midrule
 15.6.2026 & register-2026-06-15.zip \\
-22.6.2026 & \\
-29.6.2026 & \\
+22.6.2026 & register-2026-06-22.zip \\
+29.6.2026 & register-2026-06-29.zip \\
 6.7.2026 & \\
 13.7.2026 & \\
 20.7.2026 & \\
