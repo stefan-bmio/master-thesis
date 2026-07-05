@@ -1430,6 +1430,10 @@ INPUT ./anhang/anhang.tex
 INPUT anhang/anhang.tex
 INPUT ./anhang/anhang.tex
 INPUT anhang/anhang.tex
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinLibertineTB-tlf-t1.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1--base.tfm
 INPUT ./anhang/adressen.tex
 INPUT anhang/adressen.tex
 INPUT ./anhang/adressen.tex

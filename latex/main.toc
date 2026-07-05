@@ -28,9 +28,13 @@
 \contentsline {section}{\numberline {6.7}Qualitätssicherung und Auswertungsvorbereitung}{37}{section.6.7}%
 \contentsline {chapter}{\numberline {7}Auswertung der Berichte}{39}{chapter.7}%
 \contentsline {chapter}{\numberline {8}Fazit und Ausblick}{47}{chapter.8}%
-\contentsline {chapter}{\numberline {A}Adressen}{55}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Suchthilfeverzeichnis der DHS}{55}{section.A.1}%
-\contentsline {section}{\numberline {A.2}infodrog Suchtindex}{69}{section.A.2}%
-\contentsline {chapter}{\numberline {B}Flyer}{76}{appendix.B}%
-\contentsline {chapter}{\numberline {C}Studieninformation}{79}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Datenschutzerklärung}{82}{appendix.D}%
+\contentsline {chapter}{\numberline {A}Studiendokumente}{55}{appendix.A}%
+\contentsline {section}{\numberline {A.1}E-Mail an Empfänger des Flyers}{55}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Empfänger in Deutschland}{55}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Empfänger in der Schweiz}{55}{subsection.A.1.2}%
+\contentsline {chapter}{\numberline {B}Adressen}{57}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Suchthilfeverzeichnis der DHS}{57}{section.B.1}%
+\contentsline {section}{\numberline {B.2}infodrog Suchtindex}{71}{section.B.2}%
+\contentsline {chapter}{\numberline {C}Flyer}{78}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Studieninformation}{81}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Datenschutzerklärung}{84}{appendix.E}%

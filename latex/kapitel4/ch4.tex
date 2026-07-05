@@ -11,11 +11,9 @@ Die CueLens-App wird für das Betriebssystem Android entwickelt. Als Endgeräte 
 \section{Grundfunktionen des Studienprototyps}
 Die grundlegende Funktionalität der App stellt moderate Anforderungen an die Hardware der Endgeräte. Bilddarstellungen im Vollbild und Buttons mit Grafik oder Text sind auf allen gängigen Android-Smartphones möglich. Auch die typischen Displaygrößen gängiger Smartphones sind für den vorgesehenen Zweck akzeptabel. Android-Tablets sind gleich gut oder besser geeignet als Smartphones.
 
-\begin{neu}
 Die Downloadgröße des Android-Packages (APK) liegt unter 50 MB, wenn nur die Grundfunktionen der App und die lokal gebündelten Studienressourcen enthalten sind. Der Payload aller 20 Übertragungen von Selbstberichten beträgt in der aktuellen prototypischen Form insgesamt weniger als 200 KB.
 
 Der lokale Persistenzbedarf ist ebenfalls gering. Die App speichert den Studienfortschritt, den nächsten erlaubten Startzeitpunkt und die zufällig erzeugte Reihenfolge der Cue-Matching-Auf\-gaben in \texttt{SharedPreferences}. Diese Datenstruktur besteht aus wenigen Ganzzahlen, Zeitstempeln und einer kommagetrennten Indexliste. Sie ist robust gegenüber App-Neustarts und benötigt keine lokale Datenbank. Aus Datenschutzsicht ist relevant, dass die automatische Android-Sicherung deaktiviert ist, damit lokale Fortschrittsdaten nicht über allgemeine Gerätesicherungen in weitere Kontexte übertragen werden \cite{bsi_tr03161_mobile_2024}.
-\end{neu}
 
 \section{KI-Funktionalität}
 Das KI-Feature stellt deutlich höhere Ansprüche an Rechen- und Speicherkapazität. Vortrainierte Classifier-Modelle sind mehrere hundert MB groß und würden die App-Downloadgröße entsprechend erhöhen. Die Klassifizierung eines Bildes dauerte in einem Test mit dem Modell MobileCLIP S2 ungefähr fünf Sekunden auf einem Preis-Leistungs-Smartphone. Es wurden 750~GB Arbeitsspeicher beansprucht, und die Präzision blieb unter den Erwartungen. Ein eigens für diesen Zweck trainiertes Modell würde alle diese Werte verbessern.
