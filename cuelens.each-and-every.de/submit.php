@@ -120,7 +120,7 @@ function pdo_from_config(array $config): PDO
 
 function handle_self_report(PDO $pdo, array $payload): never
 {
-    $participantId = require_string($payload, 'app_token');
+    $appToken = require_string($payload, 'app_token');
     $craving = parse_craving($payload['craving'] ?? null);
 
     if (isset($payload['app_version'])) {
@@ -129,12 +129,13 @@ function handle_self_report(PDO $pdo, array $payload): never
         }
     }
 
-    validate_uuid($participantId, 'app_token');
+    validate_uuid($appToken, 'app_token');
+    $participantId = hash('sha256', strtolower($appToken));
 
     $pdo->beginTransaction();
     try {
         $existing = $pdo->prepare(
-            'SELECT craving
+            'SELECT participant_id
                FROM self_reports
               WHERE participant_id = :participant_id
               FOR UPDATE'
