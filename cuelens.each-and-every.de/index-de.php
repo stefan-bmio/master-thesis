@@ -5,6 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 require __DIR__ . '/lib/PHPMailer/Exception.php';
 require __DIR__ . '/lib/PHPMailer/PHPMailer.php';
 require __DIR__ . '/lib/PHPMailer/SMTP.php';
+require __DIR__ . '/lib/error-log.php';
 
 $smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
 $hostConfig = require __DIR__ . '/config/host.php';
@@ -135,9 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} catch (Exception $e) {
 							error_log('PHPMailer: ' . $mail->ErrorInfo);
 							$message = 'Die Bestätigungs-E-Mail konnte nicht versendet werden.';
+							log_error($pdo, $message, $e);
 						} catch (Throwable $e) {
 							error_log('Double-Opt-In: ' . $e->getMessage());
 							$message = 'Beim Vorbereiten der Bestätigungs-E-Mail ist ein Fehler aufgetreten.';
+							log_error($pdo, $message, $e);
 						}
 
 					} catch (PDOException $e) {
@@ -146,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} else {
 							$message = 'Beim Speichern ist ein Fehler aufgetreten.';
 						}
+						log_error_from_config($dbConfig, $message, $e);
 					}
 				}
 			}

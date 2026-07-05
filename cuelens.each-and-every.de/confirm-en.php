@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . '/lib/error-log.php';
+
 $dbConfig = require __DIR__ . '/config/cuelens-signup.php';
 
 $message = '';
@@ -56,11 +58,12 @@ if (!is_string($doiToken) || !preg_match('/^[a-f0-9]{64}$/', $doiToken)) {
 			$message = "You have successfully registered for the study. Thank you. We'll notify you about the start in the next few days."; 
 		}		
 	} catch (PDOException $e) {
+		if (isset($pdo) && $pdo->inTransaction()) {
+			$pdo->rollBack();
+		}
 		http_response_code(500);
-		echo json_encode([
-			'success' => false,
-			'error' => $e
-		]);
+		$message = 'An error occured when confirming the registration.';
+		log_error_from_config($dbConfig, $message, $e);
 	}
 }
 ?>

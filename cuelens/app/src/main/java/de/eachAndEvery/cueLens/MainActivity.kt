@@ -60,6 +60,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONException
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
@@ -105,15 +106,8 @@ private fun CueLensApp() {
         mutableStateOf(loadMatchingOrder(preferences, imageItems.size))
     }
     var appToken by remember { mutableStateOf(preferences.getString(KEY_APP_TOKEN, null)) }
-    var currentHash by remember { mutableStateOf(preferences.getString(KEY_CURRENT_HASH, null)) }
-    var pendingActivationEmail by remember {
-        mutableStateOf(preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null))
-    }
     var pendingSubmissionCraving by remember {
         mutableIntStateOf(preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING))
-    }
-    var pendingConfirmationHash by remember {
-        mutableStateOf(preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null))
     }
     var compensationCode by remember {
         mutableStateOf(preferences.getString(KEY_COMPENSATION_CODE, null))
@@ -134,10 +128,7 @@ private fun CueLensApp() {
             preferences.getLong(LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS, 0L)
         )
         appToken = preferences.getString(KEY_APP_TOKEN, null)
-        currentHash = preferences.getString(KEY_CURRENT_HASH, null)
-        pendingActivationEmail = preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null)
         pendingSubmissionCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
-        pendingConfirmationHash = preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null)
         compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
         studyCompleted = preferences.getBoolean(KEY_STUDY_COMPLETED, false)
     }
@@ -245,10 +236,8 @@ private fun CueLensApp() {
         }
     }
 
-    val hasActivation = !appToken.isNullOrBlank() && !currentHash.isNullOrBlank()
-    val networkWorkPending = !pendingActivationEmail.isNullOrBlank() ||
-        pendingSubmissionCraving != NO_PENDING_CRAVING ||
-        !pendingConfirmationHash.isNullOrBlank() ||
+    val hasActivation = !appToken.isNullOrBlank()
+    val networkWorkPending = pendingSubmissionCraving != NO_PENDING_CRAVING ||
         (!compensationCode.isNullOrBlank() && !studyCompleted)
     val canStartNow = hasActivation && !networkWorkPending && !syncInProgress && !studyCompleted
 
@@ -691,15 +680,13 @@ private suspend fun activateAndConfirm(preferences: SharedPreferences, email: St
         val activation = CravingSubmissionClient.activate(email)
         preferences.edit()
             .putString(KEY_APP_TOKEN, activation.appToken)
-            .putString(KEY_CURRENT_HASH, activation.hash)
-            .putString(KEY_PENDING_ACTIVATION_EMAIL, email)
             .putInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
             .remove(KEY_STUDY_COMPLETED)
             .remove(KEY_COMPENSATION_CODE)
             .apply()
         recoverPendingNetworkWork(preferences).getOrThrow()
     }.onFailure {
-        Log.w(TAG, "Activation or activation confirmation failed")
+        Log.w(TAG, "Activation failed", it)
     }
 
 private suspend fun recoverPendingNetworkWork(preferences: SharedPreferences): Result<Unit> =
@@ -712,57 +699,30 @@ private suspend fun recoverPendingNetworkWork(preferences: SharedPreferences): R
                 .putBoolean(KEY_STUDY_COMPLETED, true)
                 .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
                 .remove(KEY_PENDING_SUBMISSION_CRAVING)
-                .remove(KEY_PENDING_CONFIRMATION_HASH)
                 .apply()
             return@runCatching
         }
 
         val appToken = preferences.getString(KEY_APP_TOKEN, null)
-        val currentHash = preferences.getString(KEY_CURRENT_HASH, null)
-        val pendingActivationEmail = preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null)
-        if (!appToken.isNullOrBlank() && !currentHash.isNullOrBlank() && !pendingActivationEmail.isNullOrBlank()) {
-            CravingSubmissionClient.confirmActivation(
-                email = pendingActivationEmail,
-                appToken = appToken,
-                confirmedHash = currentHash
-            )
-            preferences.edit()
-                .remove(KEY_PENDING_ACTIVATION_EMAIL)
-                .putInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
-                .apply()
-        }
-
-        val activeToken = preferences.getString(KEY_APP_TOKEN, null)
+        val activeToken = appToken
             ?: throw IllegalStateException("Missing app token")
-        val pendingConfirmationHash = preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null)
-        if (!pendingConfirmationHash.isNullOrBlank()) {
-            confirmSubmissionAndAdvance(preferences, activeToken, pendingConfirmationHash)
-            return@runCatching
-        }
 
         val pendingCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
         if (pendingCraving == NO_PENDING_CRAVING) {
             return@runCatching
         }
 
-        val activeHash = preferences.getString(KEY_CURRENT_HASH, null)
-            ?: throw IllegalStateException("Missing current hash")
         when (val response = CravingSubmissionClient.submitSelfReport(
             appToken = activeToken,
-            hash = activeHash,
             craving = pendingCraving
         )) {
             is SelfReportResponse.Next -> {
-                preferences.edit()
-                    .putString(KEY_PENDING_CONFIRMATION_HASH, response.nextHash)
-                    .apply()
-                confirmSubmissionAndAdvance(preferences, activeToken, response.nextHash)
+                advanceAfterConfirmedSubmission(preferences)
             }
             is SelfReportResponse.Complete -> {
                 preferences.edit()
                     .putString(KEY_COMPENSATION_CODE, response.compensationCode)
                     .remove(KEY_PENDING_SUBMISSION_CRAVING)
-                    .remove(KEY_PENDING_CONFIRMATION_HASH)
                     .apply()
                 CravingSubmissionClient.confirmCompensation(response.compensationCode)
                 preferences.edit()
@@ -772,95 +732,99 @@ private suspend fun recoverPendingNetworkWork(preferences: SharedPreferences): R
             }
         }
     }.onFailure {
-        Log.w(TAG, "Pending network work could not be completed")
+        Log.w(TAG, "Pending network work could not be completed", it)
     }
 
-private suspend fun confirmSubmissionAndAdvance(
-    preferences: SharedPreferences,
-    appToken: String,
-    nextHash: String
-) {
-    CravingSubmissionClient.confirmSubmission(appToken, nextHash)
+private fun advanceAfterConfirmedSubmission(preferences: SharedPreferences) {
     val nextCompletedSituationCount = (preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0) + 1)
         .coerceAtMost(TOTAL_SITUATION_COUNT)
     val nextRunAt = System.currentTimeMillis() + RUN_COOLDOWN_MILLIS
     preferences.edit()
-        .putString(KEY_CURRENT_HASH, nextHash)
         .putInt(KEY_CONFIRMED_SITUATION_COUNT, nextCompletedSituationCount)
         .putLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, nextRunAt)
         .remove(KEY_PENDING_SUBMISSION_CRAVING)
-        .remove(KEY_PENDING_CONFIRMATION_HASH)
         .apply()
 }
 
 private fun hasPendingNetworkWork(preferences: SharedPreferences): Boolean {
     val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
-    return !preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null).isNullOrBlank() ||
-        preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING) != NO_PENDING_CRAVING ||
-        !preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null).isNullOrBlank() ||
+    return preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING) != NO_PENDING_CRAVING ||
         (!compensationCode.isNullOrBlank() && !preferences.getBoolean(KEY_STUDY_COMPLETED, false))
 }
 
 private object CravingSubmissionClient {
     suspend fun activate(email: String): ActivationResponse {
-        val response = putJson(JSONObject().put("email", email))
-        return ActivationResponse(
-            appToken = response.getString("app_token"),
-            hash = response.getString("hash")
-        )
-    }
-
-    suspend fun confirmActivation(email: String, appToken: String, confirmedHash: String) {
-        putJsonNoContent(
-            JSONObject()
-                .put("email", email)
-                .put("app_token", appToken)
-                .put("confirmed_hash", confirmedHash)
-        )
-    }
-
-    suspend fun submitSelfReport(appToken: String, hash: String, craving: Int): SelfReportResponse {
         val response = putJson(
+            ServerRequest.Activation,
+            JSONObject().put("email", email)
+        )
+        return try {
+            ActivationResponse(
+                appToken = response.getString("app_token")
+            )
+        } catch (e: JSONException) {
+            logServerRequestError(
+                ServerRequest.Activation,
+                serverErrorMessage = "Unexpected JSON response shape",
+                cause = e
+            )
+            throw e
+        }
+    }
+
+    suspend fun submitSelfReport(appToken: String, craving: Int): SelfReportResponse {
+        val response = putJson(
+            ServerRequest.SelfReportSubmission,
             JSONObject()
                 .put("app_token", appToken)
-                .put("hash", hash)
                 .put("craving", craving)
                 .put("app_version", BuildConfig.VERSION_NAME)
         )
         val status = response.optString("status")
-        return if (status == "complete") {
-            SelfReportResponse.Complete(response.getString("compensation_code"))
-        } else {
-            SelfReportResponse.Next(response.getString("next_hash"))
+        return try {
+            if (status == "complete") {
+                SelfReportResponse.Complete(response.getString("compensation_code"))
+            } else {
+                SelfReportResponse.Next
+            }
+        } catch (e: JSONException) {
+            logServerRequestError(
+                ServerRequest.SelfReportSubmission,
+                serverErrorMessage = "Unexpected JSON response shape",
+                cause = e
+            )
+            throw e
         }
-    }
-
-    suspend fun confirmSubmission(appToken: String, confirmedHash: String) {
-        putJsonNoContent(
-            JSONObject()
-                .put("app_token", appToken)
-                .put("confirmed_hash", confirmedHash)
-        )
     }
 
     suspend fun confirmCompensation(compensationCode: String) {
-        putJsonNoContent(JSONObject().put("compensation_code", compensationCode))
+        putJsonNoContent(
+            ServerRequest.CompensationConfirmation,
+            JSONObject().put("compensation_code", compensationCode)
+        )
     }
 
-    private suspend fun putJson(payload: JSONObject): JSONObject = withContext(Dispatchers.IO) {
-        val response = executePut(payload, expectedNoContent = false)
-        JSONObject(response ?: "{}")
-    }
-
-    private suspend fun putJsonNoContent(payload: JSONObject) {
-        withContext(Dispatchers.IO) {
-            executePut(payload, expectedNoContent = true)
+    private suspend fun putJson(request: ServerRequest, payload: JSONObject): JSONObject = withContext(Dispatchers.IO) {
+        val response = executePut(request, payload, expectedNoContent = false)
+        try {
+            JSONObject(response ?: "{}")
+        } catch (e: JSONException) {
+            logServerRequestError(request, serverErrorMessage = "Invalid JSON response", cause = e)
+            throw e
         }
     }
 
-    private fun executePut(payload: JSONObject, expectedNoContent: Boolean): String? {
+    private suspend fun putJsonNoContent(request: ServerRequest, payload: JSONObject) {
+        withContext(Dispatchers.IO) {
+            executePut(request, payload, expectedNoContent = true)
+        }
+    }
+
+    private fun executePut(request: ServerRequest, payload: JSONObject, expectedNoContent: Boolean): String? {
         val body = payload.toString()
-        val connection = URL(BuildConfig.CRAVING_SUBMIT_URL).openConnection() as HttpURLConnection
+        val connection = URL(request.url).openConnection() as HttpURLConnection
+        var responseCode: Int? = null
+        var serverErrorMessage: String? = null
         try {
             connection.connectTimeout = NETWORK_TIMEOUT_MILLIS
             connection.readTimeout = NETWORK_TIMEOUT_MILLIS
@@ -873,31 +837,64 @@ private object CravingSubmissionClient {
                 writer.write(body)
             }
 
-            val responseCode = connection.responseCode
+            responseCode = connection.responseCode
             if (expectedNoContent) {
                 if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
-                    drainErrorStream(connection)
-                    throw IOException("Unexpected HTTP status")
+                    serverErrorMessage = readServerErrorMessage(connection)
+                    throw IOException("Unexpected HTTP status $responseCode")
                 }
                 return null
             }
             if (responseCode !in 200..299) {
-                drainErrorStream(connection)
-                throw IOException("Unexpected HTTP status")
+                serverErrorMessage = readServerErrorMessage(connection)
+                throw IOException("Unexpected HTTP status $responseCode")
             }
             return connection.inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
                 reader.readText()
             }
+        } catch (e: IOException) {
+            logServerRequestError(request, responseCode, serverErrorMessage, e)
+            throw e
         } finally {
             connection.disconnect()
         }
     }
 
-    private fun drainErrorStream(connection: HttpURLConnection) {
-        connection.errorStream?.bufferedReader(Charsets.UTF_8)?.use { reader ->
+    private fun readServerErrorMessage(connection: HttpURLConnection): String? {
+        val errorBody = connection.errorStream?.bufferedReader(Charsets.UTF_8)?.use { reader ->
             reader.readText()
+        } ?: return null
+
+        return try {
+            JSONObject(errorBody).optString("error").takeIf { it.isNotBlank() }
+        } catch (_: JSONException) {
+            null
         }
     }
+
+    private fun logServerRequestError(
+        request: ServerRequest,
+        statusCode: Int? = null,
+        serverErrorMessage: String? = null,
+        cause: Throwable
+    ) {
+        val details = buildList {
+            add("request=${request.logName}")
+            if (statusCode != null) {
+                add("status=$statusCode")
+            }
+            if (!serverErrorMessage.isNullOrBlank()) {
+                add("server_error=$serverErrorMessage")
+            }
+        }.joinToString(", ")
+        Log.w(TAG, "Server request failed: $details", cause)
+    }
+}
+
+private enum class ServerRequest(val logName: String, val url: String) {
+    Activation("activation", BuildConfig.ACTIVATION_URL),
+    SelfReportSubmission("self_report_submission", BuildConfig.CRAVING_SUBMIT_URL),
+    CompensationConfirmation("compensation_confirmation", BuildConfig.CRAVING_SUBMIT_URL)
 }
 
 private enum class Phase {
@@ -920,12 +917,11 @@ private data class WordMatchItem(
 )
 
 private data class ActivationResponse(
-    val appToken: String,
-    val hash: String
+    val appToken: String
 )
 
 private sealed interface SelfReportResponse {
-    data class Next(val nextHash: String) : SelfReportResponse
+    data object Next : SelfReportResponse
     data class Complete(val compensationCode: String) : SelfReportResponse
 }
 
@@ -996,10 +992,7 @@ private const val KEY_CONFIRMED_SITUATION_COUNT = "confirmed_situation_count"
 private const val KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS = "next_situation_available_at_millis"
 private const val KEY_MATCHING_ORDER = "matching_order"
 private const val KEY_APP_TOKEN = "app_token"
-private const val KEY_CURRENT_HASH = "current_hash"
-private const val KEY_PENDING_ACTIVATION_EMAIL = "pending_activation_email"
 private const val KEY_PENDING_SUBMISSION_CRAVING = "pending_submission_craving"
-private const val KEY_PENDING_CONFIRMATION_HASH = "pending_confirmation_hash"
 private const val KEY_COMPENSATION_CODE = "compensation_code"
 private const val KEY_STUDY_COMPLETED = "study_completed"
 private const val LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS = "next_run_available_at_millis"

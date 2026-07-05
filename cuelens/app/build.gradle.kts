@@ -42,6 +42,11 @@ android {
                 "CRAVING_SUBMIT_URL",
                 "\"http://192.168.1.203:8080/cuelens/submit\""
             )
+            buildConfigField(
+                "String",
+                "ACTIVATION_URL",
+                "\"http://192.168.1.203:8080/cuelens/activate\""
+            )
         }
         create("production") {
             dimension = "environment"
@@ -49,6 +54,11 @@ android {
                 "String",
                 "CRAVING_SUBMIT_URL",
                 "\"https://cuelens.each-and-every.de/submit\""
+            )
+            buildConfigField(
+                "String",
+                "ACTIVATION_URL",
+                "\"https://cuelens.each-and-every.de/activate\""
             )
         }
     }

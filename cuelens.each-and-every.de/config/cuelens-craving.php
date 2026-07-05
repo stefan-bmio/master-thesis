@@ -5,5 +5,4 @@ return [
     'dbname' => 'deine_datenbank',
     'user' => 'dein_benutzer',
     'pass' => 'dein_passwort',
-    'hmac_secret' => 'serverseitig-durch-langen-zufaelligen-wert-ersetzen',
 ];
