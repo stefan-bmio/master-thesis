@@ -85,17 +85,20 @@ Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Stu
 Cue-Bilder & lokal gebündelte App-Ressourcen & innerhalb des APK \\
 Cue-Matching-Zuordnungen & KI-unterstützt erstellt und manuell gesichtet & App-Ressourcen und Aufgabenlogik \\
 Cue-Labeling-Wortoptionen & KI-unterstützt erstellt und manuell gesichtet & fest codierte Zuordnungsliste in der App \\
-Lokaler Studienfortschritt & App-Logik & \texttt{SharedPreferences}; keine Übertragung in der aktuellen Entwicklungsfassung \\
-Craving-Wert & Slider in der Android-App & App-Speicher (temporär),\newline Tabelle \texttt{self\_reports} \\
-Experimentelle Bedingung und Durchgangsindex & App-Logik & für die auswertbare Studienfassung zusätzlich zu übermitteln oder serverseitig eindeutig abzuleiten \\
+Lokaler Studienfortschritt & App-Logik & \texttt{SharedPreferences}; enthält bestätigte Situation, Sperrzeit, aktuelle Hashposition und ausstehende Übertragungszustände \\
+App-Token & Server bei erfolgreicher Aktivierung & lokale Speicherung in der App; keine dauerhafte Speicherung in \texttt{register} \\
+Aktueller HMAC-Kettenwert & Server aus App-Token und serverseitigem Schlüssel & lokal als \texttt{current\_hash}; serverseitig jeweils nur nächster gültiger Wert in \texttt{valid\_hashes} \\
+Craving-Wert & Slider in der Android-App & lokal bis zur Bestätigung als \texttt{pending\_submission\_craving}; temporär in \texttt{submission}; final in \texttt{self\_reports} \\
+Experimentelle Bedingung und Durchgangsindex & serverseitig validierter HMAC-Kettenindex & Ableitung im Backend; keine vertrauenswürdige App-Eingabe \\
+Abrechnungscode & Server nach zwanzigstem gültigem Selbstbericht & Tabelle \texttt{compensation\_code} und lokale Anzeige in der App \\
 Registrierungsdaten & Webformular & Tabelle \texttt{register} \\
 Bestätigung von Studieninformation und Datenschutzerklärung & Pflicht-Checkboxen im Webformular & Felder \texttt{studyinfo} und \texttt{dataprot} in Tabelle \texttt{register} \\
 Double-Opt-In-Token & serverseitig mit \texttt{random\_bytes(32)} erzeugt & Klartext im E-Mail-Link,\newline SHA-256-Hash in \texttt{doi\_token} \\
 CSRF-Token & PHP-Session & Hidden Field im Formular,\newline Session-Speicher des Webservers \\
 SMTP-Zugangsdaten & Serverkonfiguration & Konfigurationsdatei \texttt{noreply-smtp.php} \\
-Datenbankzugangsdaten & Serverkonfiguration & Konfigurationsdatei \texttt{cuelens-signup.php} \\
+Datenbankzugangsdaten & Serverkonfiguration & Konfigurationsdateien im geschützten Verzeichnis \texttt{config} \\
 Host-Konfiguration & Umgebungskonfiguration & Platzhalter im VCS, angepasste Werte in lokaler Testumgebung und Produktivsystem \\
-technische Logs & Android-Logcat und Webserver/PHP & Gerätelog beziehungsweise Server-Logs \\
+technische Logs & Android-Logcat und Webserver/PHP & Gerätelog beziehungsweise Server-Logs; kein produktives Logging sensibler Payloads vorgesehen \\
 \bottomrule
 \end{tabularx}
 \captionof{table}{Datenherkunft und Speicherorte}
