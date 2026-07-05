@@ -1,31 +1,37 @@
-# CueLens Assumptions and Unclear Specifications
+# CueLens Assumptions and Resolved Specifications
 
 ## Assumptions
 
 - The Android app project root is `./`.
 - Missing assets terminate the current phase rather than causing a crash.
-- The productive app uses `PUT` requests to `submit.php`.
+- The productive app uses JSON `PUT` requests to `submit.php`; the older `POST` form submission is obsolete.
+- The former 20-component completion token is replaced by a server-side HMAC-SHA-256 hash chain with 20 steps.
+- The server stores the HMAC secret only in the protected server-side `config` directory.
+- The server does not persist the app token; it stores only the currently valid next HMAC value in `valid_hashes`.
 - Each productive study situation contains exactly five trials.
-- Local app progress is only a cache. The completion count is derived from token components that were returned by the server and confirmed by the app.
-- A completion token consists of 20 components with exactly three alphanumeric characters each.
-- The first component is unique across the expected maximum of 85 participants and is protected by a database uniqueness constraint on `component_01`.
-- The token table is not permanently related to the scientific self-report table.
-- `delivered_component_count` records how many token components the server has returned.
-- `confirmed_component_count` records how many returned components the app has confirmed with the second `PUT` request.
+- Local app progress is only a cache. Authoritative progress is whether the app holds the next valid HMAC value returned by the server and confirmed by the app.
 - The temporary `submission` table is used only during the three-way handshake and is cleared after confirmed transfer to `self_reports`.
-- `situation_index`, `condition`, and the fixed trial count are derived server-side from the confirmed token progress and the study configuration.
-- The app does not send `situation_index`, `condition`, or `trial_count` in the regular submit payload.
+- `situation_index`, `condition_code`, and the fixed trial count are derived server-side from the HMAC chain index and the study configuration.
+- The app does not send `situation_index`, `condition_code`, or `trial_count` in the regular submit payload.
 - A repeated confirmation request is idempotent and returns HTTP 204.
-- Invalid token prefixes or malformed token components return HTTP 400 without writing study data.
+- Malformed UUIDs, malformed HMAC hashes, missing required fields, unknown hashes, HMAC-chain mismatches, and invalid craving values return HTTP 400 without writing study data.
+- There are no cleanup rules for stale `submission` rows; unresolved rows remain for later manual inspection.
+- App reinstallation resets participation state on the device for data protection reasons. The server does not reconstruct app tokens or HMAC state for a reinstalled app.
+- Local app tokens, current hashes, pending submissions, and pending confirmation hashes should be stored as sensitive local state; encryption remains recommended when feasible for the target Android version.
+- The final compensation proof shown to participants is the UUID stored in `compensation_code`.
 
-## Unclear Specifications
+## Resolved Specifications
 
-- The exact allowed alphanumeric alphabet for token components is not yet fixed.
-- The final user-facing token format is not yet fixed.
-- The exact JSON response shape of the initial `submit.php` PUT is not yet fixed.
-- The exact confirmation payload is not yet fixed. The current documentation prefers the full token prefix including the newly returned component.
-- The retention time and cleanup behavior for stale `submission` rows are not yet fixed.
-- The server response for an initial request after all 20 components have already been confirmed is not yet fixed.
-- The exact behavior after app reinstallation before all 20 components have been received is not yet specified.
-- The extent to which local token components and pending submissions must be encrypted on the device is not yet specified.
-- The exact UI copy for the final token display and the participant instructions for compensation are not yet specified.
+- `PUT` replaces the older `POST` endpoint behavior.
+- HMAC-Hash-Chain replaces the older 20-components-token design.
+- The initial registration response returns JSON with `app_token` and `hash`.
+- A regular initial self-report response returns JSON with `next_hash`, `situation_index`, and `condition_code`.
+- The regular confirmation payload uses `confirmed_hash`.
+- The final self-report response returns JSON with `status: "complete"` and `compensation_code`.
+- Final compensation confirmation uses a `compensation_code` payload and returns HTTP 204.
+- A request after app reinstallation is treated as a fresh device state; the server does not recover previous local token material.
+
+## Remaining Unclear Specifications
+
+- Exact UI copy for the final token display and participant instructions for compensation is not yet specified.
+- The current `compensation_code` table does not persist a link to `participant_id` or `consumed_hash`; therefore an already issued final code cannot be reconstructed from a retry if the final response was lost.

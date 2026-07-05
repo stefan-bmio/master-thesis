@@ -1,6 +1,7 @@
 package de.eachAndEvery.cueLens
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,10 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
 import de.eachAndEvery.cueLens.ui.theme.CueLensTheme
+import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.net.URLEncoder
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -84,7 +86,12 @@ private fun CueLensApp() {
     var currentImageItems by remember { mutableStateOf(emptyList<ImageMatchItem>()) }
     var currentWordItems by remember { mutableStateOf(emptyList<WordMatchItem>()) }
     var completedSituationCount by remember {
-        mutableIntStateOf(preferences.getInt(KEY_COMPLETED_SITUATION_COUNT, 0))
+        mutableIntStateOf(
+            preferences.getInt(
+                KEY_CONFIRMED_SITUATION_COUNT,
+                preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, 0)
+            )
+        )
     }
     var nextRunAvailableAtMillis by remember {
         mutableStateOf(
@@ -97,6 +104,70 @@ private fun CueLensApp() {
     var matchingOrder by remember {
         mutableStateOf(loadMatchingOrder(preferences, imageItems.size))
     }
+    var appToken by remember { mutableStateOf(preferences.getString(KEY_APP_TOKEN, null)) }
+    var currentHash by remember { mutableStateOf(preferences.getString(KEY_CURRENT_HASH, null)) }
+    var pendingActivationEmail by remember {
+        mutableStateOf(preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null))
+    }
+    var pendingSubmissionCraving by remember {
+        mutableIntStateOf(preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING))
+    }
+    var pendingConfirmationHash by remember {
+        mutableStateOf(preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null))
+    }
+    var compensationCode by remember {
+        mutableStateOf(preferences.getString(KEY_COMPENSATION_CODE, null))
+    }
+    var studyCompleted by remember {
+        mutableStateOf(preferences.getBoolean(KEY_STUDY_COMPLETED, false))
+    }
+    var syncInProgress by remember { mutableStateOf(false) }
+    var syncMessage by remember { mutableStateOf<String?>(null) }
+
+    val refreshPersistedState = {
+        completedSituationCount = preferences.getInt(
+            KEY_CONFIRMED_SITUATION_COUNT,
+            preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, 0)
+        )
+        nextRunAvailableAtMillis = preferences.getLong(
+            KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS,
+            preferences.getLong(LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS, 0L)
+        )
+        appToken = preferences.getString(KEY_APP_TOKEN, null)
+        currentHash = preferences.getString(KEY_CURRENT_HASH, null)
+        pendingActivationEmail = preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null)
+        pendingSubmissionCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
+        pendingConfirmationHash = preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null)
+        compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
+        studyCompleted = preferences.getBoolean(KEY_STUDY_COMPLETED, false)
+    }
+
+    val syncPendingWork = {
+        coroutineScope.launch {
+            syncInProgress = true
+            syncMessage = null
+            val result = recoverPendingNetworkWork(preferences)
+            refreshPersistedState()
+            syncInProgress = false
+            if (result.isFailure) {
+                syncMessage = "Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+            }
+        }
+        Unit
+    }
+
+    LaunchedEffect(Unit) {
+        if (hasPendingNetworkWork(preferences)) {
+            syncInProgress = true
+            syncMessage = null
+            val result = recoverPendingNetworkWork(preferences)
+            refreshPersistedState()
+            syncInProgress = false
+            if (result.isFailure) {
+                syncMessage = "Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+            }
+        }
+    }
 
     val getMatchingOrder = {
         matchingOrder.ifEmpty {
@@ -108,7 +179,10 @@ private fun CueLensApp() {
     }
 
     val startRun = {
-        val situationIndex = completedSituationCount
+        val situationIndex = preferences.getInt(
+            KEY_CONFIRMED_SITUATION_COUNT,
+            preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, completedSituationCount)
+        )
         itemIndex = 0
         currentImageItems = emptyList()
         currentWordItems = emptyList()
@@ -136,21 +210,15 @@ private fun CueLensApp() {
     }
 
     val finishRun = { craving: Int ->
-        val nextRunAt = System.currentTimeMillis() + RUN_COOLDOWN_MILLIS
-        val nextCompletedSituationCount = (completedSituationCount + 1).coerceAtMost(TOTAL_SITUATION_COUNT)
         preferences.edit()
-            .putInt(KEY_COMPLETED_SITUATION_COUNT, nextCompletedSituationCount)
-            .putLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, nextRunAt)
+            .putInt(KEY_PENDING_SUBMISSION_CRAVING, craving.coerceIn(0, 100))
             .apply()
-        completedSituationCount = nextCompletedSituationCount
-        nextRunAvailableAtMillis = nextRunAt
+        pendingSubmissionCraving = craving.coerceIn(0, 100)
         itemIndex = 0
         currentImageItems = emptyList()
         currentWordItems = emptyList()
         phase = Phase.StartGate
-        coroutineScope.launch {
-            submitCraving(craving)
-        }
+        syncPendingWork()
         Unit
     }
 
@@ -177,17 +245,47 @@ private fun CueLensApp() {
         }
     }
 
+    val hasActivation = !appToken.isNullOrBlank() && !currentHash.isNullOrBlank()
+    val networkWorkPending = !pendingActivationEmail.isNullOrBlank() ||
+        pendingSubmissionCraving != NO_PENDING_CRAVING ||
+        !pendingConfirmationHash.isNullOrBlank() ||
+        (!compensationCode.isNullOrBlank() && !studyCompleted)
+    val canStartNow = hasActivation && !networkWorkPending && !syncInProgress && !studyCompleted
+
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        when (phase) {
+        if (!hasActivation && !studyCompleted) {
+            ActivationScreen(
+                syncInProgress = syncInProgress,
+                message = syncMessage,
+                onActivate = { email ->
+                    coroutineScope.launch {
+                        syncInProgress = true
+                        syncMessage = null
+                        val result = activateAndConfirm(preferences, email)
+                        refreshPersistedState()
+                        syncInProgress = false
+                        if (result.isFailure) {
+                            syncMessage = "Die Aktivierung ist fehlgeschlagen. Bitte prüfen Sie die E-Mail-Adresse und versuchen Sie es erneut."
+                        }
+                    }
+                }
+            )
+        } else when (phase) {
             Phase.StartGate -> StartGateScreen(
                 nextRunAvailableAtMillis = nextRunAvailableAtMillis,
                 completedSituationCount = completedSituationCount,
+                studyCompleted = studyCompleted,
+                compensationCode = compensationCode,
+                networkWorkPending = networkWorkPending,
+                syncInProgress = syncInProgress,
+                syncMessage = syncMessage,
                 canStartSituation = canStartSituation(
                     completedSituationCount = completedSituationCount,
                     imageItemCount = imageItems.size,
                     wordItemCount = wordItems.size
-                ),
-                onStartRun = startRun
+                ) && canStartNow,
+                onStartRun = startRun,
+                onRetrySync = syncPendingWork
             )
             Phase.ImageMatching -> {
                 val item = currentImageItems.getOrNull(itemIndex)
@@ -210,13 +308,20 @@ private fun CueLensApp() {
 private fun StartGateScreen(
     nextRunAvailableAtMillis: Long,
     completedSituationCount: Int,
+    studyCompleted: Boolean,
+    compensationCode: String?,
+    networkWorkPending: Boolean,
+    syncInProgress: Boolean,
+    syncMessage: String?,
     canStartSituation: Boolean,
-    onStartRun: () -> Unit
+    onStartRun: () -> Unit,
+    onRetrySync: () -> Unit
 ) {
     var nowMillis by remember { mutableStateOf(System.currentTimeMillis()) }
     val remainingMillis = max(0L, nextRunAvailableAtMillis - nowMillis)
-    val studyComplete = completedSituationCount >= TOTAL_SITUATION_COUNT
-    val startEnabled = remainingMillis == 0L && canStartSituation && !studyComplete
+    val studyComplete = studyCompleted || completedSituationCount >= TOTAL_SITUATION_COUNT
+    val startEnabled = remainingMillis == 0L && canStartSituation && !studyComplete &&
+        !networkWorkPending && !syncInProgress
     val nextSituationNumber = (completedSituationCount + 1).coerceAtMost(TOTAL_SITUATION_COUNT)
 
     LaunchedEffect(nextRunAvailableAtMillis) {
@@ -237,6 +342,7 @@ private fun StartGateScreen(
         Text(
             text = when {
                 studyComplete -> "Studie abgeschlossen"
+                networkWorkPending || syncInProgress -> "Datenübertragung ausstehend"
                 canStartSituation -> "Durchgang $nextSituationNumber von $TOTAL_SITUATION_COUNT"
                 else -> "Cue Labeling noch unvollständig"
             },
@@ -244,17 +350,100 @@ private fun StartGateScreen(
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(12.dp))
+        if (studyComplete && !compensationCode.isNullOrBlank()) {
+            Text(
+                text = "Aufwandsentschädigungscode:",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = compensationCode,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
+            )
+        } else {
+            Text(
+                text = if (networkWorkPending || syncInProgress) {
+                    "Bitte schließen Sie die Übertragung ab."
+                } else {
+                    formatDuration(remainingMillis)
+                },
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
+            )
+        }
+        if (!syncMessage.isNullOrBlank()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = syncMessage,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        if (networkWorkPending || syncInProgress) {
+            Button(
+                enabled = !syncInProgress,
+                onClick = onRetrySync
+            ) {
+                Text(text = if (syncInProgress) "Übertragung läuft" else "Erneut versuchen")
+            }
+        } else if (!studyComplete) {
+            Button(
+                enabled = startEnabled,
+                onClick = onStartRun
+            ) {
+                Text(text = "Durchgang starten")
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActivationScreen(
+    syncInProgress: Boolean,
+    message: String?,
+    onActivate: (String) -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    val trimmedEmail = email.trim()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Text(
-            text = formatDuration(remainingMillis),
-            style = MaterialTheme.typography.headlineMedium,
+            text = "App aktivieren",
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            enabled = !syncInProgress,
+            singleLine = true,
+            label = { Text("E-Mail-Adresse") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (!message.isNullOrBlank()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            enabled = startEnabled,
-            onClick = onStartRun
+            enabled = !syncInProgress && trimmedEmail.isNotBlank(),
+            onClick = { onActivate(trimmedEmail) }
         ) {
-            Text(text = "Durchgang starten")
+            Text(text = if (syncInProgress) "Aktivierung läuft" else "Aktivieren")
         }
     }
 }
@@ -468,7 +657,7 @@ private fun canStartSituation(
         }
     }
 
-private fun loadMatchingOrder(preferences: android.content.SharedPreferences, imageItemCount: Int): List<Int> {
+private fun loadMatchingOrder(preferences: SharedPreferences, imageItemCount: Int): List<Int> {
     val savedOrder = preferences.getString(KEY_MATCHING_ORDER, null).orEmpty()
     if (savedOrder.isBlank()) return emptyList()
 
@@ -483,7 +672,7 @@ private fun loadMatchingOrder(preferences: android.content.SharedPreferences, im
     }
 }
 
-private fun saveMatchingOrder(preferences: android.content.SharedPreferences, order: List<Int>) {
+private fun saveMatchingOrder(preferences: SharedPreferences, order: List<Int>) {
     preferences.edit()
         .putString(KEY_MATCHING_ORDER, order.joinToString(","))
         .apply()
@@ -497,37 +686,216 @@ private fun formatDuration(durationMillis: Long): String {
     return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }
 
-private suspend fun submitCraving(craving: Int) {
-    withContext(Dispatchers.IO) {
-        val body = "craving=${URLEncoder.encode(craving.toString(), Charsets.UTF_8.name())}"
+private suspend fun activateAndConfirm(preferences: SharedPreferences, email: String): Result<Unit> =
+    runCatching {
+        val activation = CravingSubmissionClient.activate(email)
+        preferences.edit()
+            .putString(KEY_APP_TOKEN, activation.appToken)
+            .putString(KEY_CURRENT_HASH, activation.hash)
+            .putString(KEY_PENDING_ACTIVATION_EMAIL, email)
+            .putInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
+            .remove(KEY_STUDY_COMPLETED)
+            .remove(KEY_COMPENSATION_CODE)
+            .apply()
+        recoverPendingNetworkWork(preferences).getOrThrow()
+    }.onFailure {
+        Log.w(TAG, "Activation or activation confirmation failed")
+    }
+
+private suspend fun recoverPendingNetworkWork(preferences: SharedPreferences): Result<Unit> =
+    runCatching {
+        val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
+        val studyCompleted = preferences.getBoolean(KEY_STUDY_COMPLETED, false)
+        if (!compensationCode.isNullOrBlank() && !studyCompleted) {
+            CravingSubmissionClient.confirmCompensation(compensationCode)
+            preferences.edit()
+                .putBoolean(KEY_STUDY_COMPLETED, true)
+                .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
+                .remove(KEY_PENDING_SUBMISSION_CRAVING)
+                .remove(KEY_PENDING_CONFIRMATION_HASH)
+                .apply()
+            return@runCatching
+        }
+
+        val appToken = preferences.getString(KEY_APP_TOKEN, null)
+        val currentHash = preferences.getString(KEY_CURRENT_HASH, null)
+        val pendingActivationEmail = preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null)
+        if (!appToken.isNullOrBlank() && !currentHash.isNullOrBlank() && !pendingActivationEmail.isNullOrBlank()) {
+            CravingSubmissionClient.confirmActivation(
+                email = pendingActivationEmail,
+                appToken = appToken,
+                confirmedHash = currentHash
+            )
+            preferences.edit()
+                .remove(KEY_PENDING_ACTIVATION_EMAIL)
+                .putInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
+                .apply()
+        }
+
+        val activeToken = preferences.getString(KEY_APP_TOKEN, null)
+            ?: throw IllegalStateException("Missing app token")
+        val pendingConfirmationHash = preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null)
+        if (!pendingConfirmationHash.isNullOrBlank()) {
+            confirmSubmissionAndAdvance(preferences, activeToken, pendingConfirmationHash)
+            return@runCatching
+        }
+
+        val pendingCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
+        if (pendingCraving == NO_PENDING_CRAVING) {
+            return@runCatching
+        }
+
+        val activeHash = preferences.getString(KEY_CURRENT_HASH, null)
+            ?: throw IllegalStateException("Missing current hash")
+        when (val response = CravingSubmissionClient.submitSelfReport(
+            appToken = activeToken,
+            hash = activeHash,
+            craving = pendingCraving
+        )) {
+            is SelfReportResponse.Next -> {
+                preferences.edit()
+                    .putString(KEY_PENDING_CONFIRMATION_HASH, response.nextHash)
+                    .apply()
+                confirmSubmissionAndAdvance(preferences, activeToken, response.nextHash)
+            }
+            is SelfReportResponse.Complete -> {
+                preferences.edit()
+                    .putString(KEY_COMPENSATION_CODE, response.compensationCode)
+                    .remove(KEY_PENDING_SUBMISSION_CRAVING)
+                    .remove(KEY_PENDING_CONFIRMATION_HASH)
+                    .apply()
+                CravingSubmissionClient.confirmCompensation(response.compensationCode)
+                preferences.edit()
+                    .putBoolean(KEY_STUDY_COMPLETED, true)
+                    .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
+                    .apply()
+            }
+        }
+    }.onFailure {
+        Log.w(TAG, "Pending network work could not be completed")
+    }
+
+private suspend fun confirmSubmissionAndAdvance(
+    preferences: SharedPreferences,
+    appToken: String,
+    nextHash: String
+) {
+    CravingSubmissionClient.confirmSubmission(appToken, nextHash)
+    val nextCompletedSituationCount = (preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0) + 1)
+        .coerceAtMost(TOTAL_SITUATION_COUNT)
+    val nextRunAt = System.currentTimeMillis() + RUN_COOLDOWN_MILLIS
+    preferences.edit()
+        .putString(KEY_CURRENT_HASH, nextHash)
+        .putInt(KEY_CONFIRMED_SITUATION_COUNT, nextCompletedSituationCount)
+        .putLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, nextRunAt)
+        .remove(KEY_PENDING_SUBMISSION_CRAVING)
+        .remove(KEY_PENDING_CONFIRMATION_HASH)
+        .apply()
+}
+
+private fun hasPendingNetworkWork(preferences: SharedPreferences): Boolean {
+    val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
+    return !preferences.getString(KEY_PENDING_ACTIVATION_EMAIL, null).isNullOrBlank() ||
+        preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING) != NO_PENDING_CRAVING ||
+        !preferences.getString(KEY_PENDING_CONFIRMATION_HASH, null).isNullOrBlank() ||
+        (!compensationCode.isNullOrBlank() && !preferences.getBoolean(KEY_STUDY_COMPLETED, false))
+}
+
+private object CravingSubmissionClient {
+    suspend fun activate(email: String): ActivationResponse {
+        val response = putJson(JSONObject().put("email", email))
+        return ActivationResponse(
+            appToken = response.getString("app_token"),
+            hash = response.getString("hash")
+        )
+    }
+
+    suspend fun confirmActivation(email: String, appToken: String, confirmedHash: String) {
+        putJsonNoContent(
+            JSONObject()
+                .put("email", email)
+                .put("app_token", appToken)
+                .put("confirmed_hash", confirmedHash)
+        )
+    }
+
+    suspend fun submitSelfReport(appToken: String, hash: String, craving: Int): SelfReportResponse {
+        val response = putJson(
+            JSONObject()
+                .put("app_token", appToken)
+                .put("hash", hash)
+                .put("craving", craving)
+                .put("app_version", BuildConfig.VERSION_NAME)
+        )
+        val status = response.optString("status")
+        return if (status == "complete") {
+            SelfReportResponse.Complete(response.getString("compensation_code"))
+        } else {
+            SelfReportResponse.Next(response.getString("next_hash"))
+        }
+    }
+
+    suspend fun confirmSubmission(appToken: String, confirmedHash: String) {
+        putJsonNoContent(
+            JSONObject()
+                .put("app_token", appToken)
+                .put("confirmed_hash", confirmedHash)
+        )
+    }
+
+    suspend fun confirmCompensation(compensationCode: String) {
+        putJsonNoContent(JSONObject().put("compensation_code", compensationCode))
+    }
+
+    private suspend fun putJson(payload: JSONObject): JSONObject = withContext(Dispatchers.IO) {
+        val response = executePut(payload, expectedNoContent = false)
+        JSONObject(response ?: "{}")
+    }
+
+    private suspend fun putJsonNoContent(payload: JSONObject) {
+        withContext(Dispatchers.IO) {
+            executePut(payload, expectedNoContent = true)
+        }
+    }
+
+    private fun executePut(payload: JSONObject, expectedNoContent: Boolean): String? {
+        val body = payload.toString()
         val connection = URL(BuildConfig.CRAVING_SUBMIT_URL).openConnection() as HttpURLConnection
         try {
-            connection.requestMethod = "POST"
+            connection.connectTimeout = NETWORK_TIMEOUT_MILLIS
+            connection.readTimeout = NETWORK_TIMEOUT_MILLIS
+            connection.requestMethod = "PUT"
             connection.doOutput = true
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-            connection.setRequestProperty("Content-Length", body.toByteArray().size.toString())
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+            connection.setRequestProperty("Accept", "application/json")
+            connection.setRequestProperty("Content-Length", body.toByteArray(Charsets.UTF_8).size.toString())
             OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { writer ->
                 writer.write(body)
             }
-            Log.i(TAG, "submitCraving response: ${connection.responseCode} ${connection.responseMessage}")
-            val responseStream = if (connection.responseCode in 200..299) {
-                connection.inputStream
-            } else {
-                connection.errorStream
-            }
-            responseStream?.bufferedReader(Charsets.UTF_8)?.use { reader ->
-                val responseJson = JSONObject(reader.readText())
-                if (responseJson.has("success")) {
-                    Log.i(TAG, "submitCraving success: ${responseJson.getBoolean("success")}")
+
+            val responseCode = connection.responseCode
+            if (expectedNoContent) {
+                if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
+                    drainErrorStream(connection)
+                    throw IOException("Unexpected HTTP status")
                 }
-                if (responseJson.has("error")) {
-                    Log.i(TAG, "submitCraving error: ${responseJson.getString("error")}")
-                }
+                return null
             }
-        } catch (exception: Exception) {
-            Log.e(TAG, "Error submitting value", exception)
+            if (responseCode !in 200..299) {
+                drainErrorStream(connection)
+                throw IOException("Unexpected HTTP status")
+            }
+            return connection.inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
+                reader.readText()
+            }
         } finally {
             connection.disconnect()
+        }
+    }
+
+    private fun drainErrorStream(connection: HttpURLConnection) {
+        connection.errorStream?.bufferedReader(Charsets.UTF_8)?.use { reader ->
+            reader.readText()
         }
     }
 }
@@ -550,6 +918,16 @@ private data class WordMatchItem(
     val wordA: String,
     val wordB: String
 )
+
+private data class ActivationResponse(
+    val appToken: String,
+    val hash: String
+)
+
+private sealed interface SelfReportResponse {
+    data class Next(val nextHash: String) : SelfReportResponse
+    data class Complete(val compensationCode: String) : SelfReportResponse
+}
 
 private data class CueLabelMapping(
     val cueName: String,
@@ -614,10 +992,20 @@ private val cueLabelMappings = listOf(
 
 private const val TAG = "CueLens"
 private const val PREFERENCES_NAME = "cue_lens_state"
-private const val KEY_COMPLETED_SITUATION_COUNT = "completed_situation_count"
+private const val KEY_CONFIRMED_SITUATION_COUNT = "confirmed_situation_count"
 private const val KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS = "next_situation_available_at_millis"
 private const val KEY_MATCHING_ORDER = "matching_order"
+private const val KEY_APP_TOKEN = "app_token"
+private const val KEY_CURRENT_HASH = "current_hash"
+private const val KEY_PENDING_ACTIVATION_EMAIL = "pending_activation_email"
+private const val KEY_PENDING_SUBMISSION_CRAVING = "pending_submission_craving"
+private const val KEY_PENDING_CONFIRMATION_HASH = "pending_confirmation_hash"
+private const val KEY_COMPENSATION_CODE = "compensation_code"
+private const val KEY_STUDY_COMPLETED = "study_completed"
 private const val LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS = "next_run_available_at_millis"
+private const val LEGACY_KEY_COMPLETED_SITUATION_COUNT = "completed_situation_count"
+private const val NO_PENDING_CRAVING = -1
+private const val NETWORK_TIMEOUT_MILLIS = 15_000
 private const val TRIALS_PER_SITUATION = 5
 private const val MATCHING_SITUATION_COUNT = 10
 private const val LABELING_SITUATION_COUNT = 10

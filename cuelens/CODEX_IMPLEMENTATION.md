@@ -95,7 +95,7 @@ Die auswertbare Uebertragung besteht aus drei Schritten:
    - Der Server sucht den uebermittelten Hash in `valid_hashes`.
    - Der Server berechnet mit dem uebermittelten App-Token die HMAC-Kette `h_1` bis `h_20` und prueft zeitkonstant, ob der uebermittelte Hash zu dieser Kette gehoert.
    - Der Server leitet aus dem gefundenen Kettenindex Situation und Bedingung ab.
-   - Der Server speichert Selbstbericht, Kettenindex und den naechsten Hash zunaechst nur temporaer in `submission`.
+   - Der Server speichert Selbstbericht, Kettenindex, den naechsten Hash und den Hash des App-Tokens zunaechst nur temporaer in `submission`.
    - Der Server loescht den verbrauchten Hash aus `valid_hashes` und antwortet mit dem naechsten Hash. Bei `h_20` antwortet der Server mit einem Abschlussstatus und speichert keinen weiteren gueltigen Hash.
 
 2. **Bestaetigungs-PUT der App**
@@ -216,7 +216,7 @@ Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Tr
 Die bestehende Tabelle `register` enthaelt Teilnahmeinformationen ohne Bezug zu Craving-Werten und ohne Bezug zu App-Tokens.
 ```sql
 CREATE TABLE register (
-    created_at DATETIME NOT NULL DEFAULT NOW(),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
     name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
     iban VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
@@ -247,9 +247,11 @@ CREATE TABLE valid_hashes (
 ```sql
 CREATE TABLE submission (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    participant_id CHAR(64) NOT NULL,
     consumed_hash CHAR(64) NOT NULL UNIQUE,
     next_hash CHAR(64) NULL,
     craving TINYINT UNSIGNED NOT NULL,
+    situation_index TINYINT NOT NULL,
     condition_code ENUM('CUE_MATCHING', 'CUE_LABELING') NOT NULL,
     app_version VARCHAR(32) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -257,13 +259,25 @@ CREATE TABLE submission (
 );
 ```
 
-`submission` enthaelt keine personenbezogenen Daten und kein App-Token. Sie verbindet Hashbezug und Selbstbericht nur bis zur App-Bestaetigung. Nach erfolgreichem Bestaetigungs-PUT wird der Selbstbericht in `self_reports` gespeichert und der `submission`-Eintrag geloescht. Abgelaufene Eintraege werden per Cleanup entfernt oder als abgebrochen behandelt, ohne nach `self_reports` uebernommen zu werden.
+`submission` enthaelt keine personenbezogenen Daten, aber einen Hash des App-Tokens. Nach erfolgreichem Bestaetigungs-PUT wird der Selbstbericht in `self_reports` gespeichert und der `submission`-Eintrag geloescht.
 
-### 4.4 Abrechnungscodes
+### 4.4 Selbstberichte
+
+```sql
+CREATE TABLE self_reports (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    participant_id CHAR(64),
+    condition_code ENUM('CUE_MATCHING', 'CUE_LABELING') NOT NULL,
+    craving TINYINT NOT NULL,
+    CHECK(craving BETWEEN 0 AND 100)   
+);
+```
+
+### 4.5 Abrechnungscodes
 ```sql
 CREATE TABLE compensation_code (
-    compensation_code CHAR(64) NOT NULL PRIMARY KEY,
-    confirmmed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    compensation_code CHAR(36) NOT NULL PRIMARY KEY,
+    confirmed_at TIMESTAMP NULL 
 );
 ```
 
