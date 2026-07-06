@@ -1,8 +1,6 @@
 package me.stefanberger.ai_poc
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,16 +30,16 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.stefanberger.ai_poc.benchmark.BenchmarkRunResult
+import me.stefanberger.ai_poc.benchmark.BenchmarkRunner
+import me.stefanberger.ai_poc.benchmark.CsvExporter
+import me.stefanberger.ai_poc.ml.AiLabels
+import me.stefanberger.ai_poc.ml.AiModelConfig
+import me.stefanberger.ai_poc.ml.ImageModelBackendFactory
+import me.stefanberger.ai_poc.ml.ImagePreprocessor
+import me.stefanberger.ai_poc.ml.ModelPrediction
 import me.stefanberger.ai_poc.ui.theme.AIPoCTheme
-import org.tensorflow.lite.Interpreter
-import java.io.Closeable
-import java.io.FileInputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.MappedByteBuffer
-import java.nio.channels.FileChannel
 import java.util.Locale
-import kotlin.math.sqrt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,39 +47,44 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AIPoCTheme {
-                SmokeClassifierScreen()
+                CueLensClassifierScreen()
             }
         }
     }
 }
 
 @Composable
-private fun SmokeClassifierScreen() {
+private fun CueLensClassifierScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val classifierResult = remember { runCatching { SmokeClassifier(context.applicationContext) } }
-    val classifier = classifierResult.getOrNull()
+    val backendResult = remember {
+        runCatching {
+            ImageModelBackendFactory.create(context.applicationContext, AiModelConfig.activeModel)
+        }
+    }
+    val backend = backendResult.getOrNull()
 
     var selectedUri by remember { mutableStateOf<Uri?>(null) }
-    var isClassifying by remember { mutableStateOf(false) }
+    var isBusy by remember { mutableStateOf(false) }
     var status by remember {
         mutableStateOf(
-            classifierResult.exceptionOrNull()?.let { "Could not load MobileCLIP: ${it.message}" }
-                ?: "Pick a 256x256 image to classify."
+            backendResult.exceptionOrNull()?.message
+                ?: "Active model: ${AiModelConfig.activeModel.id}"
         )
     }
-    var classification by remember { mutableStateOf<Classification?>(null) }
+    var prediction by remember { mutableStateOf<ModelPrediction?>(null) }
+    var benchmarkResult by remember { mutableStateOf<BenchmarkRunResult?>(null) }
 
-    DisposableEffect(classifier) {
-        onDispose { classifier?.close() }
+    DisposableEffect(backend) {
+        onDispose { backend?.close() }
     }
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri == null || classifier == null) return@rememberLauncherForActivityResult
-
+        if (uri == null || backend == null) return@rememberLauncherForActivityResult
         selectedUri = uri
-        classification = null
-        isClassifying = true
+        prediction = null
+        benchmarkResult = null
+        isBusy = true
         status = "Classifying..."
         runCatching {
             context.contentResolver.takePersistableUriPermission(
@@ -92,15 +95,22 @@ private fun SmokeClassifierScreen() {
 
         scope.launch {
             val result = withContext(Dispatchers.IO) {
-                runCatching { classifier.classify(uri) }
+                runCatching {
+                    val bitmap = ImagePreprocessor.decodeBitmapFromUri(context, uri)
+                    try {
+                        backend.classify(bitmap)
+                    } finally {
+                        bitmap.recycle()
+                    }
+                }
             }
             result.onSuccess {
-                classification = it
+                prediction = it
                 status = "Done."
             }.onFailure {
                 status = it.message ?: "Classification failed."
             }
-            isClassifying = false
+            isBusy = false
         }
     }
 
@@ -113,178 +123,111 @@ private fun SmokeClassifierScreen() {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "MobileCLIP S2 Smoke Classifier",
+                text = "CueLens Image Classifier",
                 style = MaterialTheme.typography.headlineSmall
             )
-            Text(
-                text = "Prototype input: RGB JPEG/PNG/WebP, exactly 256 x 256 px, upright. This does not resize, crop, rotate, or correct EXIF orientation."
-            )
+            Text(text = status)
             Button(
-                enabled = classifier != null && !isClassifying,
+                enabled = backend != null && !isBusy,
                 onClick = { picker.launch(arrayOf("image/*")) }
             ) {
                 Text("Open image")
             }
 
             selectedUri?.let { Text("Selected: $it") }
-            if (isClassifying) CircularProgressIndicator()
-            Text(status)
+            if (isBusy) CircularProgressIndicator()
 
-            classification?.let { result ->
+            prediction?.let { result ->
                 Text(
-                    text = "Prediction: ${result.label} (${result.score.formatScore()})",
+                    text = "Prediction: ${result.predictedLabel} (${result.modelId}, ${result.latencyMs} ms)",
                     style = MaterialTheme.typography.titleMedium
                 )
-                result.scores.forEach { score ->
-                    Text("${score.label}: ${score.score.formatScore()}")
+                AiLabels.canonical.forEach { label ->
+                    Text("${label}: ${result.scores[label].orZero().formatScore()}")
                 }
+            }
+
+            if (BuildConfig.FLAVOR == "benchmark") {
+                BenchmarkControls(
+                    isBusy = isBusy,
+                    result = benchmarkResult,
+                    onRunActive = {
+                        isBusy = true
+                        status = "Benchmark running..."
+                        scope.launch {
+                            val result = withContext(Dispatchers.IO) {
+                                runCatching {
+                                    BenchmarkRunner(context).run(listOf(AiModelConfig.activeModel))
+                                }
+                            }
+                            result.onSuccess {
+                                benchmarkResult = it
+                                status = "Benchmark done: ${it.predictions.size} predictions."
+                            }.onFailure {
+                                status = it.message ?: "Benchmark failed."
+                            }
+                            isBusy = false
+                        }
+                    },
+                    onRunAll = {
+                        isBusy = true
+                        status = "Benchmark running..."
+                        scope.launch {
+                            val result = withContext(Dispatchers.IO) {
+                                runCatching {
+                                    BenchmarkRunner(context).run(AiModelConfig.benchmarkModels)
+                                }
+                            }
+                            result.onSuccess {
+                                benchmarkResult = it
+                                status = "Benchmark done: ${it.predictions.size} predictions."
+                            }.onFailure {
+                                status = it.message ?: "Benchmark failed."
+                            }
+                            isBusy = false
+                        }
+                    },
+                    onExport = export@{
+                        val current = benchmarkResult ?: return@export
+                        val export = CsvExporter.export(context, current)
+                        status = "CSV exported: ${export.predictionCsv.name}, ${export.metricCsv.name}"
+                    }
+                )
             }
         }
     }
 }
 
-private class SmokeClassifier(context: Context) : Closeable {
-    private val interpreter = Interpreter(
-        loadModel(context),
-        Interpreter.Options().setNumThreads(2)
-    )
-    private val contentResolver = context.contentResolver
-
-    fun classify(uri: Uri): Classification {
-        val imageInput = imageInput(uri)
-        val scores = prompts.map { prompt ->
-            val output0 = Array(1) { FloatArray(embeddingSize) }
-            val output1 = Array(1) { FloatArray(embeddingSize) }
-            val outputs = mutableMapOf<Int, Any>(
-                0 to output0,
-                1 to output1
-            )
-
-            imageInput.rewind()
-            interpreter.runForMultipleInputsOutputs(
-                arrayOf(imageInput, arrayOf(prompt.tokens)),
-                outputs
-            )
-
-            LabelScore(prompt.label, cosine(output0[0], output1[0]))
-        }.sortedByDescending { it.score }
-
-        val top = scores.first()
-        return Classification(top.label, top.score, scores)
+@Composable
+private fun BenchmarkControls(
+    isBusy: Boolean,
+    result: BenchmarkRunResult?,
+    onRunActive: () -> Unit,
+    onRunAll: () -> Unit,
+    onExport: () -> Unit
+) {
+    Button(enabled = !isBusy, onClick = onRunActive) {
+        Text("Run active model")
     }
-
-    private fun imageInput(uri: Uri): ByteBuffer {
-        val bitmap = contentResolver.openInputStream(uri)?.use { stream ->
-            BitmapFactory.decodeStream(stream)
-        } ?: error("Could not decode the selected image.")
-
-        if (bitmap.width != imageSize || bitmap.height != imageSize) {
-            val message = "Image must already be ${imageSize}x$imageSize px. Selected image is ${bitmap.width}x${bitmap.height} px."
-            bitmap.recycle()
-            error(message)
-        }
-
-        val pixels = IntArray(imageSize * imageSize)
-        bitmap.getPixels(pixels, 0, imageSize, 0, 0, imageSize, imageSize)
-        bitmap.recycle()
-
-        val input = ByteBuffer
-            .allocateDirect(imageSize * imageSize * channels * floatBytes)
-            .order(ByteOrder.nativeOrder())
-
-        for (channel in 0 until channels) {
-            for (pixel in pixels) {
-                val value = when (channel) {
-                    0 -> (pixel shr 16) and 0xff
-                    1 -> (pixel shr 8) and 0xff
-                    else -> pixel and 0xff
-                } / 255f
-                input.putFloat((value - clipMean[channel]) / clipStd[channel])
-            }
-        }
-
-        input.rewind()
-        return input
+    Button(enabled = !isBusy, onClick = onRunAll) {
+        Text("Run all benchmark models")
     }
-
-    override fun close() {
-        interpreter.close()
+    Button(enabled = !isBusy && result != null, onClick = onExport) {
+        Text("Export CSV")
     }
-
-    private companion object {
-        private const val modelName = "mobileclip_s2_datacompdr_last.tflite"
-        private const val imageSize = 256
-        private const val channels = 3
-        private const val embeddingSize = 512
-        private const val textLength = 77
-        private const val floatBytes = 4
-        private val clipMean = floatArrayOf(0.48145466f, 0.4578275f, 0.40821073f)
-        private val clipStd = floatArrayOf(0.26862954f, 0.26130258f, 0.27577711f)
-
-        private val prompts = listOf(
-            Prompt("cigarette", tokens(49406, 320, 1125, 539, 320, 18548, 49407)),
-            Prompt("smoke", tokens(49406, 320, 1125, 539, 18548, 6664, 49407)),
-            Prompt("pack of cigarettes", tokens(49406, 320, 1125, 539, 320, 3420, 539, 22750, 49407)),
-            Prompt("full ashtray", tokens(49406, 320, 1125, 539, 320, 1476, 2067, 14621, 49407)),
-            Prompt("person smoking", tokens(49406, 320, 1125, 539, 320, 2533, 9038, 320, 18548, 49407)),
-            Prompt("group of people smoking", tokens(49406, 320, 1125, 539, 320, 1771, 539, 1047, 9038, 22750, 49407)),
-            Prompt("none of the other", tokens(49406, 320, 1125, 38644, 531, 22750, 541, 9038, 49407))
-        )
-
-        private fun loadModel(context: Context): MappedByteBuffer {
-            context.assets.openFd(modelName).use { fileDescriptor ->
-                FileInputStream(fileDescriptor.fileDescriptor).channel.use { channel ->
-                    return channel.map(
-                        FileChannel.MapMode.READ_ONLY,
-                        fileDescriptor.startOffset,
-                        fileDescriptor.declaredLength
-                    )
-                }
-            }
-        }
-
-        private fun tokens(vararg ids: Int): LongArray {
-            return LongArray(textLength).also { output ->
-                ids.forEachIndexed { index, id -> output[index] = id.toLong() }
-            }
-        }
-
-        private fun cosine(a: FloatArray, b: FloatArray): Float {
-            var dot = 0.0
-            var normA = 0.0
-            var normB = 0.0
-
-            for (index in a.indices) {
-                val av = a[index].toDouble()
-                val bv = b[index].toDouble()
-                dot += av * bv
-                normA += av * av
-                normB += bv * bv
-            }
-
-            return if (normA == 0.0 || normB == 0.0) {
-                0f
-            } else {
-                (dot / sqrt(normA * normB)).toFloat()
-            }
+    result?.let {
+        Text("Run: ${it.runId}")
+        Text("Images: ${it.imageCount}; models: ${it.modelCount}")
+        it.metrics.firstOrNull { metric -> metric.metricScope == "binary_smoking_cue" }?.let { metric ->
+            Text("Binary sensitivity: ${metric.sensitivity.formatScore()}")
+            Text("Binary specificity: ${metric.specificity.formatScore()}")
+            Text("Mean latency: ${metric.meanLatencyMs.formatScore()} ms")
         }
     }
 }
 
-private data class Prompt(
-    val label: String,
-    val tokens: LongArray
-)
-
-private data class Classification(
-    val label: String,
-    val score: Float,
-    val scores: List<LabelScore>
-)
-
-private data class LabelScore(
-    val label: String,
-    val score: Float
-)
+private fun Float?.orZero(): Float = this ?: 0f
 
 private fun Float.formatScore(): String = String.format(Locale.US, "%.3f", this)
+
+private fun Double?.formatScore(): String = this?.let { String.format(Locale.US, "%.3f", it) } ?: "n/a"
