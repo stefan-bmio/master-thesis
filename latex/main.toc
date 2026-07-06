@@ -1,5 +1,5 @@
 \babel@toc {ngerman}{}\relax 
-\contentsline {chapter}{Einführung}{3}{chapter*.6}%
+\contentsline {chapter}{Einführung}{3}{chapter*.7}%
 \contentsline {chapter}{\numberline {1}Grundlagen und verwandte Arbeiten}{9}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Gesundheitsökonomischer Hintergrund}{9}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Rauchverlangen, Auslöserreize und Cue-Labeling}{10}{section.1.2}%
@@ -16,25 +16,27 @@
 \contentsline {section}{\numberline {4.2}KI-Funktionalität}{27}{section.4.2}%
 \contentsline {chapter}{\numberline {5}Appentwicklung}{29}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Sicherheit}{29}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Qualitätssicherung und Testbarkeit}{31}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Backup}{31}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{35}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{35}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Studiendesign}{35}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{36}{section.6.3}%
-\contentsline {section}{\numberline {6.4}Ablauf der Teilnahme}{36}{section.6.4}%
-\contentsline {section}{\numberline {6.5}Datenflüsse im Studienbetrieb}{37}{section.6.5}%
-\contentsline {section}{\numberline {6.6}Studienbetrieb, Monitoring und Support}{37}{section.6.6}%
-\contentsline {section}{\numberline {6.7}Qualitätssicherung und Auswertungsvorbereitung}{37}{section.6.7}%
-\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{39}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{47}{chapter.8}%
-\contentsline {chapter}{\numberline {A}Studiendokumente}{55}{appendix.A}%
-\contentsline {section}{\numberline {A.1}E-Mail an Empfänger des Flyers}{55}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}Empfänger in Deutschland}{55}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Empfänger in der Schweiz}{55}{subsection.A.1.2}%
-\contentsline {chapter}{\numberline {B}Adressen}{57}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Suchthilfeverzeichnis der DHS}{57}{section.B.1}%
-\contentsline {section}{\numberline {B.2}infodrog Suchtindex}{71}{section.B.2}%
-\contentsline {chapter}{\numberline {C}Flyer}{78}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Studieninformation}{81}{appendix.D}%
-\contentsline {chapter}{\numberline {E}Datenschutzerklärung}{84}{appendix.E}%
+\contentsline {section}{\numberline {5.2}Craving-Übertragung, Pseudonymisierung und Sicherheitskonzept}{30}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Qualitätssicherung und Testbarkeit}{32}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Backup}{32}{section.5.4}%
+\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{37}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{37}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Studiendesign}{37}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{38}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Maßnahmen zur Verbesserung von Rekrutierung und Retention}{38}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Ablauf der Teilnahme}{39}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Datenflüsse im Studienbetrieb}{40}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Studienbetrieb, Monitoring und Support}{40}{section.6.7}%
+\contentsline {section}{\numberline {6.8}Qualitätssicherung und Auswertungsvorbereitung}{40}{section.6.8}%
+\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{41}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{49}{chapter.8}%
+\contentsline {chapter}{\numberline {A}Studiendokumente}{57}{appendix.A}%
+\contentsline {section}{\numberline {A.1}E-Mail an Empfänger des Flyers}{57}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Empfänger in Deutschland}{57}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Empfänger in der Schweiz}{57}{subsection.A.1.2}%
+\contentsline {chapter}{\numberline {B}Adressen}{59}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Suchthilfeverzeichnis der DHS}{59}{section.B.1}%
+\contentsline {section}{\numberline {B.2}infodrog Suchtindex}{73}{section.B.2}%
+\contentsline {chapter}{\numberline {C}Flyer}{80}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Studieninformation}{83}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Datenschutzerklärung}{86}{appendix.E}%

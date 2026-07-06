@@ -969,6 +969,310 @@
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
+    \entry{klompstraChallengesStrategiesEffective2025}{article}{}
+      \name{author}{4}{}{%
+        {{hash=82c7b13ef650df6739149e8bd2777146}{%
+           family={Klompstra},
+           familyi={K\bibinitperiod},
+           given={Leonie},
+           giveni={L\bibinitperiod}}}%
+        {{hash=aa3bd8c02f420c73e54554389a758bb4}{%
+           family={Strömberg},
+           familyi={S\bibinitperiod},
+           given={Anna},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d2159d98f8c77b6f75ae725ae1aee0e6}{%
+           family={Jaarsma},
+           familyi={J\bibinitperiod},
+           given={Tiny},
+           giveni={T\bibinitperiod}}}%
+        {{hash=285d7512c6a0dec85bf53fdd072b09d4}{%
+           family={Hendriks},
+           familyi={H\bibinitperiod},
+           given={Jeroen\bibnamedelima M},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{65d44ab6f65df76329f01b92c6f7120b}
+      \strng{fullhash}{36472b0d0276ee1369fc71f7141c6f92}
+      \strng{bibnamehash}{65d44ab6f65df76329f01b92c6f7120b}
+      \strng{authorbibnamehash}{65d44ab6f65df76329f01b92c6f7120b}
+      \strng{authornamehash}{65d44ab6f65df76329f01b92c6f7120b}
+      \strng{authorfullhash}{36472b0d0276ee1369fc71f7141c6f92}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{21}
+      \field{issn}{1474-5151, 1873-1953}
+      \field{journaltitle}{European Journal of Cardiovascular Nursing}
+      \field{langid}{english}
+      \field{month}{7}
+      \field{number}{5}
+      \field{title}{Challenges and Strategies for Effective Recruitment and Retention of Participants in Clinical Research Studies}
+      \field{urlday}{1}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{volume}{24}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{808\bibrangedash 812}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1093/eurjcn/zvae158
+      \endverb
+      \verb{urlraw}
+      \verb https://academic.oup.com/eurjcn/article/24/5/808/7935389
+      \endverb
+      \verb{url}
+      \verb https://academic.oup.com/eurjcn/article/24/5/808/7935389
+      \endverb
+    \endentry
+    \entry{anastasiRecruitmentRetentionClinical2024}{article}{}
+      \name{author}{5}{}{%
+        {{hash=9e8c5a108f2468612540588797add1d1}{%
+           family={Anastasi},
+           familyi={A\bibinitperiod},
+           given={Joyce\bibnamedelima K.},
+           giveni={J\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=f5c1ff92bf637537e6dfc95fae613beb}{%
+           family={Capili},
+           familyi={C\bibinitperiod},
+           given={Bernadette},
+           giveni={B\bibinitperiod}}}%
+        {{hash=469a4afedebdb399a0a2cb26caf85409}{%
+           family={Norton},
+           familyi={N\bibinitperiod},
+           given={Margaret},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e8d03adc6732b88b0cacd6f06078e1a9}{%
+           family={McMahon},
+           familyi={M\bibinitperiod},
+           given={Donald\bibnamedelima J.},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=0d8d6e07e3c7e03f3465c4ecaeb2271c}{%
+           family={Marder},
+           familyi={M\bibinitperiod},
+           given={Karen},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{ef719341fda432ed7976a2ba971e44ae}
+      \strng{fullhash}{831c2b8ef22266ae48cc1c4a44aa44d0}
+      \strng{bibnamehash}{ef719341fda432ed7976a2ba971e44ae}
+      \strng{authorbibnamehash}{ef719341fda432ed7976a2ba971e44ae}
+      \strng{authornamehash}{ef719341fda432ed7976a2ba971e44ae}
+      \strng{authorfullhash}{831c2b8ef22266ae48cc1c4a44aa44d0}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{day}{28}
+      \field{issn}{2673-561X}
+      \field{journaltitle}{Frontiers in Pain Research}
+      \field{month}{3}
+      \field{shortjournal}{Front. Pain Res.}
+      \field{shorttitle}{Recruitment and Retention of Clinical Trial Participants}
+      \field{title}{Recruitment and Retention of Clinical Trial Participants: Understanding Motivations of Patients with Chronic Pain and Other Populations}
+      \field{urlday}{4}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{volume}{4}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1330937}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.3389/fpain.2023.1330937
+      \endverb
+      \verb{file}
+      \verb C:\Users\sberg\Zotero\storage\PRP4QYSK\Anastasi et al. - 2024 - Recruitment and retention of clinical trial participants understanding motivations of patients with.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.frontiersin.org/articles/10.3389/fpain.2023.1330937/full
+      \endverb
+      \verb{url}
+      \verb https://www.frontiersin.org/articles/10.3389/fpain.2023.1330937/full
+      \endverb
+    \endentry
+    \entry{parker2024press2protocol}{online}{}
+      \name{author}{12}{}{%
+        {{hash=3f4580a3ad41778b8f4f56f392ea5057}{%
+           family={Parker},
+           familyi={P\bibinitperiod},
+           given={Adwoa},
+           giveni={A\bibinitperiod}}}%
+        {{hash=a445e0afea93fb32f65823279aeeb900}{%
+           family={Shiely},
+           familyi={S\bibinitperiod},
+           given={Frances},
+           giveni={F\bibinitperiod}}}%
+        {{hash=68a2df8dfb7a708f0269eea7fe8362ba}{%
+           family={Treweek},
+           familyi={T\bibinitperiod},
+           given={Shaun},
+           giveni={S\bibinitperiod}}}%
+        {{hash=126a31c359107d78e5d51f1dcd63896f}{%
+           family={Arundel},
+           familyi={A\bibinitperiod},
+           given={Catherine},
+           giveni={C\bibinitperiod}}}%
+        {{hash=62953754dd4d9d4f099c3ab58cfb31de}{%
+           family={Bruhn},
+           familyi={B\bibinitperiod},
+           given={Hanne},
+           giveni={H\bibinitperiod}}}%
+        {{hash=769def7820fc9fe14b586a601a5bc874}{%
+           family={Sutton},
+           familyi={S\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod}}}%
+        {{hash=f970285e2baa250cc2273cda39f16e72}{%
+           family={Gkekas},
+           familyi={G\bibinitperiod},
+           given={Athanasios},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ec94050591435e907a63e05345b72a7b}{%
+           family={Way},
+           familyi={W\bibinitperiod},
+           given={Rosie},
+           giveni={R\bibinitperiod}}}%
+        {{hash=088b1aabef34c84c3b7317a9b97cf0cd}{%
+           family={Willis},
+           familyi={W\bibinitperiod},
+           given={Andy},
+           giveni={A\bibinitperiod}}}%
+        {{hash=94ad842542ea1852357c089bfd1173a2}{%
+           family={Hays},
+           familyi={H\bibinitperiod},
+           given={Leanne},
+           giveni={L\bibinitperiod}}}%
+        {{hash=a654d2329ec6491b4017f9e73678325d}{%
+           family={Bell},
+           familyi={B\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+        {{hash=c63dfd11d22c22193641fb31bd0d0724}{%
+           family={Wilkinson},
+           familyi={W\bibinitperiod},
+           given={Jackie},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{6807242ff86130b6622d0db870481a51}
+      \strng{fullhash}{94fd8f8c11bf399262d3816f9082d88b}
+      \strng{bibnamehash}{6807242ff86130b6622d0db870481a51}
+      \strng{authorbibnamehash}{6807242ff86130b6622d0db870481a51}
+      \strng{authornamehash}{6807242ff86130b6622d0db870481a51}
+      \strng{authorfullhash}{94fd8f8c11bf399262d3816f9082d88b}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{8}
+      \field{month}{5}
+      \field{title}{Protocol and Resources Development for Prioritised Recruitment and Retention Strategies ({{PRESS-2}})}
+      \field{urlday}{1}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{version}{1.0}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.trialforge.org/wp-content/uploads/2025/03/PRESS2_Protocol_v1.0_08.05.24.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.trialforge.org/wp-content/uploads/2025/03/PRESS2_Protocol_v1.0_08.05.24.pdf
+      \endverb
+    \endentry
+    \entry{bruhnEstimatingSitePerformance2019}{article}{}
+      \name{author}{9}{}{%
+        {{hash=62953754dd4d9d4f099c3ab58cfb31de}{%
+           family={Bruhn},
+           familyi={B\bibinitperiod},
+           given={Hanne},
+           giveni={H\bibinitperiod}}}%
+        {{hash=68a2df8dfb7a708f0269eea7fe8362ba}{%
+           family={Treweek},
+           familyi={T\bibinitperiod},
+           given={Shaun},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ff5c2b29e463cc9d58c32e4f42fe4075}{%
+           family={Duncan},
+           familyi={D\bibinitperiod},
+           given={Anne},
+           giveni={A\bibinitperiod}}}%
+        {{hash=783ba977ab2858dcdc485ca9c0b7dfcc}{%
+           family={Shearer},
+           familyi={S\bibinitperiod},
+           given={Kirsty},
+           giveni={K\bibinitperiod}}}%
+        {{hash=56cfb8ed4ffa7087c39a8ced014b8a57}{%
+           family={Cameron},
+           familyi={C\bibinitperiod},
+           given={Sarah},
+           giveni={S\bibinitperiod}}}%
+        {{hash=58a34f4ecb0917b7ba43e21dc7709fc8}{%
+           family={Campbell},
+           familyi={C\bibinitperiod},
+           given={Karen},
+           giveni={K\bibinitperiod}}}%
+        {{hash=304970dc4d8f5eb2224ff3239bf64cff}{%
+           family={Innes},
+           familyi={I\bibinitperiod},
+           given={Karen},
+           giveni={K\bibinitperiod}}}%
+        {{hash=46dd40a9e884ef592f5b6f70d2089856}{%
+           family={McRae},
+           familyi={M\bibinitperiod},
+           given={Dawn},
+           giveni={D\bibinitperiod}}}%
+        {{hash=f1a9a7a3422339fa059fa7c2ef0bff76}{%
+           family={Cotton},
+           familyi={C\bibinitperiod},
+           given={Seonaidh\bibnamedelima C.},
+           giveni={S\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{36e2778fd41ff16f407d2cb708edfc8a}
+      \strng{fullhash}{d6e44ecbc92ee0f40edc58bb77374c84}
+      \strng{bibnamehash}{36e2778fd41ff16f407d2cb708edfc8a}
+      \strng{authorbibnamehash}{36e2778fd41ff16f407d2cb708edfc8a}
+      \strng{authornamehash}{36e2778fd41ff16f407d2cb708edfc8a}
+      \strng{authorfullhash}{d6e44ecbc92ee0f40edc58bb77374c84}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{issn}{1745-6215}
+      \field{journaltitle}{Trials}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{1}
+      \field{shortjournal}{Trials}
+      \field{shorttitle}{Estimating {{Site Performance}} ({{ESP}})}
+      \field{title}{Estimating {{Site Performance}} ({{ESP}}): Can Trial Managers Predict Recruitment Success at Trial Sites? {{An}} Exploratory Study}
+      \field{urlday}{1}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{volume}{20}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{192}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1186/s13063-019-3287-6
+      \endverb
+      \verb{file}
+      \verb C:\Users\sberg\Zotero\storage\Z85VIALB\Bruhn et al. - 2019 - Estimating Site Performance (ESP) can trial managers predict recruitment success at trial sites An.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-019-3287-6
+      \endverb
+      \verb{url}
+      \verb https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-019-3287-6
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

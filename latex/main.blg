@@ -1,20 +1,20 @@
 [0] Config.pm:307> INFO - This is Biber 2.17
 [0] Config.pm:310> INFO - Logfile is 'main.blg'
-[43] biber:340> INFO - === Sat Jul  4, 2026, 22:51:35
-[56] Biber.pm:418> INFO - Reading 'main.bcf'
-[85] Biber.pm:972> INFO - Found 20 citekeys in bib section 0
-[92] Biber.pm:4383> INFO - Processing section 0
-[98] Biber.pm:4574> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
-[99] bibtex.pm:1713> INFO - LaTeX decoding ...
-[112] bibtex.pm:1518> INFO - Found BibTeX data source 'bhtThesis.bib'
-[202] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[202] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
-[202] Biber.pm:4203> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'de-DE'
-[202] Biber.pm:4209> INFO - No sort tailoring available for locale 'de-DE'
-[212] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[220] bbl.pm:757> INFO - Output to main.bbl
-[220] Biber.pm:130> WARN - legacy year field '2025-05-15, 2025' in entry 'gba_tabakentwoehnung_2025' is not an integer - this will probably not sort properly.
-[220] Biber.pm:130> WARN - legacy year field '2026-03-16, 2026' in entry 'baecke_gkv_bonusprogramme_2026' is not an integer - this will probably not sort properly.
-[220] Biber.pm:130> WARN - ISBN '978-1-0716-1417-4 978-1-0716-1418-1' in entry 'james_islr_2021' is invalid - run biber with '--validate_datamodel' for details.
-[220] Biber.pm:130> WARN - ISBN '978-0-521-86571-5 978-0-511-80907-1' in entry 'manning_ir_2008' is invalid - run biber with '--validate_datamodel' for details.
-[220] Biber.pm:132> INFO - WARNINGS: 4
+[40] biber:340> INFO - === Mon Jul  6, 2026, 19:31:21
+[47] Biber.pm:418> INFO - Reading 'main.bcf'
+[76] Biber.pm:972> INFO - Found 24 citekeys in bib section 0
+[83] Biber.pm:4383> INFO - Processing section 0
+[87] Biber.pm:4574> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
+[88] bibtex.pm:1713> INFO - LaTeX decoding ...
+[101] bibtex.pm:1518> INFO - Found BibTeX data source 'bhtThesis.bib'
+[228] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[228] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[228] Biber.pm:4203> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'de-DE'
+[228] Biber.pm:4209> INFO - No sort tailoring available for locale 'de-DE'
+[238] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[250] bbl.pm:757> INFO - Output to main.bbl
+[250] Biber.pm:130> WARN - legacy year field '2025-05-15, 2025' in entry 'gba_tabakentwoehnung_2025' is not an integer - this will probably not sort properly.
+[250] Biber.pm:130> WARN - legacy year field '2026-03-16, 2026' in entry 'baecke_gkv_bonusprogramme_2026' is not an integer - this will probably not sort properly.
+[250] Biber.pm:130> WARN - ISBN '978-1-0716-1417-4 978-1-0716-1418-1' in entry 'james_islr_2021' is invalid - run biber with '--validate_datamodel' for details.
+[250] Biber.pm:130> WARN - ISBN '978-0-521-86571-5 978-0-511-80907-1' in entry 'manning_ir_2008' is invalid - run biber with '--validate_datamodel' for details.
+[250] Biber.pm:132> INFO - WARNINGS: 4
