@@ -1,2 +1,15 @@
 *~lock~*
 *Zone.Identifier
+
+# Local Android build state
+AI_PoC/.gradle/
+AI_PoC/.idea/
+AI_PoC/app/build/
+
+# Generated or large image/model artifacts
+images/
+data/
+AI_PoC/app/src/benchmark/assets/eval_manifest.json
+AI_PoC/app/src/benchmark/assets/evalset/
+AI_PoC/app/src/main/assets/models/*.tflite
+training/image_models/artifacts/
