@@ -509,9 +509,7 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Tests decken die Kernpfade und Entscheidungszweige der neuen Funktionen moeglichst vollstaendig ab.
 - Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token, Feedback und spaeterer Berichtstabelle.
 
-## 8. Wiederhergestellte Spezifikation fuer Datenschutz und produktive Studienfassung
-
-Dieser Abschnitt stellt die zuvor geloeschten Inhalte zur produktiven Studienfassung wieder her. Er ist fuer die erste Play-Store-Version nicht als sichtbarer Funktionsumfang zu verstehen, sondern als dokumentierte Zielarchitektur fuer die spaetere serverseitige Aktivierung der eigentlichen Studiensituationen.
+## 8. Sicherheitskonzepte
 
 ### 8.1 Pseudonymisierungsziel
 
@@ -526,7 +524,7 @@ Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Mas
 - Die Registrierung enthaelt nur den Zeitpunkt der Token-Ausgabe in `app_token_issued_at`, nicht aber das App-Token selbst und nicht dessen Hash.
 - Eine Wiederzuordnung zu einer natuerlichen Person soll ohne Zusatzinformationen aus Registrierung, lokaler App-Installation, Zahlungsabwicklung, Serverlogs oder aktivem Supportvorgang nicht moeglich sein. Diese Zusatzinformationen sind organisatorisch und technisch getrennt zu halten.
 
-### 8.2 Grundsaetze fuer sensible Daten
+### 8.2 Grundsaetze
 
 - Kein produktives Logging von E-Mail-Adressen, App-Tokens, Hashes, Selbstbericht-Werten, Serverantworten oder personenbezogenen Angaben.
 - HTTPS in Production; Klartext nur als Staging-Ausnahme.
@@ -534,9 +532,9 @@ Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Mas
 - Lokale App-Werte wie App-Token, ausstehender Selbstbericht und Abrechnungscode verschluesseln, wenn sie als sensibel eingestuft werden.
 - Keine sensiblen Daten in Zwischenablage, Screenshots, externem Speicher oder Mediengalerie, solange dies nicht ausdruecklich vorgesehen ist.
 
-### 8.3 Lokaler Zustand der produktiven Studienfassung
+### 8.3 Lokaler Zustand
 
-In der spaeter aktivierten Studienfassung werden nur kleine, zweckgebundene Werte persistiert:
+Persistiere nur kleine, zweckgebundene Werte:
 
 - `app_token`: UUID, die beim initialen Freischaltungsrequest vom Server ausgeliefert und nur in der App persistiert wird.
 - `next_situation_available_at_millis`: fruehester Startzeitpunkt der naechsten Situation.
@@ -575,9 +573,9 @@ Serververhalten:
 - Der Server gibt `app_token` an die App zurueck, persistiert aber weder das App-Token noch dessen Hash in Bezug zur E-Mail-Adresse.
 - In `register` wird `app_token_issued_at` gesetzt, damit dieselbe Registrierung nicht erneut aktiviert werden kann.
 
-### 8.6 Produktive Selbstbericht-Uebertragung
+### 8.6 Selbstbericht-Uebertragung
 
-Die App sendet pro produktiver Studiensituation einen `PUT`-Request an `submit.php`:
+Die App sendet pro wissenschaftlicher Studiensituation einen `PUT`-Request an `submit.php`:
 
 ```json
 {
@@ -593,7 +591,7 @@ Der Server berechnet aus dem App-Token die `participant_id`, zaehlt die bereits 
 
 Bei Situation 20 erzeugt der Server einen UUID-v4-Abrechnungscode, speichert ihn in `compensation_code` und gibt ihn an die App zurueck. Die App bestaetigt diesen Code anschliessend mit einem separaten `PUT`; der Server setzt dabei `confirmed_at`.
 
-## 9. Wiederhergestellte Android-Spezifikation fuer produktive Studiensituationen
+## 9. Implementierungsdetails der Android-App
 
 ### 9.1 Projektgeruest und Endpunkt-Prototyp
 
@@ -633,18 +631,18 @@ Cue-Bilder fuellen den sichtbaren Bildschirm durch eine Cover-Darstellung. Match
 ### 9.5 Build-Varianten und Endpunkte
 
 - `staging` verwendet lokale oder interne Test-Endpunkte.
-- `production` verwendet `https://cuelens.each-and-every.de/submit` fuer produktive Selbstberichte.
+- `production` verwendet `https://cuelens.each-and-every.de/submit`.
 - Endpunkte werden ueber `BuildConfig` oder eine vergleichbare Build-Konfiguration bereitgestellt.
 - Klartextverkehr ist nur als abgegrenzte Staging-Ausnahme zulaessig.
 
-### 9.6 Architektur fuer produktive Studienphasen
+### 9.6 Architektur
 
 - `MainActivity` initialisiert die Compose-App.
 - Studienphasen werden explizit modelliert, zum Beispiel `StartGate`, `ImageMatching`, `WordMatching` und `SelfReport`.
 - UI-Komponenten erhalten nur die fuer Darstellung und Rueckmeldung notwendigen Daten.
 - Netzwerk-, Ressourcen- und Persistenzlogik sollen so gekapselt werden, dass sie spaeter in ViewModel-, Repository- oder Service-Klassen ausgelagert werden koennen.
 
-### 9.7 Datenmodell fuer produktive Studiensituationen
+### 9.7 Datenmodell
 
 Mindestens erforderliche Datenklassen:
 
@@ -667,7 +665,8 @@ enum class StudyCondition { CUE_MATCHING, CUE_LABELING }
 
 Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Trials ergaenzt werden. Drawable-IDs sind keine dauerhaften wissenschaftlichen Kennungen. Diese IDs muessen nicht im regulaeren Submit-Payload enthalten sein, solange sie fuer den Server nicht zur Validierung oder Auswertung benoetigt werden.
 
-## 10. Wiederhergestellte serverseitige Tabellen und Logik fuer die produktive Studienfassung
+
+## 10. Serverseitige Tabellen
 
 ### 10.1 Registrierung
 
@@ -742,7 +741,7 @@ CREATE TABLE compensation_code (
    - Unsupported HTTP-Methoden resultieren in HTTP 405.
    - Dabei wird kein neuer Selbstbericht gespeichert.
 
-## 11. Wiederhergestellte App-Retry-Logik fuer produktive Selbstberichte
+## 11. App-Retry-Logik
 
 - Vor dem Selbstbericht-PUT legt die App lokal den ausstehenden Craving-Wert ab.
 - Wenn vor der Serverantwort ein Fehler auftritt, wird derselbe Selbstbericht erneut uebertragen.
@@ -754,22 +753,16 @@ CREATE TABLE compensation_code (
 
 Die Selbstbericht-Uebertragung ist im derzeitigen Backend nicht vollstaendig idempotent. Wenn der Server einen Selbstbericht erfolgreich speichert, die Antwort aber vor dem Erreichen der App verloren geht, kann ein erneuter PUT als naechste Studiensituation gespeichert werden. Diese Vereinfachung ist eine bewusste Folge des Verzichts auf Hash-Chain und Drei-Wege-Bestaetigung und muss bei Test, Monitoring und Interpretation beruecksichtigt werden.
 
-## 12. Wiederhergestellte Querschnittsanforderungen fuer Mehrsprachigkeit und spaetere Benachrichtigungen
-
-### 12.1 Mehrsprachigkeit Deutsch/Englisch
+## 12. Mehrsprachigkeit Deutsch/Englisch
 
 - Sichtbare UI-Texte aus Kotlin in Android-Stringressourcen verschieben.
 - Mindestens `values/strings.xml` und `values-en/strings.xml` pflegen.
 - Labelpaare erhalten Sprachzuordnung oder getrennte Ressourcen.
 - Studienbegriffe bleiben zwischen App, Studieninformation und Datenschutzerklaerung konsistent.
 
-### 12.2 Spaetere Benachrichtigungen fuer produktive Studienfunktionen
+## 13. Tests
 
-Lokale Benachrichtigungen fuer spaetere produktive Studienfunktionen koennen nach stabiler Datenerfassung implementiert werden. Texte bleiben neutral und enthalten keine Angaben zu Rauchverlangen, Rauchstatus oder medizinischen Aussagen. Diese Anforderung ist von den Info-Nachrichten-Benachrichtigungen der ersten Play-Store-Version zu unterscheiden.
-
-## 13. Wiederhergestellte Tests fuer die spaetere produktive Studienfassung
-
-Vor produktiver Nutzung der eigentlichen Studiensituationen sind zusaetzlich mindestens zu testen:
+Vor produktiver Nutzung sind mindestens zu testen:
 
 - Freischaltungsrequest nur fuer in `register` vorhandene und freigegebene E-Mail-Adressen.
 - Keine dauerhafte Speicherung des App-Tokens auf dem Server.
@@ -788,9 +781,9 @@ Vor produktiver Nutzung der eigentlichen Studiensituationen sind zusaetzlich min
 - Bestaetigung des Abrechnungscodes mit HTTP 204.
 - HTTP 400 fuer ungueltige Selbstbericht-PUTs.
 
-## 14. Definition of Done fuer die spaetere produktive Studienfassung
+## 14. Definition of Done
 
-Eine Aenderung an der spaeter aktivierten produktiven Studienfassung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
+Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
 
 - Die App baut in Staging und Production.
 - Die Studienlogik wurde nicht unbeabsichtigt veraendert.
