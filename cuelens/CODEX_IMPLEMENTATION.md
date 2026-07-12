@@ -9,12 +9,12 @@ Die erste Play-Store-Version ist eine Pre-Study-App. Sie soll die spaetere Aktiv
 In diesem Branch soll die erste App-Version entstehen, die ueber den Play Store bereitgestellt werden kann. Ziel ist eine robuste, datensparsame und testbare Basisversion mit folgenden initial sichtbaren Funktionen:
 
 1. Infofeed mit serverseitig gepflegten Nachrichten.
-2. Startseite nach eventuellen Info-Nachrichten.
+2. Nach eventuellen Info-Nachrichten Startseite oder vorherige Seite.
 3. E-Mail-Aktivierung fuer spaetere Studienteilnahme.
 4. Beispiel-Studiensituation ohne Uebertragung eines Craving-Werts.
 5. Feedback-Formular mit serverseitiger Speicherung.
 6. Sprachauswahl Deutsch/Englisch ueber Android-Internationalisierung.
-7. Optionale Push-Benachrichtigungen fuer neue Info-Nachrichten, wenn die Nutzerin oder der Nutzer diese zulaesst.
+7. Optionale Benachrichtigungen fuer neue Info-Nachrichten, wenn die Nutzerin oder der Nutzer diese zulaesst.
 8. Update-Hinweise moeglichst ueber Android- beziehungsweise Play-Store-Funktionen, nicht ueber einen eigenen APK-Download.
 
 Alle anderen bereits implementierten App-Funktionen, insbesondere produktive Studiensituationen, echte Craving-Uebertragung, Fortschrittszaehlung, Sperrzeiten, Abrechnungscode-Logik und nicht benoetigte Diagnosefunktionen, sind initial deaktiviert und fuer Teilnehmende nicht sichtbar. Ausnahme ist die E-Mail-Aktivierung, weil sie fuer die spaetere serverseitige Freischaltung benoetigt wird.
@@ -23,11 +23,13 @@ Alle anderen bereits implementierten App-Funktionen, insbesondere produktive Stu
 
 - Implementiere inkrementell, einfach, wartbar und testbar.
 - Behandle CueLens als Studienprototyp, nicht als Therapie-App. UI-Texte duerfen keine Wirksamkeitsversprechen enthalten.
-- Priorisiere Datensparsamkeit, robuste Studienlogik, nachvollziehbare Zustandsuebergaenge, reproduzierbare Beispielablaeufe und geringe Anforderungen an reale Android-Endgeraete.
+- Priorisiere Datensparsamkeit, robuste Studienlogik, reproduzierbare Reizpraesentation, nachvollziehbare Zustandsuebergaenge und geringe Anforderungen an reale Android-Endgeraete.
 - Fuege Berechtigungen nur hinzu, wenn sie fuer eine konkrete Funktion zwingend erforderlich sind.
 - Personenbezogene Registrierungs- und Abrechnungsdaten gehoeren nicht in die Android-App und nicht in wissenschaftliche Selbstberichte.
 - Trenne Registrierung, Aktivierung, Feedback, Infofeed und spaetere wissenschaftliche Selbstberichte technisch und tabellarisch.
-- Behandle Netzwerkfehler als zentrale Robustheitsanforderung. Nutzerinnen und Nutzer muessen eine verstaendliche Rueckmeldung erhalten, ohne dass doppelte oder unklare Zustandsuebergaenge entstehen.
+- Behandle Netzwerkfehler als zentrale Robustheitsanforderung. Die App muss ausstehende Selbstberichte erneut senden koennen und einen erhaltenen Abrechnungscode bis zur Bestaetigung lokal zwischenspeichern.
+- Uebertrage keine Felder, die serverseitig deterministisch ableitbar sind. Der Server leitet den Studienfortschritt aus der Anzahl bereits gespeicherter Selbstberichte fuer die pseudonyme Kennung ab.
+- Speichere in `self_reports` nicht das App-Token selbst, sondern nur den daraus abgeleiteten SHA-256-Hash als `participant_id`.
 - Nutze Android- und Play-Store-Mechanismen, wenn sie den Zweck bereits sicher und wartbar abdecken, zum Beispiel Android-Stringressourcen fuer Internationalisierung und Play-Store-Updatefunktionen fuer Updates.
 - Kein eigener Mechanismus zum Nachladen oder Ausfuehren von App-Code. Fehlerbehebungen am nativen App-Code werden ueber den regulaeren Android-/Play-Store-Updatekanal ausgeliefert.
 
@@ -42,7 +44,7 @@ Beim Start gilt folgende Reihenfolge:
 3. App zeigt noch nicht ausgeblendete Info-Nachrichten als Vollbild-Nachrichtenseiten an.
 4. Danach zeigt die App die Startseite.
 
-Wenn der Infofeed nicht erreichbar ist, darf der App-Start nicht blockieren. Die App zeigt eine kurze neutrale Fehlermeldung oder ignoriert den Fehler still, sofern keine sicherheitsrelevante Nachricht zwingend angezeigt werden muss. Fuer diese erste Version gibt es keine serverseitige Pflichtnachricht mit App-Sperre.
+Wenn der Infofeed nicht erreichbar ist, darf der App-Start nicht blockieren. Die App zeigt eine kurze neutrale Fehlermeldung. Fuer diese erste Version gibt es keine serverseitige Pflichtnachricht mit App-Sperre.
 
 Die sichtbare Hauptnavigation der Startseite besteht aus genau diesen Optionen:
 
@@ -62,7 +64,8 @@ Ein PHP-Endpunkt liefert alle Info-Nachrichten aus der Tabelle `messages` aus:
 CREATE TABLE messages (
     id BIGINT NOT NULL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    text TEXT NOT NULL
+    text_de TEXT NOT NULL,
+    text_en TEXT NOT NULL
 );
 ```
 
@@ -74,7 +77,8 @@ Der Endpunkt soll vorzugsweise `GET /messages.php` oder eine konsistente vorhand
     {
       "id": 1,
       "created_at": "2026-07-07T20:00:00Z",
-      "text": "Willkommen zur CueLens-Studie."
+      "text_de": "Willkommen zur CueLens-Studie.",
+      "text_en": "Welcome to the CueLens study."
     }
   ]
 }
@@ -86,6 +90,7 @@ Anforderungen:
 - Daten per Prepared Statement aus der Datenbank lesen.
 - Ausgabe nach `created_at ASC, id ASC` sortieren.
 - `id` als numerische, stabile Nachrichtenkennung verwenden.
+- Nachrichten in Deutsch und Englisch
 - Keine personenbezogenen Daten in der Nachrichtentabelle speichern.
 - Bei Datenbankfehlern HTTP 500 mit generischer Fehlermeldung liefern, ohne interne Details auszugeben.
 
@@ -106,21 +111,17 @@ Verhalten:
 - Nachrichten, die nur mit `OK` bestaetigt werden, ohne dass die Checkbox gesetzt ist, duerfen fuer die aktuelle Sitzung geschlossen werden, koennen aber bei einem spaeteren App-Start erneut erscheinen.
 - Die Nachrichtenseite darf nicht als therapeutische Intervention formuliert werden und keine Aussagen zum individuellen Rauchverlangen enthalten.
 
-### 2.3 Push-Benachrichtigungen fuer Info-Nachrichten
+### 2.3 Benachrichtigungen fuer Info-Nachrichten
 
-Push-Benachrichtigungen sind in der ersten Version nur fuer Info-Nachrichten vorgesehen und nur dann aktiv, wenn die Nutzerin oder der Nutzer sie zulaesst.
+Benachrichtigungen sind in der ersten Version nur fuer Info-Nachrichten vorgesehen und nur dann aktiv, wenn die Nutzerin oder der Nutzer sie zulaesst.
 
 Anforderungen:
 
 - Unter Android 13 und hoeher die Runtime Permission `POST_NOTIFICATIONS` erst kontextbezogen anfragen.
 - Keine Benachrichtigungspflicht: Bei Ablehnung funktionieren Infofeed, Startseite, Aktivierung, Beispiel und Feedback weiterhin.
-- Push-Inhalt neutral halten, zum Beispiel `Neue Information zu CueLens verfuegbar`.
-- Keine gesundheitsbezogenen Inhalte, kein Rauchstatus, kein Craving-Wert und keine personenbezogenen Informationen in den Push-Payload aufnehmen.
+- Inhalt neutral halten, zum Beispiel `Neue Information zu CueLens verfuegbar`.
 - Beim Tippen auf die Benachrichtigung die App oeffnen und den Infofeed neu abrufen.
-- Wenn Firebase Cloud Messaging verwendet wird, nach Moeglichkeit Topic-basierte Benachrichtigungen fuer allgemeine Info-Nachrichten verwenden, damit keine eigene Datenbank mit Geraete-Tokens erforderlich ist.
-- Falls ein eigener Push-Token-Endpunkt benoetigt wird, duerfen Push-Tokens nicht mit E-Mail-Adresse, App-Token oder spaeteren Selbstberichten verknuepft werden.
-
-Push ist ein Komfortmerkmal. Die autoritative Quelle fuer Nachrichten bleibt der `messages`-Endpunkt.
+- Per Android WorkManager wird periodisch auf neue Nachrichten geprueft.
 
 ### 2.4 Startseite
 
@@ -173,7 +174,7 @@ Wichtige Grenzen:
 
 ### 2.7 Feedback-Formular
 
-Das Feedback-Formular ist ohne Aktivierung verfuegbar. Es dient der Optimierung der Studiendurchfuehrung, nicht der wissenschaftlichen Craving-Auswertung.
+Das anonyme Feedback-Formular ist ohne Aktivierung verfuegbar. Es dient der Optimierung der Studiendurchfuehrung, nicht der wissenschaftlichen Craving-Auswertung.
 
 UI-Felder:
 
@@ -184,7 +185,7 @@ UI-Felder:
 Technische Anforderungen:
 
 - Beide Felder als Freitext behandeln und serverseitig laengenbegrenzen.
-- Keine Pflicht zur Eingabe personenbezogener Daten.
+- Hinweis, keine personenbezogenen Daten, insbesondere Abrechnungstoken, einzugeben.
 - Keine automatische Uebernahme von E-Mail-Adresse oder App-Token in das Feedback.
 - Nach erfolgreichem Absenden eine neutrale Bestaetigung anzeigen.
 - Bei Netzwerkfehlern eine verstaendliche Fehlermeldung anzeigen. Fuer die erste Version ist keine lokale Retry-Warteschlange fuer Feedback erforderlich.
@@ -199,8 +200,7 @@ CREATE TABLE feedback (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     source TEXT NULL,
     comment TEXT NULL,
-    app_version VARCHAR(64) NULL,
-    language CHAR(2) NULL
+    app_version VARCHAR(64) NULL
 );
 ```
 
@@ -210,8 +210,7 @@ Request-Beispiel:
 {
   "source": "Flyer in Beratungsstelle",
   "comment": "Die Anmeldung war einfach. Beim Beispiel war mir der Unterschied zwischen den Aufgaben zuerst unklar.",
-  "app_version": "1.0.0",
-  "language": "de"
+  "app_version": "1.0.0"
 }
 ```
 
@@ -238,7 +237,6 @@ Anforderungen:
 - Der Umschalt-Button wechselt die Sprache der aktuell sichtbaren Texte unmittelbar.
 - Die ausgewaehlte Sprache lokal speichern, vorzugsweise DataStore.
 - Die Sprachauswahl darf keine App-Neuinstallation und keinen Serverkontakt erfordern.
-- Servernachrichten aus `messages.text` koennen in dieser ersten Version als vom Server gelieferter Text angezeigt werden. Wenn mehrsprachige Info-Nachrichten benoetigt werden, ist das Datenmodell spaeter zu erweitern.
 
 ### 2.9 Update-Hinweise und Fehlerbehebungen
 
@@ -331,9 +329,7 @@ CREATE TABLE feedback (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     source TEXT NULL,
     comment TEXT NULL,
-    app_version VARCHAR(64) NULL,
-    language CHAR(2) NULL
-);
+    app_version VARCHAR(64) NULL
 ```
 
 Endpoint:
@@ -389,7 +385,7 @@ Persistiere nur kleine, zweckgebundene Werte:
 - Ausgewaehlte Sprache.
 - IDs ausgeblendeter Info-Nachrichten.
 - Optional App-Token aus erfolgreicher E-Mail-Aktivierung.
-- Optional Push-Berechtigungsstatus beziehungsweise technische Push-Konfiguration, soweit fuer Benachrichtigungen erforderlich.
+- Optional Berechtigungsstatus fuer Benachrichtigungen.
 
 Nicht lokal persistieren:
 
@@ -490,7 +486,7 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Die Beispiel-Studiensituation uebertraegt keinen Craving-Wert und persistiert keinen Demo-Craving-Wert.
 - Feedback wird in einer separaten Tabelle gespeichert und nicht mit `self_reports`, E-Mail-Adresse oder App-Token verknuepft.
 - Info-Nachrichten werden aus `messages` geladen und ausgeblendete Nachrichten-IDs werden lokal gespeichert.
-- Push-Benachrichtigungen fuer Info-Nachrichten sind optional, neutral formuliert und funktionieren nur nach Zustimmung.
+- Benachrichtigungen fuer Info-Nachrichten sind optional, neutral formuliert und funktionieren nur nach Zustimmung.
 - Alle UI-Texte liegen in Android-Stringressourcen fuer Deutsch und Englisch.
 - Der Sprachumschalt-Button ist oben rechts staendig sichtbar und aktualisiert die aktuell sichtbaren Texte.
 - Designentscheidungen orientieren sich an `cuelens.each-and-every.de/index.css`, ohne Android-Konventionen und Barrierearmut zu verletzen.
