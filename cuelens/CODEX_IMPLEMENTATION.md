@@ -4,6 +4,8 @@ Diese Datei beschreibt den geplanten technischen Stand der ersten Play-Store-Ver
 
 Die erste Play-Store-Version ist eine Pre-Study-App. Sie soll die spaetere Aktivierung der Studie vorbereiten, aber noch keine produktive Studiensituation fuer die wissenschaftliche Auswertung freigeben. Sichtbar sind nur Funktionen, die keine serverseitige Feature-Aktivierung benoetigen oder diese Aktivierung erst ermoeglichen.
 
+Die Abschnitte zur produktiven Studienfassung bleiben in dieser Datei erhalten, obwohl sie fuer die erste Play-Store-Version initial deaktiviert sind. Sie dokumentieren die bereits geplante Studienlogik, Pseudonymisierung, Serverlogik und Retry-Strategie, damit die Pre-Study-App nicht als Ersatz der eigentlichen Studienspezifikation missverstanden wird.
+
 ## 0. Zielbild fuer Branch `pre_study_app`
 
 In diesem Branch soll die erste App-Version entstehen, die ueber den Play Store bereitgestellt werden kann. Ziel ist eine robuste, datensparsame und testbare Basisversion mit folgenden initial sichtbaren Funktionen:
@@ -27,10 +29,10 @@ Alle anderen bereits implementierten App-Funktionen, insbesondere produktive Stu
 - Fuege Berechtigungen nur hinzu, wenn sie fuer eine konkrete Funktion zwingend erforderlich sind.
 - Personenbezogene Registrierungs- und Abrechnungsdaten gehoeren nicht in die Android-App und nicht in wissenschaftliche Selbstberichte.
 - Trenne Registrierung, Aktivierung, Feedback, Infofeed und spaetere wissenschaftliche Selbstberichte technisch und tabellarisch.
-- Behandle Netzwerkfehler als zentrale Robustheitsanforderung. Die App muss ausstehende Selbstberichte erneut senden koennen und einen erhaltenen Abrechnungscode bis zur Bestaetigung lokal zwischenspeichern.
+- Behandle Netzwerkfehler als zentrale Robustheitsanforderung. Die App muss in der spaeteren produktiven Studienfassung ausstehende Selbstberichte erneut senden koennen und einen erhaltenen Abrechnungscode bis zur Bestaetigung lokal zwischenspeichern.
 - Uebertrage keine Felder, die serverseitig deterministisch ableitbar sind. Der Server leitet den Studienfortschritt aus der Anzahl bereits gespeicherter Selbstberichte fuer die pseudonyme Kennung ab.
 - Speichere in `self_reports` nicht das App-Token selbst, sondern nur den daraus abgeleiteten SHA-256-Hash als `participant_id`.
-- Nutze Android- und Play-Store-Mechanismen, wenn sie den Zweck bereits sicher und wartbar abdecken, zum Beispiel Android-Stringressourcen fuer Internationalisierung und Play-Store-Updatefunktionen fuer Updates.
+- Nutze Android- und Play-Store-Mechanismen, wenn sie den Zweck bereits sicher und wartbar abdecken, zum Beispiel Android-Stringressourcen fuer Internationalisierung, WorkManager fuer nicht zeitkritische Hintergrundsynchronisation und Play-Store-Updatefunktionen fuer Updates.
 - Kein eigener Mechanismus zum Nachladen oder Ausfuehren von App-Code. Fehlerbehebungen am nativen App-Code werden ueber den regulaeren Android-/Play-Store-Updatekanal ausgeliefert.
 
 ## 2. Initial sichtbare App-Funktionen
@@ -42,7 +44,7 @@ Beim Start gilt folgende Reihenfolge:
 1. App initialisiert Sprache, lokale Einstellungen und Netzwerk-Clients.
 2. App ruft den Infofeed ab, sofern Netzwerk verfuegbar ist.
 3. App zeigt noch nicht ausgeblendete Info-Nachrichten als Vollbild-Nachrichtenseiten an.
-4. Danach zeigt die App die Startseite.
+4. Danach zeigt die App die Startseite oder kehrt zur vorherigen Seite zurueck, wenn der Infofeed aus einem bestehenden App-Zustand heraus geoeffnet wurde.
 
 Wenn der Infofeed nicht erreichbar ist, darf der App-Start nicht blockieren. Die App zeigt eine kurze neutrale Fehlermeldung. Fuer diese erste Version gibt es keine serverseitige Pflichtnachricht mit App-Sperre.
 
@@ -90,7 +92,7 @@ Anforderungen:
 - Daten per Prepared Statement aus der Datenbank lesen.
 - Ausgabe nach `created_at ASC, id ASC` sortieren.
 - `id` als numerische, stabile Nachrichtenkennung verwenden.
-- Nachrichten in Deutsch und Englisch
+- Nachrichten in Deutsch und Englisch bereitstellen.
 - Keine personenbezogenen Daten in der Nachrichtentabelle speichern.
 - Bei Datenbankfehlern HTTP 500 mit generischer Fehlermeldung liefern, ohne interne Details auszugeben.
 
@@ -98,7 +100,7 @@ Anforderungen:
 
 Die App zeigt jede nicht ausgeblendete Nachricht als Vollbildseite an. Die Seite enthaelt:
 
-- Nachrichtentext.
+- Nachrichtentext in der aktuell gewaehlten Sprache, sofern vorhanden.
 - Checkbox `Diese Nachricht nicht mehr anzeigen`.
 - Button `OK`.
 
@@ -113,15 +115,19 @@ Verhalten:
 
 ### 2.3 Benachrichtigungen fuer Info-Nachrichten
 
-Benachrichtigungen sind in der ersten Version nur fuer Info-Nachrichten vorgesehen und nur dann aktiv, wenn die Nutzerin oder der Nutzer sie zulaesst.
+Benachrichtigungen sind in der ersten Version nur fuer Info-Nachrichten vorgesehen und nur dann aktiv, wenn die Nutzerin oder der Nutzer sie zulaesst. Fuer die erste Version ist kein Firebase Cloud Messaging erforderlich. Die App darf den `messages`-Endpunkt periodisch im Hintergrund mit WorkManager abrufen und bei neuen, noch nicht ausgeblendeten Nachrichten eine lokale Android-Benachrichtigung erzeugen.
 
 Anforderungen:
 
 - Unter Android 13 und hoeher die Runtime Permission `POST_NOTIFICATIONS` erst kontextbezogen anfragen.
 - Keine Benachrichtigungspflicht: Bei Ablehnung funktionieren Infofeed, Startseite, Aktivierung, Beispiel und Feedback weiterhin.
 - Inhalt neutral halten, zum Beispiel `Neue Information zu CueLens verfuegbar`.
+- Keine gesundheitsbezogenen Inhalte, kein Rauchstatus, kein Craving-Wert und keine personenbezogenen Informationen in Benachrichtigungstitel oder -text aufnehmen.
 - Beim Tippen auf die Benachrichtigung die App oeffnen und den Infofeed neu abrufen.
 - Per Android WorkManager wird periodisch auf neue Nachrichten geprueft.
+- Die Hintergrundpruefung ist nicht zeitkritisch. Android darf sie wegen Doze, App Standby, Energiesparmodus oder Netzbedingungen verspaetet ausfuehren.
+- Der autoritative Pfad bleibt der Abruf beim App-Start oder beim manuellen Oeffnen des Infofeeds.
+- Firebase Cloud Messaging kann spaeter ergaenzt werden, falls echte servergetriggerte Push-Nachrichten erforderlich werden. Dann duerfen Push-Tokens nicht mit E-Mail-Adresse, App-Token oder Selbstberichten verknuepft werden.
 
 ### 2.4 Startseite
 
@@ -179,7 +185,7 @@ Das anonyme Feedback-Formular ist ohne Aktivierung verfuegbar. Es dient der Opti
 UI-Felder:
 
 1. Einzeiliges Freitextfeld: `Wie haben Sie von der CueLens-Studie erfahren?`
-2. Mehrzeiliges Freitextfeld: `Was gefällt Ihnen an der Studie, wobei gab es eventuell Probleme?`
+2. Mehrzeiliges Freitextfeld: `Was gefaellt Ihnen an der Studie, wobei gab es eventuell Probleme?`
 3. Button `Absenden`.
 
 Technische Anforderungen:
@@ -237,6 +243,7 @@ Anforderungen:
 - Der Umschalt-Button wechselt die Sprache der aktuell sichtbaren Texte unmittelbar.
 - Die ausgewaehlte Sprache lokal speichern, vorzugsweise DataStore.
 - Die Sprachauswahl darf keine App-Neuinstallation und keinen Serverkontakt erfordern.
+- Servernachrichten aus `messages.text_de` und `messages.text_en` werden passend zur aktuell gewaehlten Sprache angezeigt.
 
 ### 2.9 Update-Hinweise und Fehlerbehebungen
 
@@ -288,7 +295,7 @@ Die Deaktivierung darf nicht nur optisch erfolgen. Nicht sichtbare Funktionen mu
 
 Alle anderen Routen sind fuer Production-Builds zu sperren oder nicht zu registrieren.
 
-## 4. Serverseitige Tabellen und Endpunkte
+## 4. Serverseitige Tabellen und Endpunkte der ersten Play-Store-Version
 
 ### 4.1 Registrierung und Aktivierung
 
@@ -309,7 +316,8 @@ Tabelle:
 CREATE TABLE messages (
     id BIGINT NOT NULL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    text TEXT NOT NULL
+    text_de TEXT NOT NULL,
+    text_en TEXT NOT NULL
 );
 ```
 
@@ -330,12 +338,13 @@ CREATE TABLE feedback (
     source TEXT NULL,
     comment TEXT NULL,
     app_version VARCHAR(64) NULL
+);
 ```
 
 Endpoint:
 
 - `POST /feedback.php`
-- Speichert `source`, `comment`, optional `app_version` und optional `language`.
+- Speichert `source`, `comment` und optional `app_version`.
 - Keine Speicherung in `self_reports`.
 - Keine Verknuepfung mit Registrierung oder App-Token.
 
@@ -349,7 +358,7 @@ Fuer spaetere Studienversionen bleibt das Ziel bestehen:
 - `self_reports` enthaelt keine E-Mail-Adresse, keinen Namen und keine Zahlungsdaten.
 - Die produktive Craving-Uebertragung wird erst durch eine spaetere Feature-Aktivierung und eine geeignete App-Version freigegeben.
 
-## 5. Android-Architektur
+## 5. Android-Architektur der ersten Play-Store-Version
 
 ### 5.1 Empfohlene Zustandsstruktur
 
@@ -386,6 +395,7 @@ Persistiere nur kleine, zweckgebundene Werte:
 - IDs ausgeblendeter Info-Nachrichten.
 - Optional App-Token aus erfolgreicher E-Mail-Aktivierung.
 - Optional Berechtigungsstatus fuer Benachrichtigungen.
+- Optional Menge bereits lokal benachrichtigter Nachrichten-IDs, damit periodische Hintergrundpruefungen nicht dieselbe lokale Benachrichtigung wiederholt ausloesen.
 
 Nicht lokal persistieren:
 
@@ -411,7 +421,7 @@ Nicht lokal persistieren:
 - Spracheinstellungen und Screenreader nicht behindern.
 - Bei Bildaufgaben kurze neutrale Alternativtexte verwenden, ohne die Aufgabe zu loesen.
 
-## 6. Tests
+## 6. Tests fuer die erste Play-Store-Version
 
 Fuer die erste Play-Store-Version sind umfangreiche Tests mit moeglichst vollstaendiger Branch-Abdeckung umzusetzen. Ziel ist nicht nur hohe Zeilenabdeckung, sondern insbesondere Abdeckung aller Entscheidungszweige.
 
@@ -431,6 +441,7 @@ Mindestens testen:
 - Feedback-Validierung fuer leere, kurze, lange und mehrzeilige Eingaben.
 - Produktionsnavigation erlaubt nur die freigegebenen Routen.
 - Initial deaktivierte Studienfeatures sind nicht erreichbar.
+- WorkManager-Logik markiert neue Nachrichten als lokal benachrichtigt, ohne ausgeblendete Nachrichten erneut anzukuendigen.
 
 ### 6.2 Android-Compose-UI-Tests
 
@@ -476,7 +487,7 @@ Nach Moeglichkeit PHPUnit-Tests oder vergleichbare automatisierte Tests fuer:
 - Coverage-Berichte in der CI erzeugen, wenn die bestehende Projektstruktur dies ohne unverhaeltnismaessigen Aufwand erlaubt.
 - Falls einzelne Branches nicht automatisiert testbar sind, Acceptance-Check dokumentieren.
 
-## 7. Definition of Done
+## 7. Definition of Done fuer die erste Play-Store-Version
 
 Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
 
@@ -491,8 +502,301 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Der Sprachumschalt-Button ist oben rechts staendig sichtbar und aktualisiert die aktuell sichtbaren Texte.
 - Designentscheidungen orientieren sich an `cuelens.each-and-every.de/index.css`, ohne Android-Konventionen und Barrierearmut zu verletzen.
 - Updates werden ueber Play-Store-konforme Mechanismen vorbereitet; es gibt keinen eigenen APK-Download.
+- Die Studienlogik wurde nicht unbeabsichtigt veraendert.
 - Neue Datenfelder sind im Code, Backend-Vertrag und in der Dokumentation beschrieben.
 - Neue lokale Speicherungen sind nach Zweck, Lebensdauer und Schutzbedarf dokumentiert.
 - Fehlerfaelle fuehren zu einem eindeutigen UI-Zustand.
 - Tests decken die Kernpfade und Entscheidungszweige der neuen Funktionen moeglichst vollstaendig ab.
 - Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token, Feedback und spaeterer Berichtstabelle.
+
+## 8. Wiederhergestellte Spezifikation fuer Datenschutz und produktive Studienfassung
+
+Dieser Abschnitt stellt die zuvor geloeschten Inhalte zur produktiven Studienfassung wieder her. Er ist fuer die erste Play-Store-Version nicht als sichtbarer Funktionsumfang zu verstehen, sondern als dokumentierte Zielarchitektur fuer die spaetere serverseitige Aktivierung der eigentlichen Studiensituationen.
+
+### 8.1 Pseudonymisierungsziel
+
+Die technische Datenschutzarchitektur beschreibt keine vollstaendige Anonymisierung, sondern eine Pseudonymisierung der wissenschaftlichen Selbstberichte. Das ist fuer das Within-Subject-Design erforderlich, weil mehrere Selbstberichte derselben App-Installation zusammengefuehrt werden muessen. Die Selbstberichte enthalten keine direkten Identifikatoren wie Name, E-Mail-Adresse, IBAN oder BIC. Sie enthalten jedoch mit `participant_id` eine pseudonyme Kennung. Datenschutzfachlich bleiben die Selbstberichte deshalb als personenbezogene beziehungsweise gesundheitsbezogene Daten mit reduziertem Identifizierungsrisiko zu behandeln.
+
+Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Massnahmen:
+
+- Direkte Registrierungs- und Abrechnungsdaten liegen ausschliesslich in `register` und werden nicht in die App oder die Berichtstabelle uebernommen.
+- Das App-Token wird nach der initialen Freischaltung nur lokal in der App gespeichert und serverseitig nicht dauerhaft persistiert.
+- Die auswertbare Kennung `participant_id` wird in `submit.php` als `hash('sha256', strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
+- Die App uebertraegt das App-Token bei jedem Selbstbericht, damit der Server die stabile pseudonyme Kennung erneut berechnen kann.
+- Die Registrierung enthaelt nur den Zeitpunkt der Token-Ausgabe in `app_token_issued_at`, nicht aber das App-Token selbst und nicht dessen Hash.
+- Eine Wiederzuordnung zu einer natuerlichen Person soll ohne Zusatzinformationen aus Registrierung, lokaler App-Installation, Zahlungsabwicklung, Serverlogs oder aktivem Supportvorgang nicht moeglich sein. Diese Zusatzinformationen sind organisatorisch und technisch getrennt zu halten.
+
+### 8.2 Grundsaetze fuer sensible Daten
+
+- Kein produktives Logging von E-Mail-Adressen, App-Tokens, Hashes, Selbstbericht-Werten, Serverantworten oder personenbezogenen Angaben.
+- HTTPS in Production; Klartext nur als Staging-Ausnahme.
+- Datenbankzugangsdaten liegen serverseitig in `config`, nicht im Repository und nicht in Web-auslieferbaren Verzeichnissen.
+- Lokale App-Werte wie App-Token, ausstehender Selbstbericht und Abrechnungscode verschluesseln, wenn sie als sensibel eingestuft werden.
+- Keine sensiblen Daten in Zwischenablage, Screenshots, externem Speicher oder Mediengalerie, solange dies nicht ausdruecklich vorgesehen ist.
+
+### 8.3 Lokaler Zustand der produktiven Studienfassung
+
+In der spaeter aktivierten Studienfassung werden nur kleine, zweckgebundene Werte persistiert:
+
+- `app_token`: UUID, die beim initialen Freischaltungsrequest vom Server ausgeliefert und nur in der App persistiert wird.
+- `next_situation_available_at_millis`: fruehester Startzeitpunkt der naechsten Situation.
+- `confirmed_situation_count`: lokal bestaetigte Anzahl erfolgreich uebermittelter Studiensituationen.
+- `matching_order`: stabile zufaellige Reihenfolge der Cue-Matching-Aufgaben.
+- `pending_submission_craving`: abgeschlossener Durchgang, dessen Serverantwort noch fehlt.
+- `compensation_code`: nach dem letzten Selbstbericht erhaltener Abrechnungscode, solange dessen Bestaetigung noch aussteht.
+
+Lokale Daten duerfen keine Namen, Zahlungsdaten oder Freitexte enthalten. Die E-Mail-Adresse wird nur fuer den initialen Freischaltungsrequest verwendet und danach nicht in der App als Studienzustand benoetigt.
+
+### 8.4 App-Token und Teilnehmerkennung
+
+Der Server erzeugt bei der Freischaltung ein zufaelliges UUID-v4-App-Token und gibt es an die App zurueck. Dieses Token wird danach nur lokal in der App gespeichert. Bei Selbstberichten sendet die App das Token erneut an `submit.php`. Der Server validiert das UUID-Format und berechnet daraus die pseudonyme Auswertungskennung:
+
+```php
+$participantId = hash('sha256', strtolower($appToken));
+```
+
+Der Hash normalisiert die UUID auf Kleinschreibung, damit dieselbe App-Installation unabhaengig von der Schreibweise dieselbe `participant_id` erhaelt. Der rohe App-Token wird nicht in `self_reports` gespeichert. Zur Rueckwaertskompatibilitaet aktualisiert `submit.php` beim naechsten Selbstbericht alte `self_reports`-Zeilen, deren `participant_id` noch dem rohen App-Token entspricht, auf den SHA-256-Hash.
+
+### 8.5 Initiale Freischaltung per E-Mail-Adresse
+
+Der allererste Request dient nur der Ausgabe des App-Tokens:
+
+```json
+{
+  "email": "participant@example.org"
+}
+```
+
+Serververhalten:
+
+- Der Server prueft, ob die E-Mail-Adresse in `register` vorhanden und die Teilnahme freigegeben ist.
+- Wenn die E-Mail-Adresse nicht vorhanden, nicht freigegeben oder bereits als tokenisiert markiert ist, wird kein App-Token ausgeliefert.
+- Wenn die E-Mail-Adresse gueltig ist, erzeugt der Server ein neues `app_token` als UUID.
+- Der Server gibt `app_token` an die App zurueck, persistiert aber weder das App-Token noch dessen Hash in Bezug zur E-Mail-Adresse.
+- In `register` wird `app_token_issued_at` gesetzt, damit dieselbe Registrierung nicht erneut aktiviert werden kann.
+
+### 8.6 Produktive Selbstbericht-Uebertragung
+
+Die App sendet pro produktiver Studiensituation einen `PUT`-Request an `submit.php`:
+
+```json
+{
+  "app_token": "550e8400-e29b-41d4-a716-446655440000",
+  "craving": 50,
+  "app_version": "1.0"
+}
+```
+
+Der Server berechnet aus dem App-Token die `participant_id`, zaehlt die bereits vorhandenen Selbstberichte fuer diese Kennung und bestimmt daraus `situation_index = submitted_count + 1`. Fuer die Situationen 1 bis 10 wird `condition_code = CUE_MATCHING` gesetzt, fuer die Situationen 11 bis 20 `condition_code = CUE_LABELING`. Die App uebertraegt weder Situation noch Bedingung.
+
+`app_version` wird als optionales String-Feld akzeptiert und validiert, aber im derzeitigen Tabellenschema nicht gespeichert.
+
+Bei Situation 20 erzeugt der Server einen UUID-v4-Abrechnungscode, speichert ihn in `compensation_code` und gibt ihn an die App zurueck. Die App bestaetigt diesen Code anschliessend mit einem separaten `PUT`; der Server setzt dabei `confirmed_at`.
+
+## 9. Wiederhergestellte Android-Spezifikation fuer produktive Studiensituationen
+
+### 9.1 Projektgeruest und Endpunkt-Prototyp
+
+- Eigenstaendiges Android-Projekt im Verzeichnis `cuelens`.
+- Native Android-App in Kotlin mit einer `MainActivity` und Jetpack Compose.
+- Nur die fuer den Studienbetrieb erforderlichen Berechtigungen, im Grundbetrieb insbesondere Internet.
+- Hochformat, damit Bilddarstellung, Antwortoptionen und Slider kontrolliert bleiben.
+- Android-Backup deaktiviert, damit lokale Fortschrittsdaten nicht in allgemeine Geraete- oder Cloud-Backups gelangen.
+- Der Selbstbericht wird ganzzahlig im Bereich 0 bis 100 erfasst.
+- Produktive Uebertragungen an `submit.php` erfolgen per `PUT`.
+- Netzwerkanfragen laufen nicht auf dem UI-Thread.
+
+### 9.2 Studien-MVP
+
+Ein produktiver Durchgang besteht aus mehreren Reizaufgaben und einer anschliessenden Selbstbericht-Abfrage. In der Cue-Matching-Bedingung wird ein Zielbild mit zwei Bildoptionen kombiniert. In der Cue-Labeling-Bedingung wird ein Zielbild mit zwei Wortoptionen kombiniert. Nach jeder Auswahl wechselt die App zur naechsten Aufgabe. Nach Abschluss der Aufgaben erscheint die Abfrage mit Slider von 0 bis 100, Standardwert 50 und Button `Absenden`.
+
+Cue-Bilder fuellen den sichtbaren Bildschirm durch eine Cover-Darstellung. Match-Bilder und Wortoptionen werden ueber dem Cue-Bild im unteren Bildschirmbereich dargestellt.
+
+### 9.3 Ressourcen und Aufgabenlisten
+
+- Cue-Matching-Items werden aus `cue_0nn`, `match_a_0nn` und `match_b_0nn` erzeugt.
+- Ein Cue-Matching-Item ist nur gueltig, wenn alle drei Drawables vorhanden sind.
+- Cue-Labeling-Items werden aus einem Cue-Bild und einem Labelpaar erzeugt.
+- Labelpaare enthalten ein besser passendes und ein weniger passendes Label.
+- Bild- und Wortoptionen werden innerhalb eines Items zufaellig links/rechts beziehungsweise in ihrer Reihenfolge vertauscht.
+
+### 9.4 Studienfortschritt, Sperrzeit und Randomisierung
+
+- Lokaler Fortschritt ist ein App-Cache. Autoritativ fuer die serverseitige Auswertung ist die Anzahl der in `self_reports` gespeicherten Selbstberichte pro `participant_id`.
+- Die App speichert lokal den naechsten erlaubten Startzeitpunkt, die Anzahl bestaetigter Studiensituationen, die zufaellige Cue-Matching-Reihenfolge und das App-Token.
+- Bei Netzwerkfehlern speichert die App den ausstehenden Craving-Wert, damit derselbe Selbstbericht erneut uebertragen werden kann.
+- Zwischen zwei Studiensituationen liegt im Produktivbetrieb ein Mindestabstand von drei Stunden.
+- Insgesamt sind 20 Studiensituationen vorgesehen: zehn Cue-Matching-Situationen und zehn Cue-Labeling-Situationen.
+- Jede Studiensituation enthaelt fuenf Aufgaben.
+- Production-Werte bleiben fachlich konsistent: vier Sekunden Betrachtungs-Countdown beim Cue-Matching und drei Stunden Sperrzeit.
+
+### 9.5 Build-Varianten und Endpunkte
+
+- `staging` verwendet lokale oder interne Test-Endpunkte.
+- `production` verwendet `https://cuelens.each-and-every.de/submit` fuer produktive Selbstberichte.
+- Endpunkte werden ueber `BuildConfig` oder eine vergleichbare Build-Konfiguration bereitgestellt.
+- Klartextverkehr ist nur als abgegrenzte Staging-Ausnahme zulaessig.
+
+### 9.6 Architektur fuer produktive Studienphasen
+
+- `MainActivity` initialisiert die Compose-App.
+- Studienphasen werden explizit modelliert, zum Beispiel `StartGate`, `ImageMatching`, `WordMatching` und `SelfReport`.
+- UI-Komponenten erhalten nur die fuer Darstellung und Rueckmeldung notwendigen Daten.
+- Netzwerk-, Ressourcen- und Persistenzlogik sollen so gekapselt werden, dass sie spaeter in ViewModel-, Repository- oder Service-Klassen ausgelagert werden koennen.
+
+### 9.7 Datenmodell fuer produktive Studiensituationen
+
+Mindestens erforderliche Datenklassen:
+
+```kotlin
+data class ImageMatchItem(
+    @DrawableRes val cueResId: Int,
+    @DrawableRes val matchAResId: Int,
+    @DrawableRes val matchBResId: Int
+)
+
+data class WordMatchItem(
+    @DrawableRes val cueResId: Int,
+    val fittingLabel: String,
+    val lessFittingLabel: String,
+    val language: String = "de"
+)
+
+enum class StudyCondition { CUE_MATCHING, CUE_LABELING }
+```
+
+Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Trials ergaenzt werden. Drawable-IDs sind keine dauerhaften wissenschaftlichen Kennungen. Diese IDs muessen nicht im regulaeren Submit-Payload enthalten sein, solange sie fuer den Server nicht zur Validierung oder Auswertung benoetigt werden.
+
+## 10. Wiederhergestellte serverseitige Tabellen und Logik fuer die produktive Studienfassung
+
+### 10.1 Registrierung
+
+Die bestehende Tabelle `register` enthaelt Teilnahmeinformationen ohne Bezug zu Craving-Werten und ohne Bezug zu App-Tokens.
+
+```sql
+CREATE TABLE register (
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    iban VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    bic VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    age INTEGER NOT NULL,
+    cigarettes INTEGER NOT NULL,
+    studyinfo tinyint(1) NULL,
+    dataprot tinyint(1) NULL,
+    doi_token VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    doi tinyint(1) NOT NULL,
+    app_token_issued_at TIMESTAMP NULL
+);
+```
+
+### 10.2 Selbstberichte
+
+```sql
+CREATE TABLE self_reports (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    participant_id CHAR(64) NOT NULL,
+    condition_code ENUM('CUE_MATCHING', 'CUE_LABELING') NOT NULL,
+    craving TINYINT NOT NULL,
+    CHECK(craving BETWEEN 0 AND 100)
+);
+```
+
+`self_reports` ist die pseudonymisierte Auswertungstabelle. `participant_id` ist der SHA-256-Hash des normalisierten App-Tokens und nicht der rohe Token. Die Tabelle enthaelt keine Kontakt- oder Zahlungsdaten, erlaubt aber die Zusammenfuehrung mehrerer Selbstberichte derselben App-Installation. Sie darf deshalb nicht als anonymisierte Datensammlung beschrieben werden.
+
+### 10.3 Abrechnungscodes
+
+```sql
+CREATE TABLE compensation_code (
+    compensation_code CHAR(36) NOT NULL PRIMARY KEY,
+    confirmed_at TIMESTAMP NULL
+);
+```
+
+### 10.4 Serverlogik fuer `activate.php` und `submit.php`
+
+1. **Freischaltungsrequest mit E-Mail-Adresse**
+   - Voraussetzung: E-Mail-Adresse existiert in `register`, Teilnahme ist freigegeben, `app_token_issued_at` ist noch leer.
+   - Server erzeugt ein UUID-App-Token.
+   - Server gibt das App-Token zurueck, speichert das App-Token aber nicht.
+   - Server setzt `app_token_issued_at`, damit dieselbe Registrierung nicht mehrfach aktiviert werden kann.
+
+2. **Selbstbericht mit App-Token**
+   - Voraussetzung: Der Request enthaelt ein formal gueltiges UUID-App-Token und einen ganzzahligen Craving-Wert von 0 bis 100.
+   - Server berechnet `participant_id = hash('sha256', strtolower($appToken))`.
+   - Server aktualisiert alte `self_reports`-Zeilen, deren `participant_id` noch dem rohen App-Token entspricht, auf den neuen Hash.
+   - Server zaehlt die vorhandenen Selbstberichte fuer `participant_id` unter Transaktionsschutz.
+   - Wenn bereits 20 Selbstberichte vorhanden sind, wird der Request mit HTTP 400 abgelehnt.
+   - Andernfalls wird `situation_index = submitted_count + 1` berechnet.
+   - Fuer `situation_index <= 10` wird `condition_code = CUE_MATCHING` gespeichert, danach `condition_code = CUE_LABELING`.
+   - Server speichert `participant_id`, `condition_code` und `craving` in `self_reports`.
+
+3. **Abschlussfall**
+   - Bei Situation 20 erzeugt der Server einen UUID-Abrechnungscode.
+   - Der Code wird in `compensation_code` gespeichert und in der Antwort an die App zurueckgegeben.
+   - Die App bestaetigt den Code in einem separaten `PUT`.
+   - Der Server setzt `confirmed_at = CURRENT_TIMESTAMP`, falls der Code existiert, und antwortet mit HTTP 204.
+
+4. **Ungueltige Requests**
+   - Fehlende App-Tokens, falsch formatierte UUIDs, fehlende oder ungueltige Craving-Werte und nicht unterstuetzte Payloads resultieren in HTTP 400 `Bad Request`.
+   - Unsupported HTTP-Methoden resultieren in HTTP 405.
+   - Dabei wird kein neuer Selbstbericht gespeichert.
+
+## 11. Wiederhergestellte App-Retry-Logik fuer produktive Selbstberichte
+
+- Vor dem Selbstbericht-PUT legt die App lokal den ausstehenden Craving-Wert ab.
+- Wenn vor der Serverantwort ein Fehler auftritt, wird derselbe Selbstbericht erneut uebertragen.
+- Nach erfolgreicher Serverantwort entfernt die App den ausstehenden Craving-Wert, erhoeht lokal die Anzahl bestaetigter Situationen und setzt die naechste Sperrzeit.
+- Wenn die Antwort den Abschlussstatus enthaelt, speichert die App den Abrechnungscode lokal und bestaetigt ihn mit einem separaten `PUT`.
+- Wenn die Bestaetigung des Abrechnungscodes fehlschlaegt, wiederholt die App nur diese Bestaetigung.
+- Nach erfolgreicher Bestaetigung des Abrechnungscodes markiert die App die Studie lokal als abgeschlossen.
+- Die App startet beim naechsten App-Start und vor einer neuen Studiensituation ausstehende Wiederholungen.
+
+Die Selbstbericht-Uebertragung ist im derzeitigen Backend nicht vollstaendig idempotent. Wenn der Server einen Selbstbericht erfolgreich speichert, die Antwort aber vor dem Erreichen der App verloren geht, kann ein erneuter PUT als naechste Studiensituation gespeichert werden. Diese Vereinfachung ist eine bewusste Folge des Verzichts auf Hash-Chain und Drei-Wege-Bestaetigung und muss bei Test, Monitoring und Interpretation beruecksichtigt werden.
+
+## 12. Wiederhergestellte Querschnittsanforderungen fuer Mehrsprachigkeit und spaetere Benachrichtigungen
+
+### 12.1 Mehrsprachigkeit Deutsch/Englisch
+
+- Sichtbare UI-Texte aus Kotlin in Android-Stringressourcen verschieben.
+- Mindestens `values/strings.xml` und `values-en/strings.xml` pflegen.
+- Labelpaare erhalten Sprachzuordnung oder getrennte Ressourcen.
+- Studienbegriffe bleiben zwischen App, Studieninformation und Datenschutzerklaerung konsistent.
+
+### 12.2 Spaetere Benachrichtigungen fuer produktive Studienfunktionen
+
+Lokale Benachrichtigungen fuer spaetere produktive Studienfunktionen koennen nach stabiler Datenerfassung implementiert werden. Texte bleiben neutral und enthalten keine Angaben zu Rauchverlangen, Rauchstatus oder medizinischen Aussagen. Diese Anforderung ist von den Info-Nachrichten-Benachrichtigungen der ersten Play-Store-Version zu unterscheiden.
+
+## 13. Wiederhergestellte Tests fuer die spaetere produktive Studienfassung
+
+Vor produktiver Nutzung der eigentlichen Studiensituationen sind zusaetzlich mindestens zu testen:
+
+- Freischaltungsrequest nur fuer in `register` vorhandene und freigegebene E-Mail-Adressen.
+- Keine dauerhafte Speicherung des App-Tokens auf dem Server.
+- Freischaltung setzt `app_token_issued_at` und gibt ein UUID-v4-App-Token zurueck.
+- Ableitung von `participant_id` als SHA-256-Hash des normalisierten App-Tokens.
+- Migration alter `self_reports`-Zeilen vom rohen App-Token auf den App-Token-Hash.
+- Studiensequenz ueber 20 Situationen.
+- Vollstaendigkeit der Bild- und Labelressourcen.
+- Slider-Grenzen 0 bis 100.
+- Selbstbericht mit gueltigem App-Token und Craving-Wert.
+- Retry-Verhalten bei Netzwerkfehlern, einschliesslich des Risikos doppelter Speicherung nach verlorener Serverantwort.
+- Speicherung in `self_reports` ohne rohes App-Token.
+- Ableitung von Situation und Bedingung aus der Anzahl gespeicherter Selbstberichte.
+- Kein weiterer Selbstbericht nach 20 gespeicherten Selbstberichten.
+- Ausgabe eines Abrechnungscodes bei Situation 20.
+- Bestaetigung des Abrechnungscodes mit HTTP 204.
+- HTTP 400 fuer ungueltige Selbstbericht-PUTs.
+
+## 14. Definition of Done fuer die spaetere produktive Studienfassung
+
+Eine Aenderung an der spaeter aktivierten produktiven Studienfassung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte erfuellt sind:
+
+- Die App baut in Staging und Production.
+- Die Studienlogik wurde nicht unbeabsichtigt veraendert.
+- Neue Datenfelder sind im Code, Backend-Vertrag und in der Dokumentation beschrieben.
+- Neue lokale Speicherungen sind nach Zweck, Lebensdauer und Schutzbedarf dokumentiert.
+- Fehlerfaelle fuehren zu einem eindeutigen UI-Zustand.
+- Tests oder manuelle Acceptance Checks decken den Kernpfad ab.
+- `self_reports.participant_id` enthaelt den App-Token-Hash, nicht den rohen App-Token.
+- Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token und Berichtstabelle.
