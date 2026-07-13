@@ -42,9 +42,9 @@ class LocalHttpIntegrationTest {
         }
 
         val messages = HttpInfoFeedService("$baseUrl/messages")
-            .fetchMessages(setOf(2L, 1L))
+            .fetchMessages()
 
-        assertEquals("GET exclude_ids=1,2", request.get())
+        assertEquals("GET null", request.get())
         assertEquals(listOf(4L), messages.map { it.id })
     }
 

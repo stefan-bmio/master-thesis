@@ -24,7 +24,7 @@ class InfoFeedControllerTest {
     fun loadFailureFinishesWithNotice() = runBlocking {
         val store = FakeStore()
         val service = object : InfoFeedService {
-            override suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage> {
+            override suspend fun fetchMessages(): List<InfoMessage> {
                 throw InfoFeedNetworkException(java.io.IOException("offline"))
             }
         }
@@ -101,7 +101,7 @@ class InfoFeedControllerTest {
         store: FakeStore = FakeStore()
     ): InfoFeedController {
         val service = object : InfoFeedService {
-            override suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage> = messages
+            override suspend fun fetchMessages(): List<InfoMessage> = messages
         }
         return InfoFeedController(InfoFeedRepository(service, store))
     }

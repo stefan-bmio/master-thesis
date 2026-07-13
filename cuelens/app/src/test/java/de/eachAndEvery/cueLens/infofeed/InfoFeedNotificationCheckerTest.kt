@@ -14,7 +14,7 @@ class InfoFeedNotificationCheckerTest {
         var fetched = false
         val checker = checker(
             preferences = preferences(enabled = false),
-            service = service { _ -> fetched = true; emptyList() }
+            service = service { fetched = true; emptyList() }
         )
 
         assertEquals(InfoFeedCheckResult.Success, checker.check())
@@ -28,19 +28,16 @@ class InfoFeedNotificationCheckerTest {
         )
         val dismissedStore = FakeDismissedStore(setOf(2L))
         val notifier = FakeNotifier(canPost = true)
-        var excludedIds: Set<Long>? = null
         val checker = checker(
             preferenceStore = preferenceStore,
             dismissedStore = dismissedStore,
             notifier = notifier,
-            service = service { excluded ->
-                excludedIds = excluded
+            service = service {
                 listOf(message(1L), message(2L), message(3L), message(4L))
             }
         )
 
         assertEquals(InfoFeedCheckResult.Success, checker.check())
-        assertEquals(setOf(2L), excludedIds)
         assertEquals(1, notifier.postCount)
         assertEquals(setOf(1L, 2L, 3L, 4L), preferenceStore.value.knownMessageIds)
     }
@@ -52,7 +49,7 @@ class InfoFeedNotificationCheckerTest {
         val checker = checker(
             preferenceStore = preferenceStore,
             notifier = notifier,
-            service = service { _ -> listOf(message(5L)) }
+            service = service { listOf(message(5L)) }
         )
 
         assertEquals(InfoFeedCheckResult.Success, checker.check())
@@ -66,7 +63,7 @@ class InfoFeedNotificationCheckerTest {
         val checker = checker(
             preferences = preferences(enabled = true, knownIds = setOf(8L)),
             notifier = notifier,
-            service = service { _ -> listOf(message(8L)) }
+            service = service { listOf(message(8L)) }
         )
 
         assertEquals(InfoFeedCheckResult.Success, checker.check())
@@ -125,12 +122,12 @@ class InfoFeedNotificationCheckerTest {
         knownMessageIds = knownIds
     )
 
-    private fun service(block: suspend (Set<Long>) -> List<InfoMessage>) =
+    private fun service(block: suspend () -> List<InfoMessage>) =
         object : InfoFeedService {
-            override suspend fun fetchMessages(excludedIds: Set<Long>) = block(excludedIds)
+            override suspend fun fetchMessages() = block()
         }
 
-    private fun failingService(error: InfoFeedException) = service { _ -> throw error }
+    private fun failingService(error: InfoFeedException) = service { throw error }
 
     private fun message(id: Long) = InfoMessage(
         id = id,

@@ -40,41 +40,6 @@ function server_error(?Throwable $cause = null, ?PDO $pdo = null, ?array $dbConf
     ]);
 }
 
-/**
- * @return list<int>
- */
-function parse_excluded_ids(mixed $value): array
-{
-    if ($value === null || $value === '') {
-        return [];
-    }
-
-    if (!is_string($value)) {
-        bad_request('Malformed query parameter: exclude_ids');
-    }
-
-    $ids = [];
-    foreach (explode(',', $value) as $rawId) {
-        $candidate = trim($rawId);
-        if (!preg_match('/^[1-9][0-9]*$/', $candidate)) {
-            bad_request('Malformed query parameter: exclude_ids');
-        }
-
-        $id = filter_var(
-            $candidate,
-            FILTER_VALIDATE_INT,
-            ['options' => ['min_range' => 1, 'max_range' => PHP_INT_MAX]]
-        );
-        if ($id === false) {
-            bad_request('Malformed query parameter: exclude_ids');
-        }
-
-        $ids[$id] = $id;
-    }
-
-    return array_values($ids);
-}
-
 function pdo_from_config(array $config): PDO
 {
     foreach (['host', 'dbname', 'user', 'pass'] as $key) {
@@ -96,35 +61,22 @@ function pdo_from_config(array $config): PDO
 }
 
 /**
- * @param list<int> $excludedIds
  * @return list<array{id: int, created_at: string, text_de: string, text_en: string}>
  */
-function fetch_messages(PDO $pdo, array $excludedIds): array
+function fetch_messages(PDO $pdo): array
 {
     $timeZone = $pdo->prepare("SET time_zone = '+00:00'");
     $timeZone->execute();
-
-    $where = '';
-    if ($excludedIds !== []) {
-        $placeholders = [];
-        foreach (array_keys($excludedIds) as $index) {
-            $placeholders[] = ':excluded_id_' . $index;
-        }
-        $where = ' WHERE id NOT IN (' . implode(', ', $placeholders) . ')';
-    }
 
     $stmt = $pdo->prepare(
         "SELECT id,
                 DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at,
                 text_de,
                 text_en
-           FROM messages" . $where . '
-          ORDER BY created_at ASC, id ASC'
+           FROM messages
+          ORDER BY created_at ASC, id ASC"
     );
 
-    foreach ($excludedIds as $index => $id) {
-        $stmt->bindValue(':excluded_id_' . $index, $id, PDO::PARAM_INT);
-    }
     $stmt->execute();
 
     $messages = [];
@@ -148,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     ]);
 }
 
-$excludedIds = parse_excluded_ids($_GET['exclude_ids'] ?? null);
 $config = require __DIR__ . '/config/cuelens-craving.php';
 
 try {
@@ -159,7 +110,7 @@ try {
 
 try {
     json_response(200, [
-        'messages' => fetch_messages($pdo, $excludedIds),
+        'messages' => fetch_messages($pdo),
     ]);
 } catch (Throwable $e) {
     server_error($e, $pdo);

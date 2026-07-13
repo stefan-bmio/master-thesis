@@ -17,18 +17,6 @@ final class MessagesEndpointTest extends TestCase
         ], json_decode($response['stdout'], true, 512, JSON_THROW_ON_ERROR));
     }
 
-    public function testRejectsMalformedExcludedIdsWithoutConnectingToDatabase(): void
-    {
-        $response = $this->runEndpoint('GET', 'exclude_ids=1%2Cinvalid');
-
-        self::assertSame(0, $response['exit_code']);
-        self::assertSame('', $response['stderr']);
-        self::assertSame([
-            'success' => false,
-            'error' => 'Malformed query parameter: exclude_ids',
-        ], json_decode($response['stdout'], true, 512, JSON_THROW_ON_ERROR));
-    }
-
     /**
      * @return array{stdout: string, stderr: string, exit_code: int}
      */

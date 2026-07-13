@@ -9,7 +9,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 interface InfoFeedService {
-    suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage>
+    suspend fun fetchMessages(): List<InfoMessage>
 }
 
 class HttpInfoFeedService(
@@ -18,10 +18,10 @@ class HttpInfoFeedService(
         it.openConnection() as HttpURLConnection
     }
 ) : InfoFeedService {
-    override suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage> =
+    override suspend fun fetchMessages(): List<InfoMessage> =
         withContext(Dispatchers.IO) {
             val connection = try {
-                connectionFactory(buildRequestUrl(excludedIds))
+                connectionFactory(URL(endpointUrl))
             } catch (error: IOException) {
                 throw InfoFeedNetworkException(error)
             }
@@ -51,18 +51,6 @@ class HttpInfoFeedService(
                 connection.disconnect()
             }
         }
-
-    private fun buildRequestUrl(excludedIds: Set<Long>): URL {
-        val validIds = excludedIds
-            .onEach { require(it > 0L) { "Excluded message IDs must be positive." } }
-            .sorted()
-        if (validIds.isEmpty()) {
-            return URL(endpointUrl)
-        }
-
-        val separator = if ('?' in endpointUrl) '&' else '?'
-        return URL(endpointUrl + separator + "exclude_ids=" + validIds.joinToString(","))
-    }
 
     private fun parseResponse(responseBody: String): List<InfoMessage> {
         try {

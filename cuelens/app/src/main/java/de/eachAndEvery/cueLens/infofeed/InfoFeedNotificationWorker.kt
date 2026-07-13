@@ -49,7 +49,7 @@ class InfoFeedNotificationChecker(
 
         val dismissedIds = dismissedMessageStore.getDismissedIds()
         val messages = try {
-            service.fetchMessages(dismissedIds)
+            service.fetchMessages()
         } catch (_: InfoFeedNetworkException) {
             return InfoFeedCheckResult.Retry
         } catch (error: InfoFeedHttpException) {

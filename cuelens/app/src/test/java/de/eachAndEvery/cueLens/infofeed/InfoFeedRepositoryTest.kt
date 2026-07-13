@@ -9,12 +9,12 @@ import org.junit.Test
 
 class InfoFeedRepositoryTest {
     @Test
-    fun loadMessagesPassesDismissedIdsAndFiltersAndSortsDefensively() = runBlocking {
+    fun loadMessagesFetchesAllMessagesAndFiltersAndSortsDefensively() = runBlocking {
         val store = FakeDismissedMessageStore(setOf(2L))
-        var receivedExcludedIds: Set<Long>? = null
+        var fetchCount = 0
         val service = object : InfoFeedService {
-            override suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage> {
-                receivedExcludedIds = excludedIds
+            override suspend fun fetchMessages(): List<InfoMessage> {
+                fetchCount += 1
                 return listOf(
                     message(3L, "2026-07-08T10:00:00Z"),
                     message(2L, "2026-07-06T10:00:00Z"),
@@ -28,7 +28,7 @@ class InfoFeedRepositoryTest {
         val result = repository.loadMessages()
 
         assertTrue(result.isSuccess)
-        assertEquals(setOf(2L), receivedExcludedIds)
+        assertEquals(1, fetchCount)
         assertEquals(listOf(1L, 4L, 3L), result.getOrThrow().map(InfoMessage::id))
     }
 
@@ -36,7 +36,7 @@ class InfoFeedRepositoryTest {
     fun loadMessagesReturnsNetworkFailure() = runBlocking {
         val expected = InfoFeedNetworkException(java.io.IOException("offline"))
         val service = object : InfoFeedService {
-            override suspend fun fetchMessages(excludedIds: Set<Long>): List<InfoMessage> {
+            override suspend fun fetchMessages(): List<InfoMessage> {
                 throw expected
             }
         }
@@ -53,7 +53,7 @@ class InfoFeedRepositoryTest {
         val store = FakeDismissedMessageStore()
         val repository = InfoFeedRepository(
             service = object : InfoFeedService {
-                override suspend fun fetchMessages(excludedIds: Set<Long>) = emptyList<InfoMessage>()
+                override suspend fun fetchMessages() = emptyList<InfoMessage>()
             },
             dismissedMessageStore = store
         )

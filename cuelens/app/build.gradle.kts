@@ -52,7 +52,7 @@ android {
                 "String",
                 "MESSAGES_URL",
                 "\"http://192.168.1.203:8080/cuelens/messages\""
-            )
+            ) 
             buildConfigField(
                 "String",
                 "FEEDBACK_URL",

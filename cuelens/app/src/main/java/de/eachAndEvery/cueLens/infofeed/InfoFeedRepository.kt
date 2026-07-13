@@ -9,7 +9,7 @@ class InfoFeedRepository(
 ) {
     suspend fun loadMessages(): Result<List<InfoMessage>> = runCatching {
         val dismissedIds = dismissedMessageStore.getDismissedIds()
-        service.fetchMessages(dismissedIds)
+        service.fetchMessages()
             .asSequence()
             .filterNot { it.id in dismissedIds }
             .sortedWith(compareBy(InfoMessage::createdAtUtc, InfoMessage::id))

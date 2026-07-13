@@ -13,7 +13,7 @@ import org.junit.Test
 
 class HttpInfoFeedServiceTest {
     @Test
-    fun fetchMessagesSendsSortedExcludedIdsAndParsesResponse() = runBlocking {
+    fun fetchMessagesUsesEndpointUrlAndParsesResponse() = runBlocking {
         var requestedUrl: URL? = null
         val response = """
             {
@@ -32,9 +32,9 @@ class HttpInfoFeedServiceTest {
             FakeHttpURLConnection(url, 200, response)
         }
 
-        val messages = service.fetchMessages(setOf(9L, 2L))
+        val messages = service.fetchMessages()
 
-        assertEquals("https://example.test/messages.php?exclude_ids=2,9", requestedUrl.toString())
+        assertEquals("https://example.test/messages.php", requestedUrl.toString())
         assertEquals(
             listOf(
                 InfoMessage(
@@ -56,7 +56,7 @@ class HttpInfoFeedServiceTest {
             FakeHttpURLConnection(url, 200, """{"messages":[]}""")
         }
 
-        assertTrue(service.fetchMessages(emptySet()).isEmpty())
+        assertTrue(service.fetchMessages().isEmpty())
         assertEquals("https://example.test/messages.php", requestedUrl.toString())
     }
 
@@ -71,7 +71,7 @@ class HttpInfoFeedServiceTest {
         }
 
         val error = assertThrows(InfoFeedHttpException::class.java) {
-            runBlocking { service.fetchMessages(emptySet()) }
+            runBlocking { service.fetchMessages() }
         }
 
         assertEquals(500, error.statusCode)
@@ -85,7 +85,7 @@ class HttpInfoFeedServiceTest {
         }
 
         assertThrows(InfoFeedProtocolException::class.java) {
-            runBlocking { service.fetchMessages(emptySet()) }
+            runBlocking { service.fetchMessages() }
         }
     }
 
@@ -102,7 +102,7 @@ class HttpInfoFeedServiceTest {
         }
 
         assertThrows(InfoFeedProtocolException::class.java) {
-            runBlocking { service.fetchMessages(emptySet()) }
+            runBlocking { service.fetchMessages() }
         }
     }
 
@@ -113,7 +113,7 @@ class HttpInfoFeedServiceTest {
         }
 
         assertThrows(InfoFeedNetworkException::class.java) {
-            runBlocking { service.fetchMessages(emptySet()) }
+            runBlocking { service.fetchMessages() }
         }
     }
 
