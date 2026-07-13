@@ -1,6 +1,7 @@
 package de.eachAndEvery.cueLens
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -32,6 +33,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -60,23 +62,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONException
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
+    private val infoFeedOpenRequests = MutableStateFlow(0L)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val infoFeedOpenRequest by infoFeedOpenRequests.collectAsState()
             CueLensTheme {
-                CueLensApp()
+                CueLensApp(infoFeedOpenRequest = infoFeedOpenRequest)
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(
+                de.eachAndEvery.cueLens.infofeed.AndroidInfoFeedNotifier.EXTRA_OPEN_INFO_FEED,
+                false
+            )
+        ) {
+            infoFeedOpenRequests.value += 1L
         }
     }
 }
 
 @Composable
-private fun CueLensApp() {
+internal fun LegacyStudyApp() {
     val context = LocalContext.current
     val imageItems = remember { loadImageMatchItems(context) }
     val wordItems = remember { loadWordMatchItems(context) }

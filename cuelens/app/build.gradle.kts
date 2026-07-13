@@ -37,6 +37,7 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
             buildConfigField(
                 "String",
                 "CRAVING_SUBMIT_URL",
@@ -47,9 +48,20 @@ android {
                 "ACTIVATION_URL",
                 "\"http://192.168.1.203:8080/cuelens/activate\""
             )
+            buildConfigField(
+                "String",
+                "MESSAGES_URL",
+                "\"http://192.168.1.203:8080/cuelens/messages\""
+            )
+            buildConfigField(
+                "String",
+                "FEEDBACK_URL",
+                "\"http://192.168.1.203:8080/cuelens/feedback\""
+            )
         }
         create("production") {
             dimension = "environment"
+            manifestPlaceholders["usesCleartextTraffic"] = "false"
             buildConfigField(
                 "String",
                 "CRAVING_SUBMIT_URL",
@@ -59,6 +71,16 @@ android {
                 "String",
                 "ACTIVATION_URL",
                 "\"https://cuelens.each-and-every.de/activate\""
+            )
+            buildConfigField(
+                "String",
+                "MESSAGES_URL",
+                "\"https://cuelens.each-and-every.de/messages.php\""
+            )
+            buildConfigField(
+                "String",
+                "FEEDBACK_URL",
+                "\"https://cuelens.each-and-every.de/feedback.php\""
             )
         }
     }
@@ -71,6 +93,11 @@ android {
         compose = true
         buildConfig = true
     }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
@@ -82,7 +109,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.work.runtime)
     testImplementation(libs.junit)
+    testImplementation(libs.json)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

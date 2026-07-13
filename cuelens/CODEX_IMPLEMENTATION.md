@@ -11,7 +11,7 @@ Die Abschnitte zur produktiven Studienfassung bleiben in dieser Datei erhalten, 
 In diesem Branch soll die erste App-Version entstehen, die ueber den Play Store bereitgestellt werden kann. Ziel ist eine robuste, datensparsame und testbare Basisversion mit folgenden initial sichtbaren Funktionen:
 
 1. Infofeed mit serverseitig gepflegten Nachrichten.
-2. Nach eventuellen Info-Nachrichten Startseite oder vorherige Seite.
+2. Nach eventuellen Info-Nachrichten Startseite.
 3. E-Mail-Aktivierung fuer spaetere Studienteilnahme.
 4. Beispiel-Studiensituation ohne Uebertragung eines Craving-Werts.
 5. Feedback-Formular mit serverseitiger Speicherung.
@@ -127,7 +127,6 @@ Anforderungen:
 - Per Android WorkManager wird periodisch auf neue Nachrichten geprueft.
 - Die Hintergrundpruefung ist nicht zeitkritisch. Android darf sie wegen Doze, App Standby, Energiesparmodus oder Netzbedingungen verspaetet ausfuehren.
 - Der autoritative Pfad bleibt der Abruf beim App-Start oder beim manuellen Oeffnen des Infofeeds.
-- Firebase Cloud Messaging kann spaeter ergaenzt werden, falls echte servergetriggerte Push-Nachrichten erforderlich werden. Dann duerfen Push-Tokens nicht mit E-Mail-Adresse, App-Token oder Selbstberichten verknuepft werden.
 
 ### 2.4 Startseite
 
@@ -314,7 +313,7 @@ Tabelle:
 
 ```sql
 CREATE TABLE messages (
-    id BIGINT NOT NULL PRIMARY KEY,
+    id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     text_de TEXT NOT NULL,
     text_en TEXT NOT NULL
@@ -673,20 +672,20 @@ Fuer die auswertbare Studienfassung sollen stabile IDs fuer Cue, Optionen und Tr
 Die bestehende Tabelle `register` enthaelt Teilnahmeinformationen ohne Bezug zu Craving-Werten und ohne Bezug zu App-Tokens.
 
 ```sql
-CREATE TABLE register (
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-    iban VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-    bic VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-    age INTEGER NOT NULL,
-    cigarettes INTEGER NOT NULL,
-    studyinfo tinyint(1) NULL,
-    dataprot tinyint(1) NULL,
-    doi_token VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-    doi tinyint(1) NOT NULL,
-    app_token_issued_at TIMESTAMP NULL
-);
+CREATE TABLE `register` (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `iban` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `bic` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `age` int NOT NULL,
+  `cigarettes` int NOT NULL,
+  `studyinfo` tinyint(1) DEFAULT '0',
+  `dataprot` tinyint(1) DEFAULT '0',
+  `doi_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `doi` tinyint(1) NOT NULL DEFAULT '0',
+  `app_token_issued_at` TIMESTAMP DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
 
 ### 10.2 Selbstberichte
