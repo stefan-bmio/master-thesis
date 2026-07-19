@@ -28,9 +28,9 @@ function server_error(?Throwable $cause = null, ?PDO $pdo = null, ?array $dbConf
     $message = 'Server error.';
     if ($cause !== null) {
         if ($pdo !== null) {
-            log_error($pdo, $message, $cause);
+            log_error($pdo, $message, $cause, 'messages_endpoint');
         } elseif ($dbConfig !== null) {
-            log_error_from_config($dbConfig, $message, $cause);
+            log_error_from_config($dbConfig, $message, $cause, 'messages_endpoint');
         }
     }
 

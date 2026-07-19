@@ -21,7 +21,8 @@
     <string name="email_address">E-Mail-Adresse</string>
     <string name="activate">Aktivieren</string>
     <string name="activation_running">Aktivierung läuft</string>
-    <string name="activation_failed">Die Aktivierung ist fehlgeschlagen. Bitte prüfen Sie Ihre Eingabe und versuchen Sie es erneut.</string>
+    <string name="activation_failed">Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="activation_needs_support">Die Aktivierung war nicht möglich. Bitte wenden Sie sich an cuelens@each-and-every.de.</string>
     <string name="demo_study_situation">Beispiel-Studiensituation</string>
     <string name="demo_situation_notice">Dies ist ein Beispiel und kein Teil der Studie.</string>
     <string name="demo_image_matching_title">Beispiel: Cue-Matching</string>

@@ -21,7 +21,8 @@
     <string name="email_address">Email address</string>
     <string name="activate">Activate</string>
     <string name="activation_running">Activating</string>
-    <string name="activation_failed">Activation failed. Please check your input and try again.</string>
+    <string name="activation_failed">Activation failed. Please try again later.</string>
+    <string name="activation_needs_support">Activation was not possible. Please contact cuelens@each-and-every.de.</string>
     <string name="demo_study_situation">Example study situation</string>
     <string name="demo_situation_notice">This is an example and not part of the study.</string>
     <string name="demo_image_matching_title">Example: cue matching</string>

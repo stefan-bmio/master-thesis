@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "de.eachAndEvery.cueLens"
+    namespace = "de.eachandevery.cuelens"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "de.eachAndEvery.cueLens"
+        applicationId = "de.eachandevery.cuelens"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -52,7 +52,7 @@ android {
                 "String",
                 "MESSAGES_URL",
                 "\"http://192.168.1.203:8080/cuelens/messages\""
-            ) 
+            )
             buildConfigField(
                 "String",
                 "FEEDBACK_URL",

@@ -54,6 +54,10 @@ if (!is_string($doiToken) || !preg_match('/^[a-f0-9]{64}$/', $doiToken)) {
 			]);
 			
 			$pdo->commit();
+			send_operational_notification(
+				OPERATIONAL_EVENT_REGISTRATION_CREATED,
+				'registration_confirmation'
+			);
 			
 			$message = "You have successfully registered for the study. Thank you. We'll notify you about the start in the next few days."; 
 		}		
@@ -63,7 +67,7 @@ if (!is_string($doiToken) || !preg_match('/^[a-f0-9]{64}$/', $doiToken)) {
 		}
 		http_response_code(500);
 		$message = 'An error occured when confirming the registration.';
-		log_error_from_config($dbConfig, $message, $e);
+		log_error_from_config($dbConfig, $message, $e, 'registration_confirmation');
 	}
 }
 ?>

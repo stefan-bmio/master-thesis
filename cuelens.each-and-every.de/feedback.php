@@ -4,6 +4,7 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 
 require __DIR__ . '/lib/error-log.php';
+require __DIR__ . '/lib/feedback-store.php';
 
 const MAX_SOURCE_LENGTH = 500;
 const MAX_COMMENT_LENGTH = 5000;
@@ -16,6 +17,12 @@ function json_response(int $statusCode, array $payload): never
     exit;
 }
 
+function no_content(): never
+{
+    http_response_code(204);
+    exit;
+}
+
 function bad_request(string $message): never
 {
     json_response(400, ['success' => false, 'error' => $message]);
@@ -25,9 +32,14 @@ function server_error(?Throwable $cause = null, ?PDO $pdo = null, ?array $dbConf
 {
     if ($cause !== null) {
         if ($pdo !== null) {
-            log_error($pdo, 'Feedback endpoint failed.', $cause);
+            log_error($pdo, 'Feedback endpoint failed.', $cause, 'feedback_endpoint');
         } elseif ($dbConfig !== null) {
-            log_error_from_config($dbConfig, 'Feedback endpoint failed.', $cause);
+            log_error_from_config(
+                $dbConfig,
+                'Feedback endpoint failed.',
+                $cause,
+                'feedback_endpoint'
+            );
         }
     }
     json_response(500, ['success' => false, 'error' => 'Server error.']);
@@ -102,16 +114,23 @@ try {
 }
 
 try {
-    $stmt = $pdo->prepare(
-        'INSERT INTO feedback (source, comment, app_version)
-         VALUES (:source, :comment, :app_version)'
-    );
-    $stmt->execute([
-        ':source' => $source,
-        ':comment' => $comment,
-        ':app_version' => $appVersion,
-    ]);
-    json_response(201, ['success' => true]);
+    $result = store_feedback_with_soft_limit($pdo, $source, $comment, $appVersion);
+    if ($result === FEEDBACK_STORED) {
+        send_operational_notification(
+            OPERATIONAL_EVENT_FEEDBACK_RECEIVED,
+            'feedback_endpoint'
+        );
+    } else {
+        error_log(
+            'CueLens feedback soft limit reached; request discarded; request_id=' .
+            operational_request_id()
+        );
+        send_operational_notification(
+            OPERATIONAL_EVENT_FEEDBACK_LIMIT_REACHED,
+            'feedback_endpoint'
+        );
+    }
+    no_content();
 } catch (Throwable $e) {
     server_error($e, $pdo);
 }

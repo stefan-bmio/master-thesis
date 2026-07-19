@@ -518,9 +518,10 @@ Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Mas
 
 - Direkte Registrierungs- und Abrechnungsdaten liegen ausschliesslich in `register` und werden nicht in die App oder die Berichtstabelle uebernommen.
 - Das App-Token wird nach der initialen Freischaltung nur lokal in der App gespeichert und serverseitig nicht dauerhaft persistiert.
-- Die auswertbare Kennung `participant_id` wird in `submit.php` als `hash('sha256', strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
+- Die auswertbare Kennung `participant_id` wird in `submit.php` als `HMAC-SHA-256(pseudonym-secret, "pseudonym:v1" || strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
+- Das `pseudonym-secret` ist in `host.php` im geschuetzten Verzeichnis `config` abgelegt.
 - Die App uebertraegt das App-Token bei jedem Selbstbericht, damit der Server die stabile pseudonyme Kennung erneut berechnen kann.
-- Die Registrierung enthaelt nur den Zeitpunkt der Token-Ausgabe in `app_token_issued_at`, nicht aber das App-Token selbst und nicht dessen Hash.
+- Waehrend des Aktivierungs-Handshakes enthaelt die Registrierung temporaer `app_token_hash` und `activation_valid_through`. Nach erfolgreicher Bestaetigung werden beide Felder geloescht; dauerhaft verbleibt nur `app_token_issued_at`.
 - Eine Wiederzuordnung zu einer natuerlichen Person soll ohne Zusatzinformationen aus Registrierung, lokaler App-Installation, Zahlungsabwicklung, Serverlogs oder aktivem Supportvorgang nicht moeglich sein. Diese Zusatzinformationen sind organisatorisch und technisch getrennt zu halten.
 
 ### 8.2 Grundsaetze
@@ -684,6 +685,8 @@ CREATE TABLE `register` (
   `dataprot` tinyint(1) DEFAULT '0',
   `doi_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `doi` tinyint(1) NOT NULL DEFAULT '0',
+  `app_token_hash` CHAR(64) DEFAULT NULL,
+  `activation_valid_through` DATETIME DEFAULT NULL,
   `app_token_issued_at` TIMESTAMP DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
@@ -792,3 +795,283 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Tests oder manuelle Acceptance Checks decken den Kernpfad ab.
 - `self_reports.participant_id` enthaelt den App-Token-Hash, nicht den rohen App-Token.
 - Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token und Berichtstabelle.
+
+
+## 15. Ergaenzende Anforderungen fuer die Pre-Study-App
+
+Die Anforderungen dieses Abschnitts konkretisieren beziehungsweise ersetzen bei Widerspruechen die bisherigen Angaben zur Application ID, E-Mail-Aktivierung, lokalen Speicherung des App-Tokens, Feedbackbegrenzung, E-Mail-Benachrichtigung und serverseitigen Feature-Aktivierung.
+
+### 15.1 Android Application ID
+
+Die Application ID und der Android-Namespace werden vollstaendig kleingeschrieben:
+
+```kotlin
+android {
+    namespace = "de.eachandevery.cuelens"
+
+    defaultConfig {
+        applicationId = "de.eachandevery.cuelens"
+    }
+}
+```
+
+Anforderungen:
+
+- Keine Grossbuchstaben in `namespace`, `applicationId` oder Package-Deklarationen verwenden.
+- Das Staging-Suffix bleibt `.staging`, sodass die Staging-ID `de.eachandevery.cuelens.staging` lautet.
+- Package-Deklarationen und Verzeichnisstruktur des Kotlin-Quellcodes konsistent auf `de.eachandevery.cuelens` umstellen.
+- Referenzen in Tests, Manifesten und ProGuard-/R8-Regeln ebenfalls anpassen.
+- Vor einer Veroeffentlichung pruefen, ob unter der bisherigen Application ID bereits ein Play-Store-Eintrag oder eine produktiv verteilte App existiert. Eine nachtraegliche Aenderung der Application ID wird von Google Play als eigenstaendige App behandelt.
+
+### 15.2 Begrenzung der Feedbacktabelle
+
+Die Tabelle `feedback` verwendet 200 Datensaetze als weichen Grenzwert. Die Begrenzung dient der Datensparsamkeit und verhindert im regulaeren Betrieb ein unbegrenztes Wachstum durch automatisierte oder wiederholte Requests.
+
+Serververhalten:
+
+1. Der Feedback-Endpunkt validiert Methode, Content-Type, JSON-Struktur und Feldlaengen wie bisher.
+2. Der Endpunkt ermittelt die aktuelle Anzahl mit `SELECT COUNT(*) FROM feedback`. Eine zusaetzliche Transaktion oder Sperrtabelle ist fuer diesen weichen Grenzwert nicht erforderlich.
+3. Solange weniger als 200 Eintraege vorhanden sind, wird das Feedback gespeichert.
+4. Sind bereits 200 Eintraege vorhanden, wird der validierte Request ohne Speicherung verworfen.
+5. Auch bei einem verworfenen Request antwortet der Server mit demselben Erfolgsstatus wie bei einer Speicherung, vorzugsweise HTTP 204.
+6. Die App zeigt in beiden Faellen die normale Bestaetigung fuer das Absenden an.
+7. Weder Antworttext noch Statuscode duerfen erkennen lassen, ob das Feedback gespeichert oder wegen des Limits verworfen wurde.
+
+Der Silent Drop gilt nur fuer formal gueltige Feedback-Requests. Fehlerhafte Requests werden weiterhin mit HTTP 400 und nicht unterstuetzte Methoden mit HTTP 405 beantwortet.
+
+Bei parallelen Requests darf der weiche Grenzwert durch das bewusst nicht gesperrte `SELECT COUNT(*)` voruebergehend geringfuegig ueberschritten werden. Nach einer administrativen Loeschung von Feedbackeintraegen werden wieder neue Eintraege gespeichert, sobald die Anzahl unter 200 liegt.
+
+Jeder wegen des Grenzwerts verworfene gueltige Request wird serverseitig intern protokolliert und an `cuelens-alert@each-and-every.de` gemeldet. Wiederholte verworfene Requests duerfen wiederholte E-Mails erzeugen.
+
+### 15.3 Verschluesselte Speicherung des App-Tokens
+
+Das App-Token wird nicht im Klartext in DataStore, SharedPreferences, Dateien, Logs, Backups oder im Saved State gespeichert.
+
+Anforderungen:
+
+- Einen nicht exportierbaren AES-Schluessel im Android Keystore erzeugen.
+- AES im GCM-Modus ohne statisches IV verwenden.
+- Fuer jede Verschluesselung ein neues zufaelliges IV erzeugen.
+- Ciphertext, IV und gegebenenfalls Formatversion duerfen in einer privaten lokalen Key-Value-Struktur gespeichert werden.
+- Der Keystore-Schluessel selbst darf die App nicht verlassen.
+- Fuer das App-Token kein Cloud- oder Geraetebackup zulassen.
+- Keine benutzerbezogene Authentifizierung fuer jeden Tokenzugriff verlangen, da Hintergrund- und Wiederholungsrequests sonst unzuverlaessig werden koennen.
+- Keine Rueckfallloesung implementieren, die das Token bei Keystore-Fehlern unverschluesselt speichert.
+- App-Token, Klartext, Ciphertext und Schluesselalias nicht in produktive Logs aufnehmen.
+- Entschluesselte Token nur fuer die Dauer des jeweils erforderlichen Requests im Arbeitsspeicher halten.
+- Bei fehlendem, unlesbarem oder invalidiertem Keystore-Schluessel keine produktiven Studienrequests senden. Stattdessen einen definierten Fehlerzustand anzeigen und den Vorfall ohne sensible Daten an die serverseitige Fehlererfassung melden.
+
+Die Verschluesselungslogik wird hinter einer kleinen Schnittstelle gekapselt, beispielsweise:
+
+```kotlin
+interface AppTokenStore {
+    suspend fun save(appToken: String)
+    suspend fun read(): String?
+    suspend fun clear()
+}
+```
+
+Tests muessen mindestens erfolgreiche Ver- und Entschluesselung, unterschiedliche Ciphertexte bei wiederholter Verschluesselung, manipulierte Ciphertexte, fehlende Schluessel und das Verbot eines Klartext-Fallbacks abdecken.
+
+### 15.4 Drei-Wege-Handshake fuer die E-Mail-Aktivierung
+
+Die Aktivierung mit sofortiger Speicherung des App-Tokens und sofortigem Setzen von `app_token_issued_at` wird durch einen Drei-Wege-Handshake erweitert.
+
+#### 15.4.1 Erster Request: Aktivierungsanfrage
+
+Die App sendet einen Request mit E-Mail-Adresse:
+
+```json
+{
+  "email": "participant@example.org"
+}
+```
+
+Serververhalten:
+
+- E-Mail-Adresse normalisieren und syntaktisch validieren.
+- Unter Transaktionsschutz pruefen, ob die Registrierung existiert, freigegeben ist und `app_token_issued_at` noch leer ist.
+- Ein kryptographisch zufaelliges UUID-v4-App-Token erzeugen.
+- Einen Token-Verifikator mittels `HMAC-SHA-256(activation-secret, "activation:v1\0" || normalized_email || "\0" || lowercase(app_token))` erzeugen und in `register.app_token_hash` ablegen.
+- Einen Zeitstempel, der 5 Minuten in der Zukunft liegt, in `register.activation_valid_through` ablegen.
+- Noch nicht `register.app_token_issued_at` setzen.
+- Das App-Token mit HTTP 200 zurueckgeben:
+
+```json
+{
+  "app_token": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+Ausstehende Aktivierungen werden bei nachfolgenden Requests mit derselben E-Mail-Adresse komplett ueberschrieben. Fuer parallele Anfragen derselben E-Mail-Adresse darf hoechstens eine gueltige ausstehende Aktivierung existieren.
+
+Eine verlorene erste Response muss sicher wiederholt werden koennen. Der Server darf das ausstehende Token nicht im Klartext persistieren. Eine Zuordnung darf nur in Form eines vom `register.app_token_hash` verschiedenen kryptographischen Hashes in die wissenschaftlichen Tabellen aufgenommen werden (Pseudonymisierung).
+
+#### 15.4.2 Zweiter Request: Aktivierungsbestaetigung
+
+Nach Empfang des App-Tokens sendet die App einen zweiten Request:
+
+```json
+{
+  "email": "participant@example.org",
+  "app_token": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+Serververhalten:
+
+- E-Mail-Adresse erneut validieren.
+- Anhand des mittels `HMAC-SHA-256(activation-secret, "activation:v1\0" || normalized_email || "\0" || lowercase(app_token))` generierten Verifikators pruefen, ob eine passende Aktivierung existiert.
+- Den Tokenvergleich in konstanter Zeit durchfuehren.
+- `register.activation_valid_through` pruefen und im Fall einer abgelaufenen Aktivierung Fehler 400 zurueckliefern.
+- Unter Transaktionsschutz die Aktivierung als bestaetigt markieren und erst jetzt `register.app_token_issued_at = CURRENT_TIMESTAMP` setzen.
+- `register.app_token_hash` und `register.activation_valid_through` auf `NULL` setzen.
+- Mit HTTP 204 und leerem Response-Body antworten.
+- Das App-Token weiterhin nicht dauerhaft in `register`, `self_reports` oder einer anderen dauerhaften Zuordnung zur E-Mail-Adresse speichern.
+
+#### 15.4.3 Speicherung in der App
+
+Die App behandelt das aus dem ersten Response gelesene Token bis zum Empfang von HTTP 204 nur als fluechtigen Aktivierungszustand.
+
+Erst nach erfolgreichem HTTP-204-Response:
+
+1. App-Token mit dem Android-Keystore-Verfahren verschluesselt speichern.
+2. Lokalen Aktivierungszustand setzen.
+3. Erfolgsansicht anzeigen.
+
+Vor HTTP 204 duerfen weder das App-Token dauerhaft gespeichert noch lokale Studienfunktionen freigeschaltet werden.
+
+Schlaegt einer der beiden Requests fehl, laeuft die Aktivierung ab oder ist die Serverantwort nicht eindeutig verarbeitbar, zeigt die App exakt folgende lokalisierte Meldung an:
+
+```text
+Aktivierung fehlgeschlagen. Bitte versuchen Sie es spaeter noch einmal.
+```
+
+Englische Stringressource:
+
+```text
+Activation failed. Please try again later.
+```
+
+Nach fehlgeschlagener Aktivierung kann der 3-Wege-Handshake neu versucht werden.
+
+Einzig das Ausbleiben der finalen 204-Response (Request Timeout) loest eine andere Fehlermeldung aus:
+
+```text
+Die Aktivierung war nicht moeglich. Bitte wenden Sie sich an cuelens@each-and-every.de.
+```
+
+Die Fehlermeldung darf nicht offenlegen, ob die E-Mail-Adresse registriert, freigegeben oder bereits aktiviert ist.
+
+#### 15.4.4 Zustandsmodell
+
+```kotlin
+sealed interface ActivationState {
+    data object Idle : ActivationState
+    data object RequestingToken : ActivationState
+    data object ConfirmingToken : ActivationState
+    data object Activated : ActivationState
+    data object Error : ActivationState
+}
+```
+
+Der Aktivierungsbutton ist waehrend `RequestingToken` und `ConfirmingToken` gegen Mehrfachausloesung zu sperren.
+
+### 15.5 E-Mail-Benachrichtigungen
+
+Das Backend sendet betriebliche Benachrichtigungen an:
+
+```text
+cuelens-alert@each-and-every.de
+```
+
+Benachrichtigungsanlaesse:
+
+- unerwartete serverseitige Fehler,
+- Exceptions, die auch nach `error_log` geschrieben werden,
+- neu gespeichertes Feedback,
+- neue Registrierung,
+- erfolgreich abgeschlossene App-Aktivierung.
+
+`registration_created` wird erst nach erfolgreichem Double-Opt-In ausgeloest. Betriebsbenachrichtigungen zu Registrierungen und Aktivierungen enthalten keine E-Mail-Adresse.
+
+Anforderungen:
+
+- Benachrichtigungen duerfen die fachliche Transaktion nicht steuern. Eine fehlgeschlagene E-Mail darf einen erfolgreichen Datenbankvorgang nicht rueckgaengig machen und darf der App keinen Fehler vortaeuschen.
+- Fehler beim E-Mail-Versand in `error_log` protokollieren, ohne rekursive Fehler-E-Mails auszuloesen.
+- Keine App-Tokens, Token-Hashes, DOI-Tokens, IBAN, BIC, Craving-Werte oder vollstaendigen technischen Stacktraces per E-Mail versenden.
+- Feedbacktexte standardmaessig nicht vollstaendig per E-Mail versenden. Die Nachricht informiert nur ueber den Eingang und verweist auf die geschuetzte serverseitige Ablage.
+- Bei Registrierungen und Aktivierungen nur die fuer den betrieblichen Zweck erforderlichen Angaben aufnehmen. Personenbezogene Inhalte minimieren.
+- Fehlerbenachrichtigungen mit Ereignistyp, UTC-Zeitstempel, betroffener Komponente, anonymisierter Request-ID und einer bereinigten Fehlerkategorie versehen.
+- Absenderadresse und Mail-Header serverseitig fest konfigurieren. Keine Requestwerte ungeprueft in Header uebernehmen.
+- Zeilenumbrueche und andere Header-Injection-Zeichen aus dynamischen Betreffbestandteilen entfernen.
+- E-Mail-Versand ueber eine zentrale Funktion kapseln.
+
+Beispiel fuer eine datensparsame Feedback-Benachrichtigung:
+
+```text
+Betreff: [CueLens] Neues Feedback
+
+Ereignis: feedback_received
+Zeitpunkt: 2026-07-18T10:45:00Z
+Request-ID: 8d63c8f1-...
+Hinweis: Der Inhalt liegt in der geschuetzten Feedbacktabelle.
+```
+
+### 15.6 Serverseitiges Feature-Toggle fuer „Naechster Studiendurchgang“
+
+Die Funktion `Naechster Studiendurchgang` wird durch ein serverseitiges Feature-Toggle kontrolliert. Eine ausschliesslich lokal oder zur Build-Zeit gesetzte Freigabe ist nicht ausreichend.
+
+Der Konfigurationsendpunkt liefert mindestens:
+
+```json
+{
+  "features": {
+    "next_study_run_enabled": false
+  }
+}
+```
+
+Anforderungen an den Server:
+
+- Der Schalter ist in Production initial `false`.
+- Der Wert wird aus der Tabelle `feature_toggle` in der Datenbank `cuelens_craving` gelesen.
+- Aenderungen am Toggle erfordern kein App-Update.
+- Der Endpunkt liefert ausschliesslich nicht vertrauliche Konfigurationswerte.
+- Bei Fehlern wird HTTP 500 mit generischer Fehlermeldung ausgegeben.
+- Aenderungen am Toggle werden mit UTC-Zeitstempel protokolliert.
+
+Anforderungen an die App:
+
+- Vor Anzeige oder Ausfuehrung der Funktion den aktuellen Konfigurationswert abrufen.
+- Bei fehlendem Feld, ungueltigem Response, Timeout oder sonstigem Fehler gilt `next_study_run_enabled = false`.
+- Bei `false` darf die Funktion weder ueber die sichtbare Navigation noch ueber Deep Links oder direkte Zustandsuebergaenge erreichbar sein.
+- Bei `true` darf die Funktion nur angezeigt werden, wenn auch alle uebrigen fachlichen Voraussetzungen erfuellt sind, insbesondere erfolgreiche Aktivierung, gueltiger lokaler Studienzustand und abgelaufene Sperrzeit.
+- Ein lokal zwischengespeicherter Wert darf nur kurzzeitig gelten. Ein zuvor empfangenes `true` darf bei einem fehlgeschlagenen erneuten Abruf nicht unbegrenzt weiterverwendet werden.
+- Der Server muss produktive Requests unabhaengig von der UI ebenfalls ablehnen, solange das Feature deaktiviert ist. Das Verbergen des Buttons allein ist keine Zugriffskontrolle.
+- Der Demo-Durchgang bleibt vom Toggle unabhaengig erreichbar, sofern er nicht durch eine gesonderte Konfiguration deaktiviert wird.
+
+### 15.7 Zusaetzliche Tests und Definition of Done
+
+Vor Abschluss der Aenderungen sind mindestens folgende Faelle zu testen:
+
+- `namespace` und `applicationId` enthalten ausschliesslich Kleinbuchstaben.
+- Staging verwendet `de.eachandevery.cuelens.staging`.
+- Der 200. Feedbackeintrag wird gespeichert.
+- Der 201. und jeder weitere gueltige Feedback-Request wird mit Erfolgsstatus beantwortet, aber nicht gespeichert.
+- Bei weniger als 200 vorhandenen Eintraegen wird Feedback gespeichert; bei mindestens 200 Eintraegen wird es mit demselben Erfolgsstatus verworfen.
+- Nach dem Loeschen von Feedbackeintraegen werden wieder neue Eintraege gespeichert, sobald `COUNT(*)` unter 200 liegt.
+- Das App-Token erscheint nicht im Klartext in DataStore, SharedPreferences, Dateien oder Logs.
+- Manipulierter Ciphertext wird nicht als gueltiges App-Token verwendet.
+- Der erste Aktivierungsrequest setzt `app_token_issued_at` noch nicht.
+- Erst eine gueltige Bestaetigung setzt `app_token_issued_at`.
+- Erst nach HTTP 204 speichert die App das Token verschluesselt.
+- Abgelaufene, manipulierte und nicht zusammenpassende Aktivierungsrequests werden abgelehnt.
+- Kein Aktivierungsfehler legt den Registrierungsstatus einer E-Mail-Adresse offen.
+- Fehler, Feedback, Registrierung und Aktivierung loesen die vorgesehene datensparsame Benachrichtigung aus.
+- Ein Fehler des Mailversands veraendert nicht den Status der eigentlichen Transaktion.
+- `next_study_run_enabled = false` sperrt UI, Deep Links und produktive Serverrequests.
+- Fehlende oder fehlerhafte Feature-Konfiguration wird wie `false` behandelt.
+- `next_study_run_enabled = true` umgeht keine Aktivierungs-, Fortschritts- oder Sperrzeitpruefung.
+
+Ein wichtiger technischer Punkt ist im Entwurf bewusst abgesichert: Der Drei-Wege-Handshake benoetigt einen kurzlebigen serverseitigen Pending-Zustand. Andernfalls koennte ein verlorener Token-Response nicht sicher wiederholt und der Bestaetigungsrequest nicht verifiziert werden. Das Token bleibt dabei nur temporaer der E-Mail-Adresse zugeordnet; eine dauerhafte Verbindung entsteht nicht.

@@ -17,7 +17,9 @@
 - Malformed UUIDs, malformed HMAC hashes, missing required fields, unknown hashes, HMAC-chain mismatches, and invalid craving values return HTTP 400 without writing study data.
 - There are no cleanup rules for stale `submission` rows; unresolved rows remain for later manual inspection.
 - App reinstallation resets participation state on the device for data protection reasons. The server does not reconstruct app tokens or HMAC state for a reinstalled app.
-- Local app tokens, current hashes, pending submissions, and pending confirmation hashes should be stored as sensitive local state; encryption remains recommended when feasible for the target Android version.
+- The app token is encrypted with an AES-GCM key held by Android Keystore and is excluded from cloud and device-transfer backups. Other local study state is outside the scope of this encryption step.
+- The lowercase application ID is not used for a Play Store release, so no migration from the former mixed-case ID is required.
+- The current activation request mechanism remains in use for this encryption step. Recovery after the unlikely loss of the Keystore key is not implemented; regular deletion occurs through app uninstallation.
 - The final compensation proof shown to participants is the UUID stored in `compensation_code`.
 
 ## Resolved Specifications

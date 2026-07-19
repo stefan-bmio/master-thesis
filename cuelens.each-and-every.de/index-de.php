@@ -98,8 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							':dataprot' => $dataprotAccepted,
 						]);
 						
-						error_log(print_r($hostConfig, true));
-						try {
+							try {
 							$confirmUrl = $hostConfig['root'] . '/confirm-de.php?' . http_build_query([
 								'doiToken' => $doiToken,
 							]);
@@ -136,11 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} catch (Exception $e) {
 							error_log('PHPMailer: ' . $mail->ErrorInfo);
 							$message = 'Die Bestätigungs-E-Mail konnte nicht versendet werden.';
-							log_error($pdo, $message, $e);
+								log_error($pdo, $message, $e, 'registration_form');
 						} catch (Throwable $e) {
 							error_log('Double-Opt-In: ' . $e->getMessage());
 							$message = 'Beim Vorbereiten der Bestätigungs-E-Mail ist ein Fehler aufgetreten.';
-							log_error($pdo, $message, $e);
+								log_error($pdo, $message, $e, 'registration_form');
 						}
 
 					} catch (PDOException $e) {
@@ -149,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} else {
 							$message = 'Beim Speichern ist ein Fehler aufgetreten.';
 						}
-						log_error_from_config($dbConfig, $message, $e);
+							log_error_from_config($dbConfig, $message, $e, 'registration_form');
 					}
 				}
 			}

@@ -135,11 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} catch (Exception $e) {
 							error_log('PHPMailer: ' . $mail->ErrorInfo);
 							$message = 'The confirmation email could not be sent.';
-							log_error($pdo, $message, $e);
+								log_error($pdo, $message, $e, 'registration_form');
 						} catch (Throwable $e) {
 							error_log('Double-Opt-In: ' . $e->getMessage());
 							$message = 'An error occured when preparing the confirmation email.';
-							log_error($pdo, $message, $e);
+								log_error($pdo, $message, $e, 'registration_form');
 						}
 
 					} catch (PDOException $e) {
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						} else {
 							$message = 'An error occured when saving.';
 						}
-						log_error_from_config($dbConfig, $message, $e);
+							log_error_from_config($dbConfig, $message, $e, 'registration_form');
 					}
 				}
 			}

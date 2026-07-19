@@ -1,7 +1,14 @@
 <?php
 declare(strict_types=1);
 
-function log_error(PDO $pdo, string $errorMessage, Throwable $cause): void
+require_once __DIR__ . '/operational-notification.php';
+
+function log_error(
+    PDO $pdo,
+    string $errorMessage,
+    Throwable $cause,
+    string $component = 'backend'
+): void
 {
     try {
         $stmt = $pdo->prepare(
@@ -13,11 +20,21 @@ function log_error(PDO $pdo, string $errorMessage, Throwable $cause): void
             ':cause' => (string) $cause,
         ]);
     } catch (Throwable $loggingError) {
-        error_log('Could not write error_log entry: ' . $loggingError->getMessage());
+        error_log('Could not write error_log entry: ' . operational_error_category($loggingError));
     }
+    send_operational_notification(
+        OPERATIONAL_EVENT_SERVER_ERROR,
+        $component,
+        operational_error_category($cause)
+    );
 }
 
-function log_error_from_config(array $dbConfig, string $errorMessage, Throwable $cause): void
+function log_error_from_config(
+    array $dbConfig,
+    string $errorMessage,
+    Throwable $cause,
+    string $component = 'backend'
+): void
 {
     try {
         $pdo = new PDO(
@@ -30,8 +47,13 @@ function log_error_from_config(array $dbConfig, string $errorMessage, Throwable 
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]
         );
-        log_error($pdo, $errorMessage, $cause);
+        log_error($pdo, $errorMessage, $cause, $component);
     } catch (Throwable $loggingError) {
-        error_log('Could not connect for error_log entry: ' . $loggingError->getMessage());
+        error_log('Could not connect for error_log entry: ' . operational_error_category($loggingError));
+        send_operational_notification(
+            OPERATIONAL_EVENT_SERVER_ERROR,
+            $component,
+            operational_error_category($cause)
+        );
     }
 }

@@ -30,12 +30,12 @@ function bad_request(string $message = 'Bad request.'): never
 
 function server_error(?Throwable $cause = null, ?PDO $pdo = null, ?array $dbConfig = null): never
 {
-    $message = 'Server error.' . $cause;
+    $message = 'Server error.';
     if ($cause !== null) {
         if ($pdo !== null) {
-            log_error($pdo, $message, $cause);
+            log_error($pdo, $message, $cause, 'submission_endpoint');
         } elseif ($dbConfig !== null) {
-            log_error_from_config($dbConfig, $message, $cause);
+            log_error_from_config($dbConfig, $message, $cause, 'submission_endpoint');
         }
     }
 
@@ -227,7 +227,7 @@ try {
 } catch (JsonException $e) {
     $dbConfig = require __DIR__ . '/config/cuelens-craving.php';
     if (is_array($dbConfig)) {
-        log_error_from_config($dbConfig, 'Malformed JSON body.', $e);
+        log_error_from_config($dbConfig, 'Malformed JSON body.', $e, 'submission_endpoint');
     }
     bad_request('Malformed JSON body.');
 }
