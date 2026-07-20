@@ -111,11 +111,7 @@ try {
         $hostConfig['secret']['activation'] === '' ||
         !isset($hostConfig['secret']['pseudonym']) ||
         !is_string($hostConfig['secret']['pseudonym']) ||
-        $hostConfig['secret']['pseudonym'] === '' ||
-        !is_array($cravingDbConfig) ||
-        !isset($cravingDbConfig['dbname']) ||
-        !is_string($cravingDbConfig['dbname']) ||
-        $cravingDbConfig['dbname'] === ''
+        $hostConfig['secret']['pseudonym'] === ''
     ) {
         throw new RuntimeException('Missing activation secret.');
     }
@@ -134,13 +130,14 @@ try {
         json_response(200, ['app_token' => $issuedToken]);
     }
 
+    $cravingPdo = pdo_from_config(is_array($cravingDbConfig) ? $cravingDbConfig : []);
     confirm_activation_token(
         $pdo,
+        $cravingPdo,
         $email,
         $appToken,
         $hostConfig['secret']['activation'],
-        $hostConfig['secret']['pseudonym'],
-        $cravingDbConfig['dbname']
+        $hostConfig['secret']['pseudonym']
     );
     send_operational_notification(
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED,

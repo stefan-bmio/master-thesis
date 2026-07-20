@@ -113,12 +113,12 @@ function request_activation_token(
 }
 
 function confirm_activation_token(
-    PDO $pdo,
+    PDO $registrationPdo,
+    PDO $cravingPdo,
     string $email,
     string $appToken,
     string $activationSecret,
-    string $pseudonymSecret,
-    string $cravingDatabase
+    string $pseudonymSecret
 ): void {
     $normalizedEmail = normalize_activation_email($email);
     $normalizedToken = strtolower($appToken);
@@ -131,58 +131,51 @@ function confirm_activation_token(
         $normalizedToken
     );
     $validTokenHash = valid_app_token_hash($pseudonymSecret, $normalizedToken);
-    $validTokenTable = qualified_database_table(
-        $cravingDatabase,
-        'valid_app_token_hashes'
+
+    $registration = $registrationPdo->prepare(
+        'SELECT app_token_hash,
+                activation_valid_through > CURRENT_TIMESTAMP AS activation_is_valid
+           FROM register
+          WHERE email = :email
+            AND doi = 1
+            AND studyinfo = 1
+            AND dataprot = 1
+            AND app_token_issued_at IS NULL'
     );
-
-    $pdo->beginTransaction();
-    try {
-        $registration = $pdo->prepare(
-            'SELECT app_token_hash,
-                    activation_valid_through > CURRENT_TIMESTAMP AS activation_is_valid
-               FROM register
-              WHERE email = :email
-                AND doi = 1
-                AND studyinfo = 1
-                AND dataprot = 1
-                AND app_token_issued_at IS NULL
-              FOR UPDATE'
-        );
-        $registration->execute([':email' => $normalizedEmail]);
-        $row = $registration->fetch(PDO::FETCH_ASSOC);
-        if (
-            !is_array($row) ||
-            !is_string($row['app_token_hash'] ?? null) ||
-            !hash_equals($row['app_token_hash'], $candidateHash) ||
-            (int) ($row['activation_is_valid'] ?? 0) !== 1
-        ) {
-            throw new ActivationRejectedException('Activation confirmation rejected.');
-        }
-
-        $allowlist = $pdo->prepare(
-            'INSERT INTO ' . $validTokenTable . ' (hash) VALUES (:hash)'
-        );
-        $allowlist->execute([':hash' => $validTokenHash]);
-
-        $update = $pdo->prepare(
-            'UPDATE register
-                SET app_token_hash = NULL,
-                    activation_valid_through = NULL,
-                    app_token_issued_at = CURRENT_TIMESTAMP
-              WHERE email = :email
-                AND app_token_issued_at IS NULL'
-        );
-        $update->execute([':email' => $normalizedEmail]);
-        if ($update->rowCount() !== 1) {
-            throw new RuntimeException('Activation confirmation was not stored.');
-        }
-
-        $pdo->commit();
-    } catch (Throwable $error) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        throw $error;
+    $registration->execute([':email' => $normalizedEmail]);
+    $row = $registration->fetch(PDO::FETCH_ASSOC);
+    if (
+        !is_array($row) ||
+        !is_string($row['app_token_hash'] ?? null) ||
+        !hash_equals($row['app_token_hash'], $candidateHash) ||
+        (int) ($row['activation_is_valid'] ?? 0) !== 1
+    ) {
+        throw new ActivationRejectedException('Activation confirmation rejected.');
     }
+
+    $update = $registrationPdo->prepare(
+        'UPDATE register
+            SET app_token_hash = NULL,
+                activation_valid_through = NULL,
+                app_token_issued_at = CURRENT_TIMESTAMP
+          WHERE email = :email
+            AND app_token_hash = :app_token_hash
+            AND activation_valid_through > CURRENT_TIMESTAMP
+            AND doi = 1
+            AND studyinfo = 1
+            AND dataprot = 1
+            AND app_token_issued_at IS NULL'
+    );
+    $update->execute([
+        ':email' => $normalizedEmail,
+        ':app_token_hash' => $candidateHash,
+    ]);
+    if ($update->rowCount() !== 1) {
+        throw new RuntimeException('Activation confirmation was not stored.');
+    }
+
+    $allowlist = $cravingPdo->prepare(
+        'INSERT INTO valid_app_token_hashes (hash) VALUES (:hash)'
+    );
+    $allowlist->execute([':hash' => $validTokenHash]);
 }

@@ -14,7 +14,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
     private const PSEUDONYM_SECRET = 'integration-test-pseudonym-secret';
 
     private PDO $pdo;
-    private string $database;
+    private PDO $cravingPdo;
 
     protected function setUp(): void
     {
@@ -25,15 +25,28 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                 'Set CUELENS_TEST_DB_NAME and CUELENS_TEST_DB_USER for the MariaDB integration test.'
             );
         }
-        $this->database = $database;
-
         $host = getenv('CUELENS_TEST_DB_HOST') ?: '127.0.0.1';
         $port = getenv('CUELENS_TEST_DB_PORT') ?: '3306';
         $password = getenv('CUELENS_TEST_DB_PASS') ?: '';
+        $cravingHost = getenv('CUELENS_TEST_CRAVING_DB_HOST') ?: $host;
+        $cravingPort = getenv('CUELENS_TEST_CRAVING_DB_PORT') ?: $port;
+        $cravingDatabase = getenv('CUELENS_TEST_CRAVING_DB_NAME') ?: $database;
+        $cravingUser = getenv('CUELENS_TEST_CRAVING_DB_USER') ?: $user;
+        $cravingPassword = getenv('CUELENS_TEST_CRAVING_DB_PASS') ?: $password;
         $this->pdo = new PDO(
             "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4",
             $user,
             $password,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]
+        );
+        $this->cravingPdo = new PDO(
+            "mysql:host={$cravingHost};port={$cravingPort};dbname={$cravingDatabase};charset=utf8mb4",
+            $cravingUser,
+            $cravingPassword,
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -51,7 +64,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                 app_token_issued_at TIMESTAMP NULL
             ) ENGINE=InnoDB'
         );
-        $this->pdo->exec(
+        $this->cravingPdo->exec(
             'CREATE TEMPORARY TABLE valid_app_token_hashes (
                 hash CHAR(64) NOT NULL PRIMARY KEY
             ) ENGINE=InnoDB'
@@ -87,7 +100,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertNotNull($confirmed['app_token_issued_at']);
         self::assertSame(
             valid_app_token_hash(self::PSEUDONYM_SECRET, $token),
-            $this->pdo->query('SELECT hash FROM valid_app_token_hashes')->fetchColumn()
+            $this->cravingPdo->query('SELECT hash FROM valid_app_token_hashes')->fetchColumn()
         );
     }
 
@@ -147,11 +160,11 @@ final class ActivationMariaDbIntegrationTest extends TestCase
     {
         confirm_activation_token(
             $this->pdo,
+            $this->cravingPdo,
             self::EMAIL,
             $token,
             self::SECRET,
-            self::PSEUDONYM_SECRET,
-            $this->database
+            self::PSEUDONYM_SECRET
         );
     }
 }

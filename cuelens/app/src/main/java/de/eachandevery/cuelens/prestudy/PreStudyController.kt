@@ -1,5 +1,6 @@
 package de.eachandevery.cuelens.prestudy
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -187,6 +188,7 @@ class PreStudyController(
                 activationState = ActivationState.Activated
             )
         } catch (error: Throwable) {
+            Log.e("CueLens", "Fehler bei Aktivierung", error)
             mutableState.value = current.copy(
                 route = PreStudyRoute.EmailActivation,
                 activationState = ActivationState.Error,

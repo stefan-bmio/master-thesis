@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 require_once dirname(__DIR__) . '/lib/token-identity.php';
@@ -22,20 +21,5 @@ final class TokenIdentityTest extends TestCase
         );
         self::assertSame(64, strlen($validHash));
         self::assertNotSame($validHash, $participantId);
-    }
-
-    #[DataProvider('invalidIdentifiers')]
-    public function testRejectsUnsafeDatabaseIdentifiers(string $identifier): void
-    {
-        $this->expectException(RuntimeException::class);
-        qualified_database_table($identifier, 'valid_app_token_hashes');
-    }
-
-    /** @return iterable<string, array{string}> */
-    public static function invalidIdentifiers(): iterable
-    {
-        yield 'separator' => ['db.table'];
-        yield 'quote' => ['db`name'];
-        yield 'empty' => [''];
     }
 }

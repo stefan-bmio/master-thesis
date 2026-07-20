@@ -63,7 +63,7 @@ android {
                 "FEATURE_CONFIG_URL",
                 "\"http://192.168.1.203:8080/cuelens/features\""
             )
-            buildConfigField("long", "RUN_COOLDOWN_MILLIS", "20000L")
+            buildConfigField("long", "RUN_COOLDOWN_MILLIS", "3000L")
         }
         create("production") {
             dimension = "environment"

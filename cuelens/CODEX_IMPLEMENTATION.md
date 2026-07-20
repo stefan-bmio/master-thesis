@@ -705,7 +705,7 @@ CREATE TABLE `valid_app_token_hashes` (
 
 Die Tabelle liegt in `cuelens_craving`. Sie enthaelt ausschliesslich den mittels `HMAC-SHA-256(pseudonym-secret, "valid-token:v1\0" || lowercase(app_token))` berechneten Freigabe-Hash. Dieser ist durch Domaenentrennung nicht mit `participant_id` identisch. Ein Zeitstempel und eine automatische Loeschung sind nicht vorgesehen.
 
-Die Bestaetigung wird ueber die bestehende Verbindung zu `cuelens_signup` als Cross-Schema-Transaktion ausgefuehrt. Dafuer muessen beide Tabellen auf derselben MariaDB-Instanz mit einer transaktionsfaehigen Storage Engine liegen. Der Benutzer aus `config/cuelens-signup.php` benoetigt zusaetzlich mindestens `INSERT` auf `cuelens_craving.valid_app_token_hashes`; weitergehende Rechte auf wissenschaftliche Tabellen sind nicht erforderlich.
+Die Bestaetigung verwendet zwei getrennte Datenbankverbindungen mit den Benutzern aus `config/cuelens-signup.php` und `config/cuelens-craving.php`. Zuerst wird der Registrierungsstatus in `register` mit erneutem Hash-, Frist- und Freigabevergleich bedingt aktualisiert. Danach wird der Freigabe-Hash mit einem separaten `INSERT` ueber die zweite Verbindung in `valid_app_token_hashes` geschrieben. Eine datenbankuebergreifende Transaktion und datenbankuebergreifende Benutzerrechte sind nicht erforderlich. Schlaegt der zweite Datenbankzugriff fehl, bleibt die Registrierung als ausgegeben markiert, waehrend der Token noch nicht fuer Selbstberichte freigegeben ist; dieser seltene Inkonsistenzfall erfordert eine manuelle Korrektur.
 
 ### 10.3 Feature-Toggle
 
@@ -954,7 +954,7 @@ Serververhalten:
 - Anhand des mittels `HMAC-SHA-256(activation-secret, "activation:v1\0" || normalized_email || "\0" || lowercase(app_token))` generierten Verifikators pruefen, ob eine passende Aktivierung existiert.
 - Den Tokenvergleich in konstanter Zeit durchfuehren.
 - `register.activation_valid_through` pruefen und im Fall einer abgelaufenen Aktivierung Fehler 400 zurueckliefern.
-- Unter Transaktionsschutz die Aktivierung als bestaetigt markieren und erst jetzt `register.app_token_issued_at = CURRENT_TIMESTAMP` setzen.
+- Nach erfolgreicher Verifikation ueber die Verbindung zu `cuelens_signup` den Registrierungsstatus bedingt aktualisieren und `register.app_token_issued_at = CURRENT_TIMESTAMP` setzen. Anschliessend den Freigabe-Hash mit einem separaten Statement ueber die Verbindung zu `cuelens_craving` speichern.
 - `register.app_token_hash` und `register.activation_valid_through` auf `NULL` setzen.
 - Den mittels `HMAC-SHA-256(pseudonym-secret, "valid-token:v1\0" || strtolower($appToken))` generierten Hash in `valid_app_token_hashes` speichern.
 - Mit HTTP 204 und leerem Response-Body antworten.

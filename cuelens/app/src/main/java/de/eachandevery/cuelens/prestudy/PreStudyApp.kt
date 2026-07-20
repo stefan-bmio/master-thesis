@@ -580,7 +580,7 @@ fun EmailActivationScreen(
                 text = if (activationNeedsSupport) {
                     strings.activationNeedsSupport
                 } else {
-                    strings.activationFailed
+                    strings.nextStudyRun
                 },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,

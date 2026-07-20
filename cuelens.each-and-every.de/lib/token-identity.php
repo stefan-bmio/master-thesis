@@ -22,14 +22,3 @@ function domain_separated_app_token_hash(
 
     return hash_hmac('sha256', $context . "\0" . strtolower($appToken), $secret);
 }
-
-function qualified_database_table(string $database, string $table): string
-{
-    foreach ([$database, $table] as $identifier) {
-        if (preg_match('/^[a-zA-Z0-9_]+$/D', $identifier) !== 1) {
-            throw new RuntimeException('Invalid database identifier.');
-        }
-    }
-
-    return sprintf('`%s`.`%s`', $database, $table);
-}
