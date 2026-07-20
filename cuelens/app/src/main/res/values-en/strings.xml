@@ -49,4 +49,17 @@
     <string name="feedback_submitting">Sending</string>
     <string name="feedback_submitted">Thank you for your feedback.</string>
     <string name="feedback_failed">Feedback could not be sent. Please try again later.</string>
+    <string name="next_study_run">Next study run</string>
+    <string name="next_study_run_countdown">Next study run in %1$s</string>
+    <string name="study_completed">Study completed</string>
+    <string name="study_transfer_pending">Data transfer pending</string>
+    <string name="study_run_progress">Run %1$d of %2$d</string>
+    <string name="study_resources_incomplete">Cue labeling is not yet complete</string>
+    <string name="study_complete_transfer">Please complete the data transfer.</string>
+    <string name="study_compensation_code">Compensation code:</string>
+    <string name="study_transfer_running">Transferring data</string>
+    <string name="study_retry">Try again</string>
+    <string name="study_start_run">Start run</string>
+    <string name="study_submission_failed">Data transfer failed. Please try again.</string>
+    <string name="study_submit">Submit</string>
 </resources>

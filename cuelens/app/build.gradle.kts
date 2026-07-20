@@ -58,6 +58,12 @@ android {
                 "FEEDBACK_URL",
                 "\"http://192.168.1.203:8080/cuelens/feedback\""
             )
+            buildConfigField(
+                "String",
+                "FEATURE_CONFIG_URL",
+                "\"http://192.168.1.203:8080/cuelens/features\""
+            )
+            buildConfigField("long", "RUN_COOLDOWN_MILLIS", "20000L")
         }
         create("production") {
             dimension = "environment"
@@ -82,6 +88,12 @@ android {
                 "FEEDBACK_URL",
                 "\"https://cuelens.each-and-every.de/feedback.php\""
             )
+            buildConfigField(
+                "String",
+                "FEATURE_CONFIG_URL",
+                "\"https://cuelens.each-and-every.de/features.php\""
+            )
+            buildConfigField("long", "RUN_COOLDOWN_MILLIS", "10800000L")
         }
     }
 

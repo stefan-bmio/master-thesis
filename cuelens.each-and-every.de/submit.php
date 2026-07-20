@@ -4,6 +4,8 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 
 require __DIR__ . '/lib/error-log.php';
+require __DIR__ . '/lib/feature-toggle.php';
+require __DIR__ . '/lib/token-identity.php';
 
 const TOTAL_SUBMISSION_COUNT = 20;
 
@@ -17,6 +19,12 @@ function json_response(int $statusCode, array $payload): never
 function no_content(): never
 {
     http_response_code(204);
+    exit;
+}
+
+function not_found(): never
+{
+    http_response_code(404);
     exit;
 }
 
@@ -118,7 +126,7 @@ function pdo_from_config(array $config): PDO
     );
 }
 
-function handle_self_report(PDO $pdo, array $payload): never
+function handle_self_report(PDO $pdo, array $payload, string $pseudonymSecret): never
 {
     $appToken = require_string($payload, 'app_token');
     $craving = parse_craving($payload['craving'] ?? null);
@@ -130,10 +138,20 @@ function handle_self_report(PDO $pdo, array $payload): never
     }
 
     validate_uuid($appToken, 'app_token');
-    $participantId = hash('sha256', strtolower($appToken));
+    $validTokenHash = valid_app_token_hash($pseudonymSecret, $appToken);
+    $participantId = participant_id_for_app_token($pseudonymSecret, $appToken);
 
     $pdo->beginTransaction();
     try {
+        $allowlist = $pdo->prepare(
+            'SELECT hash FROM valid_app_token_hashes WHERE hash = :hash'
+        );
+        $allowlist->execute([':hash' => $validTokenHash]);
+        if ($allowlist->fetchColumn() === false) {
+            $pdo->rollBack();
+            bad_request('Bad request.');
+        }
+
         $existing = $pdo->prepare(
             'SELECT participant_id
                FROM self_reports
@@ -210,6 +228,28 @@ function handle_compensation_confirmation(PDO $pdo, array $payload): never
     }
 }
 
+$config = [];
+try {
+    $loadedConfig = require __DIR__ . '/config/cuelens-craving.php';
+    $config = is_array($loadedConfig) ? $loadedConfig : [];
+    $pdo = pdo_from_config($config);
+    if (!feature_enabled($pdo, FEATURE_NEXT_STUDY_RUN)) {
+        not_found();
+    }
+
+    $hostConfig = require __DIR__ . '/config/host.php';
+    if (
+        !is_array($hostConfig) ||
+        !isset($hostConfig['secret']['pseudonym']) ||
+        !is_string($hostConfig['secret']['pseudonym']) ||
+        $hostConfig['secret']['pseudonym'] === ''
+    ) {
+        throw new RuntimeException('Missing pseudonym secret.');
+    }
+} catch (Throwable $e) {
+    server_error($e, $pdo ?? null, $config);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     json_response(405, [
         'success' => false,
@@ -217,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     ]);
 }
 
-$rawBody = file_get_contents('php://input');
+$rawBody = file_get_contents(PHP_SAPI === 'cli' ? 'php://stdin' : 'php://input');
 if ($rawBody === false || trim($rawBody) === '') {
     bad_request('Missing JSON body.');
 }
@@ -225,10 +265,7 @@ if ($rawBody === false || trim($rawBody) === '') {
 try {
     $payload = json_decode($rawBody, true, 512, JSON_THROW_ON_ERROR);
 } catch (JsonException $e) {
-    $dbConfig = require __DIR__ . '/config/cuelens-craving.php';
-    if (is_array($dbConfig)) {
-        log_error_from_config($dbConfig, 'Malformed JSON body.', $e, 'submission_endpoint');
-    }
+    log_error($pdo, 'Malformed JSON body.', $e, 'submission_endpoint');
     bad_request('Malformed JSON body.');
 }
 
@@ -236,16 +273,8 @@ if (!is_array($payload)) {
     bad_request('JSON body must be an object.');
 }
 
-$config = require __DIR__ . '/config/cuelens-craving.php';
-
-try {
-    $pdo = pdo_from_config(is_array($config) ? $config : []);
-} catch (Throwable $e) {
-    server_error($e, null, is_array($config) ? $config : []);
-}
-
 if (isset($payload['app_token'], $payload['craving'])) {
-    handle_self_report($pdo, $payload);
+    handle_self_report($pdo, $payload, $hostConfig['secret']['pseudonym']);
 }
 
 if (isset($payload['compensation_code'])) {

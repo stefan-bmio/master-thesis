@@ -11,8 +11,10 @@ final class ActivationMariaDbIntegrationTest extends TestCase
     private const FIRST_TOKEN = '550e8400-e29b-41d4-a716-446655440000';
     private const SECOND_TOKEN = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
     private const SECRET = 'integration-test-secret';
+    private const PSEUDONYM_SECRET = 'integration-test-pseudonym-secret';
 
     private PDO $pdo;
+    private string $database;
 
     protected function setUp(): void
     {
@@ -23,6 +25,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                 'Set CUELENS_TEST_DB_NAME and CUELENS_TEST_DB_USER for the MariaDB integration test.'
             );
         }
+        $this->database = $database;
 
         $host = getenv('CUELENS_TEST_DB_HOST') ?: '127.0.0.1';
         $port = getenv('CUELENS_TEST_DB_PORT') ?: '3306';
@@ -48,6 +51,11 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                 app_token_issued_at TIMESTAMP NULL
             ) ENGINE=InnoDB'
         );
+        $this->pdo->exec(
+            'CREATE TEMPORARY TABLE valid_app_token_hashes (
+                hash CHAR(64) NOT NULL PRIMARY KEY
+            ) ENGINE=InnoDB'
+        );
         $this->pdo->prepare(
             'INSERT INTO register (email, doi, studyinfo, dataprot) VALUES (:email, 1, 1, 1)'
         )->execute([':email' => self::EMAIL]);
@@ -71,12 +79,16 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertNotNull($pending['activation_valid_through']);
         self::assertNull($pending['app_token_issued_at']);
 
-        confirm_activation_token($this->pdo, self::EMAIL, $token, self::SECRET);
+        $this->confirm($token);
 
         $confirmed = $this->registration();
         self::assertNull($confirmed['app_token_hash']);
         self::assertNull($confirmed['activation_valid_through']);
         self::assertNotNull($confirmed['app_token_issued_at']);
+        self::assertSame(
+            valid_app_token_hash(self::PSEUDONYM_SECRET, $token),
+            $this->pdo->query('SELECT hash FROM valid_app_token_hashes')->fetchColumn()
+        );
     }
 
     public function testNewRequestOverwritesPendingTokenAndRejectsOldToken(): void
@@ -95,13 +107,13 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         );
 
         try {
-            confirm_activation_token($this->pdo, self::EMAIL, self::FIRST_TOKEN, self::SECRET);
+            $this->confirm(self::FIRST_TOKEN);
             self::fail('The overwritten token must be rejected.');
         } catch (ActivationRejectedException) {
             self::assertNull($this->registration()['app_token_issued_at']);
         }
 
-        confirm_activation_token($this->pdo, self::EMAIL, self::SECOND_TOKEN, self::SECRET);
+        $this->confirm(self::SECOND_TOKEN);
         self::assertNotNull($this->registration()['app_token_issued_at']);
     }
 
@@ -118,7 +130,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         );
 
         $this->expectException(ActivationRejectedException::class);
-        confirm_activation_token($this->pdo, self::EMAIL, self::FIRST_TOKEN, self::SECRET);
+        $this->confirm(self::FIRST_TOKEN);
     }
 
     /** @return array<string, mixed> */
@@ -129,5 +141,17 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         )->fetch(PDO::FETCH_ASSOC);
         self::assertIsArray($row);
         return $row;
+    }
+
+    private function confirm(string $token): void
+    {
+        confirm_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            $token,
+            self::SECRET,
+            self::PSEUDONYM_SECRET,
+            $this->database
+        );
     }
 }

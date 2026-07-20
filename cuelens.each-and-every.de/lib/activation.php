@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/token-identity.php';
+
 const ACTIVATION_VALIDITY_MINUTES = 5;
 
 final class ActivationRejectedException extends RuntimeException
@@ -110,14 +112,29 @@ function request_activation_token(
     }
 }
 
-function confirm_activation_token(PDO $pdo, string $email, string $appToken, string $secret): void
-{
+function confirm_activation_token(
+    PDO $pdo,
+    string $email,
+    string $appToken,
+    string $activationSecret,
+    string $pseudonymSecret,
+    string $cravingDatabase
+): void {
     $normalizedEmail = normalize_activation_email($email);
     $normalizedToken = strtolower($appToken);
     if (!is_uuid_v4($normalizedToken)) {
         throw new ActivationRejectedException('Activation confirmation rejected.');
     }
-    $candidateHash = activation_token_hash($secret, $normalizedEmail, $normalizedToken);
+    $candidateHash = activation_token_hash(
+        $activationSecret,
+        $normalizedEmail,
+        $normalizedToken
+    );
+    $validTokenHash = valid_app_token_hash($pseudonymSecret, $normalizedToken);
+    $validTokenTable = qualified_database_table(
+        $cravingDatabase,
+        'valid_app_token_hashes'
+    );
 
     $pdo->beginTransaction();
     try {
@@ -142,6 +159,11 @@ function confirm_activation_token(PDO $pdo, string $email, string $appToken, str
         ) {
             throw new ActivationRejectedException('Activation confirmation rejected.');
         }
+
+        $allowlist = $pdo->prepare(
+            'INSERT INTO ' . $validTokenTable . ' (hash) VALUES (:hash)'
+        );
+        $allowlist->execute([':hash' => $validTokenHash]);
 
         $update = $pdo->prepare(
             'UPDATE register

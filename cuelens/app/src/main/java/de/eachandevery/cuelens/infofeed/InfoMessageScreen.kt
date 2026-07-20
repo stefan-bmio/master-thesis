@@ -204,7 +204,20 @@ data class InfoFeedStrings(
     val feedbackSubmit: String,
     val feedbackSubmitting: String,
     val feedbackSubmitted: String,
-    val feedbackFailed: String
+    val feedbackFailed: String,
+    val nextStudyRun: String,
+    val nextStudyRunCountdown: (String) -> String,
+    val studyCompleted: String,
+    val studyTransferPending: String,
+    val studyRunProgress: (Int, Int) -> String,
+    val studyResourcesIncomplete: String,
+    val studyCompleteTransfer: String,
+    val studyCompensationCode: String,
+    val studyTransferRunning: String,
+    val studyRetry: String,
+    val studyStartRun: String,
+    val studySubmissionFailed: String,
+    val studySubmit: String
 )
 
 @Composable
@@ -269,7 +282,24 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
             feedbackSubmit = localizedContext.getString(R.string.feedback_submit),
             feedbackSubmitting = localizedContext.getString(R.string.feedback_submitting),
             feedbackSubmitted = localizedContext.getString(R.string.feedback_submitted),
-            feedbackFailed = localizedContext.getString(R.string.feedback_failed)
+            feedbackFailed = localizedContext.getString(R.string.feedback_failed),
+            nextStudyRun = localizedContext.getString(R.string.next_study_run),
+            nextStudyRunCountdown = { countdown ->
+                localizedContext.getString(R.string.next_study_run_countdown, countdown)
+            },
+            studyCompleted = localizedContext.getString(R.string.study_completed),
+            studyTransferPending = localizedContext.getString(R.string.study_transfer_pending),
+            studyRunProgress = { current, total ->
+                localizedContext.getString(R.string.study_run_progress, current, total)
+            },
+            studyResourcesIncomplete = localizedContext.getString(R.string.study_resources_incomplete),
+            studyCompleteTransfer = localizedContext.getString(R.string.study_complete_transfer),
+            studyCompensationCode = localizedContext.getString(R.string.study_compensation_code),
+            studyTransferRunning = localizedContext.getString(R.string.study_transfer_running),
+            studyRetry = localizedContext.getString(R.string.study_retry),
+            studyStartRun = localizedContext.getString(R.string.study_start_run),
+            studySubmissionFailed = localizedContext.getString(R.string.study_submission_failed),
+            studySubmit = localizedContext.getString(R.string.study_submit)
         )
     }
 }

@@ -101,13 +101,21 @@ if ($appToken !== null && !is_uuid_v4($appToken)) {
 }
 
 $dbConfig = require __DIR__ . '/config/cuelens-signup.php';
+$cravingDbConfig = require __DIR__ . '/config/cuelens-craving.php';
 $hostConfig = require __DIR__ . '/config/host.php';
 try {
     if (
         !is_array($hostConfig) ||
         !isset($hostConfig['secret']['activation']) ||
         !is_string($hostConfig['secret']['activation']) ||
-        $hostConfig['secret']['activation'] === ''
+        $hostConfig['secret']['activation'] === '' ||
+        !isset($hostConfig['secret']['pseudonym']) ||
+        !is_string($hostConfig['secret']['pseudonym']) ||
+        $hostConfig['secret']['pseudonym'] === '' ||
+        !is_array($cravingDbConfig) ||
+        !isset($cravingDbConfig['dbname']) ||
+        !is_string($cravingDbConfig['dbname']) ||
+        $cravingDbConfig['dbname'] === ''
     ) {
         throw new RuntimeException('Missing activation secret.');
     }
@@ -126,7 +134,14 @@ try {
         json_response(200, ['app_token' => $issuedToken]);
     }
 
-    confirm_activation_token($pdo, $email, $appToken, $hostConfig['secret']['activation']);
+    confirm_activation_token(
+        $pdo,
+        $email,
+        $appToken,
+        $hostConfig['secret']['activation'],
+        $hostConfig['secret']['pseudonym'],
+        $cravingDbConfig['dbname']
+    );
     send_operational_notification(
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED,
         'activation_endpoint'

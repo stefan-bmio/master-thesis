@@ -178,6 +178,81 @@ class PreStudyControllerTest {
     }
 
     @Test
+    fun enabledNextStudyRunIsShownOnlyForEligibleActivatedApp() = runBlocking {
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(nextSituationAvailableAtMillis = 1_000L)
+            },
+            nowMillis = { 1_000L }
+        )
+
+        controller.refreshNextStudyRun()
+        assertTrue(controller.state.value.nextStudyRunVisible)
+        assertTrue(controller.state.value.nextStudyRunEligible)
+        assertTrue(controller.state.value.nextStudyRunAvailable)
+
+        controller.openNextStudyRun()
+        assertEquals(PreStudyRoute.ProductiveStudy, controller.state.value.route)
+    }
+
+    @Test
+    fun nextStudyRunFailsClosedWhenDisabledOrCooldownIsActive() = runBlocking {
+        val disabled = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { false },
+            studyProgressStore = StudyProgressStore { StudyProgress() }
+        )
+        disabled.refreshNextStudyRun()
+        assertFalse(disabled.state.value.nextStudyRunVisible)
+        assertFalse(disabled.state.value.nextStudyRunAvailable)
+
+        val coolingDown = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(nextSituationAvailableAtMillis = 1_001L)
+            },
+            nowMillis = { 1_000L }
+        )
+        coolingDown.refreshNextStudyRun()
+        assertTrue(coolingDown.state.value.nextStudyRunVisible)
+        assertTrue(coolingDown.state.value.nextStudyRunEligible)
+        assertFalse(coolingDown.state.value.nextStudyRunAvailable)
+        assertEquals(1_001L, coolingDown.state.value.nextStudyRunAvailableAtMillis)
+    }
+
+    @Test
+    fun nextStudyRunRemainsHiddenWithoutAppToken() = runBlocking {
+        var configRequests = 0
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore(),
+            featureConfigService = FeatureConfigService {
+                configRequests += 1
+                true
+            },
+            studyProgressStore = StudyProgressStore { StudyProgress() }
+        )
+
+        controller.refreshNextStudyRun()
+
+        assertFalse(controller.state.value.nextStudyRunAvailable)
+        assertEquals(0, configRequests)
+    }
+
+    @Test
+    fun studyCooldownUsesRoundedUpHoursMinutesAndSeconds() {
+        assertEquals("00:00:01", formatStudyCooldown(1L))
+        assertEquals("00:00:02", formatStudyCooldown(1_001L))
+        assertEquals("03:00:00", formatStudyCooldown(10_800_000L))
+    }
+
+    @Test
     fun feedbackSubmissionContainsOnlyFeedbackFieldsAndShowsConfirmation() = runBlocking {
         val feedbackService = FakeFeedbackService()
         val controller = PreStudyController(

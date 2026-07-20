@@ -12,6 +12,7 @@ sealed interface PreStudyRoute {
     data object DemoCraving : PreStudyRoute
     data object DemoComplete : PreStudyRoute
     data object Feedback : PreStudyRoute
+    data object ProductiveStudy : PreStudyRoute
 }
 
 sealed interface ActivationState {
@@ -28,6 +29,10 @@ data class PreStudyUiState(
     val tokenStorageFailed: Boolean = false,
     val activationState: ActivationState = ActivationState.Idle,
     val activationNeedsSupport: Boolean = false,
+    val nextStudyRunVisible: Boolean = false,
+    val nextStudyRunEligible: Boolean = false,
+    val nextStudyRunAvailable: Boolean = false,
+    val nextStudyRunAvailableAtMillis: Long = 0L,
     val feedbackSubmitting: Boolean = false,
     val feedbackSubmitted: Boolean = false,
     val feedbackFailed: Boolean = false
@@ -38,7 +43,10 @@ class PreStudyController(
     private val appTokenStore: AppTokenStore,
     private val feedbackService: FeedbackService = FeedbackService { _, _, _ ->
         throw IllegalStateException("Feedback service is not configured.")
-    }
+    },
+    private val featureConfigService: FeatureConfigService = FeatureConfigService { false },
+    private val studyProgressStore: StudyProgressStore = StudyProgressStore { StudyProgress() },
+    private val nowMillis: () -> Long = System::currentTimeMillis
 ) {
     private val mutableState = MutableStateFlow(
         runCatching { appTokenStore.getAppToken() }
@@ -93,6 +101,51 @@ class PreStudyController(
         )
     }
 
+    suspend fun refreshNextStudyRun() {
+        val current = mutableState.value
+        if (current.route != PreStudyRoute.Home || !current.hasAppToken) {
+            mutableState.value = current.copy(
+                nextStudyRunVisible = false,
+                nextStudyRunEligible = false,
+                nextStudyRunAvailable = false,
+                nextStudyRunAvailableAtMillis = 0L
+            )
+            return
+        }
+        val enabled = runCatching { featureConfigService.nextStudyRunEnabled() }
+            .getOrDefault(false)
+        val progress = if (enabled) runCatching { studyProgressStore.read() }.getOrNull() else null
+        val latest = mutableState.value
+        val visible = progress?.let {
+            !it.completed && it.confirmedSituationCount < TOTAL_STUDY_SITUATIONS
+        } == true &&
+            latest.route == PreStudyRoute.Home &&
+            latest.hasAppToken
+        val eligible = visible && progress?.hasPendingSubmission == false
+        mutableState.value = latest.copy(
+            nextStudyRunVisible = visible,
+            nextStudyRunEligible = eligible,
+            nextStudyRunAvailable = eligible && progress?.canStart(nowMillis()) == true,
+            nextStudyRunAvailableAtMillis = if (visible) {
+                progress?.nextSituationAvailableAtMillis ?: 0L
+            } else {
+                0L
+            }
+        )
+    }
+
+    suspend fun openNextStudyRun() {
+        refreshNextStudyRun()
+        if (mutableState.value.nextStudyRunAvailable) {
+            mutableState.value = mutableState.value.copy(
+                route = PreStudyRoute.ProductiveStudy,
+                nextStudyRunVisible = false,
+                nextStudyRunEligible = false,
+                nextStudyRunAvailable = false
+            )
+        }
+    }
+
     fun advanceDemo() {
         val nextRoute = when (mutableState.value.route) {
             PreStudyRoute.DemoImageMatching -> PreStudyRoute.DemoWordLabeling
@@ -101,7 +154,8 @@ class PreStudyController(
             PreStudyRoute.DemoComplete,
             PreStudyRoute.Home,
             PreStudyRoute.EmailActivation,
-            PreStudyRoute.Feedback -> return
+            PreStudyRoute.Feedback,
+            PreStudyRoute.ProductiveStudy -> return
         }
         mutableState.value = mutableState.value.copy(route = nextRoute)
     }

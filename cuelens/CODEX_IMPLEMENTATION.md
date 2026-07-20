@@ -31,7 +31,7 @@ Alle anderen bereits implementierten App-Funktionen, insbesondere produktive Stu
 - Trenne Registrierung, Aktivierung, Feedback, Infofeed und spaetere wissenschaftliche Selbstberichte technisch und tabellarisch.
 - Behandle Netzwerkfehler als zentrale Robustheitsanforderung. Die App muss in der spaeteren produktiven Studienfassung ausstehende Selbstberichte erneut senden koennen und einen erhaltenen Abrechnungscode bis zur Bestaetigung lokal zwischenspeichern.
 - Uebertrage keine Felder, die serverseitig deterministisch ableitbar sind. Der Server leitet den Studienfortschritt aus der Anzahl bereits gespeicherter Selbstberichte fuer die pseudonyme Kennung ab.
-- Speichere in `self_reports` nicht das App-Token selbst, sondern nur den daraus abgeleiteten SHA-256-Hash als `participant_id`.
+- Speichere in `self_reports` nicht das App-Token selbst, sondern nur die mittels domaenensepariertem HMAC-SHA-256 daraus abgeleitete `participant_id`.
 - Nutze Android- und Play-Store-Mechanismen, wenn sie den Zweck bereits sicher und wartbar abdecken, zum Beispiel Android-Stringressourcen fuer Internationalisierung, WorkManager fuer nicht zeitkritische Hintergrundsynchronisation und Play-Store-Updatefunktionen fuer Updates.
 - Kein eigener Mechanismus zum Nachladen oder Ausfuehren von App-Code. Fehlerbehebungen am nativen App-Code werden ueber den regulaeren Android-/Play-Store-Updatekanal ausgeliefert.
 
@@ -353,7 +353,7 @@ Die Tabelle `self_reports` und die produktive Selbstbericht-Uebertragung bleiben
 
 Fuer spaetere Studienversionen bleibt das Ziel bestehen:
 
-- `participant_id` ist der SHA-256-Hash des lokal gespeicherten App-Tokens und nicht der rohe Token.
+- `participant_id` ist ein domaenenseparierter HMAC-SHA-256 des lokal gespeicherten App-Tokens und nicht der rohe Token.
 - `self_reports` enthaelt keine E-Mail-Adresse, keinen Namen und keine Zahlungsdaten.
 - Die produktive Craving-Uebertragung wird erst durch eine spaetere Feature-Aktivierung und eine geeignete App-Version freigegeben.
 
@@ -518,7 +518,7 @@ Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Mas
 
 - Direkte Registrierungs- und Abrechnungsdaten liegen ausschliesslich in `register` und werden nicht in die App oder die Berichtstabelle uebernommen.
 - Das App-Token wird nach der initialen Freischaltung nur lokal in der App gespeichert und serverseitig nicht dauerhaft persistiert.
-- Die auswertbare Kennung `participant_id` wird in `submit.php` als `HMAC-SHA-256(pseudonym-secret, "pseudonym:v1" || strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
+- Die auswertbare Kennung `participant_id` wird in `submit.php` als `HMAC-SHA-256(pseudonym-secret, "pseudonym:v1\0" || strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
 - Das `pseudonym-secret` ist in `host.php` im geschuetzten Verzeichnis `config` abgelegt.
 - Die App uebertraegt das App-Token bei jedem Selbstbericht, damit der Server die stabile pseudonyme Kennung erneut berechnen kann.
 - Waehrend des Aktivierungs-Handshakes enthaelt die Registrierung temporaer `app_token_hash` und `activation_valid_through`. Nach erfolgreicher Bestaetigung werden beide Felder geloescht; dauerhaft verbleibt nur `app_token_issued_at`.
@@ -550,10 +550,14 @@ Lokale Daten duerfen keine Namen, Zahlungsdaten oder Freitexte enthalten. Die E-
 Der Server erzeugt bei der Freischaltung ein zufaelliges UUID-v4-App-Token und gibt es an die App zurueck. Dieses Token wird danach nur lokal in der App gespeichert. Bei Selbstberichten sendet die App das Token erneut an `submit.php`. Der Server validiert das UUID-Format und berechnet daraus die pseudonyme Auswertungskennung:
 
 ```php
-$participantId = hash('sha256', strtolower($appToken));
+$participantId = hash_hmac(
+    'sha256',
+    "pseudonym:v1\0" . strtolower($appToken),
+    $pseudonymSecret
+);
 ```
 
-Der Hash normalisiert die UUID auf Kleinschreibung, damit dieselbe App-Installation unabhaengig von der Schreibweise dieselbe `participant_id` erhaelt. Der rohe App-Token wird nicht in `self_reports` gespeichert. Zur Rueckwaertskompatibilitaet aktualisiert `submit.php` beim naechsten Selbstbericht alte `self_reports`-Zeilen, deren `participant_id` noch dem rohen App-Token entspricht, auf den SHA-256-Hash.
+Der HMAC normalisiert die UUID auf Kleinschreibung, damit dieselbe App-Installation unabhaengig von der Schreibweise dieselbe `participant_id` erhaelt. Die Domaene `pseudonym:v1` trennt diese Kennung kryptographisch vom Freigabe-Hash. Der rohe App-Token wird nicht in `self_reports` gespeichert. Da keine bestehenden App-Tokens vorliegen, ist keine Rueckwaertskompatibilitaet oder Migration alter Kennungen erforderlich.
 
 ### 8.5 Initiale Freischaltung per E-Mail-Adresse
 
@@ -691,7 +695,33 @@ CREATE TABLE `register` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
 
-### 10.2 Selbstberichte
+### 10.2 Gueltige App-Token-Hashes
+
+```sql
+CREATE TABLE `valid_app_token_hashes` (
+   `hash` CHAR(64) NOT NULL PRIMARY KEY
+);
+```
+
+Die Tabelle liegt in `cuelens_craving`. Sie enthaelt ausschliesslich den mittels `HMAC-SHA-256(pseudonym-secret, "valid-token:v1\0" || lowercase(app_token))` berechneten Freigabe-Hash. Dieser ist durch Domaenentrennung nicht mit `participant_id` identisch. Ein Zeitstempel und eine automatische Loeschung sind nicht vorgesehen.
+
+Die Bestaetigung wird ueber die bestehende Verbindung zu `cuelens_signup` als Cross-Schema-Transaktion ausgefuehrt. Dafuer muessen beide Tabellen auf derselben MariaDB-Instanz mit einer transaktionsfaehigen Storage Engine liegen. Der Benutzer aus `config/cuelens-signup.php` benoetigt zusaetzlich mindestens `INSERT` auf `cuelens_craving.valid_app_token_hashes`; weitergehende Rechte auf wissenschaftliche Tabellen sind nicht erforderlich.
+
+### 10.3 Feature-Toggle
+
+```sql
+CREATE TABLE feature_toggle (
+    feature_key VARCHAR(64) NOT NULL PRIMARY KEY,
+    enabled TINYINT(1) NOT NULL
+);
+
+INSERT INTO feature_toggle (feature_key, enabled)
+VALUES ('next_study_run_enabled', 0);
+```
+
+Ein fehlender oder von `0` beziehungsweise `1` abweichender Wert ist ein Konfigurationsfehler und fuehrt am Konfigurations- und am produktiven Endpunkt zu HTTP 500.
+
+### 10.4 Selbstberichte
 
 ```sql
 CREATE TABLE self_reports (
@@ -703,9 +733,9 @@ CREATE TABLE self_reports (
 );
 ```
 
-`self_reports` ist die pseudonymisierte Auswertungstabelle. `participant_id` ist der SHA-256-Hash des normalisierten App-Tokens und nicht der rohe Token. Die Tabelle enthaelt keine Kontakt- oder Zahlungsdaten, erlaubt aber die Zusammenfuehrung mehrerer Selbstberichte derselben App-Installation. Sie darf deshalb nicht als anonymisierte Datensammlung beschrieben werden.
+`self_reports` ist die pseudonymisierte Auswertungstabelle. `participant_id` ist der domaenenseparierte HMAC-SHA-256 des normalisierten App-Tokens und nicht der rohe Token. Die Tabelle enthaelt keine Kontakt- oder Zahlungsdaten, erlaubt aber die Zusammenfuehrung mehrerer Selbstberichte derselben App-Installation. Sie darf deshalb nicht als anonymisierte Datensammlung beschrieben werden.
 
-### 10.3 Abrechnungscodes
+### 10.5 Abrechnungscodes
 
 ```sql
 CREATE TABLE compensation_code (
@@ -714,18 +744,18 @@ CREATE TABLE compensation_code (
 );
 ```
 
-### 10.4 Serverlogik fuer `activate.php` und `submit.php`
+### 10.6 Serverlogik fuer `activate.php` und `submit.php`
 
 1. **Freischaltungsrequest mit E-Mail-Adresse**
    - Voraussetzung: E-Mail-Adresse existiert in `register`, Teilnahme ist freigegeben, `app_token_issued_at` ist noch leer.
    - Server erzeugt ein UUID-App-Token.
-   - Server gibt das App-Token zurueck, speichert das App-Token aber nicht.
-   - Server setzt `app_token_issued_at`, damit dieselbe Registrierung nicht mehrfach aktiviert werden kann.
+   - Server gibt das App-Token zurueck und speichert nur dessen kurzlebigen Aktivierungsverifikator.
+   - Server setzt `app_token_issued_at` erst nach dem zweiten, bestaetigenden Request.
 
 2. **Selbstbericht mit App-Token**
    - Voraussetzung: Der Request enthaelt ein formal gueltiges UUID-App-Token und einen ganzzahligen Craving-Wert von 0 bis 100.
-   - Server berechnet `participant_id = hash('sha256', strtolower($appToken))`.
-   - Server aktualisiert alte `self_reports`-Zeilen, deren `participant_id` noch dem rohen App-Token entspricht, auf den neuen Hash.
+   - Server prueft den domaenenseparierten Freigabe-HMAC gegen `valid_app_token_hashes`.
+   - Server berechnet `participant_id = HMAC-SHA-256(pseudonym-secret, "pseudonym:v1\0" || strtolower($appToken))`.
    - Server zaehlt die vorhandenen Selbstberichte fuer `participant_id` unter Transaktionsschutz.
    - Wenn bereits 20 Selbstberichte vorhanden sind, wird der Request mit HTTP 400 abgelehnt.
    - Andernfalls wird `situation_index = submitted_count + 1` berechnet.
@@ -769,8 +799,8 @@ Vor produktiver Nutzung sind mindestens zu testen:
 - Freischaltungsrequest nur fuer in `register` vorhandene und freigegebene E-Mail-Adressen.
 - Keine dauerhafte Speicherung des App-Tokens auf dem Server.
 - Freischaltung setzt `app_token_issued_at` und gibt ein UUID-v4-App-Token zurueck.
-- Ableitung von `participant_id` als SHA-256-Hash des normalisierten App-Tokens.
-- Migration alter `self_reports`-Zeilen vom rohen App-Token auf den App-Token-Hash.
+- Ableitung von `participant_id` als domaenenseparierter HMAC-SHA-256 des normalisierten App-Tokens.
+- Kryptographische Trennung von `participant_id` und Freigabe-Hash bei identischem App-Token.
 - Studiensequenz ueber 20 Situationen.
 - Vollstaendigkeit der Bild- und Labelressourcen.
 - Slider-Grenzen 0 bis 100.
@@ -926,6 +956,7 @@ Serververhalten:
 - `register.activation_valid_through` pruefen und im Fall einer abgelaufenen Aktivierung Fehler 400 zurueckliefern.
 - Unter Transaktionsschutz die Aktivierung als bestaetigt markieren und erst jetzt `register.app_token_issued_at = CURRENT_TIMESTAMP` setzen.
 - `register.app_token_hash` und `register.activation_valid_through` auf `NULL` setzen.
+- Den mittels `HMAC-SHA-256(pseudonym-secret, "valid-token:v1\0" || strtolower($appToken))` generierten Hash in `valid_app_token_hashes` speichern.
 - Mit HTTP 204 und leerem Response-Body antworten.
 - Das App-Token weiterhin nicht dauerhaft in `register`, `self_reports` oder einer anderen dauerhaften Zuordnung zur E-Mail-Adresse speichern.
 
@@ -1036,20 +1067,26 @@ Anforderungen an den Server:
 
 - Der Schalter ist in Production initial `false`.
 - Der Wert wird aus der Tabelle `feature_toggle` in der Datenbank `cuelens_craving` gelesen.
+- Der Konfigurationsendpunkt `features.php` antwortet bei erfolgreichem GET mit HTTP 200 und `Cache-Control: no-store`.
 - Aenderungen am Toggle erfordern kein App-Update.
 - Der Endpunkt liefert ausschliesslich nicht vertrauliche Konfigurationswerte.
 - Bei Fehlern wird HTTP 500 mit generischer Fehlermeldung ausgegeben.
-- Aenderungen am Toggle werden mit UTC-Zeitstempel protokolliert.
+- Toggle-Aenderungen werden manuell durchgefuehrt; ein automatisches Aenderungsprotokoll ist nicht Bestandteil dieses Schritts.
+- Solange der Schalter deaktiviert ist, antwortet `submit.php` fuer jeden Request mit HTTP 404 und leerem Response-Body. Dadurch ist der produktive Endpunkt fuer appfremde Requests nicht als deaktiviertes Feature erkennbar.
+- Ein Wiederabschalten nach produktiver Freigabe ist nicht vorgesehen und wird in diesem Schritt nicht als laufender Zustandswechsel behandelt.
 
 Anforderungen an die App:
 
 - Vor Anzeige oder Ausfuehrung der Funktion den aktuellen Konfigurationswert abrufen.
 - Bei fehlendem Feld, ungueltigem Response, Timeout oder sonstigem Fehler gilt `next_study_run_enabled = false`.
 - Bei `false` darf die Funktion weder ueber die sichtbare Navigation noch ueber Deep Links oder direkte Zustandsuebergaenge erreichbar sein.
-- Bei `true` darf die Funktion nur angezeigt werden, wenn auch alle uebrigen fachlichen Voraussetzungen erfuellt sind, insbesondere erfolgreiche Aktivierung, gueltiger lokaler Studienzustand und abgelaufene Sperrzeit.
+- Bei `true` wird die Funktion nach erfolgreicher Aktivierung und bei gueltigem, noch nicht abgeschlossenem Studienzustand angezeigt. Solange die Sperrzeit laeuft, bleibt der Button deaktiviert und zeigt die sekundenweise aktualisierte Restzeit als `HH:mm:ss` an.
 - Ein lokal zwischengespeicherter Wert darf nur kurzzeitig gelten. Ein zuvor empfangenes `true` darf bei einem fehlgeschlagenen erneuten Abruf nicht unbegrenzt weiterverwendet werden.
 - Der Server muss produktive Requests unabhaengig von der UI ebenfalls ablehnen, solange das Feature deaktiviert ist. Das Verbergen des Buttons allein ist keine Zugriffskontrolle.
 - Der Demo-Durchgang bleibt vom Toggle unabhaengig erreichbar, sofern er nicht durch eine gesonderte Konfiguration deaktiviert wird.
+- Die produktive Funktion ist ohne separaten Altpfad in die Pre-Study-Navigation und deren tuerkisfarbenes Farbschema integriert. Studienlogik, Bild-Triplets und Cue-Labels werden gemeinsam genutzt.
+- Der Produktions-Build verwendet eine Sperrzeit von drei Stunden, der Staging-Build drei Sekunden. Die Sperrzeit wird in diesem Schritt aufseiten der App geprueft.
+- Die englischen Cue-Label-Uebersetzungen sind als Entwurf implementiert und muessen vor der produktiven Aktivierung fachlich und sprachlich geprueft werden.
 
 ### 15.7 Zusaetzliche Tests und Definition of Done
 
@@ -1071,7 +1108,9 @@ Vor Abschluss der Aenderungen sind mindestens folgende Faelle zu testen:
 - Fehler, Feedback, Registrierung und Aktivierung loesen die vorgesehene datensparsame Benachrichtigung aus.
 - Ein Fehler des Mailversands veraendert nicht den Status der eigentlichen Transaktion.
 - `next_study_run_enabled = false` sperrt UI, Deep Links und produktive Serverrequests.
+- Ein deaktivierter produktiver Serverendpunkt antwortet mit leerem HTTP 404.
 - Fehlende oder fehlerhafte Feature-Konfiguration wird wie `false` behandelt.
 - `next_study_run_enabled = true` umgeht keine Aktivierungs-, Fortschritts- oder Sperrzeitpruefung.
+- Nur ein nach erfolgreichem Double Opt-In bestaetigtes und in `valid_app_token_hashes` freigegebenes App-Token darf Selbstberichte erzeugen.
 
 Ein wichtiger technischer Punkt ist im Entwurf bewusst abgesichert: Der Drei-Wege-Handshake benoetigt einen kurzlebigen serverseitigen Pending-Zustand. Andernfalls koennte ein verlorener Token-Response nicht sicher wiederholt und der Bestaetigungsrequest nicht verifiziert werden. Das Token bleibt dabei nur temporaer der E-Mail-Adresse zugeordnet; eine dauerhafte Verbindung entsteht nicht.

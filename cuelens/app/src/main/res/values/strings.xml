@@ -49,4 +49,17 @@
     <string name="feedback_submitting">Wird gesendet</string>
     <string name="feedback_submitted">Vielen Dank für Ihr Feedback.</string>
     <string name="feedback_failed">Das Feedback konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.</string>
+    <string name="next_study_run">Nächster Studiendurchgang</string>
+    <string name="next_study_run_countdown">Nächster Studiendurchgang in %1$s</string>
+    <string name="study_completed">Studie abgeschlossen</string>
+    <string name="study_transfer_pending">Datenübertragung ausstehend</string>
+    <string name="study_run_progress">Durchgang %1$d von %2$d</string>
+    <string name="study_resources_incomplete">Cue-Labeling noch unvollständig</string>
+    <string name="study_complete_transfer">Bitte schließen Sie die Übertragung ab.</string>
+    <string name="study_compensation_code">Aufwandsentschädigungscode:</string>
+    <string name="study_transfer_running">Übertragung läuft</string>
+    <string name="study_retry">Erneut versuchen</string>
+    <string name="study_start_run">Durchgang starten</string>
+    <string name="study_submission_failed">Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="study_submit">Absenden</string>
 </resources>

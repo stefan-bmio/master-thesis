@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
@@ -26,9 +27,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,7 +55,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
 import de.eachandevery.cuelens.prestudy.AndroidKeystoreAppTokenStore
 import de.eachandevery.cuelens.prestudy.AppTokenStore
-import de.eachandevery.cuelens.prestudy.HttpActivationService
+import de.eachandevery.cuelens.prestudy.KEY_COMPENSATION_CODE
+import de.eachandevery.cuelens.prestudy.KEY_CONFIRMED_SITUATION_COUNT
+import de.eachandevery.cuelens.prestudy.KEY_MATCHING_ORDER
+import de.eachandevery.cuelens.prestudy.KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS
+import de.eachandevery.cuelens.prestudy.KEY_PENDING_SUBMISSION_CRAVING
+import de.eachandevery.cuelens.prestudy.KEY_STUDY_COMPLETED
+import de.eachandevery.cuelens.prestudy.NO_PENDING_CRAVING
+import de.eachandevery.cuelens.prestudy.STUDY_PREFERENCES_NAME
+import de.eachandevery.cuelens.infofeed.AppLanguage
+import de.eachandevery.cuelens.infofeed.InfoFeedStrings
+import de.eachandevery.cuelens.infofeed.localizedStrings
 import de.eachandevery.cuelens.ui.theme.CueLensTheme
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -97,12 +110,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-internal fun LegacyStudyApp() {
+internal fun ProductiveStudyApp(
+    language: AppLanguage,
+    onLanguageChange: () -> Unit,
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
+    val strings = localizedStrings(language)
     val imageItems = remember { loadImageMatchItems(context) }
     val wordItems = remember { loadWordMatchItems(context) }
     val coroutineScope = rememberCoroutineScope()
-    val preferences = remember { context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE) }
+    val preferences = remember {
+        context.getSharedPreferences(STUDY_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
     val appTokenStore = remember { AndroidKeystoreAppTokenStore(context) }
     var phase by remember { mutableStateOf(Phase.StartGate) }
     var itemIndex by remember { mutableIntStateOf(0) }
@@ -110,18 +131,12 @@ internal fun LegacyStudyApp() {
     var currentWordItems by remember { mutableStateOf(emptyList<WordMatchItem>()) }
     var completedSituationCount by remember {
         mutableIntStateOf(
-            preferences.getInt(
-                KEY_CONFIRMED_SITUATION_COUNT,
-                preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, 0)
-            )
+            preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
         )
     }
     var nextRunAvailableAtMillis by remember {
         mutableStateOf(
-            preferences.getLong(
-                KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS,
-                preferences.getLong(LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS, 0L)
-            )
+            preferences.getLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, 0L)
         )
     }
     var matchingOrder by remember {
@@ -143,14 +158,8 @@ internal fun LegacyStudyApp() {
     var syncMessage by remember { mutableStateOf<String?>(null) }
 
     val refreshPersistedState = {
-        completedSituationCount = preferences.getInt(
-            KEY_CONFIRMED_SITUATION_COUNT,
-            preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, 0)
-        )
-        nextRunAvailableAtMillis = preferences.getLong(
-            KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS,
-            preferences.getLong(LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS, 0L)
-        )
+        completedSituationCount = preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
+        nextRunAvailableAtMillis = preferences.getLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, 0L)
         hasActivation = runCatching { appTokenStore.getAppToken() != null }.getOrDefault(false)
         pendingSubmissionCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
         compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
@@ -165,7 +174,7 @@ internal fun LegacyStudyApp() {
             refreshPersistedState()
             syncInProgress = false
             if (result.isFailure) {
-                syncMessage = "Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+                syncMessage = strings.studySubmissionFailed
             }
         }
         Unit
@@ -179,7 +188,7 @@ internal fun LegacyStudyApp() {
             refreshPersistedState()
             syncInProgress = false
             if (result.isFailure) {
-                syncMessage = "Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+                syncMessage = strings.studySubmissionFailed
             }
         }
     }
@@ -196,7 +205,7 @@ internal fun LegacyStudyApp() {
     val startRun = {
         val situationIndex = preferences.getInt(
             KEY_CONFIRMED_SITUATION_COUNT,
-            preferences.getInt(LEGACY_KEY_COMPLETED_SITUATION_COUNT, completedSituationCount)
+            completedSituationCount
         )
         itemIndex = 0
         currentImageItems = emptyList()
@@ -264,25 +273,14 @@ internal fun LegacyStudyApp() {
         (!compensationCode.isNullOrBlank() && !studyCompleted)
     val canStartNow = hasActivation && !networkWorkPending && !syncInProgress && !studyCompleted
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        if (!hasActivation && !studyCompleted) {
-            ActivationScreen(
-                syncInProgress = syncInProgress,
-                message = syncMessage,
-                onActivate = { email ->
-                    coroutineScope.launch {
-                        syncInProgress = true
-                        syncMessage = null
-                        val result = activateAndConfirm(preferences, appTokenStore, email)
-                        refreshPersistedState()
-                        syncInProgress = false
-                        if (result.isFailure) {
-                            syncMessage = "Die Aktivierung ist fehlgeschlagen. Bitte prüfen Sie die E-Mail-Adresse und versuchen Sie es erneut."
-                        }
-                    }
-                }
-            )
-        } else when (phase) {
+    LaunchedEffect(hasActivation) {
+        if (!hasActivation) onExit()
+    }
+    BackHandler(enabled = phase == Phase.StartGate, onBack = onExit)
+
+    Surface(modifier = modifier.fillMaxSize(), color = StudyBackground) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (phase) {
             Phase.StartGate -> StartGateScreen(
                 nextRunAvailableAtMillis = nextRunAvailableAtMillis,
                 completedSituationCount = completedSituationCount,
@@ -296,6 +294,7 @@ internal fun LegacyStudyApp() {
                     imageItemCount = imageItems.size,
                     wordItemCount = wordItems.size
                 ) && canStartNow,
+                strings = strings,
                 onStartRun = startRun,
                 onRetrySync = syncPendingWork
             )
@@ -308,10 +307,21 @@ internal fun LegacyStudyApp() {
             Phase.WordMatching -> {
                 val item = currentWordItems.getOrNull(itemIndex)
                 if (item != null) {
-                    WordMatchScreen(item = item, onChoiceTapped = advance)
+                    WordMatchScreen(item = item, language = language, onChoiceTapped = advance)
                 }
             }
-            Phase.CravingSubmission -> CravingSubmissionScreen(onSubmit = finishRun)
+            Phase.CravingSubmission -> CravingSubmissionScreen(
+                prompt = strings.demoCravingPrompt,
+                submitLabel = strings.studySubmit,
+                onSubmit = finishRun
+            )
+            }
+            OutlinedButton(
+                onClick = onLanguageChange,
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+            ) {
+                Text(strings.languageSwitchLabel)
+            }
         }
     }
 }
@@ -326,6 +336,7 @@ private fun StartGateScreen(
     syncInProgress: Boolean,
     syncMessage: String?,
     canStartSituation: Boolean,
+    strings: InfoFeedStrings,
     onStartRun: () -> Unit,
     onRetrySync: () -> Unit
 ) {
@@ -353,10 +364,13 @@ private fun StartGateScreen(
     ) {
         Text(
             text = when {
-                studyComplete -> "Studie abgeschlossen"
-                networkWorkPending || syncInProgress -> "Datenübertragung ausstehend"
-                canStartSituation -> "Durchgang $nextSituationNumber von $TOTAL_SITUATION_COUNT"
-                else -> "Cue Labeling noch unvollständig"
+                studyComplete -> strings.studyCompleted
+                networkWorkPending || syncInProgress -> strings.studyTransferPending
+                canStartSituation -> strings.studyRunProgress(
+                    nextSituationNumber,
+                    TOTAL_SITUATION_COUNT
+                )
+                else -> strings.studyResourcesIncomplete
             },
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
@@ -364,7 +378,7 @@ private fun StartGateScreen(
         Spacer(modifier = Modifier.height(12.dp))
         if (studyComplete && !compensationCode.isNullOrBlank()) {
             Text(
-                text = "Aufwandsentschädigungscode:",
+                text = strings.studyCompensationCode,
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )
@@ -377,7 +391,7 @@ private fun StartGateScreen(
         } else {
             Text(
                 text = if (networkWorkPending || syncInProgress) {
-                    "Bitte schließen Sie die Übertragung ab."
+                    strings.studyCompleteTransfer
                 } else {
                     formatDuration(remainingMillis)
                 },
@@ -397,65 +411,21 @@ private fun StartGateScreen(
         if (networkWorkPending || syncInProgress) {
             Button(
                 enabled = !syncInProgress,
-                onClick = onRetrySync
+                onClick = onRetrySync,
+                colors = ButtonDefaults.buttonColors(containerColor = StudyPrimary)
             ) {
-                Text(text = if (syncInProgress) "Übertragung läuft" else "Erneut versuchen")
+                Text(
+                    text = if (syncInProgress) strings.studyTransferRunning else strings.studyRetry
+                )
             }
         } else if (!studyComplete) {
             Button(
                 enabled = startEnabled,
-                onClick = onStartRun
+                onClick = onStartRun,
+                colors = ButtonDefaults.buttonColors(containerColor = StudyPrimary)
             ) {
-                Text(text = "Durchgang starten")
+                Text(text = strings.studyStartRun)
             }
-        }
-    }
-}
-
-@Composable
-private fun ActivationScreen(
-    syncInProgress: Boolean,
-    message: String?,
-    onActivate: (String) -> Unit
-) {
-    var email by remember { mutableStateOf("") }
-    val trimmedEmail = email.trim()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "App aktivieren",
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            enabled = !syncInProgress,
-            singleLine = true,
-            label = { Text("E-Mail-Adresse") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (!message.isNullOrBlank()) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            enabled = !syncInProgress && trimmedEmail.isNotBlank(),
-            onClick = { onActivate(trimmedEmail) }
-        ) {
-            Text(text = if (syncInProgress) "Aktivierung läuft" else "Aktivieren")
         }
     }
 }
@@ -533,12 +503,18 @@ private fun CountdownIndicator(remainingSeconds: Int) {
 }
 
 @Composable
-private fun WordMatchScreen(item: WordMatchItem, onChoiceTapped: () -> Unit) {
-    val choices = remember(item.cueResId, item.wordA, item.wordB) {
+private fun WordMatchScreen(
+    item: WordMatchItem,
+    language: AppLanguage,
+    onChoiceTapped: () -> Unit
+) {
+    val wordA = item.wordA(language)
+    val wordB = item.wordB(language)
+    val choices = remember(item.cueResId, wordA, wordB) {
         if (Random.nextBoolean()) {
-            listOf(item.wordA, item.wordB)
+            listOf(wordA, wordB)
         } else {
-            listOf(item.wordB, item.wordA)
+            listOf(wordB, wordA)
         }
     }
 
@@ -551,11 +527,17 @@ private fun WordMatchScreen(item: WordMatchItem, onChoiceTapped: () -> Unit) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = onChoiceTapped) {
+            Button(
+                onClick = onChoiceTapped,
+                colors = ButtonDefaults.buttonColors(containerColor = StudyPrimary)
+            ) {
                 Text(text = choices[0])
             }
             Spacer(modifier = Modifier.width(24.dp))
-            Button(onClick = onChoiceTapped) {
+            Button(
+                onClick = onChoiceTapped,
+                colors = ButtonDefaults.buttonColors(containerColor = StudyPrimary)
+            ) {
                 Text(text = choices[1])
             }
         }
@@ -591,7 +573,11 @@ private fun MatchImage(@DrawableRes resId: Int, enabled: Boolean, onClick: () ->
 }
 
 @Composable
-private fun CravingSubmissionScreen(onSubmit: (Int) -> Unit) {
+private fun CravingSubmissionScreen(
+    prompt: String,
+    submitLabel: String,
+    onSubmit: (Int) -> Unit
+) {
     var craving by remember { mutableIntStateOf(50) }
 
     Column(
@@ -602,7 +588,7 @@ private fun CravingSubmissionScreen(onSubmit: (Int) -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Wie hoch ist in diesem Moment Ihr Rauchverlangen?",
+            text = prompt,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
@@ -618,9 +604,10 @@ private fun CravingSubmissionScreen(onSubmit: (Int) -> Unit) {
         Button(
             onClick = {
                 onSubmit(craving)
-            }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = StudyPrimary)
         ) {
-            Text(text = "Absenden")
+            Text(text = submitLabel)
         }
     }
 }
@@ -646,7 +633,13 @@ private fun loadWordMatchItems(context: Context): List<WordMatchItem> {
         if (cue == 0) {
             null
         } else {
-            WordMatchItem(cue, mapping.germanFittingLabel, mapping.germanLessFittingLabel)
+            WordMatchItem(
+                cue,
+                mapping.germanFittingLabel,
+                mapping.germanLessFittingLabel,
+                mapping.englishFittingLabel,
+                mapping.englishLessFittingLabel
+            )
         }
     }
 }
@@ -697,26 +690,6 @@ private fun formatDuration(durationMillis: Long): String {
     val seconds = totalSeconds % 60
     return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }
-
-private suspend fun activateAndConfirm(
-    preferences: SharedPreferences,
-    appTokenStore: AppTokenStore,
-    email: String
-): Result<Unit> =
-    runCatching {
-        val activationService = HttpActivationService(BuildConfig.ACTIVATION_URL)
-        val appToken = activationService.requestToken(email)
-        activationService.confirmToken(email, appToken)
-        appTokenStore.saveAppToken(appToken)
-        preferences.edit()
-            .putInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
-            .remove(KEY_STUDY_COMPLETED)
-            .remove(KEY_COMPENSATION_CODE)
-            .apply()
-        recoverPendingNetworkWork(preferences, appTokenStore).getOrThrow()
-    }.onFailure {
-        Log.w(TAG, "Activation failed", it)
-    }
 
 private suspend fun recoverPendingNetworkWork(
     preferences: SharedPreferences,
@@ -769,7 +742,7 @@ private suspend fun recoverPendingNetworkWork(
 private fun advanceAfterConfirmedSubmission(preferences: SharedPreferences) {
     val nextCompletedSituationCount = (preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0) + 1)
         .coerceAtMost(TOTAL_SITUATION_COUNT)
-    val nextRunAt = System.currentTimeMillis() + RUN_COOLDOWN_MILLIS
+    val nextRunAt = System.currentTimeMillis() + BuildConfig.RUN_COOLDOWN_MILLIS
     preferences.edit()
         .putInt(KEY_CONFIRMED_SITUATION_COUNT, nextCompletedSituationCount)
         .putLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, nextRunAt)
@@ -923,9 +896,17 @@ private data class ImageMatchItem(
 
 private data class WordMatchItem(
     @param:DrawableRes val cueResId: Int,
-    val wordA: String,
-    val wordB: String
-)
+    val germanWordA: String,
+    val germanWordB: String,
+    val englishWordA: String,
+    val englishWordB: String
+) {
+    fun wordA(language: AppLanguage): String =
+        if (language == AppLanguage.English) englishWordA else germanWordA
+
+    fun wordB(language: AppLanguage): String =
+        if (language == AppLanguage.English) englishWordB else germanWordB
+}
 
 private sealed interface SelfReportResponse {
     data object Next : SelfReportResponse
@@ -936,80 +917,71 @@ private data class CueLabelMapping(
     val cueName: String,
     val germanFittingLabel: String,
     val germanLessFittingLabel: String,
-    val englishFittingLabel: String? = null,
-    val englishLessFittingLabel: String? = null
+    val englishFittingLabel: String,
+    val englishLessFittingLabel: String
 )
 
+// Draft translations require fachliche review before the production toggle is enabled.
 private val cueLabelMappings = listOf(
-    CueLabelMapping("cue_000", "Rauchschleier", "Abendlicht"),
-    CueLabelMapping("cue_001", "Aschegeruch", "Regenschirmmoment"),
-    CueLabelMapping("cue_002", "Kaffee dazu", "Handy in der Hand"),
-    CueLabelMapping("cue_003", "nachglimmen", "Tischrunde"),
-    CueLabelMapping("cue_004", "ausdrücken", "Nachtluft"),
-    CueLabelMapping("cue_005", "abaschen", "Packung öffnen"),
-    CueLabelMapping("cue_006", "Zigarette nehmen", "Rauchkringel"),
-    CueLabelMapping("cue_007", "Packung klopfen", "Fensterpause"),
-    CueLabelMapping("cue_008", "Zigarette nehmen", "gemeinsam draußen"),
-    CueLabelMapping("cue_009", "Stadtluft", "Balkonmoment"),
-    CueLabelMapping("cue_010", "Packungsrascheln", "Rauchschleier"),
-    CueLabelMapping("cue_011", "Wegbegleiter", "Tischrunde"),
-    CueLabelMapping("cue_012", "Feuer suchen", "Wolke"),
-    CueLabelMapping("cue_013", "Klick", "Geselligkeit"),
-    CueLabelMapping("cue_014", "Haltestellenpause", "Glutmoment"),
-    CueLabelMapping("cue_015", "Papiergeschmack", "Hofpause"),
-    CueLabelMapping("cue_016", "Gewohnheitsgriff", "Kneipenluft"),
-    CueLabelMapping("cue_017", "Fingergefühl", "Feuerzeugklick"),
-    CueLabelMapping("cue_018", "Aufglimmen", "gemeinsam draußen"),
-    CueLabelMapping("cue_019", "Tischrunde", "Filtergeschmack"),
-    CueLabelMapping("cue_020", "Gesprächspause", "erster Zug"),
-    CueLabelMapping("cue_021", "Nachtluft", "verbrannter Geruch"),
-    CueLabelMapping("cue_022", "rauchige Luft", "Kaffee dazu"),
-    CueLabelMapping("cue_023", "Tischrunde", "Glutpunkt"),
-    CueLabelMapping("cue_024", "Gewohnheitsgriff", "trockener Tabak"),
-    CueLabelMapping("cue_025", "Dazugehören", "Filter an den Lippen"),
-    CueLabelMapping("cue_026", "gemeinsam draußen", "Papiergeschmack"),
-    CueLabelMapping("cue_027", "Flamme", "Asche abstreifen"),
-    CueLabelMapping("cue_028", "leiser Moment", "Mundzug"),
-    CueLabelMapping("cue_029", "Wartezeit", "herber Duft"),
-    CueLabelMapping("cue_030", "kleine Ruhe", "Feuerzeugklick"),
-    CueLabelMapping("cue_031", "Jetzt eine", "Mundzug"),
-    CueLabelMapping("cue_032", "Nachtluft", "Filtergeschmack"),
-    CueLabelMapping("cue_033", "Anzündmoment", "Stadtluft"),
-    CueLabelMapping("cue_034", "Fensterpause", "Flamme"),
-    CueLabelMapping("cue_035", "Schreibtischpause", "Regenschirmmoment"),
-    CueLabelMapping("cue_036", "Halskratzen", "Balkonmoment"),
-    CueLabelMapping("cue_037", "runterkommen", "Knistern"),
-    CueLabelMapping("cue_038", "dichter Zug", "Packung klopfen"),
-    CueLabelMapping("cue_039", "Feierabendzug", "Folie öffnen"),
-    CueLabelMapping("cue_040", "vertrauter Moment", "Flamme"),
-    CueLabelMapping("cue_041", "draußen stehen", "Schreibtischpause"),
-    CueLabelMapping("cue_042", "Haltestellenpause", "würziges Aroma"),
-    CueLabelMapping("cue_043", "vor die Tür", "Nachgeschmack"),
-    CueLabelMapping("cue_044", "ziehen", "Dazugehören"),
-    CueLabelMapping("cue_045", "nur kurz", "Feierabendzug"),
-    CueLabelMapping("cue_046", "Automatismus", "Aschegeruch"),
-    CueLabelMapping("cue_047", "Lust auf Zug", "Knistern"),
-    CueLabelMapping("cue_048", "Feierabendzug", "Tabakduft"),
-    CueLabelMapping("cue_049", "Rauchkringel", "Aufglimmen")
+    CueLabelMapping("cue_000", "Rauchschleier", "Abendlicht", "smoke haze", "evening light"),
+    CueLabelMapping("cue_001", "Aschegeruch", "Regenschirmmoment", "smell of ash", "umbrella moment"),
+    CueLabelMapping("cue_002", "Kaffee dazu", "Handy in der Hand", "coffee with it", "phone in hand"),
+    CueLabelMapping("cue_003", "nachglimmen", "Tischrunde", "smoldering", "around the table"),
+    CueLabelMapping("cue_004", "ausdrücken", "Nachtluft", "stubbing it out", "night air"),
+    CueLabelMapping("cue_005", "abaschen", "Packung öffnen", "tapping off ash", "opening the pack"),
+    CueLabelMapping("cue_006", "Zigarette nehmen", "Rauchkringel", "taking a cigarette", "smoke ring"),
+    CueLabelMapping("cue_007", "Packung klopfen", "Fensterpause", "tapping the pack", "window break"),
+    CueLabelMapping("cue_008", "Zigarette nehmen", "gemeinsam draußen", "taking a cigarette", "outside together"),
+    CueLabelMapping("cue_009", "Stadtluft", "Balkonmoment", "city air", "balcony moment"),
+    CueLabelMapping("cue_010", "Packungsrascheln", "Rauchschleier", "pack rustling", "smoke haze"),
+    CueLabelMapping("cue_011", "Wegbegleiter", "Tischrunde", "companion", "around the table"),
+    CueLabelMapping("cue_012", "Feuer suchen", "Wolke", "looking for a light", "cloud"),
+    CueLabelMapping("cue_013", "Klick", "Geselligkeit", "click", "company"),
+    CueLabelMapping("cue_014", "Haltestellenpause", "Glutmoment", "bus-stop break", "glowing moment"),
+    CueLabelMapping("cue_015", "Papiergeschmack", "Hofpause", "taste of paper", "courtyard break"),
+    CueLabelMapping("cue_016", "Gewohnheitsgriff", "Kneipenluft", "habitual reach", "pub air"),
+    CueLabelMapping("cue_017", "Fingergefühl", "Feuerzeugklick", "feeling in the fingers", "lighter click"),
+    CueLabelMapping("cue_018", "Aufglimmen", "gemeinsam draußen", "lighting up", "outside together"),
+    CueLabelMapping("cue_019", "Tischrunde", "Filtergeschmack", "around the table", "taste of the filter"),
+    CueLabelMapping("cue_020", "Gesprächspause", "erster Zug", "pause in conversation", "first drag"),
+    CueLabelMapping("cue_021", "Nachtluft", "verbrannter Geruch", "night air", "burnt smell"),
+    CueLabelMapping("cue_022", "rauchige Luft", "Kaffee dazu", "smoky air", "coffee with it"),
+    CueLabelMapping("cue_023", "Tischrunde", "Glutpunkt", "around the table", "glowing tip"),
+    CueLabelMapping("cue_024", "Gewohnheitsgriff", "trockener Tabak", "habitual reach", "dry tobacco"),
+    CueLabelMapping("cue_025", "Dazugehören", "Filter an den Lippen", "belonging", "filter on the lips"),
+    CueLabelMapping("cue_026", "gemeinsam draußen", "Papiergeschmack", "outside together", "taste of paper"),
+    CueLabelMapping("cue_027", "Flamme", "Asche abstreifen", "flame", "brushing off ash"),
+    CueLabelMapping("cue_028", "leiser Moment", "Mundzug", "quiet moment", "draw in the mouth"),
+    CueLabelMapping("cue_029", "Wartezeit", "herber Duft", "waiting time", "tart scent"),
+    CueLabelMapping("cue_030", "kleine Ruhe", "Feuerzeugklick", "brief calm", "lighter click"),
+    CueLabelMapping("cue_031", "Jetzt eine", "Mundzug", "one right now", "draw in the mouth"),
+    CueLabelMapping("cue_032", "Nachtluft", "Filtergeschmack", "night air", "taste of the filter"),
+    CueLabelMapping("cue_033", "Anzündmoment", "Stadtluft", "lighting moment", "city air"),
+    CueLabelMapping("cue_034", "Fensterpause", "Flamme", "window break", "flame"),
+    CueLabelMapping("cue_035", "Schreibtischpause", "Regenschirmmoment", "desk break", "umbrella moment"),
+    CueLabelMapping("cue_036", "Halskratzen", "Balkonmoment", "scratchy throat", "balcony moment"),
+    CueLabelMapping("cue_037", "runterkommen", "Knistern", "winding down", "crackling"),
+    CueLabelMapping("cue_038", "dichter Zug", "Packung klopfen", "dense drag", "tapping the pack"),
+    CueLabelMapping("cue_039", "Feierabendzug", "Folie öffnen", "after-work drag", "opening the foil"),
+    CueLabelMapping("cue_040", "vertrauter Moment", "Flamme", "familiar moment", "flame"),
+    CueLabelMapping("cue_041", "draußen stehen", "Schreibtischpause", "standing outside", "desk break"),
+    CueLabelMapping("cue_042", "Haltestellenpause", "würziges Aroma", "bus-stop break", "spicy aroma"),
+    CueLabelMapping("cue_043", "vor die Tür", "Nachgeschmack", "stepping outside", "aftertaste"),
+    CueLabelMapping("cue_044", "ziehen", "Dazugehören", "taking a drag", "belonging"),
+    CueLabelMapping("cue_045", "nur kurz", "Feierabendzug", "just briefly", "after-work drag"),
+    CueLabelMapping("cue_046", "Automatismus", "Aschegeruch", "automatic habit", "smell of ash"),
+    CueLabelMapping("cue_047", "Lust auf Zug", "Knistern", "wanting a drag", "crackling"),
+    CueLabelMapping("cue_048", "Feierabendzug", "Tabakduft", "after-work drag", "tobacco scent"),
+    CueLabelMapping("cue_049", "Rauchkringel", "Aufglimmen", "smoke ring", "lighting up")
 )
 
 private const val TAG = "CueLens"
-private const val PREFERENCES_NAME = "cue_lens_state"
-private const val KEY_CONFIRMED_SITUATION_COUNT = "confirmed_situation_count"
-private const val KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS = "next_situation_available_at_millis"
-private const val KEY_MATCHING_ORDER = "matching_order"
-private const val KEY_PENDING_SUBMISSION_CRAVING = "pending_submission_craving"
-private const val KEY_COMPENSATION_CODE = "compensation_code"
-private const val KEY_STUDY_COMPLETED = "study_completed"
-private const val LEGACY_KEY_NEXT_RUN_AVAILABLE_AT_MILLIS = "next_run_available_at_millis"
-private const val LEGACY_KEY_COMPLETED_SITUATION_COUNT = "completed_situation_count"
-private const val NO_PENDING_CRAVING = -1
 private const val NETWORK_TIMEOUT_MILLIS = 15_000
 private const val TRIALS_PER_SITUATION = 5
 private const val MATCHING_SITUATION_COUNT = 10
 private const val LABELING_SITUATION_COUNT = 10
 private const val TOTAL_SITUATION_COUNT = MATCHING_SITUATION_COUNT + LABELING_SITUATION_COUNT
-//private const val IMAGE_MATCH_WAIT_SECONDS = 4
-private const val IMAGE_MATCH_WAIT_SECONDS = 1
-//private const val RUN_COOLDOWN_MILLIS = 3L * 60L * 60L * 1000L
-private const val RUN_COOLDOWN_MILLIS = 3L
+private const val IMAGE_MATCH_WAIT_SECONDS = 4
+
+private val StudyBackground = Color(0xFFD7ECE9)
+private val StudyPrimary = Color(0xFF006269)

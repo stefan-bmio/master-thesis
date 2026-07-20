@@ -35,7 +35,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,10 +50,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.eachandevery.cuelens.BuildConfig
 import de.eachandevery.cuelens.R
+import de.eachandevery.cuelens.ProductiveStudyApp
 import de.eachandevery.cuelens.infofeed.AppLanguage
 import de.eachandevery.cuelens.infofeed.localizedStrings
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import java.util.Locale
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -66,21 +70,33 @@ fun PreStudyApp(
         PreStudyController(
             activationService = HttpActivationService(BuildConfig.ACTIVATION_URL),
             appTokenStore = AndroidKeystoreAppTokenStore(context),
+            featureConfigService = HttpFeatureConfigService(BuildConfig.FEATURE_CONFIG_URL),
+            studyProgressStore = SharedPreferencesStudyProgressStore(context),
             feedbackService = HttpFeedbackService(BuildConfig.FEEDBACK_URL)
         )
     }
     val state by controller.state.collectAsState()
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(state.route, state.hasAppToken) {
+        if (state.route == PreStudyRoute.Home) {
+            controller.refreshNextStudyRun()
+        }
+    }
+
     when (state.route) {
         PreStudyRoute.Home -> HomeScreen(
             hasAppToken = state.hasAppToken,
             tokenStorageFailed = state.tokenStorageFailed,
+            nextStudyRunVisible = state.nextStudyRunVisible,
+            nextStudyRunEligible = state.nextStudyRunEligible,
+            nextStudyRunAvailableAtMillis = state.nextStudyRunAvailableAtMillis,
             language = language,
             onLanguageChange = onLanguageChange,
             onEmailActivation = controller::openEmailActivation,
             onDemo = controller::openDemo,
             onFeedback = controller::openFeedback,
+            onNextStudyRun = { scope.launch { controller.openNextStudyRun() } },
             modifier = modifier
         )
         PreStudyRoute.EmailActivation -> {
@@ -145,6 +161,14 @@ fun PreStudyApp(
                 modifier = modifier
             )
         }
+        PreStudyRoute.ProductiveStudy -> {
+            ProductiveStudyApp(
+                language = language,
+                onLanguageChange = onLanguageChange,
+                onExit = controller::backToHome,
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -152,14 +176,30 @@ fun PreStudyApp(
 fun HomeScreen(
     hasAppToken: Boolean,
     tokenStorageFailed: Boolean = false,
+    nextStudyRunVisible: Boolean = false,
+    nextStudyRunEligible: Boolean = false,
+    nextStudyRunAvailableAtMillis: Long = 0L,
     language: AppLanguage,
     onLanguageChange: () -> Unit,
     onEmailActivation: () -> Unit,
     onDemo: () -> Unit,
     onFeedback: () -> Unit,
+    onNextStudyRun: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val strings = localizedStrings(language)
+    var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val remainingCooldownMillis = maxOf(0L, nextStudyRunAvailableAtMillis - nowMillis)
+    val nextStudyRunEnabled = nextStudyRunEligible && remainingCooldownMillis == 0L
+
+    LaunchedEffect(nextStudyRunVisible, nextStudyRunAvailableAtMillis) {
+        while (nextStudyRunVisible && nextStudyRunAvailableAtMillis > System.currentTimeMillis()) {
+            nowMillis = System.currentTimeMillis()
+            delay(1_000L)
+        }
+        nowMillis = System.currentTimeMillis()
+    }
+
     PreStudyScreenFrame(
         language = language,
         onLanguageChange = onLanguageChange,
@@ -179,6 +219,26 @@ fun HomeScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
+        }
+        if (nextStudyRunVisible) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                enabled = nextStudyRunEnabled,
+                onClick = onNextStudyRun,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (remainingCooldownMillis > 0L) {
+                        strings.nextStudyRunCountdown(
+                            formatStudyCooldown(remainingCooldownMillis)
+                        )
+                    } else {
+                        strings.nextStudyRun
+                    }
+                )
+            }
         }
         if (tokenStorageFailed) {
             Spacer(modifier = Modifier.height(12.dp))
@@ -218,6 +278,14 @@ fun HomeScreen(
             Text(strings.feedback)
         }
     }
+}
+
+internal fun formatStudyCooldown(durationMillis: Long): String {
+    val totalSeconds = (durationMillis.coerceAtLeast(0L) + 999L) / 1_000L
+    val hours = totalSeconds / 3_600L
+    val minutes = (totalSeconds % 3_600L) / 60L
+    val seconds = totalSeconds % 60L
+    return String.format(Locale.ROOT, "%02d:%02d:%02d", hours, minutes, seconds)
 }
 
 @Composable
