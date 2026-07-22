@@ -213,8 +213,10 @@ data class InfoFeedStrings(
     val studyResourcesIncomplete: String,
     val studyCompleteTransfer: String,
     val studyCompensationCode: String,
+    val studyCopyCompensationCode: String,
     val studyTransferRunning: String,
     val studyRetry: String,
+    val studyRetryPendingTransfer: String,
     val studyStartRun: String,
     val studySubmissionFailed: String,
     val studySubmit: String
@@ -295,8 +297,14 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
             studyResourcesIncomplete = localizedContext.getString(R.string.study_resources_incomplete),
             studyCompleteTransfer = localizedContext.getString(R.string.study_complete_transfer),
             studyCompensationCode = localizedContext.getString(R.string.study_compensation_code),
+            studyCopyCompensationCode = localizedContext.getString(
+                R.string.study_copy_compensation_code
+            ),
             studyTransferRunning = localizedContext.getString(R.string.study_transfer_running),
             studyRetry = localizedContext.getString(R.string.study_retry),
+            studyRetryPendingTransfer = localizedContext.getString(
+                R.string.study_retry_pending_transfer
+            ),
             studyStartRun = localizedContext.getString(R.string.study_start_run),
             studySubmissionFailed = localizedContext.getString(R.string.study_submission_failed),
             studySubmit = localizedContext.getString(R.string.study_submit)

@@ -1,5 +1,8 @@
 package de.eachandevery.cuelens.prestudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
@@ -27,8 +30,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,9 +53,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import de.eachandevery.cuelens.BuildConfig
 import de.eachandevery.cuelens.R
 import de.eachandevery.cuelens.ProductiveStudyApp
+import de.eachandevery.cuelens.retryPersistedStudyTransfer
 import de.eachandevery.cuelens.infofeed.AppLanguage
 import de.eachandevery.cuelens.infofeed.localizedStrings
 import kotlinx.coroutines.launch
@@ -72,6 +79,9 @@ fun PreStudyApp(
             appTokenStore = AndroidKeystoreAppTokenStore(context),
             featureConfigService = HttpFeatureConfigService(BuildConfig.FEATURE_CONFIG_URL),
             studyProgressStore = SharedPreferencesStudyProgressStore(context),
+            studyTransferRetryService = StudyTransferRetryService {
+                retryPersistedStudyTransfer(context).getOrThrow()
+            },
             feedbackService = HttpFeedbackService(BuildConfig.FEEDBACK_URL)
         )
     }
@@ -91,12 +101,20 @@ fun PreStudyApp(
             nextStudyRunVisible = state.nextStudyRunVisible,
             nextStudyRunEligible = state.nextStudyRunEligible,
             nextStudyRunAvailableAtMillis = state.nextStudyRunAvailableAtMillis,
+            studyTransferPending = state.studyTransferPending,
+            studyTransferRetrying = state.studyTransferRetrying,
+            studyTransferRetryFailed = state.studyTransferRetryFailed,
+            studyCompleted = state.studyCompleted,
+            compensationCode = state.compensationCode,
             language = language,
             onLanguageChange = onLanguageChange,
             onEmailActivation = controller::openEmailActivation,
             onDemo = controller::openDemo,
             onFeedback = controller::openFeedback,
             onNextStudyRun = { scope.launch { controller.openNextStudyRun() } },
+            onRetryStudyTransfer = {
+                scope.launch { controller.retryPendingStudyTransfer() }
+            },
             modifier = modifier
         )
         PreStudyRoute.EmailActivation -> {
@@ -179,15 +197,25 @@ fun HomeScreen(
     nextStudyRunVisible: Boolean = false,
     nextStudyRunEligible: Boolean = false,
     nextStudyRunAvailableAtMillis: Long = 0L,
+    studyTransferPending: Boolean = false,
+    studyTransferRetrying: Boolean = false,
+    studyTransferRetryFailed: Boolean = false,
+    studyCompleted: Boolean = false,
+    compensationCode: String? = null,
     language: AppLanguage,
     onLanguageChange: () -> Unit,
     onEmailActivation: () -> Unit,
     onDemo: () -> Unit,
     onFeedback: () -> Unit,
     onNextStudyRun: () -> Unit = {},
+    onRetryStudyTransfer: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val strings = localizedStrings(language)
+    val context = LocalContext.current
+    val clipboardManager = remember(context) {
+        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    }
     var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val remainingCooldownMillis = maxOf(0L, nextStudyRunAvailableAtMillis - nowMillis)
     val nextStudyRunEnabled = nextStudyRunEligible && remainingCooldownMillis == 0L
@@ -205,70 +233,133 @@ fun HomeScreen(
         onLanguageChange = onLanguageChange,
         modifier = modifier
     ) {
-        Text(
-            text = strings.homeWelcome,
-            color = Color.Black,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
-        )
-        if (hasAppToken) {
-            Spacer(modifier = Modifier.height(12.dp))
+        if (studyCompleted) {
+            if (!compensationCode.isNullOrBlank()) {
+                Text(
+                    text = strings.studyCompensationCode,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = compensationCode,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = {
+                        clipboardManager.setPrimaryClip(
+                            ClipData.newPlainText(strings.studyCompensationCode, compensationCode)
+                        )
+                    },
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PreStudyPrimary),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(strings.studyCopyCompensationCode)
+                }
+            }
+        } else {
             Text(
-                text = strings.activationAlreadyCompleted,
+                text = strings.homeWelcome,
                 color = Color.Black,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center
             )
-        }
-        if (nextStudyRunVisible) {
-            Spacer(modifier = Modifier.height(12.dp))
+            if (hasAppToken) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = strings.activationAlreadyCompleted,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (nextStudyRunVisible) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    enabled = nextStudyRunEnabled,
+                    onClick = onNextStudyRun,
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PreStudyPrimary,
+                        contentColor = Color.White,
+                        disabledContainerColor = PreStudyDisabledButton,
+                        disabledContentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        if (remainingCooldownMillis > 0L) {
+                            strings.nextStudyRunCountdown(
+                                formatStudyCooldown(remainingCooldownMillis)
+                            )
+                        } else {
+                            strings.nextStudyRun
+                        }
+                    )
+                }
+            }
+            if (studyTransferPending) {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    enabled = !studyTransferRetrying,
+                    onClick = onRetryStudyTransfer,
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PreStudyPrimary),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        if (studyTransferRetrying) {
+                            strings.studyTransferRunning
+                        } else {
+                            strings.studyRetryPendingTransfer
+                        }
+                    )
+                }
+            }
+            if (studyTransferRetryFailed) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = strings.studySubmissionFailed,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (tokenStorageFailed) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = strings.activationFailed,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
-                enabled = nextStudyRunEnabled,
-                onClick = onNextStudyRun,
+                enabled = !hasAppToken && !tokenStorageFailed,
+                onClick = onEmailActivation,
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    if (remainingCooldownMillis > 0L) {
-                        strings.nextStudyRunCountdown(
-                            formatStudyCooldown(remainingCooldownMillis)
-                        )
-                    } else {
-                        strings.nextStudyRun
-                    }
-                )
+                Text(strings.emailActivation)
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = onDemo,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(strings.demoStudySituation)
             }
         }
-        if (tokenStorageFailed) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = strings.activationFailed,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            enabled = !hasAppToken && !tokenStorageFailed,
-            onClick = onEmailActivation,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(strings.emailActivation)
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Button(
-            onClick = onDemo,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(strings.demoStudySituation)
-        }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(if (studyCompleted) 24.dp else 12.dp))
         Button(
             onClick = onFeedback,
             shape = RoundedCornerShape(4.dp),
@@ -328,7 +419,9 @@ internal fun DemoImageMatchingScreen(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             DemoImageChoice(choices[0], remainingSeconds == 0, strings.demoChoiceImageOne, onSelected, Modifier.weight(1f))
             androidx.compose.foundation.layout.Box(
-                modifier = Modifier.width(64.dp),
+                modifier = Modifier
+                    .width(64.dp)
+                    .zIndex(1f),
                 contentAlignment = Alignment.Center
             ) {
                 if (remainingSeconds > 0) {
@@ -510,6 +603,7 @@ internal fun FeedbackScreen(
                 enabled = !submitting,
                 singleLine = true,
                 label = { Text(strings.feedbackSourceLabel) },
+                colors = preStudyTextFieldColors(),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -519,6 +613,7 @@ internal fun FeedbackScreen(
                 enabled = !submitting,
                 minLines = 5,
                 label = { Text(strings.feedbackCommentLabel) },
+                colors = preStudyTextFieldColors(),
                 modifier = Modifier.fillMaxWidth()
             )
             if (failed) {
@@ -572,6 +667,7 @@ fun EmailActivationScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             label = { Text(strings.emailAddress) },
+            colors = preStudyTextFieldColors(),
             modifier = Modifier.fillMaxWidth()
         )
         if (activationState == ActivationState.Error) {
@@ -580,7 +676,7 @@ fun EmailActivationScreen(
                 text = if (activationNeedsSupport) {
                     strings.activationNeedsSupport
                 } else {
-                    strings.nextStudyRun
+                    strings.activationFailed
                 },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
@@ -644,6 +740,22 @@ private fun PreStudyScreenFrame(
     }
 }
 
+@Composable
+private fun preStudyTextFieldColors(): TextFieldColors = OutlinedTextFieldDefaults.colors(
+    focusedTextColor = Color.Black,
+    unfocusedTextColor = Color.Black,
+    disabledTextColor = PreStudySecondaryText,
+    focusedLabelColor = PreStudyPrimary,
+    unfocusedLabelColor = PreStudySecondaryText,
+    disabledLabelColor = PreStudySecondaryText,
+    cursorColor = PreStudyPrimary,
+    focusedBorderColor = PreStudyPrimary,
+    unfocusedBorderColor = PreStudySecondaryText,
+    disabledBorderColor = PreStudySecondaryText
+)
+
 private val PreStudyBackground = Color(0xFFD7ECE9)
 private val PreStudyPrimary = Color(0xFF006269)
+private val PreStudyDisabledButton = Color(0xFF527C79)
+private val PreStudySecondaryText = Color(0xFF3F4A49)
 private const val DEMO_MATCHING_WAIT_SECONDS = 5

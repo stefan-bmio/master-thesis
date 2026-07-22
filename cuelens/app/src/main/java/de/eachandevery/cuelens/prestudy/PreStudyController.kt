@@ -24,6 +24,10 @@ sealed interface ActivationState {
     data object Error : ActivationState
 }
 
+fun interface StudyTransferRetryService {
+    suspend fun retry()
+}
+
 data class PreStudyUiState(
     val route: PreStudyRoute = PreStudyRoute.Home,
     val hasAppToken: Boolean = false,
@@ -34,6 +38,11 @@ data class PreStudyUiState(
     val nextStudyRunEligible: Boolean = false,
     val nextStudyRunAvailable: Boolean = false,
     val nextStudyRunAvailableAtMillis: Long = 0L,
+    val studyTransferPending: Boolean = false,
+    val studyTransferRetrying: Boolean = false,
+    val studyTransferRetryFailed: Boolean = false,
+    val studyCompleted: Boolean = false,
+    val compensationCode: String? = null,
     val feedbackSubmitting: Boolean = false,
     val feedbackSubmitted: Boolean = false,
     val feedbackFailed: Boolean = false
@@ -47,14 +56,20 @@ class PreStudyController(
     },
     private val featureConfigService: FeatureConfigService = FeatureConfigService { false },
     private val studyProgressStore: StudyProgressStore = StudyProgressStore { StudyProgress() },
-    private val nowMillis: () -> Long = System::currentTimeMillis
+    private val nowMillis: () -> Long = System::currentTimeMillis,
+    private val studyTransferRetryService: StudyTransferRetryService = StudyTransferRetryService {
+        throw IllegalStateException("Study transfer retry service is not configured.")
+    }
 ) {
     private val mutableState = MutableStateFlow(
         runCatching { appTokenStore.getAppToken() }
             .fold(
                 onSuccess = { token ->
+                    val progress = runCatching { studyProgressStore.read() }.getOrNull()
                     PreStudyUiState(
                         hasAppToken = token != null,
+                        studyCompleted = progress?.completed == true,
+                        compensationCode = progress?.compensationCode,
                         activationState = if (token == null) {
                             ActivationState.Idle
                         } else {
@@ -68,7 +83,11 @@ class PreStudyController(
     val state: StateFlow<PreStudyUiState> = mutableState.asStateFlow()
 
     fun openEmailActivation() {
-        if (!mutableState.value.hasAppToken && !mutableState.value.tokenStorageFailed) {
+        if (
+            !mutableState.value.studyCompleted &&
+            !mutableState.value.hasAppToken &&
+            !mutableState.value.tokenStorageFailed
+        ) {
             mutableState.value = mutableState.value.copy(
                 route = PreStudyRoute.EmailActivation,
                 activationState = ActivationState.Idle,
@@ -78,8 +97,11 @@ class PreStudyController(
     }
 
     fun backToHome() {
+        val progress = runCatching { studyProgressStore.read() }.getOrNull()
         mutableState.value = mutableState.value.copy(
             route = PreStudyRoute.Home,
+            studyCompleted = progress?.completed == true,
+            compensationCode = progress?.compensationCode,
             activationState = if (mutableState.value.hasAppToken) {
                 ActivationState.Activated
             } else {
@@ -90,7 +112,9 @@ class PreStudyController(
     }
 
     fun openDemo() {
-        mutableState.value = mutableState.value.copy(route = PreStudyRoute.DemoImageMatching)
+        if (!mutableState.value.studyCompleted) {
+            mutableState.value = mutableState.value.copy(route = PreStudyRoute.DemoImageMatching)
+        }
     }
 
     fun openFeedback() {
@@ -104,26 +128,49 @@ class PreStudyController(
 
     suspend fun refreshNextStudyRun() {
         val current = mutableState.value
-        if (current.route != PreStudyRoute.Home || !current.hasAppToken) {
+        val progress = runCatching { studyProgressStore.read() }.getOrNull()
+        if (progress?.completed == true) {
             mutableState.value = current.copy(
+                studyCompleted = true,
+                compensationCode = progress.compensationCode,
                 nextStudyRunVisible = false,
                 nextStudyRunEligible = false,
                 nextStudyRunAvailable = false,
-                nextStudyRunAvailableAtMillis = 0L
+                nextStudyRunAvailableAtMillis = 0L,
+                studyTransferPending = false,
+                studyTransferRetrying = false,
+                studyTransferRetryFailed = false
+            )
+            return
+        }
+        if (current.route != PreStudyRoute.Home || !current.hasAppToken) {
+            mutableState.value = current.copy(
+                studyCompleted = false,
+                compensationCode = null,
+                nextStudyRunVisible = false,
+                nextStudyRunEligible = false,
+                nextStudyRunAvailable = false,
+                nextStudyRunAvailableAtMillis = 0L,
+                studyTransferPending = false,
+                studyTransferRetrying = false,
+                studyTransferRetryFailed = false
             )
             return
         }
         val enabled = runCatching { featureConfigService.nextStudyRunEnabled() }
             .getOrDefault(false)
-        val progress = if (enabled) runCatching { studyProgressStore.read() }.getOrNull() else null
         val latest = mutableState.value
-        val visible = progress?.let {
+        val validStudyState = progress?.let {
             !it.completed && it.confirmedSituationCount < TOTAL_STUDY_SITUATIONS
         } == true &&
             latest.route == PreStudyRoute.Home &&
             latest.hasAppToken
+        val visible = enabled && validStudyState
         val eligible = visible && progress?.hasPendingSubmission == false
+        val transferPending = validStudyState && progress?.hasPendingSubmission == true
         mutableState.value = latest.copy(
+            studyCompleted = false,
+            compensationCode = null,
             nextStudyRunVisible = visible,
             nextStudyRunEligible = eligible,
             nextStudyRunAvailable = eligible && progress?.canStart(nowMillis()) == true,
@@ -131,8 +178,38 @@ class PreStudyController(
                 progress?.nextSituationAvailableAtMillis ?: 0L
             } else {
                 0L
-            }
+            },
+            studyTransferPending = transferPending,
+            studyTransferRetryFailed = latest.studyTransferRetryFailed && transferPending
         )
+    }
+
+    suspend fun retryPendingStudyTransfer() {
+        val current = mutableState.value
+        if (
+            current.route != PreStudyRoute.Home ||
+            !current.studyTransferPending ||
+            current.studyTransferRetrying
+        ) return
+
+        mutableState.value = current.copy(
+            studyTransferRetrying = true,
+            studyTransferRetryFailed = false
+        )
+        val result = runCatching { studyTransferRetryService.retry() }
+        if (result.isFailure) {
+            mutableState.value = mutableState.value.copy(
+                studyTransferRetrying = false,
+                studyTransferRetryFailed = true
+            )
+            return
+        }
+
+        mutableState.value = mutableState.value.copy(
+            studyTransferRetrying = false,
+            studyTransferRetryFailed = false
+        )
+        refreshNextStudyRun()
     }
 
     suspend fun openNextStudyRun() {
@@ -188,7 +265,6 @@ class PreStudyController(
                 activationState = ActivationState.Activated
             )
         } catch (error: Throwable) {
-            Log.e("CueLens", "Fehler bei Aktivierung", error)
             mutableState.value = current.copy(
                 route = PreStudyRoute.EmailActivation,
                 activationState = ActivationState.Error,

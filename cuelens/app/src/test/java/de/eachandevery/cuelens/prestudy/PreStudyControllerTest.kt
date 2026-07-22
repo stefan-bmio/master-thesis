@@ -246,10 +246,110 @@ class PreStudyControllerTest {
     }
 
     @Test
+    fun completedStudyExposesOnlyItsCompensationStateWithoutFeatureRequest() = runBlocking {
+        var configRequests = 0
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService {
+                configRequests += 1
+                true
+            },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(
+                    completed = true,
+                    compensationCode = "COMP-1234"
+                )
+            }
+        )
+
+        assertTrue(controller.state.value.studyCompleted)
+        assertEquals("COMP-1234", controller.state.value.compensationCode)
+
+        controller.openDemo()
+        controller.openEmailActivation()
+        controller.refreshNextStudyRun()
+
+        assertEquals(PreStudyRoute.Home, controller.state.value.route)
+        assertFalse(controller.state.value.nextStudyRunVisible)
+        assertFalse(controller.state.value.studyTransferPending)
+        assertEquals(0, configRequests)
+    }
+
+    @Test
     fun studyCooldownUsesRoundedUpHoursMinutesAndSeconds() {
         assertEquals("00:00:01", formatStudyCooldown(1L))
         assertEquals("00:00:02", formatStudyCooldown(1_001L))
         assertEquals("03:00:00", formatStudyCooldown(10_800_000L))
+    }
+
+    @Test
+    fun pendingStudyTransferCanBeRetriedFromHome() = runBlocking {
+        var progress = StudyProgress(hasPendingSubmission = true)
+        var retryCount = 0
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore { progress },
+            studyTransferRetryService = StudyTransferRetryService {
+                retryCount += 1
+                progress = StudyProgress(
+                    confirmedSituationCount = 1,
+                    nextSituationAvailableAtMillis = 2_000L
+                )
+            },
+            nowMillis = { 1_000L }
+        )
+        controller.refreshNextStudyRun()
+        assertTrue(controller.state.value.studyTransferPending)
+        assertFalse(controller.state.value.nextStudyRunEligible)
+
+        controller.retryPendingStudyTransfer()
+
+        assertEquals(1, retryCount)
+        assertFalse(controller.state.value.studyTransferPending)
+        assertFalse(controller.state.value.studyTransferRetryFailed)
+        assertTrue(controller.state.value.nextStudyRunEligible)
+    }
+
+    @Test
+    fun failedStudyTransferRetryRemainsAvailable() = runBlocking {
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(hasPendingSubmission = true)
+            },
+            studyTransferRetryService = StudyTransferRetryService {
+                throw java.io.IOException("network unavailable")
+            }
+        )
+        controller.refreshNextStudyRun()
+
+        controller.retryPendingStudyTransfer()
+
+        assertTrue(controller.state.value.studyTransferPending)
+        assertFalse(controller.state.value.studyTransferRetrying)
+        assertTrue(controller.state.value.studyTransferRetryFailed)
+    }
+
+    @Test
+    fun pendingStudyTransferRemainsVisibleWhenFeatureConfigFailsClosed() = runBlocking {
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { false },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(hasPendingSubmission = true)
+            }
+        )
+
+        controller.refreshNextStudyRun()
+
+        assertFalse(controller.state.value.nextStudyRunVisible)
+        assertTrue(controller.state.value.studyTransferPending)
     }
 
     @Test

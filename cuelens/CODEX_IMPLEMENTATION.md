@@ -1085,6 +1085,8 @@ Anforderungen an die App:
 - Der Server muss produktive Requests unabhaengig von der UI ebenfalls ablehnen, solange das Feature deaktiviert ist. Das Verbergen des Buttons allein ist keine Zugriffskontrolle.
 - Der Demo-Durchgang bleibt vom Toggle unabhaengig erreichbar, sofern er nicht durch eine gesonderte Konfiguration deaktiviert wird.
 - Die produktive Funktion ist ohne separaten Altpfad in die Pre-Study-Navigation und deren tuerkisfarbenes Farbschema integriert. Studienlogik, Bild-Triplets und Cue-Labels werden gemeinsam genutzt.
+- Bei einem persistent ausstehenden Selbstbericht oder einer ausstehenden Abrechnungscode-Bestaetigung zeigt die Startseite einen Retry-Button mit Lade- und Fehlerzustand. Der Retry verwendet denselben Uebertragungspfad wie die produktive Studienansicht.
+- Nach lokal bestaetigtem Studienabschluss zeigt die Startseite den Aufwandsentschaedigungscode mit Kopierfunktion. Neben Code, Feedback und Sprachauswahl sind keine weiteren App-Funktionen auf der Startseite verfuegbar.
 - Der Produktions-Build verwendet eine Sperrzeit von drei Stunden, der Staging-Build drei Sekunden. Die Sperrzeit wird in diesem Schritt aufseiten der App geprueft.
 - Die englischen Cue-Label-Uebersetzungen sind als Entwurf implementiert und muessen vor der produktiven Aktivierung fachlich und sprachlich geprueft werden.
 

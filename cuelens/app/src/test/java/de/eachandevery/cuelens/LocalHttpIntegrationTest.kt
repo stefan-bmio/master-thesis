@@ -53,9 +53,13 @@ class LocalHttpIntegrationTest {
     fun activationEndpointIsCalledOverRealLocalHttpConnection() = runBlocking {
         val methods = CopyOnWriteArrayList<String>()
         val bodies = CopyOnWriteArrayList<String>()
+        val acceptHeaders = CopyOnWriteArrayList<String>()
+        val contentTypeHeaders = CopyOnWriteArrayList<String>()
         val appToken = "550e8400-e29b-41d4-a716-446655440000"
         server.createContext("/cuelens/activate") { exchange ->
             methods += exchange.requestMethod
+            acceptHeaders += exchange.requestHeaders.getFirst("Accept")
+            contentTypeHeaders += exchange.requestHeaders.getFirst("Content-Type")
             bodies += exchange.requestBody.bufferedReader(Charsets.UTF_8).use { it.readText() }
             if (bodies.size == 1) {
                 exchange.respond(200, """{"app_token":"$appToken"}""")
@@ -69,6 +73,11 @@ class LocalHttpIntegrationTest {
         service.confirmToken("person@example.org", token)
 
         assertEquals(listOf("PUT", "PUT"), methods)
+        assertEquals(listOf("application/json, */*;q=0.8", "application/json, */*;q=0.8"), acceptHeaders)
+        assertEquals(
+            listOf("application/json; charset=UTF-8", "application/json; charset=UTF-8"),
+            contentTypeHeaders
+        )
         assertEquals("person@example.org", org.json.JSONObject(bodies[0]).getString("email"))
         val confirmation = org.json.JSONObject(bodies[1])
         assertEquals("person@example.org", confirmation.getString("email"))

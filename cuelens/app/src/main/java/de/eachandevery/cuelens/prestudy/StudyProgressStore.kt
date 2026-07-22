@@ -6,7 +6,8 @@ data class StudyProgress(
     val confirmedSituationCount: Int = 0,
     val nextSituationAvailableAtMillis: Long = 0L,
     val hasPendingSubmission: Boolean = false,
-    val completed: Boolean = false
+    val completed: Boolean = false,
+    val compensationCode: String? = null
 ) {
     fun canStart(nowMillis: Long): Boolean =
         !completed &&
@@ -35,7 +36,8 @@ class SharedPreferencesStudyProgressStore(context: Context) : StudyProgressStore
                 KEY_PENDING_SUBMISSION_CRAVING,
                 NO_PENDING_CRAVING
             ) != NO_PENDING_CRAVING || (!compensationCode.isNullOrBlank() && !completed),
-            completed = completed
+            completed = completed,
+            compensationCode = compensationCode?.takeIf { it.isNotBlank() }
         )
     }
 }

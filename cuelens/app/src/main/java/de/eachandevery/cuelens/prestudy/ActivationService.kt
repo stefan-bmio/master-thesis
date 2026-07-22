@@ -1,7 +1,6 @@
 package de.eachandevery.cuelens.prestudy
 
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
@@ -50,6 +49,7 @@ class HttpActivationService(
         }
 
     private fun executeRequest(body: JSONObject, expectedStatus: Int): String {
+        val requestBody = body.toString().toByteArray(Charsets.UTF_8)
         val connection = try {
             connectionFactory(URL(endpointUrl))
         } catch (error: IOException) {
@@ -60,10 +60,16 @@ class HttpActivationService(
             connection.readTimeout = NETWORK_TIMEOUT_MILLIS
             connection.requestMethod = "PUT"
             connection.doOutput = true
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            connection.setRequestProperty("Accept", "application/json")
-            OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { writer ->
-                writer.write(body.toString())
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+            connection.setRequestProperty("Accept", "application/json, */*;q=0.8")
+            connection.setRequestProperty("Accept-Charset", "UTF-8, *;q=0.5")
+            connection.setRequestProperty("Accept-Language", "de, en;q=0.8, *;q=0.5")
+            connection.setRequestProperty("Accept-Encoding", "identity")
+            connection.setRequestProperty("User-Agent", "CueLens-Android")
+            connection.setRequestProperty("Content-Length", requestBody.size.toString())
+            connection.setFixedLengthStreamingMode(requestBody.size)
+            connection.outputStream.use { output ->
+                output.write(requestBody)
             }
 
             val responseCode = connection.responseCode

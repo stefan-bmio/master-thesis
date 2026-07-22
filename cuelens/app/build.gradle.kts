@@ -29,6 +29,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            buildConfigField("long", "RUN_COOLDOWN_MILLIS", "3000L")
+        }
     }
     flavorDimensions += "environment"
 
@@ -71,12 +75,12 @@ android {
             buildConfigField(
                 "String",
                 "CRAVING_SUBMIT_URL",
-                "\"https://cuelens.each-and-every.de/submit\""
+                "\"https://cuelens.each-and-every.de/submit.php\""
             )
             buildConfigField(
                 "String",
                 "ACTIVATION_URL",
-                "\"https://cuelens.each-and-every.de/activate\""
+                "\"https://cuelens.each-and-every.de/activate.php\""
             )
             buildConfigField(
                 "String",
@@ -105,6 +109,9 @@ android {
         compose = true
         buildConfig = true
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
     bundle {
         language {
             enableSplit = false
@@ -132,3 +139,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
+

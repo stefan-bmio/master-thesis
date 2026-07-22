@@ -57,8 +57,10 @@
     <string name="study_resources_incomplete">Cue labeling is not yet complete</string>
     <string name="study_complete_transfer">Please complete the data transfer.</string>
     <string name="study_compensation_code">Compensation code:</string>
+    <string name="study_copy_compensation_code">Copy code</string>
     <string name="study_transfer_running">Transferring data</string>
     <string name="study_retry">Try again</string>
+    <string name="study_retry_pending_transfer">Retry pending transfer</string>
     <string name="study_start_run">Start run</string>
     <string name="study_submission_failed">Data transfer failed. Please try again.</string>
     <string name="study_submit">Submit</string>

@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.shape.CircleShape
 import de.eachandevery.cuelens.prestudy.AndroidKeystoreAppTokenStore
 import de.eachandevery.cuelens.prestudy.AppTokenStore
@@ -68,7 +71,6 @@ import de.eachandevery.cuelens.infofeed.InfoFeedStrings
 import de.eachandevery.cuelens.infofeed.localizedStrings
 import de.eachandevery.cuelens.ui.theme.CueLensTheme
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.max
@@ -318,7 +320,15 @@ internal fun ProductiveStudyApp(
             }
             OutlinedButton(
                 onClick = onLanguageChange,
-                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                shape = RoundedCornerShape(4.dp),
+                border = BorderStroke(1.dp, StudyPrimary),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = StudyBackground,
+                    contentColor = StudyPrimary
+                ),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
             ) {
                 Text(strings.languageSwitchLabel)
             }
@@ -462,7 +472,9 @@ private fun ImageMatchScreen(item: ImageMatchItem, onChoiceTapped: () -> Unit) {
         ) {
             MatchImage(resId = choices[0], enabled = choicesEnabled, onClick = onChoiceTapped)
             Box(
-                modifier = Modifier.width(64.dp),
+                modifier = Modifier
+                    .width(64.dp)
+                    .zIndex(1f),
                 contentAlignment = Alignment.Center
             ) {
                 if (!choicesEnabled) {
@@ -691,6 +703,12 @@ private fun formatDuration(durationMillis: Long): String {
     return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }
 
+internal suspend fun retryPersistedStudyTransfer(context: Context): Result<Unit> =
+    recoverPendingNetworkWork(
+        context.getSharedPreferences(STUDY_PREFERENCES_NAME, Context.MODE_PRIVATE),
+        AndroidKeystoreAppTokenStore(context.applicationContext)
+    )
+
 private suspend fun recoverPendingNetworkWork(
     preferences: SharedPreferences,
     appTokenStore: AppTokenStore
@@ -806,21 +824,14 @@ private object CravingSubmissionClient {
     }
 
     private fun executePut(request: ServerRequest, payload: JSONObject, expectedNoContent: Boolean): String? {
-        val body = payload.toString()
+        val body = payload.toString().toByteArray(Charsets.UTF_8)
         val connection = URL(request.url).openConnection() as HttpURLConnection
         var responseCode: Int? = null
         var serverErrorMessage: String? = null
         try {
             connection.connectTimeout = NETWORK_TIMEOUT_MILLIS
             connection.readTimeout = NETWORK_TIMEOUT_MILLIS
-            connection.requestMethod = "PUT"
-            connection.doOutput = true
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            connection.setRequestProperty("Accept", "application/json")
-            connection.setRequestProperty("Content-Length", body.toByteArray(Charsets.UTF_8).size.toString())
-            OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { writer ->
-                writer.write(body)
-            }
+            writeJsonPutRequest(connection, body)
 
             responseCode = connection.responseCode
             if (expectedNoContent) {
@@ -874,6 +885,20 @@ private object CravingSubmissionClient {
         }.joinToString(", ")
         Log.w(TAG, "Server request failed: $details", cause)
     }
+}
+
+internal fun writeJsonPutRequest(connection: HttpURLConnection, body: ByteArray) {
+    connection.requestMethod = "PUT"
+    connection.doOutput = true
+    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+    connection.setRequestProperty("Accept", "application/json, */*;q=0.8")
+    connection.setRequestProperty("Accept-Charset", "UTF-8, *;q=0.5")
+    connection.setRequestProperty("Accept-Language", "de, en;q=0.8, *;q=0.5")
+    connection.setRequestProperty("Accept-Encoding", "identity")
+    connection.setRequestProperty("User-Agent", "CueLens-Android")
+    connection.setRequestProperty("Content-Length", body.size.toString())
+    connection.setFixedLengthStreamingMode(body.size)
+    connection.outputStream.use { output -> output.write(body) }
 }
 
 private enum class ServerRequest(val logName: String, val url: String) {

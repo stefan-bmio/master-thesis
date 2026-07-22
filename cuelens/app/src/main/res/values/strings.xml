@@ -57,8 +57,10 @@
     <string name="study_resources_incomplete">Cue-Labeling noch unvollständig</string>
     <string name="study_complete_transfer">Bitte schließen Sie die Übertragung ab.</string>
     <string name="study_compensation_code">Aufwandsentschädigungscode:</string>
+    <string name="study_copy_compensation_code">Code kopieren</string>
     <string name="study_transfer_running">Übertragung läuft</string>
     <string name="study_retry">Erneut versuchen</string>
+    <string name="study_retry_pending_transfer">Ausstehende Übertragung erneut senden</string>
     <string name="study_start_run">Durchgang starten</string>
     <string name="study_submission_failed">Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="study_submit">Absenden</string>
