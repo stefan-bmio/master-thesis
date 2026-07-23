@@ -70,6 +70,7 @@ import kotlin.random.Random
 fun PreStudyApp(
     language: AppLanguage,
     onLanguageChange: () -> Unit,
+    studyHomeOpenRequest: Long = 0L,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -87,10 +88,33 @@ fun PreStudyApp(
     }
     val state by controller.state.collectAsState()
     val scope = rememberCoroutineScope()
-
     LaunchedEffect(state.route, state.hasAppToken) {
         if (state.route == PreStudyRoute.Home) {
             controller.refreshNextStudyRun()
+        }
+    }
+
+    LaunchedEffect(studyHomeOpenRequest) {
+        if (studyHomeOpenRequest > 0L) {
+            controller.backToHome()
+            controller.refreshNextStudyRun()
+        }
+    }
+
+    LaunchedEffect(
+        state.route,
+        state.nextStudyRunVisible,
+        state.nextStudyRunAvailableAtMillis,
+        state.studyTransferPending,
+        state.studyCompleted
+    ) {
+        if (state.route == PreStudyRoute.Home) {
+            runCatching {
+                StudyReminderScheduler.reconcile(
+                    context,
+                    featureEnabled = state.nextStudyRunVisible
+                )
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Context
 data class StudyProgress(
     val confirmedSituationCount: Int = 0,
     val nextSituationAvailableAtMillis: Long = 0L,
+    val lastNotifiedSituationNumber: Int = 0,
     val hasPendingSubmission: Boolean = false,
     val completed: Boolean = false,
     val compensationCode: String? = null
@@ -32,6 +33,10 @@ class SharedPreferencesStudyProgressStore(context: Context) : StudyProgressStore
                 KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS,
                 0L
             ),
+            lastNotifiedSituationNumber = preferences.getInt(
+                KEY_LAST_NOTIFIED_SITUATION_NUMBER,
+                0
+            ),
             hasPendingSubmission = preferences.getInt(
                 KEY_PENDING_SUBMISSION_CRAVING,
                 NO_PENDING_CRAVING
@@ -45,6 +50,7 @@ class SharedPreferencesStudyProgressStore(context: Context) : StudyProgressStore
 const val STUDY_PREFERENCES_NAME = "cue_lens_state"
 const val KEY_CONFIRMED_SITUATION_COUNT = "confirmed_situation_count"
 const val KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS = "next_situation_available_at_millis"
+const val KEY_LAST_NOTIFIED_SITUATION_NUMBER = "last_notified_situation_number"
 const val KEY_MATCHING_ORDER = "matching_order"
 const val KEY_PENDING_SUBMISSION_CRAVING = "pending_submission_craving"
 const val KEY_COMPENSATION_CODE = "compensation_code"

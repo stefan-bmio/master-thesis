@@ -1090,7 +1090,86 @@ Anforderungen an die App:
 - Der Produktions-Build verwendet eine Sperrzeit von drei Stunden, der Staging-Build drei Sekunden. Die Sperrzeit wird in diesem Schritt aufseiten der App geprueft.
 - Die englischen Cue-Label-Uebersetzungen sind als Entwurf implementiert und muessen vor der produktiven Aktivierung fachlich und sprachlich geprueft werden.
 
-### 15.7 Zusaetzliche Tests und Definition of Done
+### 15.7 Benachrichtigung nach Ablauf der Sperrzeit
+
+Nach einer erfolgreich abgeschlossenen produktiven Studiensituation plant die App eine lokale Android-Benachrichtigung fuer den Zeitpunkt, zu dem die Sperrzeit ablaeuft und die naechste Studiensituation durchgefuehrt werden kann.
+
+Die Benachrichtigung wird nur eingerichtet, wenn:
+
+- die Nutzerin oder der Nutzer Benachrichtigungen erlaubt hat,
+- die produktive Studienfunktion serverseitig aktiviert ist,
+- die App erfolgreich aktiviert wurde,
+- die letzte Studiensituation serverseitig bestaetigt wurde,
+- noch nicht alle 20 Studiensituationen abgeschlossen wurden,
+- und keine bereits geplante gleichartige Benachrichtigung fuer dieselbe Folgesituation existiert.
+
+Die erste Benachrichtigung wird nach erfolgreichem Abschluss der Studiensituation 1 geplant und weist damit auf die Verfuegbarkeit der Studiensituation 2 von 20 hin. Fuer die erste Studiensituation wird keine solche Benachrichtigung erzeugt.
+
+#### Planung und Ausfuehrung
+
+- Der Ausloesezeitpunkt entspricht `next_situation_available_at_millis`.
+- Die Benachrichtigung wird erst geplant, nachdem die Serverantwort fuer den Selbstbericht erfolgreich verarbeitet und der lokale Studienfortschritt aktualisiert wurde.
+- Fuer die zeitversetzte Ausfuehrung ist ein eindeutiger One-Time-WorkRequest mit WorkManager zu verwenden.
+- Der eindeutige Work-Name muss mindestens die Folgesituation enthalten, beispielsweise `study_situation_available_2`.
+- Bereits vorhandene Arbeit fuer dieselbe Folgesituation wird ersetzt oder beibehalten, aber nicht dupliziert.
+- Production verwendet die regulaere Sperrzeit von drei Stunden; Staging verwendet die dort konfigurierte verkuerzte Sperrzeit.
+- WorkManager garantiert keine sekundengenaue Ausfuehrung. Eine durch Doze, App Standby, Energiesparmodus oder Betriebssystemrestriktionen verspaetete Benachrichtigung ist zulaessig.
+- Die Benachrichtigung darf niemals vor Ablauf der lokal gespeicherten Sperrzeit angezeigt werden. Wird der Worker zu frueh ausgefuehrt, muss er fuer die verbleibende Zeit neu geplant werden.
+- Nach einem Neustart des Geraets oder der App muss eine noch ausstehende Benachrichtigung anhand des persistent gespeicherten Studienzustands wiederhergestellt werden koennen.
+- Nach Abschluss der Studiensituation 20 werden alle noch geplanten Sperrzeit-Benachrichtigungen entfernt.
+
+#### Berechtigung und Datenschutz
+
+- Unter Android 13 und hoeher wird `POST_NOTIFICATIONS` nur kontextbezogen angefragt.
+- Bei verweigerter oder entzogener Berechtigung bleibt die Studiendurchfuehrung vollstaendig nutzbar.
+- Die App darf die Nutzerin oder den Nutzer nicht wiederholt zur Erteilung der Berechtigung draengen.
+- Titel und Text duerfen keine Angaben zu Rauchstatus, Rauchverlangen, Craving-Werten, Bedingung, App-Token oder anderen sensiblen Daten enthalten.
+- Die Benachrichtigung soll neutral formuliert sein, beispielsweise:
+
+```text
+CueLens: Eine neue Studiensituation ist verfuegbar.
+```
+
+- Die Angabe des Fortschritts ist zulaessig, beispielsweise:
+
+```text
+Sie koennen jetzt die Studiensituation 2 von 20 starten.
+```
+
+- Alle Texte sind als deutsche und englische Android-Stringressourcen bereitzustellen.
+- Auf dem Sperrbildschirm darf keine ueber die neutralen Texte hinausgehende gesundheitsbezogene Information erscheinen.
+
+#### Navigation und erneute Pruefung
+
+Beim Antippen der Benachrichtigung:
+
+1. wird die App geoeffnet,
+2. wird der aktuelle Feature-Toggle erneut abgerufen,
+3. werden Aktivierungsstatus, Studienabschluss, lokaler Fortschritt und Sperrzeit erneut geprueft,
+4. und erst danach wird der Einstieg in die naechste Studiensituation angeboten.
+
+Die Benachrichtigung selbst ist keine Autorisierung und darf keine Feature-, Aktivierungs- oder Sperrzeitpruefung umgehen. Ist die produktive Studienfunktion nicht verfuegbar oder die Studie bereits abgeschlossen, wird keine Studiensituation gestartet.
+
+#### Zusaetzliche Tests
+
+Mindestens folgende Faelle sind automatisiert oder als dokumentierte Acceptance Checks abzudecken:
+
+- Nach Studiensituation 1 wird eine Benachrichtigung fuer Studiensituation 2 von 20 geplant.
+- Vor Studiensituation 1 wird keine Sperrzeit-Benachrichtigung geplant.
+- Nach Studiensituation 19 wird eine Benachrichtigung fuer Studiensituation 20 von 20 geplant.
+- Nach Studiensituation 20 wird keine weitere Benachrichtigung geplant.
+- Bei verweigerter Benachrichtigungsberechtigung wird kein WorkRequest eingerichtet beziehungsweise keine Benachrichtigung angezeigt.
+- Wiederholte Verarbeitung derselben erfolgreichen Serverantwort erzeugt keine doppelte Benachrichtigung.
+- Ein Retry eines noch nicht bestaetigten Selbstberichts plant die Benachrichtigung erst nach erfolgreicher Serverantwort.
+- Eine vorzeitig ausgefuehrte Hintergrundarbeit zeigt keine Benachrichtigung an, sondern wird fuer die Restzeit neu geplant.
+- Eine verspaetete Ausfuehrung zeigt hoechstens eine Benachrichtigung fuer die aktuell naechste Studiensituation.
+- Beim Antippen werden Feature-Toggle, Aktivierungsstatus, Fortschritt und Sperrzeit erneut geprueft.
+- Deaktiviertes Feature, abgeschlossene Studie oder weiterhin laufende Sperrzeit verhindern den Start einer Studiensituation.
+- Benachrichtigungstitel und -text enthalten keine sensiblen oder gesundheitsbezogenen Daten.
+
+Hinweis: Der bisherige Abschnitt `15.7 Zusaetzliche Tests und Definition of Done` ist anschliessend in `15.8` umzunummerieren.
+
+### 15.8 Zusaetzliche Tests und Definition of Done
 
 Vor Abschluss der Aenderungen sind mindestens folgende Faelle zu testen:
 

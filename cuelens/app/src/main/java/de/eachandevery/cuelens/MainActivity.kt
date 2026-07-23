@@ -66,6 +66,8 @@ import de.eachandevery.cuelens.prestudy.KEY_PENDING_SUBMISSION_CRAVING
 import de.eachandevery.cuelens.prestudy.KEY_STUDY_COMPLETED
 import de.eachandevery.cuelens.prestudy.NO_PENDING_CRAVING
 import de.eachandevery.cuelens.prestudy.STUDY_PREFERENCES_NAME
+import de.eachandevery.cuelens.prestudy.AndroidStudyReminderNotifier
+import de.eachandevery.cuelens.prestudy.StudyReminderScheduler
 import de.eachandevery.cuelens.infofeed.AppLanguage
 import de.eachandevery.cuelens.infofeed.InfoFeedStrings
 import de.eachandevery.cuelens.infofeed.localizedStrings
@@ -86,14 +88,20 @@ import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     private val infoFeedOpenRequests = MutableStateFlow(0L)
+    private val studyHomeOpenRequests = MutableStateFlow(0L)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleNotificationIntent(intent)
         enableEdgeToEdge()
         setContent {
             val infoFeedOpenRequest by infoFeedOpenRequests.collectAsState()
+            val studyHomeOpenRequest by studyHomeOpenRequests.collectAsState()
             CueLensTheme {
-                CueLensApp(infoFeedOpenRequest = infoFeedOpenRequest)
+                CueLensApp(
+                    infoFeedOpenRequest = infoFeedOpenRequest,
+                    studyHomeOpenRequest = studyHomeOpenRequest
+                )
             }
         }
     }
@@ -101,12 +109,24 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        intent ?: return
         if (intent.getBooleanExtra(
                 de.eachandevery.cuelens.infofeed.AndroidInfoFeedNotifier.EXTRA_OPEN_INFO_FEED,
                 false
             )
         ) {
             infoFeedOpenRequests.value += 1L
+            intent.removeExtra(
+                de.eachandevery.cuelens.infofeed.AndroidInfoFeedNotifier.EXTRA_OPEN_INFO_FEED
+            )
+        }
+        if (intent.getBooleanExtra(AndroidStudyReminderNotifier.EXTRA_OPEN_STUDY_HOME, false)) {
+            studyHomeOpenRequests.value += 1L
+            intent.removeExtra(AndroidStudyReminderNotifier.EXTRA_OPEN_STUDY_HOME)
         }
     }
 }
@@ -172,7 +192,9 @@ internal fun ProductiveStudyApp(
         coroutineScope.launch {
             syncInProgress = true
             syncMessage = null
-            val result = recoverPendingNetworkWork(preferences, appTokenStore)
+            val result = recoverPendingNetworkWork(preferences, appTokenStore) {
+                StudyReminderScheduler.reconcile(context, featureEnabled = true)
+            }
             refreshPersistedState()
             syncInProgress = false
             if (result.isFailure) {
@@ -186,7 +208,9 @@ internal fun ProductiveStudyApp(
         if (hasPendingNetworkWork(preferences)) {
             syncInProgress = true
             syncMessage = null
-            val result = recoverPendingNetworkWork(preferences, appTokenStore)
+            val result = recoverPendingNetworkWork(preferences, appTokenStore) {
+                StudyReminderScheduler.reconcile(context, featureEnabled = true)
+            }
             refreshPersistedState()
             syncInProgress = false
             if (result.isFailure) {
@@ -706,12 +730,14 @@ private fun formatDuration(durationMillis: Long): String {
 internal suspend fun retryPersistedStudyTransfer(context: Context): Result<Unit> =
     recoverPendingNetworkWork(
         context.getSharedPreferences(STUDY_PREFERENCES_NAME, Context.MODE_PRIVATE),
-        AndroidKeystoreAppTokenStore(context.applicationContext)
+        AndroidKeystoreAppTokenStore(context.applicationContext),
+        onStudyStateChanged = {}
     )
 
 private suspend fun recoverPendingNetworkWork(
     preferences: SharedPreferences,
-    appTokenStore: AppTokenStore
+    appTokenStore: AppTokenStore,
+    onStudyStateChanged: suspend () -> Unit
 ): Result<Unit> =
     runCatching {
         val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
@@ -723,6 +749,7 @@ private suspend fun recoverPendingNetworkWork(
                 .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
                 .remove(KEY_PENDING_SUBMISSION_CRAVING)
                 .apply()
+            runCatching { onStudyStateChanged() }
             return@runCatching
         }
 
@@ -740,6 +767,8 @@ private suspend fun recoverPendingNetworkWork(
         )) {
             is SelfReportResponse.Next -> {
                 advanceAfterConfirmedSubmission(preferences)
+                runCatching { onStudyStateChanged() }
+                Unit
             }
             is SelfReportResponse.Complete -> {
                 preferences.edit()
@@ -751,6 +780,8 @@ private suspend fun recoverPendingNetworkWork(
                     .putBoolean(KEY_STUDY_COMPLETED, true)
                     .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
                     .apply()
+                runCatching { onStudyStateChanged() }
+                Unit
             }
         }
     }.onFailure {

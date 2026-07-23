@@ -41,6 +41,8 @@ import de.eachandevery.cuelens.infofeed.InfoMessageScreen
 import de.eachandevery.cuelens.infofeed.NotificationConsentScreen
 import de.eachandevery.cuelens.infofeed.localizedStrings
 import de.eachandevery.cuelens.prestudy.PreStudyApp
+import de.eachandevery.cuelens.prestudy.AndroidStudyReminderNotifier
+import de.eachandevery.cuelens.prestudy.StudyReminderScheduler
 import kotlinx.coroutines.launch
 
 private enum class NotificationGateState {
@@ -51,7 +53,10 @@ private enum class NotificationGateState {
 }
 
 @Composable
-internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
+internal fun CueLensApp(
+    infoFeedOpenRequest: Long = 0L,
+    studyHomeOpenRequest: Long = 0L
+) {
     val context = LocalContext.current.applicationContext
     val repository = remember(context) { InfoFeedRepository.create(context) }
     val controller = remember(repository) { InfoFeedController(repository) }
@@ -79,6 +84,7 @@ internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
                 runCatching { InfoFeedNotificationScheduler.schedule(context) }
             } else {
                 runCatching { InfoFeedNotificationScheduler.cancel(context) }
+                runCatching { StudyReminderScheduler.cancelAll(context) }
             }
             notificationGate = NotificationGateState.Done
             hasEnteredApp = true
@@ -126,6 +132,7 @@ internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
                 runCatching { InfoFeedNotificationScheduler.schedule(context) }
             } else {
                 runCatching { InfoFeedNotificationScheduler.cancel(context) }
+                runCatching { StudyReminderScheduler.cancelAll(context) }
             }
             notificationGate = NotificationGateState.Done
             hasEnteredApp = true
@@ -149,10 +156,12 @@ internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
             if (!enabled) {
                 runCatching { notificationStore.completePrompt(false) }
                 runCatching { InfoFeedNotificationScheduler.cancel(context) }
+                runCatching { StudyReminderScheduler.cancelAll(context) }
                 notificationGate = NotificationGateState.Done
                 hasEnteredApp = true
             } else {
                 AndroidInfoFeedNotifier(context).ensureChannel()
+                AndroidStudyReminderNotifier(context).ensureChannel(language)
                 val permissionAlreadyGranted = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     ContextCompat.checkSelfPermission(
                         context,
@@ -166,6 +175,7 @@ internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
                         runCatching { InfoFeedNotificationScheduler.schedule(context) }
                     } else {
                         runCatching { InfoFeedNotificationScheduler.cancel(context) }
+                        runCatching { StudyReminderScheduler.cancelAll(context) }
                     }
                     notificationGate = NotificationGateState.Done
                     hasEnteredApp = true
@@ -192,7 +202,8 @@ internal fun CueLensApp(infoFeedOpenRequest: Long = 0L) {
         if (hasEnteredApp) {
             PreStudyApp(
                 language = language,
-                onLanguageChange = toggleLanguage
+                onLanguageChange = toggleLanguage,
+                studyHomeOpenRequest = studyHomeOpenRequest
             )
         }
         when (val current = state) {

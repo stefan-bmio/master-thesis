@@ -84,6 +84,11 @@ class InfoMessageScreenTest {
         }
 
         composeRule.onNodeWithText("Benachrichtigungen zulassen").assertIsDisplayed()
+        composeRule.onNodeWithText(
+            "CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über " +
+                "die Verfügbarkeit einer neuen Studienaufgabe informieren. Benachrichtigungen " +
+                "enthalten keine Angaben zu Rauchstatus oder Rauchverlangen."
+        ).assertIsDisplayed()
         composeRule.onNode(isToggleable()).performClick()
         composeRule.onNodeWithText("Weiter").performClick()
 
