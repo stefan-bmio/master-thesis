@@ -28,6 +28,13 @@
     <string name="activation_running">Activating</string>
     <string name="activation_failed">Activation failed. Please try again later.</string>
     <string name="activation_needs_support">Activation was not possible. Please contact cuelens@each-and-every.de.</string>
+    <string name="data_protection_title">Updated privacy policy</string>
+    <string name="data_protection_notice">Please read the updated privacy policy. To continue using the productive CueLens study, please consent to the privacy policy again.</string>
+    <string name="data_protection_open_policy">Open privacy policy</string>
+    <string name="data_protection_accept">I consent to the updated privacy policy.</string>
+    <string name="data_protection_submit">Submit</string>
+    <string name="data_protection_submitting">Submitting</string>
+    <string name="data_protection_failed">Your consent could not be saved. Please try again later.</string>
     <string name="demo_study_situation">Example study situation</string>
     <string name="demo_situation_notice">This is an example and not part of the study.</string>
     <string name="demo_image_matching_title">Example: cue matching</string>

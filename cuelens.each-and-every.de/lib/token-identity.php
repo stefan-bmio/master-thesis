@@ -11,6 +11,11 @@ function participant_id_for_app_token(string $secret, string $appToken): string
     return domain_separated_app_token_hash($secret, 'pseudonym:v1', $appToken);
 }
 
+function registration_token_hash(string $secret, string $appToken): string
+{
+    return domain_separated_app_token_hash($secret, 'registration-token:v1', $appToken);
+}
+
 function domain_separated_app_token_hash(
     string $secret,
     string $context,

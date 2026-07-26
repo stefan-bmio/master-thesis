@@ -9,9 +9,17 @@ require __DIR__ . '/lib/feedback-store.php';
 const MAX_SOURCE_LENGTH = 500;
 const MAX_COMMENT_LENGTH = 5000;
 const MAX_APP_VERSION_LENGTH = 64;
+const FEEDBACK_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-signup.php';
 
 function json_response(int $statusCode, array $payload): never
 {
+    if ($statusCode >= 400 && $statusCode <= 499) {
+        report_http_client_error(
+            $statusCode,
+            'feedback_endpoint',
+            FEEDBACK_DB_CONFIG_FILE
+        );
+    }
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     exit;
@@ -106,7 +114,7 @@ if ($source === null && $comment === null) {
     bad_request('At least one feedback field is required.');
 }
 
-$config = require __DIR__ . '/config/cuelens-signup.php';
+$config = require FEEDBACK_DB_CONFIG_FILE;
 try {
     $pdo = pdo_from_config(is_array($config) ? $config : []);
 } catch (Throwable $e) {

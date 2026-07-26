@@ -81,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 						$stmt = $pdo->prepare("
 							INSERT INTO `register`
-							(`email`, `name`, `iban`, `bic`, `age`, `cigarettes`, `doi_token`, `studyinfo`, `dataprot`)
+							(`email`, `name`, `iban`, `bic`, `age`, `cigarettes`, `doi_token`, `studyinfo`, `dataprot`, `dataprot_accepted_at`)
 							VALUES
-							(:email, :name, :iban, :bic, :age, :cigarettes, :doiToken, :studyinfo, :dataprot)
+							(:email, :name, :iban, :bic, :age, :cigarettes, :doiToken, :studyinfo, :dataprot, CURRENT_TIMESTAMP)
 						");
 
 						$stmt->execute([

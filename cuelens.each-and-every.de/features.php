@@ -7,8 +7,17 @@ header('Cache-Control: no-store');
 require __DIR__ . '/lib/error-log.php';
 require __DIR__ . '/lib/feature-toggle.php';
 
+const FEATURE_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-craving.php';
+
 function json_response(int $statusCode, array $payload): never
 {
+    if ($statusCode >= 400 && $statusCode <= 499) {
+        report_http_client_error(
+            $statusCode,
+            'feature_endpoint',
+            FEATURE_DB_CONFIG_FILE
+        );
+    }
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
     exit;
@@ -52,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $config = [];
 try {
-    $loadedConfig = require __DIR__ . '/config/cuelens-craving.php';
+    $loadedConfig = require FEATURE_DB_CONFIG_FILE;
     $config = is_array($loadedConfig) ? $loadedConfig : [];
     $pdo = pdo_from_config($config);
     $enabled = feature_enabled($pdo, FEATURE_NEXT_STUDY_RUN);

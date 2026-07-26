@@ -77,7 +77,6 @@ function request_activation_token(
               WHERE email = :email
                 AND doi = 1
                 AND studyinfo = 1
-                AND dataprot = 1
                 AND app_token_issued_at IS NULL
               FOR UPDATE'
         );
@@ -131,6 +130,7 @@ function confirm_activation_token(
         $normalizedToken
     );
     $validTokenHash = valid_app_token_hash($pseudonymSecret, $normalizedToken);
+    $registrationTokenHash = registration_token_hash($pseudonymSecret, $normalizedToken);
 
     $registration = $registrationPdo->prepare(
         'SELECT app_token_hash,
@@ -139,7 +139,6 @@ function confirm_activation_token(
           WHERE email = :email
             AND doi = 1
             AND studyinfo = 1
-            AND dataprot = 1
             AND app_token_issued_at IS NULL'
     );
     $registration->execute([':email' => $normalizedEmail]);
@@ -157,16 +156,17 @@ function confirm_activation_token(
         'UPDATE register
             SET app_token_hash = NULL,
                 activation_valid_through = NULL,
-                app_token_issued_at = CURRENT_TIMESTAMP
+                app_token_issued_at = CURRENT_TIMESTAMP,
+                registration_token_hash = :registration_token_hash
           WHERE email = :email
             AND app_token_hash = :app_token_hash
             AND activation_valid_through > CURRENT_TIMESTAMP
             AND doi = 1
             AND studyinfo = 1
-            AND dataprot = 1
             AND app_token_issued_at IS NULL'
     );
     $update->execute([
+        ':registration_token_hash' => $registrationTokenHash,
         ':email' => $normalizedEmail,
         ':app_token_hash' => $candidateHash,
     ]);

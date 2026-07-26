@@ -28,6 +28,13 @@
     <string name="activation_running">Aktivierung läuft</string>
     <string name="activation_failed">Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>
     <string name="activation_needs_support">Die Aktivierung war nicht möglich. Bitte wenden Sie sich an cuelens@each-and-every.de.</string>
+    <string name="data_protection_title">Aktualisierte Datenschutzerklärung</string>
+    <string name="data_protection_notice">Bitte lesen Sie die aktualisierte Datenschutzerklärung. Um die produktive CueLens-Studie weiter zu nutzen, stimmen Sie der Datenschutzerklärung bitte erneut zu.</string>
+    <string name="data_protection_open_policy">Datenschutzerklärung öffnen</string>
+    <string name="data_protection_accept">Ich stimme der aktualisierten Datenschutzerklärung zu.</string>
+    <string name="data_protection_submit">Absenden</string>
+    <string name="data_protection_submitting">Wird gesendet</string>
+    <string name="data_protection_failed">Ihre Zustimmung konnte nicht gespeichert werden. Bitte versuchen Sie es später noch einmal.</string>
     <string name="demo_study_situation">Beispiel-Studiensituation</string>
     <string name="demo_situation_notice">Dies ist ein Beispiel und kein Teil der Studie.</string>
     <string name="demo_image_matching_title">Beispiel: Cue-Matching</string>

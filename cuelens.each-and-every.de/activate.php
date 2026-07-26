@@ -6,8 +6,17 @@ header('Content-Type: application/json; charset=utf-8');
 require __DIR__ . '/lib/error-log.php';
 require __DIR__ . '/lib/activation.php';
 
+const ACTIVATION_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-signup.php';
+
 function json_response(int $statusCode, array $payload): never
 {
+    if ($statusCode >= 400 && $statusCode <= 499) {
+        report_http_client_error(
+            $statusCode,
+            'activation_endpoint',
+            ACTIVATION_DB_CONFIG_FILE
+        );
+    }
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
     exit;
@@ -100,7 +109,7 @@ if ($appToken !== null && !is_uuid_v4($appToken)) {
     bad_request();
 }
 
-$dbConfig = require __DIR__ . '/config/cuelens-signup.php';
+$dbConfig = require ACTIVATION_DB_CONFIG_FILE;
 $cravingDbConfig = require __DIR__ . '/config/cuelens-craving.php';
 $hostConfig = require __DIR__ . '/config/host.php';
 try {

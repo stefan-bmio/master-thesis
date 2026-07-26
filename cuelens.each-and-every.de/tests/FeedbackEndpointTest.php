@@ -48,6 +48,7 @@ final class FeedbackEndpointTest extends TestCase
     {
         $script = <<<'PHP'
 $_SERVER['REQUEST_METHOD'] = (string) getenv('CUELENS_REQUEST_METHOD');
+$GLOBALS['cuelens_http_client_error_reporter'] = static function (): void {};
 require getenv('CUELENS_ENDPOINT');
 PHP;
         $command = escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg($script);

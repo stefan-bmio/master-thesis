@@ -179,6 +179,13 @@ data class InfoFeedStrings(
     val activationRunning: String,
     val activationFailed: String,
     val activationNeedsSupport: String,
+    val dataProtectionTitle: String,
+    val dataProtectionNotice: String,
+    val dataProtectionOpenPolicy: String,
+    val dataProtectionAccept: String,
+    val dataProtectionSubmit: String,
+    val dataProtectionSubmitting: String,
+    val dataProtectionFailed: String,
     val demoStudySituation: String,
     val demoSituationNotice: String,
     val demoImageMatchingTitle: String,
@@ -259,6 +266,17 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
             activationRunning = localizedContext.getString(R.string.activation_running),
             activationFailed = localizedContext.getString(R.string.activation_failed),
             activationNeedsSupport = localizedContext.getString(R.string.activation_needs_support),
+            dataProtectionTitle = localizedContext.getString(R.string.data_protection_title),
+            dataProtectionNotice = localizedContext.getString(R.string.data_protection_notice),
+            dataProtectionOpenPolicy = localizedContext.getString(
+                R.string.data_protection_open_policy
+            ),
+            dataProtectionAccept = localizedContext.getString(R.string.data_protection_accept),
+            dataProtectionSubmit = localizedContext.getString(R.string.data_protection_submit),
+            dataProtectionSubmitting = localizedContext.getString(
+                R.string.data_protection_submitting
+            ),
+            dataProtectionFailed = localizedContext.getString(R.string.data_protection_failed),
             demoStudySituation = localizedContext.getString(R.string.demo_study_situation),
             demoSituationNotice = localizedContext.getString(R.string.demo_situation_notice),
             demoImageMatchingTitle = localizedContext.getString(R.string.demo_image_matching_title),

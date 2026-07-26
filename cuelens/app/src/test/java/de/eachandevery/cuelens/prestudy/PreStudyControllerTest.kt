@@ -21,10 +21,121 @@ class PreStudyControllerTest {
     }
 
     @Test
+    fun localConsentSkipsServerAndIsNeverRechecked() = runBlocking {
+        val dataProtectionService = FakeDataProtectionService(status = false)
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            dataProtectionService = dataProtectionService,
+            dataProtectionConsentStore = FakeDataProtectionConsentStore(accepted = true)
+        )
+
+        assertTrue(controller.refreshDataProtectionConsent())
+        assertTrue(controller.refreshDataProtectionConsent())
+
+        assertEquals(DataProtectionConsentState.Granted, controller.state.value.dataProtectionConsentState)
+        assertEquals(0, dataProtectionService.statusCalls)
+    }
+
+    @Test
+    fun serverConsentIsPersistedWithoutShowingDialog() = runBlocking {
+        val consentStore = FakeDataProtectionConsentStore()
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            dataProtectionService = FakeDataProtectionService(status = true),
+            dataProtectionConsentStore = consentStore
+        )
+
+        assertTrue(controller.refreshDataProtectionConsent())
+
+        assertTrue(consentStore.accepted)
+        assertEquals(DataProtectionConsentState.Granted, controller.state.value.dataProtectionConsentState)
+        assertEquals(PreStudyRoute.Home, controller.state.value.route)
+    }
+
+    @Test
+    fun missingServerConsentOpensGateAndBlocksProductiveStudy() = runBlocking {
+        val dataProtectionService = FakeDataProtectionService(status = false)
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore { StudyProgress() },
+            dataProtectionService = dataProtectionService,
+            dataProtectionConsentStore = FakeDataProtectionConsentStore()
+        )
+
+        controller.openNextStudyRun()
+
+        assertEquals(PreStudyRoute.DataProtectionConsent, controller.state.value.route)
+        assertEquals(DataProtectionConsentState.Required, controller.state.value.dataProtectionConsentState)
+        assertEquals(1, dataProtectionService.statusCalls)
+    }
+
+    @Test
+    fun successfulConsentStoresLocalFlagAndReturnsHome() = runBlocking {
+        val consentStore = FakeDataProtectionConsentStore()
+        val service = FakeDataProtectionService(status = false, acceptResult = true)
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            dataProtectionService = service,
+            dataProtectionConsentStore = consentStore
+        )
+        controller.refreshDataProtectionConsent()
+
+        controller.acceptDataProtection()
+
+        assertTrue(consentStore.accepted)
+        assertEquals(1, service.acceptCalls)
+        assertEquals(DataProtectionConsentState.Granted, controller.state.value.dataProtectionConsentState)
+        assertEquals(PreStudyRoute.Home, controller.state.value.route)
+    }
+
+    @Test
+    fun failedStatusAndFailedConsentRemainFailClosed() = runBlocking {
+        val statusFailure = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            dataProtectionService = FakeDataProtectionService(
+                statusFailure = java.io.IOException("unavailable")
+            ),
+            dataProtectionConsentStore = FakeDataProtectionConsentStore()
+        )
+        assertFalse(statusFailure.refreshDataProtectionConsent())
+        assertEquals(PreStudyRoute.DataProtectionConsent, statusFailure.state.value.route)
+        assertEquals(DataProtectionConsentState.Error, statusFailure.state.value.dataProtectionConsentState)
+
+        val consentStore = FakeDataProtectionConsentStore()
+        val putFailure = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            dataProtectionService = FakeDataProtectionService(
+                status = false,
+                acceptFailure = java.io.IOException("unavailable")
+            ),
+            dataProtectionConsentStore = consentStore
+        )
+        putFailure.refreshDataProtectionConsent()
+        putFailure.acceptDataProtection()
+
+        assertFalse(consentStore.accepted)
+        assertEquals(PreStudyRoute.DataProtectionConsent, putFailure.state.value.route)
+        assertEquals(DataProtectionConsentState.Error, putFailure.state.value.dataProtectionConsentState)
+    }
+
+    @Test
     fun successfulActivationStoresOnlyTokenAndReturnsHome() = runBlocking {
         val tokenStore = FakeAppTokenStore()
         val service = FakeActivationService(requestResult = Result.success("new-token"))
-        val controller = PreStudyController(service, tokenStore)
+        val consentStore = FakeDataProtectionConsentStore()
+        val controller = PreStudyController(
+            activationService = service,
+            appTokenStore = tokenStore,
+            dataProtectionService = FakeDataProtectionService(status = true),
+            dataProtectionConsentStore = consentStore
+        )
         controller.openEmailActivation()
 
         controller.activate("person@example.org")
@@ -33,6 +144,8 @@ class PreStudyControllerTest {
         assertEquals(PreStudyRoute.Home, controller.state.value.route)
         assertTrue(controller.state.value.hasAppToken)
         assertEquals(ActivationState.Activated, controller.state.value.activationState)
+        assertEquals(DataProtectionConsentState.Granted, controller.state.value.dataProtectionConsentState)
+        assertTrue(consentStore.accepted)
         assertEquals(listOf("person@example.org"), service.requestedEmails)
         assertEquals(listOf("person@example.org" to "new-token"), service.confirmations)
     }
@@ -186,7 +299,8 @@ class PreStudyControllerTest {
             studyProgressStore = StudyProgressStore {
                 StudyProgress(nextSituationAvailableAtMillis = 1_000L)
             },
-            nowMillis = { 1_000L }
+            nowMillis = { 1_000L },
+            dataProtectionConsentStore = FakeDataProtectionConsentStore(accepted = true)
         )
 
         controller.refreshNextStudyRun()
@@ -299,7 +413,8 @@ class PreStudyControllerTest {
                     nextSituationAvailableAtMillis = 2_000L
                 )
             },
-            nowMillis = { 1_000L }
+            nowMillis = { 1_000L },
+            dataProtectionConsentStore = FakeDataProtectionConsentStore(accepted = true)
         )
         controller.refreshNextStudyRun()
         assertTrue(controller.state.value.studyTransferPending)
@@ -324,7 +439,8 @@ class PreStudyControllerTest {
             },
             studyTransferRetryService = StudyTransferRetryService {
                 throw java.io.IOException("network unavailable")
-            }
+            },
+            dataProtectionConsentStore = FakeDataProtectionConsentStore(accepted = true)
         )
         controller.refreshNextStudyRun()
 
@@ -426,6 +542,38 @@ class PreStudyControllerTest {
         }
         override fun clear() {
             token = null
+        }
+    }
+
+    private class FakeDataProtectionConsentStore(
+        var accepted: Boolean = false
+    ) : DataProtectionConsentStore {
+        override suspend fun isAccepted(): Boolean = accepted
+
+        override suspend fun markAccepted() {
+            accepted = true
+        }
+    }
+
+    private class FakeDataProtectionService(
+        private val status: Boolean = true,
+        private val acceptResult: Boolean = true,
+        private val statusFailure: Throwable? = null,
+        private val acceptFailure: Throwable? = null
+    ) : DataProtectionService {
+        var statusCalls = 0
+        var acceptCalls = 0
+
+        override suspend fun getStatus(appToken: String): Boolean {
+            statusCalls += 1
+            statusFailure?.let { throw it }
+            return status
+        }
+
+        override suspend fun accept(appToken: String): Boolean {
+            acceptCalls += 1
+            acceptFailure?.let { throw it }
+            return acceptResult
         }
     }
 

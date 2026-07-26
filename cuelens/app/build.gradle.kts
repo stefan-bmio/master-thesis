@@ -67,6 +67,21 @@ android {
                 "FEATURE_CONFIG_URL",
                 "\"http://192.168.1.203:8080/cuelens/features\""
             )
+            buildConfigField(
+                "String",
+                "DATA_PROTECTION_URL",
+                "\"http://192.168.1.203:8080/cuelens/dataprot\""
+            )
+            buildConfigField(
+                "String",
+                "PRIVACY_POLICY_URL_DE",
+                "\"https://cuelens.each-and-every.de/ds\""
+            )
+            buildConfigField(
+                "String",
+                "PRIVACY_POLICY_URL_EN",
+                "\"https://cuelens.each-and-every.de/privacypolicy.pdf\""
+            )
             buildConfigField("long", "RUN_COOLDOWN_MILLIS", "3000L")
         }
         create("production") {
@@ -96,6 +111,21 @@ android {
                 "String",
                 "FEATURE_CONFIG_URL",
                 "\"https://cuelens.each-and-every.de/features.php\""
+            )
+            buildConfigField(
+                "String",
+                "DATA_PROTECTION_URL",
+                "\"https://cuelens.each-and-every.de/dataprot.php\""
+            )
+            buildConfigField(
+                "String",
+                "PRIVACY_POLICY_URL_DE",
+                "\"https://cuelens.each-and-every.de/ds\""
+            )
+            buildConfigField(
+                "String",
+                "PRIVACY_POLICY_URL_EN",
+                "\"https://cuelens.each-and-every.de/privacypolicy.pdf\""
             )
             buildConfigField("long", "RUN_COOLDOWN_MILLIS", "10800000L")
         }
@@ -139,4 +169,3 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
-

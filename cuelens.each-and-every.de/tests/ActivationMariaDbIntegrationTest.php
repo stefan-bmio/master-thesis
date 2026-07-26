@@ -61,7 +61,9 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                 dataprot TINYINT(1) NOT NULL DEFAULT 0,
                 app_token_hash CHAR(64) NULL,
                 activation_valid_through DATETIME NULL,
-                app_token_issued_at TIMESTAMP NULL
+                app_token_issued_at TIMESTAMP NULL,
+                registration_token_hash CHAR(64) NULL UNIQUE,
+                dataprot_accepted_at DATETIME NULL
             ) ENGINE=InnoDB'
         );
         $this->cravingPdo->exec(
@@ -98,6 +100,10 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertNull($confirmed['app_token_hash']);
         self::assertNull($confirmed['activation_valid_through']);
         self::assertNotNull($confirmed['app_token_issued_at']);
+        self::assertSame(
+            registration_token_hash(self::PSEUDONYM_SECRET, $token),
+            $confirmed['registration_token_hash']
+        );
         self::assertSame(
             valid_app_token_hash(self::PSEUDONYM_SECRET, $token),
             $this->cravingPdo->query('SELECT hash FROM valid_app_token_hashes')->fetchColumn()
@@ -146,11 +152,37 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         $this->confirm(self::FIRST_TOKEN);
     }
 
+    public function testRegistrationWithResetConsentCanStillActivate(): void
+    {
+        $this->pdo->exec('UPDATE register SET dataprot = 0, dataprot_accepted_at = NULL');
+
+        $token = request_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            self::SECRET,
+            static fn (): string => self::FIRST_TOKEN
+        );
+        $this->confirm($token);
+
+        $registration = $this->registration();
+        self::assertSame(0, (int) $registration['dataprot']);
+        self::assertNotNull($registration['app_token_issued_at']);
+        self::assertSame(
+            registration_token_hash(self::PSEUDONYM_SECRET, $token),
+            $registration['registration_token_hash']
+        );
+    }
+
     /** @return array<string, mixed> */
     private function registration(): array
     {
         $row = $this->pdo->query(
-            'SELECT app_token_hash, activation_valid_through, app_token_issued_at FROM register'
+            'SELECT app_token_hash,
+                    activation_valid_through,
+                    app_token_issued_at,
+                    registration_token_hash,
+                    dataprot
+               FROM register'
         )->fetch(PDO::FETCH_ASSOC);
         self::assertIsArray($row);
         return $row;

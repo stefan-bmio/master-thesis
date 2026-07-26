@@ -303,7 +303,7 @@ Die bestehende Tabelle `register` enthaelt Teilnahmeinformationen ohne Bezug zu 
 Grundregeln:
 
 - Der Server prueft, ob die E-Mail-Adresse fuer eine App-Aktivierung berechtigt ist.
-- Wenn ein App-Token ausgegeben wird, darf dieses nicht dauerhaft in Relation zur E-Mail-Adresse gespeichert werden.
+- Das App-Token darf nicht im Klartext gespeichert werden. Fuer den authentifizierten Abruf und die Aktualisierung des Datenschutzstatus wird nach der Aktivierungsbestaetigung ausschliesslich ein domaenenseparierter `registration_token_hash` in `register` gespeichert.
 - In `register` kann weiterhin ein Zeitstempel wie `app_token_issued_at` gesetzt werden, um Mehrfachaktivierungen zu vermeiden.
 - Die erfolgreiche E-Mail-Aktivierung aktiviert in dieser ersten Version keine produktive Studiensituation.
 
@@ -506,7 +506,7 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Neue lokale Speicherungen sind nach Zweck, Lebensdauer und Schutzbedarf dokumentiert.
 - Fehlerfaelle fuehren zu einem eindeutigen UI-Zustand.
 - Tests decken die Kernpfade und Entscheidungszweige der neuen Funktionen moeglichst vollstaendig ab.
-- Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token, Feedback und spaeterer Berichtstabelle.
+- Die Registrierungsdatenbank enthaelt mit `registration_token_hash` einen dauerhaften pseudonymen Verifikator fuer den Datenschutzendpunkt. Sie enthaelt weder das Klartext-App-Token noch eine direkte Kennung aus `self_reports` oder `feedback`.
 
 ## 8. Sicherheitskonzepte
 
@@ -517,7 +517,7 @@ Die technische Datenschutzarchitektur beschreibt keine vollstaendige Anonymisier
 Die Pseudonymisierung beruht auf folgenden technischen und organisatorischen Massnahmen:
 
 - Direkte Registrierungs- und Abrechnungsdaten liegen ausschliesslich in `register` und werden nicht in die App oder die Berichtstabelle uebernommen.
-- Das App-Token wird nach der initialen Freischaltung nur lokal in der App gespeichert und serverseitig nicht dauerhaft persistiert.
+- Das App-Token wird nach der initialen Freischaltung nur lokal im Klartext verarbeitet und in der App verschluesselt gespeichert. Serverseitig wird nicht das App-Token selbst, sondern nur der domaenenseparierte `registration_token_hash` dauerhaft in `register` persistiert.
 - Die auswertbare Kennung `participant_id` wird in `submit.php` als `HMAC-SHA-256(pseudonym-secret, "pseudonym:v1\0" || strtolower($appToken))` aus dem App-Token abgeleitet und in `self_reports` gespeichert.
 - Das `pseudonym-secret` ist in `host.php` im geschuetzten Verzeichnis `config` abgelegt.
 - Die App uebertraegt das App-Token bei jedem Selbstbericht, damit der Server die stabile pseudonyme Kennung erneut berechnen kann.
@@ -571,10 +571,10 @@ Der allererste Request dient nur der Ausgabe des App-Tokens:
 
 Serververhalten:
 
-- Der Server prueft, ob die E-Mail-Adresse in `register` vorhanden und die Teilnahme freigegeben ist.
+- Der Server prueft, ob die E-Mail-Adresse in `register` vorhanden, das Double-Opt-In und die Studieninformation bestaetigt und die Registrierung noch nicht aktiviert ist. Ein nach der einmaligen Migration auf `false` gesetztes `dataprot` verhindert die Aktivierung nicht.
 - Wenn die E-Mail-Adresse nicht vorhanden, nicht freigegeben oder bereits als tokenisiert markiert ist, wird kein App-Token ausgeliefert.
 - Wenn die E-Mail-Adresse gueltig ist, erzeugt der Server ein neues `app_token` als UUID.
-- Der Server gibt `app_token` an die App zurueck, persistiert aber weder das App-Token noch dessen Hash in Bezug zur E-Mail-Adresse.
+- Der Server gibt `app_token` an die App zurueck. Der kurzlebige Aktivierungsverifikator wird nach der Bestaetigung geloescht; danach bleibt nur der domaenenseparierte `registration_token_hash` in `register` gespeichert.
 - In `register` wird `app_token_issued_at` gesetzt, damit dieselbe Registrierung nicht erneut aktiviert werden kann.
 
 ### 8.6 Selbstbericht-Uebertragung
@@ -691,7 +691,9 @@ CREATE TABLE `register` (
   `doi` tinyint(1) NOT NULL DEFAULT '0',
   `app_token_hash` CHAR(64) DEFAULT NULL,
   `activation_valid_through` DATETIME DEFAULT NULL,
-  `app_token_issued_at` TIMESTAMP DEFAULT NULL
+  `app_token_issued_at` TIMESTAMP DEFAULT NULL,
+  `registration_token_hash` CHAR(64) NULL UNIQUE,
+  `dataprot_accepted_at` DATETIME NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
 
@@ -797,7 +799,7 @@ Die Selbstbericht-Uebertragung ist im derzeitigen Backend nicht vollstaendig ide
 Vor produktiver Nutzung sind mindestens zu testen:
 
 - Freischaltungsrequest nur fuer in `register` vorhandene und freigegebene E-Mail-Adressen.
-- Keine dauerhafte Speicherung des App-Tokens auf dem Server.
+- Keine dauerhafte Speicherung des Klartext-App-Tokens auf dem Server; dauerhaft gespeichert wird nur der domaenenseparierte `registration_token_hash`.
 - Freischaltung setzt `app_token_issued_at` und gibt ein UUID-v4-App-Token zurueck.
 - Ableitung von `participant_id` als domaenenseparierter HMAC-SHA-256 des normalisierten App-Tokens.
 - Kryptographische Trennung von `participant_id` und Freigabe-Hash bei identischem App-Token.
@@ -824,7 +826,7 @@ Eine Aenderung gilt nur dann als abgeschlossen, wenn alle zutreffenden Punkte er
 - Fehlerfaelle fuehren zu einem eindeutigen UI-Zustand.
 - Tests oder manuelle Acceptance Checks decken den Kernpfad ab.
 - `self_reports.participant_id` enthaelt den App-Token-Hash, nicht den rohen App-Token.
-- Die Datenbank enthaelt keine dauerhafte Relation zwischen Registrierung, App-Token und Berichtstabelle.
+- `register.registration_token_hash` ist kryptographisch von `valid_app_token_hashes.hash` und `self_reports.participant_id` getrennt; das Klartext-App-Token wird serverseitig nicht gespeichert.
 
 
 ## 15. Ergaenzende Anforderungen fuer die Pre-Study-App
@@ -956,9 +958,10 @@ Serververhalten:
 - `register.activation_valid_through` pruefen und im Fall einer abgelaufenen Aktivierung Fehler 400 zurueckliefern.
 - Nach erfolgreicher Verifikation ueber die Verbindung zu `cuelens_signup` den Registrierungsstatus bedingt aktualisieren und `register.app_token_issued_at = CURRENT_TIMESTAMP` setzen. Anschliessend den Freigabe-Hash mit einem separaten Statement ueber die Verbindung zu `cuelens_craving` speichern.
 - `register.app_token_hash` und `register.activation_valid_through` auf `NULL` setzen.
+- Den mittels `HMAC-SHA-256(pseudonym-secret, "registration-token:v1\0" || strtolower(app_token))` erzeugten `registration_token_hash` dauerhaft in `register` speichern.
 - Den mittels `HMAC-SHA-256(pseudonym-secret, "valid-token:v1\0" || strtolower($appToken))` generierten Hash in `valid_app_token_hashes` speichern.
 - Mit HTTP 204 und leerem Response-Body antworten.
-- Das App-Token weiterhin nicht dauerhaft in `register`, `self_reports` oder einer anderen dauerhaften Zuordnung zur E-Mail-Adresse speichern.
+- Das Klartext-App-Token weiterhin nicht dauerhaft in `register`, `self_reports` oder einer anderen serverseitigen Tabelle speichern.
 
 #### 15.4.3 Speicherung in der App
 
@@ -1167,9 +1170,267 @@ Mindestens folgende Faelle sind automatisiert oder als dokumentierte Acceptance 
 - Deaktiviertes Feature, abgeschlossene Studie oder weiterhin laufende Sperrzeit verhindern den Start einer Studiensituation.
 - Benachrichtigungstitel und -text enthalten keine sensiblen oder gesundheitsbezogenen Daten.
 
-Hinweis: Der bisherige Abschnitt `15.7 Zusaetzliche Tests und Definition of Done` ist anschliessend in `15.8` umzunummerieren.
 
-### 15.8 Zusaetzliche Tests und Definition of Done
+### 15.8 Erneute Zustimmung zur aktualisierten Datenschutzerklaerung
+
+Nach Veroeffentlichung der aktualisierten Datenschutzerklaerung wird das bestehende Flag `dataprot` in der Tabelle `register` fuer alle bereits vorhandenen Anmeldungen einmalig administrativ auf `false` gesetzt.
+
+Dabei wird auch `dataprot_accepted_at` auf `NULL` gesetzt. Fuer Anmeldungen, die erst nach dieser Umstellung ueber das Anmeldeformular angelegt werden, setzt der bestehende Ablauf `dataprot = true` und `dataprot_accepted_at = CURRENT_TIMESTAMP`. Diese neu angemeldeten Teilnehmenden duerfen deshalb in der App nicht erneut zur Zustimmung aufgefordert werden.
+
+Die produktive Studienfunktion der aktivierten App ist nur zulaessig, wenn das zuletzt erfolgreich synchronisierte Flag `DATAPROT` den Wert `true` besitzt. Demo, Sprachauswahl, Infofeed und technisches Feedback bleiben unabhaengig davon erreichbar. Das Flag steuert den clientseitigen Ablauf; `submit.php` und die anderen bestehenden Endpunkte erhalten keine zusaetzliche `dataprot`-Pruefung.
+
+#### Lokaler Zustand
+
+Die App verwaltet zusaetzlich ein lokales boolesches Flag mit dem Schluessel:
+
+```text
+DATAPROT
+```
+
+Anforderungen:
+
+- `DATAPROT` wird bei einer Neuinstallation beziehungsweise vor der ersten erfolgreichen Synchronisation mit `false` initialisiert.
+- Das lokale Flag bildet ausschliesslich den zuletzt erfolgreich vom Server bestaetigten Zustand ab.
+- Die App darf `DATAPROT` nicht allein aufgrund der lokalen Auswahl der Checkbox auf `true` setzen.
+- `DATAPROT` darf erst nach einer erfolgreichen Serverantwort mit dem serverseitigen Wert synchronisiert werden.
+- Nachdem `DATAPROT` erfolgreich auf `true` gesetzt wurde, wird es weder erneut abgefragt noch auf `false` zurueckgesetzt.
+- Fuer die Speicherung ist vorzugsweise Jetpack DataStore zu verwenden.
+
+#### Synchronisationslogik
+
+Das serverseitige Flag wird nur abgefragt, wenn das lokale Flag `DATAPROT` den Wert `false` besitzt.
+
+Der Ablauf beim Start beziehungsweise nach erfolgreicher Aktivierung lautet:
+
+1. Lokales Flag `DATAPROT` lesen.
+2. Falls `DATAPROT = true`, keinen weiteren Datenschutzhinweis anzeigen.
+3. Falls `DATAPROT = false`, den aktuellen Wert von `register.dataprot` fuer die aktivierte Anmeldung vom Server abrufen.
+4. Falls der Server `dataprot = true` meldet, das lokale Flag ebenfalls auf `true` setzen und die App freigeben.
+5. Falls lokales und serverseitiges Flag `false` sind, den verpflichtenden Bestaetigungsdialog anzeigen.
+6. Solange keine erfolgreiche Zustimmung und anschliessende Synchronisation erfolgt ist, darf keine produktive Studiensituation gestartet werden.
+
+Die zentrale Bedingung fuer die Anzeige des Dialogs lautet damit:
+
+```text
+DATAPROT == false && serverDataProt == false
+```
+
+Teilnehmende, die sich nach der Umstellung ueber das aktualisierte Anmeldeformular registrieren und dort zugestimmt haben, erhalten beim ersten Abgleich `serverDataProt = true`. Das lokale Flag wird daraufhin auf `true` gesetzt; der Bestaetigungsdialog wird nicht angezeigt.
+
+#### Zuordnung des App-Tokens zur Registrierung
+
+Nach erfolgreicher Aktivierungsbestaetigung speichert der Server dauerhaft:
+
+```text
+registration_token_hash =
+HMAC-SHA-256(
+  pseudonym-secret,
+  "registration-token:v1\0" || lowercase(app_token)
+)
+```
+
+Das Klartext-App-Token wird nicht serverseitig gespeichert. Durch die Domaenentrennung stimmt `registration_token_hash` weder mit dem Freigabe-Hash in `valid_app_token_hashes` noch mit `self_reports.participant_id` ueberein.
+
+Die Aktivierung einer vorhandenen, per Double-Opt-In bestaetigten Anmeldung muss auch bei `register.dataprot = false` moeglich sein. Andernfalls koennten die durch die einmalige Migration zurueckgesetzten Anmeldungen den In-App-Zustimmungsdialog nicht erreichen.
+
+#### Abruf des serverseitigen Zustands per POST
+
+Der Endpunkt `dataprot.php` stellt fuer eine erfolgreich authentifizierte Anmeldung den aktuellen Wert von `register.dataprot` bereit.
+
+Die App sendet:
+
+```http
+POST /dataprot.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "app_token": "<app-token>"
+}
+```
+
+Beispielantwort:
+
+```json
+{
+  "dataprot": true
+}
+```
+
+Anforderungen:
+
+- Der Server validiert den UUID-v4-App-Token und berechnet daraus den `registration_token_hash`.
+- Die E-Mail-Adresse wird weder angefordert noch uebertragen.
+- Bei fehlendem, ungueltigem oder nicht zuordenbarem App-Token antwortet der Endpunkt mit HTTP 401 und einer neutralen Fehlermeldung.
+- Die Antwort darf keine weiteren Registrierungsdaten enthalten.
+- Die Antwort verwendet `Cache-Control: no-store`.
+- Bei einem Netzwerk- oder Serverfehler darf die App den Zustand nicht als zugestimmt behandeln.
+- Kann der Zustand bei lokalem `DATAPROT = false` nicht bestimmt werden, bleibt die App gesperrt und bietet einen erneuten Versuch an.
+
+#### Bestaetigungsdialog in der App
+
+Wenn sowohl das lokale als auch das serverseitige Flag `false` sind, zeigt die App einen nicht ueberspringbaren Bestaetigungsdialog an.
+
+Der Dialog enthaelt ausschliesslich:
+
+- einen kurzen neutralen Hinweis auf die aktualisierte Datenschutzerklaerung,
+- einen klickbaren Link zur vollstaendigen Datenschutzerklaerung,
+- eine initial nicht ausgewaehlte Checkbox zur ausdruecklichen Zustimmung,
+- den Button `Absenden`.
+
+Beispieltext:
+
+```text
+Bitte lesen Sie die aktualisierte Datenschutzerklaerung. Um CueLens weiter zu nutzen, stimmen Sie der Datenschutzerklaerung bitte erneut zu.
+```
+
+Der Text `Datenschutzerklaerung` beziehungsweise ein klar erkennbarer Link im Hinweistext oeffnet die aktuelle Datenschutzerklaerung ueber eine HTTPS-URL.
+
+Anforderungen:
+
+- Die Checkbox ist initial nicht ausgewaehlt.
+- Der Button `Absenden` ist initial deaktiviert.
+- Der Button wird erst nach Auswahl der Checkbox aktiviert.
+- Das Schliessen des Dialogs, die Android-Zurueck-Geste, ein App-Neustart oder ein Deep Link duerfen den Einstieg in eine produktive Studiensituation nicht freigeben.
+- Ein nicht erreichbarer Link darf nicht als Zustimmung behandelt werden.
+- Der Link darf nur eine fest konfigurierte beziehungsweise vertrauenswuerdige HTTPS-Adresse oeffnen.
+- Der Dialog darf keine vorausgewaehlte Zustimmung und keine irrefuehrende Gestaltung enthalten.
+- Waehrend der laufenden Anfrage wird der Button deaktiviert, damit keine parallelen Mehrfachanfragen entstehen.
+
+#### Uebermittlung der Zustimmung
+
+Nach Auswahl der Checkbox und Betaetigung von `Absenden` sendet die App den App-Token und die ausdrueckliche Zustimmung im JSON-Body an `dataprot.php`.
+
+Beispiel:
+
+```http
+PUT /dataprot.php
+Content-Type: application/json
+
+{
+  "app_token": "<app-token>",
+  "dataprot": true
+}
+```
+
+Der Server verarbeitet die Anfrage wie folgt:
+
+1. Request-Methode und Eingaben validieren.
+2. UUID-v4-App-Token aus dem JSON-Body validieren.
+3. `registration_token_hash` berechnen und die zugehoerige Anmeldung ermitteln.
+4. Nur bei erfolgreicher Zuordnung `register.dataprot` auf `true` setzen.
+5. `dataprot_accepted_at` nur dann auf `UTC_TIMESTAMP()` setzen, wenn noch kein Wert vorliegt.
+6. Den anschliessend gespeicherten serverseitigen Wert in der Antwort bestaetigen.
+
+Die Aktualisierung erfolgt atomar:
+
+```sql
+UPDATE register
+SET dataprot = TRUE,
+    dataprot_accepted_at = COALESCE(dataprot_accepted_at, UTC_TIMESTAMP())
+WHERE registration_token_hash = :registration_token_hash;
+```
+
+Beispielantwort nach erfolgreicher Aktualisierung:
+
+```json
+{
+  "dataprot": true
+}
+```
+
+Damit koennen Aktualisierung und Synchronisation in einem Request bestaetigt werden.
+
+#### Synchronisation nach der Zustimmung
+
+Nach erfolgreicher Serverantwort gilt:
+
+1. Antwortwert `dataprot` pruefen.
+2. Nur bei `dataprot = true` das lokale Flag `DATAPROT` auf `true` setzen.
+3. Bestaetigungsdialog schliessen.
+4. Produktive Studienfunktion freigeben.
+
+Bei Timeout, HTTP-Fehler, ungueltiger Antwort oder `dataprot = false` bleibt das lokale Flag unveraendert auf `false`. Die App bleibt gesperrt und zeigt eine neutrale Fehlermeldung:
+
+```text
+Ihre Zustimmung konnte nicht gespeichert werden. Bitte versuchen Sie es spaeter noch einmal.
+```
+
+Die Anfrage ist idempotent. Eine wiederholte gueltige Zustimmung erzeugt keine doppelten Datensaetze, setzt lediglich erneut `register.dataprot = true` und veraendert einen bereits vorhandenen Wert in `dataprot_accepted_at` nicht.
+
+#### Einmalige administrative Migration
+
+Vor Bereitstellung der neuen App-Version wird das Flag fuer alle zu diesem Zeitpunkt bestehenden Anmeldungen einmalig administrativ zurueckgesetzt:
+
+```sql
+UPDATE register
+SET dataprot = FALSE,
+    dataprot_accepted_at = NULL
+WHERE <Bedingung fuer bestehende Anmeldungen>;
+```
+
+Die konkrete Bedingung muss verhindern, dass Anmeldungen zurueckgesetzt werden, die erst nach Inkrafttreten der neuen Datenschutzerklaerung und bereits unter deren Anzeige angelegt wurden.
+
+Dafuer ist vorzugsweise ein eindeutiger administrativer Stichtag oder eine Migrationsmarkierung zu verwenden, beispielsweise:
+
+```sql
+UPDATE register
+SET dataprot = FALSE,
+    dataprot_accepted_at = NULL
+WHERE created_at < :privacy_policy_changeover;
+```
+
+Falls `register` noch keinen verlaesslichen Erstellungszeitpunkt enthaelt, muss die Migration vor der Freischaltung des aktualisierten Anmeldeformulars einmalig und dokumentiert ausgefuehrt werden. Nach der Migration darf kein periodischer oder bei jedem Deployment ausgefuehrter Reset bestehen.
+
+Die Migration ist vorab durch ein Backup und eine zaehlende Kontrollabfrage abzusichern:
+
+```sql
+SELECT COUNT(*)
+FROM register
+WHERE created_at < :privacy_policy_changeover;
+```
+
+Zu dokumentieren sind mindestens:
+
+- Zeitpunkt der Migration,
+- verwendete SQL-Anweisung,
+- Zahl der betroffenen Datensaetze,
+- ausfuehrende administrative Rolle,
+- Ergebnis der Kontrollabfrage,
+- vorhandenes und getestetes Backup.
+
+#### Fehlerverhalten
+
+- Bei fehlendem Netzwerk und lokalem `DATAPROT = false` bleibt die App gesperrt.
+- Ein unbekannter oder fehlender Serverwert darf nicht als `true` interpretiert werden.
+- Bei HTTP 401 muss die App die bestehende Aktivierungs- beziehungsweise Tokenfehlerlogik verwenden.
+- `dataprot.php` akzeptiert ausschliesslich POST und PUT; andere Methoden werden mit HTTP 405 abgelehnt.
+- Ein PUT ohne exakt die Felder `app_token` und `dataprot = true` wird mit HTTP 400 abgelehnt.
+- Fehlermeldungen duerfen nicht offenlegen, zu welcher Registrierung ein Token gehoert.
+- App-Token und `registration_token_hash` duerfen nicht in Logs, Crash-Reports oder Fehlermeldungen ausgegeben werden.
+
+#### Tests
+
+Mindestens folgende Testfaelle sind umzusetzen:
+
+1. `DATAPROT = false` und serverseitig `dataprot = true`: lokales Flag wird synchronisiert; kein Dialog erscheint.
+2. `DATAPROT = false` und serverseitig `dataprot = false`: Dialog erscheint und die App bleibt gesperrt.
+3. `DATAPROT = true`: beim regulaeren App-Start erfolgt keine unnoetige Statusabfrage.
+4. Neu registrierte Person mit serverseitig `dataprot = true`: kein Dialog erscheint.
+5. Bestehende Anmeldung nach administrativem Reset: Dialog erscheint.
+6. Checkbox nicht ausgewaehlt: `Absenden` bleibt deaktiviert.
+7. Checkbox ausgewaehlt: `Absenden` wird aktiviert.
+8. Erfolgreiche Zustimmung: Server setzt `dataprot = true`, danach wird `DATAPROT = true` gespeichert.
+9. Timeout nach `Absenden`: lokales Flag bleibt `false`, App bleibt gesperrt.
+10. Fehlender, ungueltiger oder nicht zuordenbarer App-Token im JSON-Body: Server antwortet mit HTTP 401 und aendert keinen Datensatz.
+11. Wiederholte gueltige Zustimmung: Request bleibt idempotent.
+12. Android-Zurueck-Geste, Deep Link und App-Neustart umgehen den Dialog nicht.
+13. Ein wiederholtes PUT veraendert den erstmaligen Wert von `dataprot_accepted_at` nicht.
+14. App-Token und `registration_token_hash` erscheinen nicht in Logs.
+15. Die administrative Migration betrifft nur Anmeldungen vor dem festgelegten Stichtag und setzt deren `dataprot_accepted_at` auf `NULL`.
+16. Eine bestaetigte Altanmeldung kann trotz `register.dataprot = false` aktiviert werden.
+
+### 15.9 Zusaetzliche Tests und Definition of Done
 
 Vor Abschluss der Aenderungen sind mindestens folgende Faelle zu testen:
 
@@ -1194,4 +1455,4 @@ Vor Abschluss der Aenderungen sind mindestens folgende Faelle zu testen:
 - `next_study_run_enabled = true` umgeht keine Aktivierungs-, Fortschritts- oder Sperrzeitpruefung.
 - Nur ein nach erfolgreichem Double Opt-In bestaetigtes und in `valid_app_token_hashes` freigegebenes App-Token darf Selbstberichte erzeugen.
 
-Ein wichtiger technischer Punkt ist im Entwurf bewusst abgesichert: Der Drei-Wege-Handshake benoetigt einen kurzlebigen serverseitigen Pending-Zustand. Andernfalls koennte ein verlorener Token-Response nicht sicher wiederholt und der Bestaetigungsrequest nicht verifiziert werden. Das Token bleibt dabei nur temporaer der E-Mail-Adresse zugeordnet; eine dauerhafte Verbindung entsteht nicht.
+Ein wichtiger technischer Punkt ist im Entwurf bewusst abgesichert: Der Drei-Wege-Handshake benoetigt einen kurzlebigen serverseitigen Pending-Zustand. Andernfalls koennte ein verlorener Token-Response nicht sicher wiederholt und der Bestaetigungsrequest nicht verifiziert werden. Nach der Bestaetigung werden der Pending-Verifikator und die Aktivierungsfrist geloescht. Dauerhaft verbleibt nur der kryptographisch getrennte `registration_token_hash`, damit `dataprot.php` spaetere App-Token aus dem JSON-Body ohne Uebermittlung der E-Mail-Adresse genau einer Registrierung zuordnen kann.

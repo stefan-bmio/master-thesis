@@ -3,6 +3,8 @@ package de.eachandevery.cuelens.prestudy
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
@@ -26,6 +28,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
@@ -78,6 +82,8 @@ fun PreStudyApp(
         PreStudyController(
             activationService = HttpActivationService(BuildConfig.ACTIVATION_URL),
             appTokenStore = AndroidKeystoreAppTokenStore(context),
+            dataProtectionService = HttpDataProtectionService(BuildConfig.DATA_PROTECTION_URL),
+            dataProtectionConsentStore = DataStoreDataProtectionConsentStore(context),
             featureConfigService = HttpFeatureConfigService(BuildConfig.FEATURE_CONFIG_URL),
             studyProgressStore = SharedPreferencesStudyProgressStore(context),
             studyTransferRetryService = StudyTransferRetryService {
@@ -88,6 +94,11 @@ fun PreStudyApp(
     }
     val state by controller.state.collectAsState()
     val scope = rememberCoroutineScope()
+    LaunchedEffect(controller) {
+        if (state.hasAppToken) {
+            controller.refreshDataProtectionConsent(openScreenWhenRequired = true)
+        }
+    }
     LaunchedEffect(state.route, state.hasAppToken) {
         if (state.route == PreStudyRoute.Home) {
             controller.refreshNextStudyRun()
@@ -152,6 +163,38 @@ fun PreStudyApp(
                 modifier = modifier
             )
         }
+        PreStudyRoute.DataProtectionConsent -> {
+            BackHandler {
+                if (state.dataProtectionConsentState != DataProtectionConsentState.Submitting) {
+                    controller.backToHome()
+                }
+            }
+            val privacyPolicyUrl = if (language == AppLanguage.English) {
+                BuildConfig.PRIVACY_POLICY_URL_EN
+            } else {
+                BuildConfig.PRIVACY_POLICY_URL_DE
+            }
+            DataProtectionConsentScreen(
+                consentState = state.dataProtectionConsentState,
+                language = language,
+                privacyPolicyUrl = privacyPolicyUrl,
+                onLanguageChange = onLanguageChange,
+                onOpenPrivacyPolicy = {
+                    val uri = Uri.parse(privacyPolicyUrl)
+                    if (uri.scheme.equals("https", ignoreCase = true)) {
+                        runCatching {
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, uri).addFlags(
+                                    Intent.FLAG_ACTIVITY_NEW_TASK
+                                )
+                            )
+                        }
+                    }
+                },
+                onSubmit = { scope.launch { controller.acceptDataProtection() } },
+                modifier = modifier
+            )
+        }
         PreStudyRoute.DemoImageMatching -> {
             BackHandler { controller.backToHome() }
             DemoImageMatchingScreen(
@@ -209,6 +252,110 @@ fun PreStudyApp(
                 onLanguageChange = onLanguageChange,
                 onExit = controller::backToHome,
                 modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+internal fun DataProtectionConsentScreen(
+    consentState: DataProtectionConsentState,
+    language: AppLanguage,
+    privacyPolicyUrl: String,
+    onLanguageChange: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val strings = localizedStrings(language)
+    var accepted by remember { mutableStateOf(false) }
+    val requestRunning =
+        consentState == DataProtectionConsentState.Checking ||
+            consentState == DataProtectionConsentState.Submitting
+    val trustedPolicyUrl = remember(privacyPolicyUrl) {
+        runCatching {
+            Uri.parse(privacyPolicyUrl).scheme.equals("https", ignoreCase = true)
+        }.getOrDefault(false)
+    }
+
+    PreStudyScreenFrame(
+        language = language,
+        onLanguageChange = onLanguageChange,
+        modifier = modifier
+    ) {
+        Text(
+            text = strings.dataProtectionTitle,
+            color = Color.Black,
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = strings.dataProtectionNotice,
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedButton(
+            enabled = trustedPolicyUrl && !requestRunning,
+            onClick = onOpenPrivacyPolicy,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = PreStudyPrimary),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(strings.dataProtectionOpenPolicy)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = accepted,
+                enabled = !requestRunning,
+                onCheckedChange = { accepted = it },
+                colors = CheckboxDefaults.colors(checkedColor = PreStudyPrimary),
+                modifier = Modifier.semantics {
+                    contentDescription = strings.dataProtectionAccept
+                }
+            )
+            Text(
+                text = strings.dataProtectionAccept,
+                color = Color.Black,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        if (requestRunning) {
+            Spacer(modifier = Modifier.height(12.dp))
+            CircularProgressIndicator(color = PreStudyPrimary)
+        }
+        if (consentState == DataProtectionConsentState.Error) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = strings.dataProtectionFailed,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(
+            enabled = accepted && !requestRunning && trustedPolicyUrl,
+            onClick = onSubmit,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PreStudyPrimary,
+                disabledContainerColor = PreStudyDisabledButton
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                if (consentState == DataProtectionConsentState.Submitting) {
+                    strings.dataProtectionSubmitting
+                } else {
+                    strings.dataProtectionSubmit
+                }
             )
         }
     }

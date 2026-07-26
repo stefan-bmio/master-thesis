@@ -14,6 +14,7 @@ final class TokenIdentityTest extends TestCase
     {
         $validHash = valid_app_token_hash(self::SECRET, self::TOKEN);
         $participantId = participant_id_for_app_token(self::SECRET, self::TOKEN);
+        $registrationHash = registration_token_hash(self::SECRET, self::TOKEN);
 
         self::assertSame(
             $validHash,
@@ -21,5 +22,11 @@ final class TokenIdentityTest extends TestCase
         );
         self::assertSame(64, strlen($validHash));
         self::assertNotSame($validHash, $participantId);
+        self::assertNotSame($validHash, $registrationHash);
+        self::assertNotSame($participantId, $registrationHash);
+        self::assertSame(
+            $registrationHash,
+            registration_token_hash(self::SECRET, strtolower(self::TOKEN))
+        );
     }
 }

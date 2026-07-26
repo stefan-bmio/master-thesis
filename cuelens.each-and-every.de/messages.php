@@ -5,8 +5,17 @@ header('Content-Type: application/json; charset=utf-8');
 
 require __DIR__ . '/lib/error-log.php';
 
+const MESSAGES_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-craving.php';
+
 function json_response(int $statusCode, array $payload): never
 {
+    if ($statusCode >= 400 && $statusCode <= 499) {
+        report_http_client_error(
+            $statusCode,
+            'messages_endpoint',
+            MESSAGES_DB_CONFIG_FILE
+        );
+    }
     http_response_code($statusCode);
     echo json_encode(
         $payload,
@@ -100,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     ]);
 }
 
-$config = require __DIR__ . '/config/cuelens-craving.php';
+$config = require MESSAGES_DB_CONFIG_FILE;
 
 try {
     $pdo = pdo_from_config(is_array($config) ? $config : []);

@@ -9,6 +9,7 @@ final class FeaturesEndpointTest extends TestCase
     {
         $script = <<<'PHP'
 $_SERVER['REQUEST_METHOD'] = 'POST';
+$GLOBALS['cuelens_http_client_error_reporter'] = static function (): void {};
 require getenv('CUELENS_ENDPOINT');
 PHP;
         $process = proc_open(

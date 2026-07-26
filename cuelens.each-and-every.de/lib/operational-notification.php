@@ -11,6 +11,7 @@ const OPERATIONAL_EVENT_FEEDBACK_RECEIVED = 'feedback_received';
 const OPERATIONAL_EVENT_FEEDBACK_LIMIT_REACHED = 'feedback_limit_reached';
 const OPERATIONAL_EVENT_REGISTRATION_CREATED = 'registration_created';
 const OPERATIONAL_EVENT_ACTIVATION_COMPLETED = 'activation_completed';
+const OPERATIONAL_EVENT_CLIENT_ERROR = 'client_error';
 const OPERATIONAL_EVENT_SERVER_ERROR = 'server_error';
 
 /**
@@ -39,6 +40,10 @@ function build_operational_notification(
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED => [
             'subject' => '[CueLens] App-Aktivierung abgeschlossen',
             'notice' => 'Eine App-Aktivierung wurde erfolgreich abgeschlossen.',
+        ],
+        OPERATIONAL_EVENT_CLIENT_ERROR => [
+            'subject' => '[CueLens] Clientfehler',
+            'notice' => 'Weitere technische Angaben liegen datensparsam im geschuetzten Serverprotokoll.',
         ],
         OPERATIONAL_EVENT_SERVER_ERROR => [
             'subject' => '[CueLens] Serverfehler',
