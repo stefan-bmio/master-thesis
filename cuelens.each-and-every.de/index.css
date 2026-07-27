@@ -125,8 +125,14 @@ table.international a {
 	width: 100%;
 }
 
+img {
+	height: auto;
+	max-width: 100%;
+}
+
 @media (max-width: 520px) {
 	body {
+		font-weight: 400;
 		padding: 24px 16px;
 	}
 
