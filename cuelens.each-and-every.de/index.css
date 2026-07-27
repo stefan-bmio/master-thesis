@@ -125,6 +125,10 @@ table.international a {
 	width: 100%;
 }
 
+img {
+	width: 100%;
+}
+
 @media (max-width: 520px) {
 	body {
 		padding: 24px 16px;
