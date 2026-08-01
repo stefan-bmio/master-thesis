@@ -1,0 +1,135 @@
+%%
+%% Ergänzung zu Kapitel 5: Appentwicklung
+%%
+
+\begin{neu}
+\section{Weiterentwickelte Systemarchitektur}
+
+Die Implementierung besteht inzwischen aus vier klar getrennten Bereichen: der Android-App, der Registrierungs- und Informationswebseite, einem PHP-Backend sowie zwei fachlich getrennten Datenbanken. Die Android-App übernimmt Bedienoberfläche, lokalen Studienzustand, Aktivierung, Datenschutzbestätigung, Benachrichtigungen und Übertragung der Selbstberichte. Die Webanwendung dient der Registrierung, dem Double-Opt-In, der Bereitstellung von Dokumenten und der APK-Installation. Das PHP-Backend stellt jeweils kleine zweckgebundene Endpunkte bereit. Registrierungs- und Feedbackdaten werden von den pseudonymisierten wissenschaftlichen Berichten getrennt gespeichert.
+
+Diese Aufteilung folgt dem Prinzip der begrenzten Verantwortlichkeit. Ein Endpunkt erhält nur die Felder, die er für seinen Zweck benötigt. Der Nachrichtenendpunkt kennt keine Registrierung. Das Feedbackformular benötigt weder E-Mail-Adresse noch App-Token. Der Selbstberichtsendpunkt erhält keine Zahlungsdaten und keine von der App behauptete Versuchsbedingung. Die Aktivierung greift auf Registrierung und Freigabeliste zu, speichert aber das ausgegebene Token nicht im Klartext.
+
+Die Produktions- und Staging-Konfiguration werden über Android Product Flavors getrennt. Staging erhält eine eigene Application-ID-Endung, lokale HTTP-Endpunkte und eine verkürzte Sperrzeit von drei Sekunden. Production verwendet die offizielle HTTPS-Domain, verbietet Klartextverkehr und setzt die reguläre Sperrzeit auf drei Stunden. Die Trennung erlaubt schnelle technische Tests, ohne Testwerte oder unverschlüsselte Endpunkte in die produktive Konfiguration übernehmen zu müssen.
+
+\section{Pre-Study-App und Zustandsmodell}
+
+Der frühere lineare Studienprototyp wurde in eine Pre-Study-App eingebettet. Beim Start lädt die App zunächst die gespeicherte Sprache und ruft den Infofeed ab. Noch nicht dauerhaft ausgeblendete Nachrichten werden vor der Startseite als eigene Vollbildseiten angezeigt. Danach folgt bei der ersten Nutzung die Entscheidung über Benachrichtigungen. Erst wenn dieser Startablauf abgeschlossen ist, wird die eigentliche Pre-Study-Navigation sichtbar.
+
+Die Navigation unterscheidet die Startseite, E-Mail-Aktivierung, erneute Datenschutzbestätigung, Demo-Bildzuordnung, Demo-Wortzuordnung, Demo-Craving-Abfrage, Demo-Abschluss, Feedback und produktive Studie. Die Routen werden nicht nur durch sichtbare Buttons, sondern durch einen zentralen Controller und explizite Zustände begrenzt. Dadurch lässt sich beispielsweise verhindern, dass die produktive Studie ohne Token, bei ausstehender Übertragung oder ohne erforderliche Datenschutzbestätigung geöffnet wird.
+
+Für Aktivierung, Datenschutz und Feedback existieren getrennte Zustandsmodelle mit Lade-, Erfolgs- und Fehlerzuständen. Netzwerkoperationen werden außerhalb des UI-Threads ausgeführt. Die Compose-Oberfläche erhält nur den jeweils darzustellenden Zustand und löst klar abgegrenzte Controlleraktionen aus. Diese Struktur reduziert doppelte Zustandsübergänge und erleichtert Unit-Tests, weil Netzwerk-, Speicher- und Zeitabhängigkeiten als Schnittstellen ersetzt werden können.
+
+Die Demo bleibt von der produktiven Freigabe getrennt. Sie verwendet dieselbe Grundidee der Bild- und Wortaufgaben, überträgt aber keinen wissenschaftlichen Craving-Wert. Dadurch können Interessierte die Bedienung kennenlernen, ohne einen produktiven Bericht zu erzeugen oder den Studienfortschritt zu verändern.
+
+\section{Zweistufige Aktivierung}
+
+Die Aktivierung verwendet zwei aufeinanderfolgende \texttt{PUT}-Requests an \texttt{activate.php}. Im ersten Request sendet die App ausschließlich die E-Mail-Adresse. Der Server normalisiert sie durch Trimmen und Kleinschreibung und prüft, ob die Registrierung per Double-Opt-In bestätigt, die Studieninformation akzeptiert und noch kein Token ausgegeben wurde. Die aktuelle Aktivierung setzt nicht voraus, dass der Datenschutzstatus bereits eins ist. Damit kann eine App auch dann ein Token erhalten, wenn eine aktualisierte Datenschutzerklärung anschließend innerhalb der App erneut bestätigt werden muss.
+
+Bei zulässiger Registrierung erzeugt der Server ein UUID-v4-App-Token. Er speichert nicht das Token, sondern einen HMAC, der an Aktivierungsgeheimnis, normalisierte E-Mail-Adresse und Token gebunden ist. Zusätzlich wird ein Gültigkeitszeitpunkt von fünf Minuten gesetzt. Ein erneuter erster Request überschreibt einen noch ausstehenden Aktivierungshash. Ein älteres Token kann danach nicht mehr erfolgreich bestätigt werden.
+
+Der zweite Request enthält E-Mail-Adresse und App-Token. Der Server berechnet den erwarteten Aktivierungshash erneut, vergleicht ihn mit \texttt{hash\_equals} und prüft die Frist. Erst dann werden der temporäre Hash und die Frist gelöscht, \texttt{app\_token\_issued\_at} gesetzt und ein dauerhafter \path{registration_token_hash} gespeichert. Gleichzeitig wird in der Studiendatenbank ein davon verschiedener Freigabehash in \path{valid_app_token_hashes} eingetragen. Die App erwartet für diesen Schritt HTTP 204 und speichert den Token erst danach lokal.
+
+Der zweite Request verhindert, dass ein Token als ausgegeben gilt, obwohl der erste Response die App nicht erreicht hat. Ein Timeout bei der Bestätigung bleibt dennoch mehrdeutig: Der Server kann den Schritt bereits verarbeitet haben, während die App keine Antwort erhalten hat. In diesem Fall zeigt die App einen Supporthinweis. Eine automatische Wiederholung ist nicht ohne Weiteres möglich, weil der Server denselben Aktivierungsvorgang nach erfolgreicher Bestätigung nicht erneut annehmen soll.
+
+\section{Domänentrennung der Token-Identitäten}
+
+Aus dem App-Token werden drei HMAC-SHA-256-Werte mit unterschiedlichen Kontexten gebildet. Der Aktivierungshash ist zusätzlich an die E-Mail-Adresse gebunden und nur für das kurze Aktivierungsfenster bestimmt. Der Registrierungs-Token-Hash verwendet den Kontext \texttt{registration-token:v1} und ermöglicht spätere Statusabfragen in der Registrierungsdatenbank. Der Freigabehash verwendet \texttt{valid-token:v1} und autorisiert wissenschaftliche Übertragungen. Die pseudonyme Teilnehmerkennung verwendet \texttt{pseudonym:v1} und gruppiert die Selbstberichte.
+
+Die Domänentrennung ist notwendig, weil ein identischer einfacher Hash in mehreren Tabellen eine unmittelbare Verknüpfung ermöglichen würde. Durch die unterschiedlichen Kontexte sind die Ausgaben trotz desselben Tokens und Geheimnisses verschieden. Ohne Kenntnis des serverseitigen Geheimnisses kann ein exportierter Registrierungs-Hash nicht direkt einer Teilnehmerkennung in der Berichtstabelle zugeordnet werden.
+
+Das Verfahren verlagert einen Teil des Schutzes auf das Geheimnis in der Host-Konfiguration. Dieses Geheimnis darf nicht im Repository, in Webantworten oder in ungeschützten Backups enthalten sein. Ein Verlust würde zwar nicht die ursprünglichen UUIDs offenlegen, aber die domänentrennten Werte reproduzierbar und damit Datenbestände verknüpfbar machen. Schlüsselwechsel und Wiederherstellung sind im aktuellen Prototyp nicht automatisiert und müssen organisatorisch abgesichert werden.
+
+\section{Datenbanktrennung und Konsistenz}
+
+Die Bestätigung der Aktivierung verwendet eine Verbindung zur Registrierungsdatenbank und eine zweite Verbindung zur Studiendatenbank. Zunächst wird die Registrierung bedingt aktualisiert. Danach wird der Freigabehash in \path{valid_app_token_hashes} eingefügt. Dieses Vorgehen vermeidet, dass der Benutzer der Registrierungsdatenbank Schreibrechte auf wissenschaftliche Tabellen benötigt oder beide Schemata auf derselben Instanz liegen müssen.
+
+Die beiden Schritte bilden jedoch keine gemeinsame Transaktion. Wird die Registrierungsänderung gespeichert und schlägt anschließend der Insert in der Studiendatenbank fehl, ist die Registrierung als aktiviert markiert, während Selbstberichte mit dem Token abgewiesen werden. Die Implementierung protokolliert Serverfehler und kann eine operative Benachrichtigung auslösen, führt aber keine automatische Kompensation durch. Für den Pilotbetrieb ist deshalb ein Supportverfahren erforderlich, das den Zustand anhand der Request-ID prüft und den Freigabehash kontrolliert nachträgt oder die Aktivierung zurücksetzt.
+
+Eine alternative Architektur wäre eine gemeinsame Datenbanktransaktion mit eng begrenzten Cross-Schema-Rechten oder ein transaktionales Outbox-Verfahren. Beide Varianten erhöhen den Entwicklungs- und Betriebsaufwand. Die aktuelle Lösung priorisiert die Trennung der Datenbankberechtigungen und nimmt dafür einen seltenen, aber dokumentationspflichtigen Inkonsistenzfall in Kauf.
+
+\section{Sichere lokale Token-Speicherung}
+
+Der App-Token wird nicht mehr als Klartext in den allgemeinen Studien-\path{SharedPreferences} gespeichert. Beim ersten Speichern erzeugt die App einen 256-Bit-AES-Schlüssel im Android Keystore. Das Token wird mit AES/GCM/NoPadding verschlüsselt. Eine zufällige Initialisierungsvariable und das Chiffrat werden Base64-codiert in einem eigenen privaten Preferences-Bereich abgelegt. Als zusätzliche authentifizierte Daten wird der feste Kontext \path{cuelens:app-token:v1} verwendet.
+
+GCM stellt Vertraulichkeit und Integrität gemeinsam bereit. Wird das Chiffrat verändert, der Initialisierungsvektor ausgetauscht oder der zugehörige Keystore-Schlüssel gelöscht, schlägt die Entschlüsselung fehl. Die App behandelt diesen Zustand als Speicherfehler und verwendet weder leere noch teilweise rekonstruierte Werte. Der Schlüssel verlangt keine erneute Geräteauthentifizierung bei jedem Zugriff, damit Hintergrund- und Startabläufe funktionieren. Der Schutz beruht daher auf der regulären Gerätesicherheit und dem privaten App-Kontext.
+
+Beim Initialisieren entfernt die App einen eventuell vorhandenen alten Klartextwert aus \texttt{cue\_lens\_state}. Sie migriert ihn bewusst nicht. Diese Entscheidung vermeidet, dass ein möglicherweise bereits ungeschützt gesicherter Wert stillschweigend weiterverwendet wird. Für eine bestehende Installation kann dadurch eine erneute Aktivierung oder ein Supportvorgang erforderlich werden.
+
+Der übrige Studienzustand bleibt in \path{SharedPreferences}. Dazu gehören bestätigte Situation, nächste Freigabezeit, stabile Matching-Reihenfolge, zuletzt benachrichtigte Situation, ausstehender Craving-Wert, Abrechnungscode und Abschlussstatus. Die automatische Android-Sicherung ist deaktiviert. Für eine weitergehende Produktivisierung sollte geprüft werden, ob ausstehender Craving-Wert und Abrechnungscode ebenfalls verschlüsselt werden, da beide einen höheren Schutzbedarf als ein rein technischer Zähler haben.
+
+\section{Datenschutzstatus in App und Backend}
+
+Der Endpunkt \texttt{dataprot.php} akzeptiert ausschließlich \texttt{POST} zur Statusabfrage und \texttt{PUT} zur Zustimmung. Beide Requests müssen ein syntaktisch gültiges UUID-v4-App-Token enthalten. Der Server berechnet daraus den Registrierungs-Token-Hash und sucht den zugehörigen Datensatz, ohne E-Mail-Adresse oder Token zu speichern. Unbekannte Tokens führen zu HTTP 401, formal ungültige Payloads zu HTTP 400.
+
+Eine Zustimmung setzt \texttt{dataprot} auf eins und schreibt \path{dataprot_accepted_at} nur dann, wenn noch kein Zeitpunkt vorhanden ist. Wiederholte Bestätigungen sind damit idempotent. Die App speichert nach erfolgreicher Serverantwort einen lokalen DataStore-Wert. Fehlen Token, Statusantwort oder lokaler Speicherzugriff, bleibt die produktive Route gesperrt.
+
+Der lokale Erfolgsmarker reduziert Netzwerkzugriffe, ist aber nicht versioniert. Nach einer serverseitigen Rücknahme oder einer erneuten Änderung der Datenschutzerklärung muss sichergestellt werden, dass die App nicht allein wegen des alten lokalen Werts fortfährt. Eine zukünftige Fassung sollte deshalb eine Dokumentversion speichern und den Status regelmäßig oder mindestens vor dem nächsten produktiven Selbstbericht serverseitig verifizieren.
+
+\section{Serverseitige Feature-Freigabe}
+
+Der Endpunkt \texttt{features.php} liefert den booleschen Wert \path{next_study_run_enabled}. Die App behandelt Netzwerkfehler, unerwartete Statuscodes und ungültiges JSON als \texttt{false}. Der Button zur produktiven Studiensituation wird nur angezeigt, wenn ein Token vorhanden, die Studie nicht abgeschlossen, keine Übertragung ausstehend und das Feature aktiviert ist.
+
+Die UI-Prüfung ist nicht die einzige Zugriffskontrolle. \texttt{submit.php} liest denselben Toggle direkt aus der Studiendatenbank und behandelt den Endpunkt bei deaktivierter Funktion als nicht verfügbar. Dadurch kann ein manuell konstruierter Request die serverseitige Freigabe nicht umgehen. Das Feature-Toggle ermöglicht einen kontrollierten Übergang von der Pre-Study-Phase zur produktiven Datenerhebung und eine schnelle globale Abschaltung bei technischen oder organisatorischen Problemen.
+
+Der Toggle ist global und ersetzt keine individuelle Sperre. Ein Widerruf oder Ausschluss einer einzelnen Person muss über die zugehörige Tokenfreigabe oder eine zusätzliche serverseitige Statusprüfung umgesetzt werden. Diese Unterscheidung ist für den Studienbetrieb wesentlich.
+
+\section{Infofeed und mehrsprachige Nachrichten}
+
+Der Nachrichtenendpunkt liefert alle Datensätze aus \texttt{messages} sortiert nach Erstellungszeitpunkt und ID. Jede Nachricht besitzt einen deutschen und einen englischen Text. Die App wählt die aktuell eingestellte Sprache und speichert lediglich IDs dauerhaft ausgeblendeter Nachrichten. Der Server erhält keine Liste bereits gelesener oder ausgeblendeter IDs. Diese Entscheidung hält den Endpoint zustandslos und verhindert eine personenbezogene Nutzungsverfolgung.
+
+Zusätzlich speichert die App IDs bereits bekannter Nachrichten für die Benachrichtigungslogik. Eine periodische WorkManager-Aufgabe ruft den vollständigen Feed ab, filtert bekannte und dauerhaft ausgeblendete IDs und erzeugt höchstens eine allgemeine Benachrichtigung, wenn neue Inhalte vorhanden sind. Danach markiert sie alle erhaltenen IDs lokal als bekannt. Netzwerkfehler und Serverfehler ab 500 führen zu einem Retry; dauerhafte Protokoll- oder Clientfehler werden nicht endlos wiederholt.
+
+Die periodische Prüfung läuft frühestens ungefähr einmal täglich und ist nicht zeitkritisch. Der Infofeed beim App-Start bleibt der maßgebliche Abrufweg. Die Benachrichtigung enthält nur einen neutralen Hinweis und öffnet die App über einen expliziten Intent erneut beim Infofeed.
+
+\section{Anonymes Feedback und Kapazitätsgrenze}
+
+Das Feedbackformular kann ohne App-Aktivierung verwendet werden. Es überträgt ein optionales Feld zum Akquisekanal, einen optionalen Kommentar und die App-Version. Mindestens eines der beiden Freitextfelder muss befüllt sein. Der Server begrenzt den Akquisekanal auf 500, den Kommentar auf 5000 und die Versionsangabe auf 64 Zeichen. Feedback wird in einer getrennten Tabelle der Registrierungsdatenbank gespeichert und nicht mit Token oder Selbstberichten verknüpft.
+
+Ein weicher Grenzwert von 200 gespeicherten Einträgen schützt den begrenzten Pilotbetrieb vor unbegrenztem Wachstum. Ist die Grenze erreicht, wird ein formal gültiger Request verworfen und eine operative Benachrichtigung ausgelöst. Der Client erhält auch in diesem Fall HTTP 204. Diese neutrale Antwort verhindert eine genaue externe Beobachtung des Tabellenstands, bedeutet aber zugleich, dass Nutzende keine Rückmeldung über die Nichtaufnahme ihres Feedbacks erhalten. Für den Studienbetrieb muss die Grenze deshalb überwacht und rechtzeitig angepasst oder das Formular deaktiviert werden.
+
+Operative E-Mails enthalten den Feedbacktext nicht. Sie weisen lediglich darauf hin, dass neuer Inhalt in der geschützten Tabelle liegt beziehungsweise die Grenze erreicht wurde. Damit wird vermieden, dass möglicherweise sensible oder unbeabsichtigt identifizierende Freitexte über den Mailkanal dupliziert werden.
+
+\section{Selbstbericht, Fortschritt und Wiederholungslogik}
+
+Vor einem wissenschaftlichen Selbstbericht prüft \texttt{submit.php} den globalen Feature-Toggle und den Freigabehash des App-Tokens. Aus dem Token wird die HMAC-basierte Teilnehmerkennung berechnet. Innerhalb einer Datenbanktransaktion zählt der Server vorhandene Berichte dieser Kennung, bestimmt den nächsten Index und leitet daraus die Bedingung ab. Die Situationen eins bis zehn werden als \path{CUE_MATCHING}, die Situationen elf bis zwanzig als \path{CUE_LABELING} gespeichert. Ein einundzwanzigster Bericht wird abgelehnt.
+
+Die App speichert den Craving-Wert vor dem Request als ausstehend. Erst nach erfolgreicher Serverantwort wird der lokale Zähler erhöht und die nächste Freigabezeit gesetzt. Bei Netzwerkfehlern bleibt der Wert erhalten. Die Startseite zeigt dann einen Retry-Zustand; ein erneuter Versuch verwendet denselben Übertragungspfad wie die produktive Studienansicht. Solange eine Übertragung aussteht, kann keine neue Studiensituation begonnen werden.
+
+Nach der zwanzigsten Situation erzeugt der Server einen UUID-v4-Abrechnungscode und gibt ihn zurück. Die App speichert den Code lokal und bestätigt ihn mit einem separaten \texttt{PUT}. Schlägt die Bestätigung fehl, wird nur dieser Schritt wiederholt. Nach lokal bestätigtem Abschluss zeigt die Startseite den Code und eine Kopierfunktion. Das Kopieren erleichtert die Übermittlung an die Studienleitung, legt den Code aber in der systemweiten Zwischenablage ab. Dieser Datenschutz- und Missbrauchsaspekt ist in der Teilnehmendeninformation zu erläutern; eine spätere Fassung sollte eine direkte geschützte Übermittlung oder ein zeitnahes Löschen der Zwischenablage prüfen.
+
+Die Retry-Strategie kann einen verlorenen Response abfangen, ist aber nicht vollständig idempotent. Wenn der Server einen Selbstbericht speichert und die Antwort auf dem Übertragungsweg verloren geht, sendet die App beim Retry denselben Craving-Wert erneut. Da der Request keine eindeutige Situations- oder Idempotenzkennung enthält, kann der Server ihn als nächsten Bericht speichern. Das lokale Blockieren neuer Situationen reduziert andere Doppelungen, löst diesen speziellen Commit-Response-Fehler jedoch nicht. Für eine belastbare Produktivfassung ist eine serverseitig eindeutige Request-ID oder eine vorab vereinbarte Situationskennung erforderlich.
+
+\section{Studienerinnerungen}
+
+Nach einer erfolgreich bestätigten Situation kann die App eine einmalige Erinnerung für die nächste Situation planen. Die Entscheidungsfunktion berücksichtigt Benachrichtigungszustimmung, Systemberechtigung, vorhandenes App-Token, Studienabschluss, ausstehende Übertragung, erwartete Situationsnummer, bereits angezeigte Erinnerung und gespeicherte Freigabezeit. Eine Erinnerung wird erstmals nach Situation eins für Situation zwei und letztmals nach Situation neunzehn für Situation zwanzig angelegt.
+
+Jede Situationsnummer erhält einen eindeutigen WorkManager-Namen. Veraltete Aufgaben werden entfernt. Läuft ein Worker vor dem Freigabezeitpunkt, zeigt er keine Benachrichtigung, sondern plant sich für die Restzeit neu. Nach Anzeige wird die Situationsnummer lokal vermerkt, damit ein App-Neustart nicht dieselbe Erinnerung erneut erzeugt.
+
+Die Benachrichtigung verwendet eine private Inhaltsansicht und eine noch allgemeinere öffentliche Version für den Sperrbildschirm. Beim Antippen öffnet sie die Startseite. Dort werden Feature-Toggle, Datenschutzstatus, Fortschritt und Sperrzeit erneut geprüft. Die Benachrichtigung selbst umgeht keine fachliche oder technische Zugangskontrolle.
+
+Infofeed und Studienerinnerungen verwenden derzeit eine gemeinsame grundlegende Zustimmung. Das reduziert die Zahl der Dialoge, erlaubt aber keine getrennte Auswahl beider Nachrichtentypen. Für eine spätere Fassung wäre eine differenzierte Einstellung benutzerfreundlicher, insbesondere wenn allgemeine Informationen gewünscht, Studienerinnerungen aber abgelehnt werden.
+
+\section{Fehlerprotokollierung und Monitoring}
+
+Jeder Backend-Request erhält eine zufällige Request-ID, die als HTTP-Header zurückgegeben und für technische Meldungen verwendet wird. Serverfehler werden nach Möglichkeit in der Tabelle \texttt{error\_log} gespeichert. Die operative E-Mail enthält nur Ereignistyp, UTC-Zeitpunkt, Komponente, Request-ID und eine grobe Fehlerkategorie. Registrierungsadresse, App-Token, Craving-Wert, Feedbacktext, IP-Adresse und User-Agent werden nicht in die Benachrichtigung aufgenommen.
+
+Auch HTTP-Clientfehler zwischen 400 und 499 können datensparsam protokolliert werden. Gespeichert werden Statuscode, Komponente und Request-ID, nicht der Request-Payload. Dadurch lassen sich gehäufte Protokoll- oder Versionsprobleme erkennen, ohne ungültige Nutzdaten zu archivieren. Die geschützte Fehlerdatenbank kann bei Serverausnahmen weiterhin technische Exception-Texte enthalten; ihr Zugriff und ihre Aufbewahrungsdauer müssen deshalb begrenzt werden.
+
+Operative Benachrichtigungen werden nach Abschluss der HTTP-Antwort versendet, soweit die Serverumgebung \path{fastcgi_finish_request} unterstützt. Fehler im Mailtransport dürfen die eigentliche API-Antwort nicht verändern. Dadurch bleibt Monitoring eine beobachtende Zusatzfunktion und wird nicht zu einer neuen Fehlerquelle für die Studienübertragung.
+
+\section{Deployment und Verteilung}
+
+Der produktive Build verwendet die Application-ID \path{de.eachandevery.cuelens}, die Staging-App zusätzlich die Endung \texttt{.staging}. Endpunkte, Datenschutzerklärungs-URLs und Sperrzeiten werden im Build festgelegt. Die finale APK wird zusammen mit Metadaten als Releaseartefakt bereitgestellt und auf der Studienwebseite als \texttt{cuelens.apk} ausgeliefert.
+
+Die Webseite enthält eine sprachneutrale Auswahlseite sowie deutsche und englische Installationsanleitungen mit Screenshots. Nach erfolgreichem Double-Opt-In verweist die Bestätigungsseite direkt auf die Installationsanleitung. Das Deployment-Skript führt zunächst die PHP-Tests aus und kopiert nur bei erfolgreichem Lauf HTML-, JavaScript-, CSS-, PHP- und PDF-Dateien sowie die Verzeichnisse \texttt{lib} und \texttt{img} in das Webverzeichnis. Vertrauliche Konfigurationsdateien werden nicht aus dem Repository heraus deployt.
+
+Die direkte APK-Auslieferung erleichtert den Pilotbetrieb ohne öffentlichen Store, verschiebt aber Update-, Signatur- und Supportaufgaben auf die Studienleitung. Für jede produktive APK sind daher Prüfsumme, Signatur, Version, Erstellungszeitpunkt und zugehöriger Quelltextstand zu dokumentieren. Der aktuelle Prozess sollte um eine reproduzierbare Release-Checkliste ergänzt werden.
+
+\section{Erweiterte Qualitätssicherung}
+
+Die Backendtests decken Methodenprüfung, JSON-Validierung, Feldgrenzen und Fehlerfälle ab, bevor eine Datenbankverbindung erforderlich ist. Für Aktivierung, Feedback, Datenschutz und Freigabelogik existieren zusätzliche MariaDB-Integrationstests, die temporäre Tabellen verwenden. Sie prüfen unter anderem den zweistufigen Aktivierungsablauf, das Überschreiben alter ausstehender Tokens, abgelaufene Bestätigungen, die Trennung der Hashkontexte, den Feedbackgrenzwert und die idempotente Datenschutzannahme. Fehlen die notwendigen Testdatenbankvariablen, werden die Integrationstests übersprungen und dürfen nicht fälschlich als ausgeführt bewertet werden.
+
+Android-Unit-Tests prüfen Controllerzustände, HTTP-Protokolle, Infofeedfilterung, Feature-Fehlerverhalten und Erinnerungsentscheidungen. Tests auf einem Android-Gerät beziehungsweise Emulator prüfen unter anderem die Keystore-Verschlüsselung, wechselnde Initialisierungsvektoren, manipulierte Chiffrate, fehlende Schlüssel, Entfernung alter Klartextwerte, Compose-Oberflächen und Notification Channels. Die Erinnerungslogik testet explizit die Situationen eins, neunzehn und zwanzig, frühe Worker-Ausführung, veraltete Aufgaben, doppelte Benachrichtigungen, ausstehende Übertragungen und fehlende Aktivierung.
+
+Die Teststruktur verbessert die Nachvollziehbarkeit der sicherheits- und studienrelevanten Entscheidungen. Sie ersetzt jedoch kein dokumentiertes vollständiges Buildprotokoll. Für die Revision sind die tatsächlich ausgeführten Befehle, verwendeten Android-Geräte, übersprungenen Integrationstests und Ergebnisse des Production-Builds festzuhalten. Besonders die nicht idempotente Selbstberichtübertragung und die Zwei-Datenbank-Aktivierung benötigen zusätzlich dokumentierte Acceptance Checks für Verbindungsabbrüche an den jeweiligen Commitgrenzen.
+\end{neu}
