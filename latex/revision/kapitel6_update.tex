@@ -1,0 +1,101 @@
+%%
+%% Ergänzung zu Kapitel 6: Planung und Durchführung der App-Studie
+%%
+
+\begin{neu}
+\section{Technischer Teilnahmeablauf}
+
+Der praktische Teilnahmeablauf beginnt weiterhin mit der webbasierten Registrierung und dem Double-Opt-In. Nach erfolgreicher Bestätigung wird nun unmittelbar auf eine zweisprachige Installationsanleitung verwiesen. Die Teilnehmenden laden die APK von der Studienwebseite, öffnen die Datei und bestätigen abhängig von Gerät und Android-Version die Installation aus dieser Quelle. Da die Dialoge der Hersteller voneinander abweichen können, sind Screenshots nur als Orientierung zu verstehen. Für Personen mit geringer technischer Erfahrung muss ein Supportkontakt angeboten werden.
+
+Beim ersten App-Start wird zunächst die Systemsprache übernommen, sofern noch keine Auswahl gespeichert ist. Die App lädt allgemeine Info-Nachrichten und zeigt noch nicht dauerhaft ausgeblendete Inhalte vor der Startseite. Anschließend erläutert sie die optionalen Benachrichtigungen. Eine Ablehnung verhindert weder Demo und Feedback noch eine spätere manuelle Studienteilnahme. Der Sprachwechsel bleibt auf allen wesentlichen Seiten erreichbar und wird lokal gespeichert.
+
+Auf der Startseite kann die Beispiel-Studiensituation ohne Aktivierung ausgeführt werden. Dadurch können Bedienung und Aufgabenart vor der produktiven Teilnahme kennengelernt werden. Die Demo überträgt keinen wissenschaftlichen Craving-Wert und verändert den produktiven Fortschritt nicht. Das freiwillige Feedbackformular ist ebenfalls ohne Aktivierung verfügbar und wird getrennt von den Selbstberichten gespeichert.
+
+\section{Aktivierung und Datenschutzzustimmung}
+
+Für die Aktivierung geben Teilnehmende dieselbe E-Mail-Adresse ein, die bei der Registrierung verwendet wurde. Die App führt technisch zwei Requests aus: Sie fordert zunächst ein App-Token an und bestätigt anschließend dessen Empfang. Dieser zweite Schritt ist für die Teilnehmenden kein eigener Dialog, verhindert aber, dass ein nicht zugestelltes Token als erfolgreich ausgegeben gilt. Erst nach Bestätigung wird das Token verschlüsselt auf dem Gerät gespeichert.
+
+Schlägt der erste Schritt fehl, kann die Eingabe nach Prüfung der Adresse wiederholt werden. Ein Timeout während der Bestätigung ist anders zu behandeln, weil der Server die Aktivierung möglicherweise bereits abgeschlossen hat. Die App zeigt hierfür einen Supporthinweis. Die Studienleitung muss anhand der Registrierung und der technischen Request-ID klären, ob die Aktivierung gültig ist oder kontrolliert zurückgesetzt werden muss. Ein unkoordiniertes erneutes Registrieren derselben Person ist zu vermeiden.
+
+Nach der Aktivierung prüft die App, ob die aktuell verlangte Datenschutzzustimmung vorliegt. Wurde der Status wegen einer aktualisierten Erklärung zurückgesetzt, wird vor der produktiven Studie eine eigene Zustimmungsseite geöffnet. Die Erklärung kann in deutscher oder englischer Sprache aufgerufen werden. Erst nach erfolgreicher serverseitiger Speicherung und lokalem Vermerk kehrt die App zur Startseite zurück.
+
+Für den Studienbetrieb ist festzulegen, wie ein späterer Widerruf umgesetzt wird. Der derzeitige lokale Zustimmungsmarker wird nicht bei jedem Start erneut gegen den Server geprüft. Eine globale Deaktivierung der Studie ist über das Feature-Toggle möglich; eine individuelle Sperre muss zusätzlich über die Tokenfreigabe oder eine statusabhängige Serverprüfung erfolgen. Dieser Ablauf muss vor Beginn der Datenerhebung als Support- und Löschprozess dokumentiert werden.
+
+\section{Freigabe der Studienphase}
+
+Die produktive Studienfunktion wird durch einen serverseitigen Feature-Toggle freigegeben. Vor der Freigabe können Installation, Aktivierung, Demo, Infofeed und Feedback bereits erprobt werden, ohne wissenschaftliche Selbstberichte anzunehmen. Die Studienleitung kann damit zunächst technische Probleme sammeln und die eigentliche Datenerhebung zu einem festgelegten Zeitpunkt global öffnen.
+
+Die App zeigt den Button für die nächste Studiensituation nur, wenn das Feature aktiviert, ein gültiger Token vorhanden, die Studie nicht abgeschlossen und keine Übertragung ausstehend ist. Der Server prüft den Toggle zusätzlich beim Selbstbericht. Eine bloße Manipulation der Bedienoberfläche reicht deshalb nicht aus, um vorzeitig Daten einzureichen.
+
+Das Feature-Toggle dient auch als Notfallabschaltung. Bei einem gravierenden Fehler können neue produktive Übertragungen gestoppt werden, während allgemeine Informationen und Supporthinweise weiterhin über den Infofeed bereitgestellt werden. Vor einer erneuten Freigabe ist zu prüfen, ob lokale ausstehende Übertragungen mit der korrigierten Version kompatibel sind.
+
+\section{Durchführung der Studiensituationen}
+
+Die produktive Sequenz umfasst zwanzig Situationen mit jeweils fünf Aufgaben und einer anschließenden Craving-Angabe. Der Server bestimmt den Situationsindex aus der Zahl bereits gespeicherter Berichte. Die Situationen eins bis zehn werden der Cue-Matching-Bedingung, die Situationen elf bis zwanzig der Cue-Labeling-Bedingung zugeordnet. Dadurch kann die App keine abweichende Bedingung oder Situationsnummer übertragen.
+
+Die feste Reihenfolge vereinfacht Implementierung, Fortschrittsanzeige und Fehlerprüfung. Sie führt jedoch dazu, dass Versuchsbedingung und zeitlicher Verlauf vollständig gekoppelt sind. Gewöhnung an die App, sinkende Motivation, Veränderung des Rauchverhaltens, Lerneffekte oder selektiver Abbruch können dadurch als Bedingungsunterschied erscheinen. Für die Interpretation ist diese Einschränkung ausdrücklich zu berücksichtigen. Eine spätere konfirmatorische Studie sollte die Reihenfolge randomisieren oder zwischen Teilnehmenden ausbalancieren und den serverseitigen Ablauf entsprechend erweitern.
+
+Nach einem erfolgreich bestätigten Bericht setzt die App die nächste Freigabezeit auf drei Stunden später. Die Sperre verhindert unmittelbar aufeinanderfolgende Angaben und fördert eine Verteilung über den Alltag. Sie garantiert jedoch keine gleichmäßige zeitliche Stichprobe. Teilnehmende können die jeweils nächste Situation auch deutlich später beginnen. Für die spätere Plausibilitätsprüfung sollten deshalb, soweit datenschutzrechtlich vorgesehen, die serverseitigen Zeitpunkte der Berichte und die tatsächlichen Abstände ausgewertet werden.
+
+Die aktuelle Wirksamkeitsstudie verwendet ausschließlich statisch gebündelte, manuell geprüfte Reize und Zuordnungen. Der KI-Prototyp bestimmt keine Aufgaben im produktiven Ablauf. Diese Trennung schützt die Vergleichbarkeit der Bedingungen und verhindert, dass Fehlklassifikationen die Intervention verändern. Eine spätere Integration selbst gewählter Bilder wäre als neues Studiendesign zu behandeln.
+
+\section{Optionale Erinnerungen und Retention}
+
+Nach der ersten bis neunzehnten bestätigten Situation kann eine lokale Erinnerung für die jeweils nächste Situation geplant werden. Vor Situation eins und nach Abschluss der zwanzigsten Situation wird keine Studienerinnerung erzeugt. Voraussetzung sind die freiwillige Zustimmung, die Android-Berechtigung, ein vorhandener App-Token, eine aktive Studie und das Fehlen einer ausstehenden Übertragung.
+
+Die Benachrichtigung wird für das Ende der lokalen Sperrzeit geplant. Android darf sie wegen Energiesparmechanismen verspätet ausführen. Der Zeitpunkt ist daher keine studienmethodisch genaue Intervention. Die App kontrolliert beim Öffnen erneut, ob die Situation tatsächlich verfügbar ist. Die Benachrichtigung enthält keine Craving-Werte und keine Aussage, dass eine Person raucht. Auf dem Sperrbildschirm wird eine noch allgemeinere Fassung angezeigt.
+
+Erinnerungen können die Retention unterstützen, ohne die Teilnahme verpflichtend zu überwachen. Bei abgelehnter Berechtigung darf kein wiederholtes Drängen erfolgen. Die Studienleitung sollte bei der Auswertung dokumentieren, wie viele Teilnehmende Benachrichtigungen aktiviert hatten, sofern dies ohne zusätzliche personenbezogene Verknüpfung möglich ist. Andernfalls bleibt die Benachrichtigung eine nicht kontrollierte Begleitfunktion und darf nicht als einheitlich erhaltene Intervention interpretiert werden.
+
+Allgemeine Informationen werden unabhängig davon über den Infofeed bereitgestellt. Neue Nachrichten können ungefähr täglich eine neutrale Benachrichtigung auslösen. Der maßgebliche Abruf findet weiterhin beim App-Start statt, sodass eine verzögerte Hintergrundprüfung keine sicherheitskritische Information ersetzen darf. Dringende studienrelevante Änderungen erfordern gegebenenfalls zusätzlich direkten Kontakt oder eine globale Deaktivierung.
+
+\section{Umgang mit Übertragungsfehlern}
+
+Vor dem Senden speichert die App den Craving-Wert als ausstehende Übertragung. Er bleibt erhalten, bis eine erfolgreiche Serverantwort verarbeitet wurde. Währenddessen wird keine neue Studiensituation angeboten. Auf der Startseite erscheint eine Wiederholungsmöglichkeit mit Lade- und Fehlerzustand. Teilnehmende müssen den bereits angegebenen Wert nicht erneut einstellen.
+
+Diese Strategie verhindert, dass ein offensichtlicher Verbindungsfehler den lokalen Fortschritt erhöht oder der Wert verloren geht. Sie kann jedoch nicht eindeutig unterscheiden, ob der Server einen Bericht bereits gespeichert hat und nur die Antwort verloren ging. Ein Retry kann dann einen weiteren Bericht erzeugen. Im Support darf deshalb nicht pauschal zu wiederholtem Senden geraten werden, ohne den Serverzustand zu prüfen. Für die Pilotstudie müssen auffällige unmittelbar aufeinanderfolgende Berichte gekennzeichnet und bei der Auswertung auf mögliche technische Duplikate geprüft werden.
+
+Bei global deaktivierter Studie bleibt eine lokale ausstehende Übertragung zunächst erhalten. Vor einer erneuten Freigabe ist zu entscheiden, ob sie noch dem gültigen Studienprotokoll entspricht. Eine App-Aktualisierung darf diesen Wert nicht stillschweigend verwerfen. Änderungen am Payload oder an der Datenbanklogik benötigen deshalb eine Migrations- oder Supportstrategie.
+
+\section{Studienabschluss und Abrechnungscode}
+
+Beim zwanzigsten gültigen Selbstbericht erzeugt der Server einen zufälligen Abrechnungscode. Dieser Code wird nicht in der Berichtstabelle, sondern in einer gesonderten Tabelle gespeichert. Die App hält ihn lokal, bis die separate Bestätigung erfolgreich war. Schlägt nur diese Bestätigung fehl, wird nicht der Craving-Wert erneut übertragen, sondern ausschließlich der Code bestätigt.
+
+Nach lokal bestätigtem Abschluss zeigt die Startseite keine weiteren Studienfunktionen. Sie stellt den Abrechnungscode, eine Kopierfunktion, den Sprachwechsel und das Feedback bereit. Die Teilnehmenden werden aufgefordert, den Code an die Studienadresse zu senden. Dadurch kann die Auszahlung angestoßen werden, ohne E-Mail-Adresse oder Bankverbindung in der wissenschaftlichen Berichtstabelle zu speichern.
+
+Der Code ist dennoch ein abrechnungsbezogener Nachweis. Beim Kopieren gelangt er in die Android-Zwischenablage und kann abhängig von Betriebssystem und installierten Apps vorübergehend außerhalb der CueLens-App sichtbar sein. Die Teilnehmendeninformation sollte deshalb empfehlen, den Code zeitnah zu übertragen und nicht öffentlich weiterzugeben. Langfristig wäre eine direkte geschützte Übermittlung innerhalb der App vorzuziehen.
+
+Die Auszahlung darf nicht allein durch das Vorhandensein eines weitergegebenen Codes automatisiert werden. Die Studienleitung muss prüfen, ob der Code existiert, bestätigt und noch nicht verwendet wurde. Die Zuordnung zur Zahlung ist getrennt von der wissenschaftlichen Auswertung zu dokumentieren.
+
+\section{Installations- und Supportkonzept}
+
+Die Installation einer direkt verteilten APK ist für manche Zielgruppen eine zusätzliche Hürde. Sicherheitswarnungen können Misstrauen auslösen, und Herstelleroberflächen verwenden unterschiedliche Begriffe. Die zweisprachigen Schrittfolgen reduzieren diese Hürde, ersetzen aber keine barrierearme individuelle Unterstützung. Support muss so erfolgen, dass keine App-Tokens, Craving-Werte oder Screenshots mit sensiblen Inhalten über ungeschützte Kanäle angefordert werden.
+
+Bei Supportanfragen sollen zunächst App-Version, Android-Version, grober Bearbeitungsschritt und die sichtbare generische Fehlermeldung erfasst werden. Serverseitige Request-IDs und operative Meldungen ermöglichen die technische Zuordnung, ohne den Request-Payload per E-Mail zu senden. Zugriff auf detaillierte Fehlerprotokolle bleibt auf die hierfür verantwortlichen Personen beschränkt.
+
+Die direkte Verteilung kann eine Stichprobenselektion zugunsten technisch erfahrener Personen verursachen. Abbrüche zwischen Registrierung, Download, Installation und Aktivierung sind deshalb als eigene Rekrutierungsstufen zu erfassen. Nur so lässt sich unterscheiden, ob geringe Teilnahmezahlen aus mangelndem Interesse oder aus Installationsproblemen entstehen.
+
+\section{Monitoring während der Datenerhebung}
+
+Das Backend kann operative Hinweise zu bestätigten Registrierungen, abgeschlossenen Aktivierungen, neuem Feedback, erreichter Feedbackgrenze sowie Client- und Serverfehlern senden. Die E-Mails enthalten keine Nutzdaten, sondern Ereignisart, Zeit, Komponente, Request-ID und Fehlerkategorie. Damit können Störungen erkannt werden, ohne Selbstberichte oder Registrierungsangaben in einen weiteren Kommunikationskanal zu kopieren.
+
+Für den laufenden Betrieb sollten mindestens Erreichbarkeit der Endpunkte, Zahl bestätigter Aktivierungen, Rate technischer Fehler, ausstehende Supportfälle, vollständige Studienabschlüsse und Nutzung der Feedbackkapazität beobachtet werden. Diese Betriebskennzahlen sind von den wissenschaftlichen Selbstberichten zu trennen. Sie dienen der Qualitätssicherung und dürfen nicht ohne eigene Begründung zur Bewertung individueller Teilnehmender verwendet werden.
+
+Der weiche Grenzwert von 200 Feedbackeinträgen erfordert aktives Monitoring. Wird er erreicht, akzeptiert der Endpoint den Request formal, speichert den Inhalt aber nicht. Vor Beginn der Studie ist daher festzulegen, wer die Benachrichtigung erhält und ob die Grenze erhöht, vorhandenes Feedback exportiert oder das Formular vorübergehend deaktiviert wird.
+
+\section{Folgerungen für die Teilnehmerdokumente}
+
+Die den Teilnehmenden bereitgestellten Dokumente müssen den tatsächlichen technischen Ablauf abbilden. Zu ergänzen beziehungsweise zu prüfen sind insbesondere die Installation der direkt verteilten APK, die zweistufige Aktivierung, die verschlüsselte lokale Speicherung des App-Tokens, die lokale Speicherung ausstehender Craving-Werte, der optionale Infofeed und die optionalen Benachrichtigungen, die erneute Datenschutzbestätigung, das anonyme Feedback, der Feature-Toggle und der Umgang mit dem Abrechnungscode.
+
+Weiterhin muss verständlich zwischen produktiver Studie und KI-Prototyp unterschieden werden. In der aktuellen Studie werden keine eigenen Fotos aufgenommen, hochgeladen oder klassifiziert. Aussagen über lokale Bildverarbeitung dürfen nicht den Eindruck erwecken, dass diese Funktion bereits Teil jeder Studiensituation ist. Eine spätere Aktivierung der KI-Funktion würde eine erneute technische, methodische und datenschutzrechtliche Bewertung erfordern.
+
+Für die Revision ist außerdem die Bezeichnung der Selbstberichte zu vereinheitlichen. Da eine stabile pseudonyme Kennung verwendet wird, sind sie als pseudonymisiert und nicht als anonym zu bezeichnen. Die Erklärung sollte die Trennung von Registrierungs-, Zahlungs- und Studiendaten in verständlicher Form darstellen, ohne die Sicherheit allein aus dem Fehlen von Namen oder E-Mail-Adressen abzuleiten.
+
+\section{Auswirkungen auf die interne Validität}
+
+Die technische Weiterentwicklung verbessert die kontrollierte Durchführung: Der Server leitet Fortschritt und Bedingung ab, akzeptiert höchstens zwanzig Berichte, eine ausstehende Übertragung blockiert neue Situationen, und die produktive Funktion kann zentral freigegeben oder gestoppt werden. Diese Maßnahmen reduzieren Manipulations- und Zustandsfehler.
+
+Gleichzeitig entstehen technische Einflüsse, die bei der Interpretation berücksichtigt werden müssen. Dazu gehören unterschiedliche Installationshürden, optionale und möglicherweise verspätete Erinnerungen, Geräte- und Netzwerkunterschiede, Supportinterventionen sowie mögliche Duplikate nach verlorenem Serverresponse. Die feste Reihenfolge der beiden Bedingungen bleibt die stärkste methodische Einschränkung, weil sie Bedingung und Zeitverlauf koppelt.
+
+Für die Pilotstudie ist es angemessen, diese Einflüsse transparent zu dokumentieren und in Plausibilitätsanalysen einzubeziehen. Aussagen über einen kausalen Cue-Labeling-Effekt müssen jedoch entsprechend vorsichtig formuliert werden. Eine spätere Hauptstudie sollte neben einer idempotenten Übertragung insbesondere eine randomisierte oder ausbalancierte Bedingungsreihenfolge und einen vorab festgelegten Umgang mit technischen Sonderfällen vorsehen.
+\end{neu}
