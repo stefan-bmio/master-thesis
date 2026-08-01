@@ -1,0 +1,81 @@
+%%
+%% Ergänzung zu Kapitel 3: Evaluation geeigneter KI-Modelle
+%%
+
+\begin{neu}
+\section{Ziel der Modellevaluation}
+
+Die KI-gestützte Reizerkennung wird in einem eigenständigen Android-Prototyp untersucht. Ziel ist nicht, die kontrollierten Aufgaben der gegenwärtigen App-Studie während der Laufzeit zu verändern, sondern die technische Eignung lokaler Bildklassifikationsmodelle für eine spätere Erweiterung zu prüfen. Das Modell soll ein Bild genau einer von sechs fachlich definierten Klassen zuordnen: \texttt{ashtray}, \texttt{cigarette}, \texttt{cigarette pack}, \texttt{people smoking}, \texttt{smoke} oder \texttt{negative}. Die Reihenfolge dieser Klassen ist als Datenvertrag festgelegt und wird in Datensatz, Trainingscode, TFLite-Ausgabe, Android-App und Benchmark identisch verwendet.
+
+Die Negativklasse ist für die praktische Verwendung besonders wichtig. Ein Modell, das Rauchreize zuverlässig voneinander unterscheidet, aber neutrale Bilder häufig als Rauchreiz einordnet, wäre für eine alltagsnahe Anwendung ungeeignet. Neben der Mehrklassenentscheidung wird deshalb eine binäre Sicht ausgewertet: Die ersten fünf Klassen bilden gemeinsam die Kategorie \enquote{Rauchreiz}, während \texttt{negative} die Abwesenheit eines erkannten Rauchreizes bezeichnet. Diese zusätzliche Betrachtung ermöglicht eine getrennte Bewertung von falsch positiven und falsch negativen Auslösungen.
+
+Die Evaluation vergleicht eine allgemeine ML-Kit-Baseline mit zwei angepassten neuronalen Netzen. Die Baseline zeigt, welche Leistung ohne eigenes Training durch ein allgemeines Bildbeschriftungsmodell erreichbar ist. MobileNetV3Small wurde als ressourcenschonende Architektur für mobile Geräte gewählt. EfficientNet-Lite0 dient als zweites, ebenfalls auf Edge-Geräte ausgerichtetes Modell mit abweichendem Verhältnis von Modellkomplexität und Repräsentationsleistung. Für beide angepassten Modelle werden Float32- und vollständig ganzzahlig quantisierte TFLite-Varianten erzeugt.
+
+\section{Datenbasis und Klassendefinition}
+
+Für jede der sechs Klassen wird ein vorbereiteter Datensatz mit 500 Bildern erzeugt. Die Quelldateien liegen zunächst mit einer Kantenlänge von 512 Pixeln vor und werden für Training und Test auf 224 mal 224 Pixel vereinheitlicht. Technische Verzeichnisnamen vermeiden Leerzeichen; die fachlichen Ausgabelabel bleiben davon unabhängig. So entspricht beispielsweise das Verzeichnis \path{cigarette_pack} dem Label \texttt{cigarette pack}.
+
+Die Klasse \texttt{smoke} ist enger definiert als eine allgemeine Szene mit Rauchbezug. Sie soll Bilder enthalten, auf denen Rauch sichtbar ist, ohne dass eine konkretere Zielklasse wie Zigarette, Packung, Aschenbecher oder rauchende Person dominiert. Bei mehreren sichtbaren Reizen wird die fachlich konkretere beziehungsweise dominante Klasse gewählt. Diese Regel soll widersprüchliche Labels reduzieren. Sie bleibt jedoch eine manuelle Operationalisierung und muss bei der Sichtung konsequent angewendet werden.
+
+Für \texttt{people smoking} standen 2000 Ausgangsbilder zur Verfügung. Daraus wird einmalig eine zufällige Auswahl von 500 Dateinamen erzeugt und dauerhaft gespeichert. Die persistierte Auswahl verhindert, dass aufeinanderfolgende Trainingsläufe unbemerkt mit verschiedenen Teilmengen arbeiten. Für die Negativklasse lagen zunächst nur 159 Bilder vor. Sie wird durch deterministische Varianten auf 500 Dateien erweitert. Verwendet werden horizontale Spiegelung, ein vergrößerter Mittelausschnitt, eine geringe Rotation sowie moderate Helligkeits- und Kontraständerungen. Eine Manifestdatei hält für jedes erzeugte Bild Quelldatei und Transformation fest.
+
+Diese künstliche Erweiterung gleicht die Anzahl der Dateien aus, ersetzt aber keine inhaltliche Vielfalt. Mehrere Varianten desselben Ausgangsbildes bleiben stark korreliert. Da die Augmentation vor dem anschließenden zufälligen Split erfolgt, können Varianten derselben Quelle in Training, Validierung und Test gelangen. Dadurch kann die gemessene Leistung für die Negativklasse zu günstig ausfallen. Für eine belastbare Endauswertung muss der Split deshalb quellgruppenbasiert erfolgen: Alle Varianten eines Ausgangsbildes müssen demselben Teilset zugeordnet werden. Der gegenwärtige Dateisplit ist für einen ersten technischen Pipeline-Test geeignet, aber noch kein hinreichender Nachweis der Generalisierbarkeit.
+
+Auch für die übrigen Klassen ist die Herkunft der Bilder zu berücksichtigen. Wiederkehrende Hintergründe, Generierungsstile, Dateiserien oder nahezu identische Motive können vom Modell als Abkürzung genutzt werden. Vor der Interpretation der Kennzahlen ist deshalb eine Dubletten- und Serienprüfung erforderlich. Ebenso muss die Auswahl unterschiedliche Lichtverhältnisse, Perspektiven, Bildqualitäten und Gerätekontexte enthalten, wenn das Modell später auf frei gewählte Alltagsbilder angewendet werden soll.
+
+\section{Reproduzierbare Datenaufteilung}
+
+Das Skript \texttt{split\_dataset.py} erzeugt einen klassenweisen Split von 70 Prozent Training, 15 Prozent Validierung und 15 Prozent Test. Als fester Zufallswert wird \texttt{20260705} verwendet. Die resultierende Datei \path{dataset_split.json} speichert für jedes Bild den relativen Pfad, das technische Label, das fachliche Label und einen SHA-256-Hash des Dateiinhalts. Damit lässt sich später prüfen, ob eine Datei ausgetauscht wurde, obwohl ihr Name gleich geblieben ist.
+
+Der Testsplit wird ausschließlich in den Android-Source-Set \texttt{benchmark} exportiert. Die reguläre Prototypvariante enthält diese Bilder nicht. Diese Trennung verhindert, dass umfangreiches Testmaterial versehentlich Bestandteil einer späteren Studien-App wird. Sie reduziert außerdem die Gefahr, dass die normalen Bedienpfade Kenntnis über die Soll-Labels erhalten.
+
+Die Persistenz des Splits ist eine Voraussetzung für vergleichbare Modelltests. Die Modelle MobileNetV3Small und EfficientNet-Lite0 sowie die ML-Kit-Baseline werden auf denselben Testbildern bewertet. Veränderungen am Datensatz müssen eine neue Splitversion oder eine nachvollziehbare Migration auslösen. Andernfalls wären Kennzahlen aus verschiedenen Entwicklungsständen nicht unmittelbar vergleichbar.
+
+\section{Vorverarbeitung der Bilder}
+
+Die Android-App korrigiert bei Bildern aus einer URI zunächst die EXIF-Orientierung. Anschließend wird der größte mittige quadratische Ausschnitt gebildet und auf 224 mal 224 Pixel skaliert. Aus den Pixeln werden RGB-Werte im Bereich von 0 bis 255 erzeugt. Die modellabhängige Skalierung ist Bestandteil des exportierten Graphen: MobileNetV3Small transformiert die Eingabe auf den Bereich von minus eins bis eins, EfficientNet-Lite0 auf null bis eins. Dadurch kann dieselbe Android-Vorverarbeitung beide Modellfamilien versorgen.
+
+Für quantisierte Eingabetensoren liest die App Skalierungsfaktor und Nullpunkt aus den Tensor-Metadaten und quantisiert jeden Farbwert entsprechend. Die Ausgaben werden auf demselben Weg wieder in Fließkomma-Scores umgerechnet. Dieses Vorgehen vermeidet fest codierte Annahmen über den konkreten Integerbereich eines exportierten Modells.
+
+Der mittige quadratische Zuschnitt wurde gewählt, weil er einfach, reproduzierbar und für Training sowie Android-Inferenz identisch umsetzbar ist. Er kann jedoch relevante Objekte am Bildrand entfernen. Für frei aufgenommene Alltagsbilder ist daher zu prüfen, ob Letterboxing, objektzentrierte Ausschnitte oder eine Objektdetektion robuster wären. Eine Veränderung der Vorverarbeitung würde die Vergleichbarkeit mit bereits trainierten Modellen beeinflussen und muss als neue Modellversion behandelt werden.
+
+\section{ML-Kit-Baseline}
+
+Die ML-Kit-Baseline verwendet das allgemeine Standardmodell zur Bildbeschriftung. Da dessen Ausgabelabel nicht mit den sechs CueLens-Klassen übereinstimmen, wird eine einfache Schlüsselwortabbildung eingesetzt. Begriffe wie \texttt{cigarette}, \texttt{cigar}, \texttt{tobacco}, \texttt{smoking} und \texttt{smoke} werden den fachlichen Zielklassen zugeordnet. Ein Ergebnis wird nur oberhalb einer Konfidenzschwelle von 0,5 berücksichtigt. Greift keine Abbildung, wird \texttt{negative} vorhergesagt.
+
+Diese Baseline ist bewusst konservativ und dient nicht als gleichwertig trainierter Konkurrent. Sie prüft, ob ein allgemeines Modell ohne CueLens-spezifische Trainingsdaten bereits verwertbare Signale liefert. Die Schlüsselwortabbildung kann Mehrdeutigkeiten nicht auflösen. Insbesondere kann das allgemeine Label \texttt{tobacco} sowohl Tabak selbst als auch eine Packung oder eine andere Szene bezeichnen. Die Baseline ist deshalb vor allem als technischer Referenzpunkt zu interpretieren.
+
+\section{MobileNetV3Small mit Transfer Learning}
+
+Das MobileNetV3Small-Modell verwendet einen auf ImageNet vortrainierten Backbone ohne ursprünglichen Klassifikationskopf. Nach Datenaugmentation und Skalierung folgen globales Average Pooling, eine Dropout-Schicht mit einer Rate von 0,2 und eine Softmax-Ausgabe für die sechs CueLens-Klassen. Zunächst bleibt der Backbone eingefroren, während der neue Klassifikationskopf mit Adam und einer Lernrate von \(10^{-3}\) trainiert wird. Dafür sind höchstens zwanzig Epochen vorgesehen. Early Stopping beobachtet den Validierungsverlust mit einer Geduld von fünf Epochen und stellt die besten Gewichte wieder her.
+
+In einer zweiten Phase werden die letzten 25 Schichten des Backbones freigegeben. Das Fine-Tuning verwendet eine reduzierte Lernrate von \(10^{-5}\) und höchstens fünfzehn weitere Epochen. Dieses zweistufige Verfahren schützt die vortrainierten Merkmale zunächst vor großen Gradienten und erlaubt anschließend eine begrenzte Anpassung an die Rauchreizklassen. Es erhöht jedoch das Risiko einer Überanpassung, wenn die effektive Zahl unabhängiger Bilder kleiner ist als die Zahl der Dateien vermuten lässt.
+
+Nach dem Training wird das Keras-Modell auf dem Testsplit ausgewertet und als Float32- sowie Int8-TFLite-Datei exportiert. Für die vollständige Integerquantisierung werden die ersten 200 Trainingsbilder als repräsentativer Datensatz verwendet. Die Auswahl ist deterministisch durch den gespeicherten Split, aber nicht zusätzlich stratifiziert oder zufällig durchmischt. Für eine spätere Endversion sollte geprüft werden, ob alle Klassen und typische Helligkeitsbereiche im Repräsentativdatensatz ausgewogen enthalten sind.
+
+\section{EfficientNet-Lite0 als Merkmalsextraktor}
+
+EfficientNet-Lite0 wird über den TensorFlow-Hub-Feature-Vector \path{efficientnet/lite0/feature-vector/2} eingebunden. Die Eingabe wird im Modellgraph auf den Bereich von null bis eins skaliert. Auf den Feature-Vektor folgen ebenfalls Dropout mit 0,2 und ein Softmax-Kopf für sechs Klassen.
+
+Der verwendete Hub-Baustein liegt in einem Format vor, das in der eingesetzten Kombination nicht über \texttt{hub.KerasLayer} feinjustiert werden kann. Deshalb bleibt der EfficientNet-Lite0-Backbone eingefroren und ausschließlich der CueLens-Klassifikationskopf wird trainiert. Fachlich handelt es sich damit genauer um Transfer Learning durch Feature Extraction und nicht um ein vollständiges Fine-Tuning des Backbones. Dieser Unterschied muss bei einem Vergleich mit dem feinjustierten MobileNetV3Small berücksichtigt werden.
+
+Das Training verwendet ebenfalls Adam, kategorische Kreuzentropie, höchstens zwanzig Epochen, Early Stopping und die Wiederherstellung der besten Validierungsgewichte. Auch dieses Modell wird als Float32- und Int8-TFLite-Variante exportiert. Die gemeinsame Ein- und Ausgabeschnittstelle erlaubt, beide Modellfamilien in Android über denselben Adapter auszuführen.
+
+\section{Android-Benchmark}
+
+Eine zentrale Modellbeschreibung enthält Modell-ID, Backendtyp, Assetpfad, Eingabegröße, Labeldatei, Schwellenwert und Zahl der Interpreter-Threads. Der normale Prototyp verwendet derzeit MobileNetV3Small in der Float32-Variante als aktive Konfiguration. Der Benchmark kann zusätzlich MobileNetV3Small Int8, EfficientNet-Lite0 Float32, EfficientNet-Lite0 Int8 und die ML-Kit-Baseline nacheinander ausführen. Der Wechsel des Modells erfordert dadurch keine Änderung der Bedienoberfläche oder der Auswertungslogik.
+
+Der LiteRT-Adapter verwendet zwei Interpreter-Threads und deaktiviert XNNPACK. Diese Konfiguration erhöht die Reproduzierbarkeit zwischen Läufen, nutzt aber nicht zwingend die schnellste auf einem Gerät verfügbare CPU-Optimierung. Die gemessene Laufzeit ist deshalb eine Eigenschaft der dokumentierten Benchmarkkonfiguration und nicht automatisch die minimale erreichbare Produktionslaufzeit. Ein späterer Leistungsvergleich mit aktiviertem XNNPACK oder Hardwaredelegaten muss als gesonderte Konfiguration ausgewiesen werden.
+
+Vor der Messung führt jedes Modell eine Aufwärminferenz aus, die nicht in die Statistik eingeht. Für jedes Testbild werden Gerätehersteller, Gerätemodell, Android-Version, Modell-ID, Soll- und Ist-Klasse, alle sechs Scores, Laufzeit und Korrektheit gespeichert. Aus den Einzelzeilen erzeugt die App klassenweise One-vs-Rest-Konfusionsmatrizen sowie eine binäre Matrix \enquote{Rauchreiz gegen kein Rauchreiz}. Berechnet werden Sensitivität, Spezifität, Präzision, F1, Accuracy, mittlere Laufzeit und das 95-Prozent-Perzentil der Laufzeit. Rohdaten und Metriken können als CSV exportiert werden.
+
+Zusätzlich wertet ein Python-Skript die tatsächlich exportierten TFLite-Dateien auf demselben Testsplit aus. Dieser Schritt ist erforderlich, weil Quantisierung und Konvertierung die Vorhersagen gegenüber dem Keras-Modell verändern können. Erst die Übereinstimmung von Keras-Test, TFLite-Test und Android-Benchmark erlaubt eine belastbare Fehlersuche. Unterschiede können unter anderem aus Quantisierung, Interpreterversion, Vorverarbeitung oder gerätespezifischer Ausführung entstehen.
+
+\section{Bewertungskriterien und Grenzen}
+
+Für die Modellentscheidung reicht eine hohe Gesamtgenauigkeit nicht aus. Die Negativklasse und die fünf Rauchreizklassen sind gleich häufig vorbereitet, während ihre spätere Häufigkeit im Alltag unbekannt ist. Eine im Test ausgeglichene Accuracy kann deshalb die praktische Rate falsch positiver Auslösungen nicht direkt vorhersagen. Die klassenweisen Kennzahlen und die binäre Spezifität müssen gemeinsam betrachtet werden.
+
+Die Modellgröße, die Laufzeit und der Arbeitsspeicherbedarf sind ebenso relevant wie die Klassifikationsgüte. Der Benchmark erfasst derzeit die Zeit für zentrale Vorverarbeitung und Inferenz nach dem Decodieren des Bitmaps. Er misst weder den vollständigen Energieverbrauch noch zuverlässig den maximalen Prozessspeicher. Diese Größen müssen auf mehreren repräsentativen Geräten mit einem definierten Messverfahren ergänzt werden. Einzelne frühe Prototypmessungen dürfen nicht ohne überprüfte Einheit und reproduzierbaren Versuchsaufbau als Geräteanforderung übernommen werden.
+
+Zum Zeitpunkt dieses Entwurfs beschreibt das Repository eine reproduzierbare Trainings-, Export- und Benchmarkpipeline, enthält aber keine versionierten abschließenden Ergebnisberichte der trainierten Modellartefakte. Eine fachliche Auswahl eines Produktionsmodells kann daher erst nach Ausführung der Pipeline, Prüfung des quellgruppenbasierten Splits und Dokumentation der Messwerte erfolgen. Bis dahin bleibt die KI-Funktion ein gesonderter technischer Prototyp und wird nicht als Bestandteil der Wirksamkeitsstudie vorausgesetzt.
+\end{neu}
