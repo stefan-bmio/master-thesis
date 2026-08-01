@@ -59,8 +59,8 @@ if (!is_string($doiToken) || !preg_match('/^[a-f0-9]{64}$/', $doiToken)) {
 				'registration_confirmation'
 			);
 			
-			$message = "You have successfully registered for the study. Thank you. We'll notify you about the start in the next few days."; 
-		}		
+			$message = 'You have successfully registered for the study. Follow the instructions for the <a href="download">app installation</a>.';
+		}
 	} catch (PDOException $e) {
 		if (isset($pdo) && $pdo->inTransaction()) {
 			$pdo->rollBack();

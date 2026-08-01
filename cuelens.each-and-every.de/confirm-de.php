@@ -59,7 +59,7 @@ if (!is_string($doiToken) || !preg_match('/^[a-f0-9]{64}$/', $doiToken)) {
 				'registration_confirmation'
 			);
 			
-			$message = 'Sie haben sich erfolgreich an der Studie angemeldet. Vielen Dank. In den nächsten Tagen benachrichtigen wir Sie über den Beginn.';
+			$message = 'Sie haben sich erfolgreich an der Studie angemeldet. Folgen Sie der Anleitung f&uuml;r die <a href="download">App-Installation</a>.';
 		}		
 	} catch (PDOException $e) {
 		if (isset($pdo) && $pdo->inTransaction()) {

@@ -1,6 +1,5 @@
 <?php
 	session_start();
-	
 	$email = $_SESSION['email'] ?? '';
 	unset($_SESSION['email']);
 	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -14,7 +13,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Anmeldung</title>
-	
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
