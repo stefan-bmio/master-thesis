@@ -172,9 +172,10 @@ data class InfoFeedStrings(
     val notificationConsentToggle: String,
     val continueLabel: String,
     val homeWelcome: String,
-    val emailActivation: String,
+    val appActivation: String,
     val activationAlreadyCompleted: String,
-    val emailAddress: String,
+    val participantIdentifier: String,
+    val activationIdentifierHelp: String,
     val activate: String,
     val activationRunning: String,
     val activationFailed: String,
@@ -215,6 +216,7 @@ data class InfoFeedStrings(
     val nextStudyRun: String,
     val nextStudyRunCountdown: (String) -> String,
     val studyCompleted: String,
+    val studyProlificCompleted: String,
     val studyTransferPending: String,
     val studyRunProgress: (Int, Int) -> String,
     val studyResourcesIncomplete: String,
@@ -257,11 +259,14 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
             ),
             continueLabel = localizedContext.getString(R.string.continue_label),
             homeWelcome = localizedContext.getString(R.string.home_welcome),
-            emailActivation = localizedContext.getString(R.string.email_activation),
+            appActivation = localizedContext.getString(R.string.app_activation),
             activationAlreadyCompleted = localizedContext.getString(
                 R.string.activation_already_completed
             ),
-            emailAddress = localizedContext.getString(R.string.email_address),
+            participantIdentifier = localizedContext.getString(R.string.participant_identifier),
+            activationIdentifierHelp = localizedContext.getString(
+                R.string.activation_identifier_help
+            ),
             activate = localizedContext.getString(R.string.activate),
             activationRunning = localizedContext.getString(R.string.activation_running),
             activationFailed = localizedContext.getString(R.string.activation_failed),
@@ -308,6 +313,9 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
                 localizedContext.getString(R.string.next_study_run_countdown, countdown)
             },
             studyCompleted = localizedContext.getString(R.string.study_completed),
+            studyProlificCompleted = localizedContext.getString(
+                R.string.study_prolific_completed
+            ),
             studyTransferPending = localizedContext.getString(R.string.study_transfer_pending),
             studyRunProgress = { current, total ->
                 localizedContext.getString(R.string.study_run_progress, current, total)

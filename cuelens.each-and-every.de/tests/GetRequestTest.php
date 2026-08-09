@@ -41,6 +41,21 @@ final class GetRequestTest extends TestCase
 
         self::assertNotSame(500, $statusCode);
         self::assertStringNotContainsString('Database error', $output);
-        self::assertStringContainsString('<form method="post" action="">', $output);
+        self::assertStringContainsString(
+            '<form method="post" action="" data-registration-mode="invalid">',
+            $output
+        );
+        self::assertStringContainsString('name="participant_identifier"', $output);
+        self::assertStringContainsString('data-registration-mode="invalid"', $output);
+    }
+
+    public function testProlificSuccessPagesContainNoSubmittedIdentifier(): void
+    {
+        foreach (['registered-de.php', 'registered-en.php'] as $page) {
+            $output = file_get_contents(__DIR__ . '/../' . $page);
+            self::assertNotFalse($output);
+            self::assertStringContainsString('download', $output);
+            self::assertStringNotContainsString('participant_identifier', $output);
+        }
     }
 }

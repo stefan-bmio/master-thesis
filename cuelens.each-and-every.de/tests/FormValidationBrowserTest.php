@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class FormValidationBrowserTest extends TestCase
 {
-    private const BASE_URL = 'http://127.0.0.1:8080/cuelens';
+    private const DEFAULT_BASE_URL = 'http://127.0.0.1:8080/cuelens';
     private const WEBDRIVER_HOST = '127.0.0.1';
     private const ELEMENT_KEY = 'element-6066-11e4-a52e-4f735466cecf';
     private const GECKODRIVER_BIN_CANDIDATES = [
@@ -37,8 +37,8 @@ final class FormValidationBrowserTest extends TestCase
             self::markTestSkipped('The PHP curl extension is required for WebDriver requests.');
         }
 
-        if (!self::isUrlReachable(self::BASE_URL . '/index-de.php')) {
-            self::markTestSkipped('The default Apache test URL is not reachable: ' . self::BASE_URL);
+        if (!self::isUrlReachable(self::baseUrl() . '/index-de.php')) {
+            self::markTestSkipped('The registration test URL is not reachable: ' . self::baseUrl());
         }
 
         try {
@@ -76,7 +76,7 @@ final class FormValidationBrowserTest extends TestCase
 
     public function testGermanEmailRequiredMessageIsShownInBrowser(): void
     {
-        self::navigateTo(self::BASE_URL . '/index-de.php');
+        self::navigateTo(self::baseUrl() . '/index-de.php');
 
         self::type('#name', 'Test Person');
         self::type('#iban', 'DE89370400440532013000');
@@ -87,7 +87,7 @@ final class FormValidationBrowserTest extends TestCase
         self::click('#dataprot');
         self::click('button[type="submit"]');
 
-        $expectedMessage = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
+        $expectedMessage = 'Bitte geben Sie Ihre E-Mail-Adresse oder Prolific-ID ein.';
 
         self::assertSame($expectedMessage, self::script('return document.getElementById("email").validationMessage;'));
         self::assertSame($expectedMessage, self::script('return document.getElementById("form-validation-message").textContent;'));
@@ -96,6 +96,118 @@ final class FormValidationBrowserTest extends TestCase
             'error',
             (string) self::script('return document.getElementById("form-validation-message").className;')
         );
+    }
+
+    public function testRegistrationPagesExposeLocalizedDualIdentifierMarkup(): void
+    {
+        self::navigateTo(self::baseUrl() . '/index-de.php');
+        self::assertSame('text', self::script('return document.getElementById("email").type;'));
+        self::assertSame(
+            'E-Mail-Adresse oder Prolific-ID:',
+            self::script('return document.querySelector("label[for=email]").textContent;')
+        );
+
+        self::navigateTo(self::baseUrl() . '/index-en.php');
+        self::assertSame('text', self::script('return document.getElementById("email").type;'));
+        self::assertSame(
+            'Email address or Prolific ID:',
+            self::script('return document.querySelector("label[for=email]").textContent;')
+        );
+    }
+
+    public function testProlificModeClearsDisablesAndExcludesPersonalFields(): void
+    {
+        self::navigateTo(self::baseUrl() . '/index-de.php');
+        self::type('#name', 'Test Person');
+        self::type('#iban', 'DE89370400440532013000');
+        self::type('#bic', 'COBADEFFXXX');
+        self::type('#email', 'AbCdEf1234567890GhIjKlMn');
+
+        $state = self::script(<<<'JS'
+return {
+    mode: document.querySelector('form').dataset.registrationMode,
+    fields: ['name', 'iban', 'bic'].map((id) => {
+        const field = document.getElementById(id);
+        return { disabled: field.disabled, required: field.required, value: field.value };
+    }),
+    helpHidden: document.getElementById('registration-mode-help').hidden,
+    submittedKeys: Array.from(new FormData(document.querySelector('form')).keys())
+};
+JS);
+
+        self::assertSame('prolific', $state['mode']);
+        foreach ($state['fields'] as $field) {
+            self::assertTrue($field['disabled']);
+            self::assertFalse($field['required']);
+            self::assertSame('', $field['value']);
+        }
+        self::assertFalse($state['helpHidden']);
+        self::assertNotContains('name', $state['submittedKeys']);
+        self::assertNotContains('iban', $state['submittedKeys']);
+        self::assertNotContains('bic', $state['submittedKeys']);
+    }
+
+    public function testSwitchingBackToEmailRestoresDirectRequiredFields(): void
+    {
+        self::navigateTo(self::baseUrl() . '/index-de.php');
+        self::type('#email', 'AbCdEf1234567890GhIjKlMn');
+        self::type('#email', 'participant@example.org');
+
+        $state = self::script(<<<'JS'
+return {
+    mode: document.querySelector('form').dataset.registrationMode,
+    fields: ['name', 'iban', 'bic'].map((id) => {
+        const field = document.getElementById(id);
+        return { disabled: field.disabled, required: field.required };
+    }),
+    helpHidden: document.getElementById('registration-mode-help').hidden
+};
+JS);
+
+        self::assertSame('direct', $state['mode']);
+        foreach ($state['fields'] as $field) {
+            self::assertFalse($field['disabled']);
+            self::assertTrue($field['required']);
+        }
+        self::assertTrue($state['helpHidden']);
+    }
+
+    public function testValidProlificRegistrationPassesBrowserConstraintValidation(): void
+    {
+        self::navigateTo(self::baseUrl() . '/index-de.php');
+        self::type('#email', 'AbCdEf1234567890GhIjKlMn');
+        self::type('#age', '30');
+        self::type('#cigarettes', '10');
+        self::click('#studyinfo');
+        self::click('#dataprot');
+
+        self::assertTrue(self::script('return document.querySelector("form").checkValidity();'));
+    }
+
+    public function testMalformedIdentifierShowsLocalizedDualPurposeMessage(): void
+    {
+        self::navigateTo(self::baseUrl() . '/index-en.php');
+        self::type('#email', 'not-an-identifier');
+        self::type('#name', 'Test Person');
+        self::type('#iban', 'DE89370400440532013000');
+        self::type('#bic', 'COBADEFFXXX');
+        self::type('#age', '30');
+        self::type('#cigarettes', '10');
+        self::click('#studyinfo');
+        self::click('#dataprot');
+        self::click('button[type="submit"]');
+
+        self::assertSame(
+            'Enter a valid email address or a 24-character Prolific ID.',
+            self::script('return document.getElementById("email").validationMessage;')
+        );
+        self::assertSame('invalid', self::script('return document.querySelector("form").dataset.registrationMode;'));
+    }
+
+    private static function baseUrl(): string
+    {
+        $configured = getenv('CUELENS_BROWSER_BASE_URL');
+        return is_string($configured) && $configured !== '' ? rtrim($configured, '/') : self::DEFAULT_BASE_URL;
     }
 
     private static function type(string $selector, string $value): void
@@ -137,7 +249,10 @@ final class FormValidationBrowserTest extends TestCase
 
         $response = @file_get_contents($url, false, $context);
 
-        return $response !== false && str_contains($response, '<form method="post" action="">');
+        return $response !== false && str_contains(
+            $response,
+            '<form method="post" action="" data-registration-mode="invalid">'
+        );
     }
 
     private static function isWebDriverReachable(): bool

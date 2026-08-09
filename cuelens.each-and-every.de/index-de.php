@@ -1,233 +1,55 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+declare(strict_types=1);
 
-require __DIR__ . '/lib/PHPMailer/Exception.php';
-require __DIR__ . '/lib/PHPMailer/PHPMailer.php';
-require __DIR__ . '/lib/PHPMailer/SMTP.php';
-require __DIR__ . '/lib/error-log.php';
+$registrationPage = [
+    'language' => 'de',
+    'page_title' => 'Anmeldung',
+    'heading' => 'Anmeldung zur CueLens-Studie',
+    'introduction' => 'Vielen Dank für Ihr Interesse an der Teilnahme. Bitte lesen Sie die',
+    'study_information_url' => '/info',
+    'study_information_label' => 'Studieninformation',
+    'details_intro' => 'Wir benötigen die folgenden Angaben. Prolific-Teilnehmende geben nur ihre Prolific-ID sowie die Angaben zur Teilnahmeberechtigung und Einwilligung ein.',
+    'identifier_label' => 'E-Mail-Adresse oder Prolific-ID',
+    'identifier_help' => 'Prolific-Teilnehmende geben hier ihre 24-stellige Prolific-ID anstelle einer persönlichen E-Mail-Adresse ein.',
+    'prolific_mode_help' => 'Prolific-Modus: Name und Bankdaten werden nicht erhoben; die Vergütung erfolgt über Prolific.',
+    'identifier_required' => 'Bitte geben Sie Ihre E-Mail-Adresse oder Prolific-ID ein.',
+    'identifier_invalid' => 'Bitte geben Sie eine gültige E-Mail-Adresse oder eine 24-stellige Prolific-ID ein.',
+    'name_label' => 'Name',
+    'name_required' => 'Bitte geben Sie Ihren Namen ein.',
+    'iban_required' => 'Bitte geben Sie Ihre IBAN ein.',
+    'bic_required' => 'Bitte geben Sie Ihre BIC ein.',
+    'age_label' => 'Alter',
+    'age_required' => 'Bitte geben Sie Ihr Alter ein.',
+    'age_range' => 'Eine Teilnahme ist nur im Alter von 30 bis 65 Jahren möglich.',
+    'integer_required' => 'Bitte geben Sie eine ganze Zahl ein.',
+    'cigarettes_label' => 'Zigaretten/Tag',
+    'cigarettes_required' => 'Bitte geben Sie die Anzahl der Zigaretten pro Tag ein.',
+    'cigarettes_range' => 'Eine Teilnahme ist nur bei mindestens 10 Zigaretten pro Tag möglich.',
+    'studyinfo_required' => 'Bitte bestätigen Sie, dass Sie die Studieninformation gelesen haben.',
+    'studyinfo_prefix' => 'Ich habe die',
+    'studyinfo_suffix' => 'gelesen',
+    'dataprot_required' => 'Bitte bestätigen Sie, dass Sie die Datenschutzerklärung akzeptieren.',
+    'dataprot_prefix' => 'Ich akzeptiere die',
+    'privacy_url' => '/ds',
+    'privacy_label' => 'Datenschutzerklärung',
+    'submit_label' => 'Absenden',
+    'csrf_error' => 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.',
+    'validation_error' => 'Bitte nutzen Sie das Webformular.',
+    'duplicate_direct' => 'Diese E-Mail-Adresse ist bereits registriert.',
+    'duplicate_prolific' => 'Diese Prolific-ID ist bereits registriert.',
+    'save_error' => 'Beim Speichern ist ein Fehler aufgetreten.',
+    'mail_error' => 'Die Bestätigungs-E-Mail konnte nicht versendet werden.',
+    'confirm_path' => 'confirm-de.php',
+    'double_opt_in_path' => 'double-de.php',
+    'prolific_success_path' => 'registered-de.php',
+    'mail_subject' => 'Bitte bestätigen Sie Ihre Anmeldung zur CueLens-Studie',
+    'mail_body' => static fn (string $url): string =>
+        "Guten Tag,\n\n"
+        . "vielen Dank für Ihr Interesse an der CueLens-Studie.\n\n"
+        . "Bitte bestätigen Sie Ihre E-Mail-Adresse über den folgenden Link:\n\n"
+        . $url . "\n\n"
+        . "Falls Sie sich nicht zur CueLens-Studie angemeldet haben, können Sie diese E-Mail ignorieren.\n\n"
+        . 'Mit freundlichen Grüßen',
+];
 
-$smtpConfig = require __DIR__ . '/config/noreply-smtp.php';
-$hostConfig = require __DIR__ . '/config/host.php';
-
-$message = '';
-
-session_start();
-
-$csrfToken = $_POST['csrf_token'] ?? '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$csrfToken = $_POST['csrf_token'] ?? '';
-	
-	if (
-		empty($_SESSION['csrf_token']) ||
-		!hash_equals($_SESSION['csrf_token'], $csrfToken)
-	) {
-		$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
-	} else {
-		if (
-			empty($_SESSION['csrf_token']) ||
-			!hash_equals($_SESSION['csrf_token'], $csrfToken)
-		) {
-			$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
-		} else {
-			$email = trim($_POST['email'] ?? '');
-			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
-			$name = trim($_POST['name'] ?? '');
-			$iban = trim($_POST['iban'] ?? '');
-			$bic = trim($_POST['bic'] ?? '');
-			$age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
-			$cigarettes = filter_input(INPUT_POST, 'cigarettes', FILTER_VALIDATE_INT);	
-			$studyinfoAccepted = isset($_POST['studyinfo']);
-			$dataprotAccepted = isset($_POST['dataprot']);
-
-			if (
-				empty($email) ||
-				$email === false ||
-				empty($name) ||
-				empty($iban) ||
-				empty($bic) ||
-				$age === false ||
-				$cigarettes === false ||
-				$age < 30 || $age > 65 ||
-				$cigarettes < 10 ||
-				$studyinfoAccepted === false ||
-				$dataprotAccepted === false
-			) {
-				$message = 'Bitte nutzen Sie das Webformular';
-			} else {
-				$csrfToken = $_POST['csrf_token'] ?? '';
-				if (
-					empty($_SESSION['csrf_token']) ||
-					!hash_equals($_SESSION['csrf_token'], $csrfToken)
-				) {
-					$message = 'Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie das Formular neu.';
-				} else {
-					$doiToken = bin2hex(random_bytes(32));
-					$doiTokenHash = hash('sha256', $doiToken);
-					
-					try {
-						$dbConfig = require __DIR__ . '/config/cuelens-signup.php';
-						$pdo = new PDO(
-							"mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4",
-							$dbConfig['user'],
-							$dbConfig['pass'],
-							[
-								PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-								PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-								PDO::ATTR_EMULATE_PREPARES => false,
-							]
-						);
-
-						$stmt = $pdo->prepare("
-							INSERT INTO `register`
-							(`email`, `name`, `iban`, `bic`, `age`, `cigarettes`, `doi_token`, `studyinfo`, `dataprot`, `dataprot_accepted_at`)
-							VALUES
-							(:email, :name, :iban, :bic, :age, :cigarettes, :doiToken, :studyinfo, :dataprot, CURRENT_TIMESTAMP)
-						");
-
-						$stmt->execute([
-							':email' => $email,
-							':name' => $name,
-							':iban' => $iban,
-							':bic' => $bic,
-							':age' => $age,
-							':cigarettes' => $cigarettes,
-							':doiToken' => $doiTokenHash,
-							':studyinfo' => $studyinfoAccepted,
-							':dataprot' => $dataprotAccepted,
-						]);
-						
-							try {
-							$confirmUrl = $hostConfig['root'] . '/confirm-de.php?' . http_build_query([
-								'doiToken' => $doiToken,
-							]);
-
-							$mail = new PHPMailer(true);
-
-							$mail->isSMTP();
-							$mail->Host = $smtpConfig['host'];
-							$mail->SMTPAuth = $smtpConfig['smtpAuth'];
-							$mail->Username = $smtpConfig['user'];
-							$mail->Password = $smtpConfig['pass'];
-							$mail->SMTPSecure = $smtpConfig['smtpSecure'];
-							$mail->Port = $smtpConfig['port'];
-							$mail->CharSet = $smtpConfig['charset'];
-							$mail->setFrom($smtpConfig['from'], $smtpConfig['fromName']);
-							$mail->addReplyTo($smtpConfig['replyTo'], $smtpConfig['replyToName']);
-							$mail->addAddress($email, $name);
-
-							$mail->Subject = 'Bitte bestätigen Sie Ihre Anmeldung zur CueLens-Studie';
-							$mail->Body =
-								"Guten Tag,\n\n"
-								. "vielen Dank für Ihr Interesse an der CueLens-Studie.\n\n"
-								. "Bitte bestätigen Sie Ihre E-Mail-Adresse über den folgenden Link:\n\n"
-								. $confirmUrl . "\n\n"
-								. "Falls Sie sich nicht zur CueLens-Studie angemeldet haben, können Sie diese E-Mail ignorieren.\n\n"
-								. "Mit freundlichen Grüßen";
-
-							$mail->send();
-
-							$_SESSION['email'] = $email;
-							$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-							header('Location: double-de.php');
-							exit;
-						} catch (Exception $e) {
-							error_log('PHPMailer: ' . $mail->ErrorInfo);
-							$message = 'Die Bestätigungs-E-Mail konnte nicht versendet werden.';
-								log_error($pdo, $message, $e, 'registration_form');
-						} catch (Throwable $e) {
-							error_log('Double-Opt-In: ' . $e->getMessage());
-							$message = 'Beim Vorbereiten der Bestätigungs-E-Mail ist ein Fehler aufgetreten.';
-								log_error($pdo, $message, $e, 'registration_form');
-						}
-
-					} catch (PDOException $e) {
-						if (($e->errorInfo[1] ?? null) == 1062) {
-							$message = 'Diese E-Mail-Adresse ist bereits registriert.';
-						} else {
-							$message = 'Beim Speichern ist ein Fehler aufgetreten.';
-						}
-							log_error_from_config($dbConfig, $message, $e, 'registration_form');
-					}
-				}
-			}
-		}
-	}
-} else {
-	if (empty($_SESSION['csrf_token'])) {
-		$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-	}
-}
-
-?>
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Anmeldung</title>
-	
-	<link rel="stylesheet" href="index.css">
-</head>
-<body>
-
-<h1>Anmeldung zur CueLens-Studie</h1>
-<p>Vielen Dank für Ihr Interesse an der Teilnahme. Bitte lesen Sie die <a href="/info">Studieninformation</a>.</p>
-
-<p>Wir benötigen diese Angaben über Sie:</p>
-
-<form method="post" action="">
-<table class="form-fields">
-<tr>
-    <td><label for="email">E-Mail:</label></td>
-    <td><input type="email" id="email" name="email" required data-validation-required="Bitte geben Sie Ihre E-Mail-Adresse ein."></td>
-</tr>
-<tr>
-    <td><label for="name">Name:</label></td>
-    <td><input type="text" id="name" name="name" required data-validation-required="Bitte geben Sie Ihren Namen ein."></td>
-</tr>
-<tr>
-    <td><label for="iban">IBAN:</label></td>
-    <td><input type="text" id="iban" name="iban" maxlength="34" required data-validation-required="Bitte geben Sie Ihre IBAN ein."></td>
-</tr>
-<tr>
-    <td><label for="bic">BIC:</label></td>
-    <td><input type="text" id="bic" name="bic" maxlength="11" required data-validation-required="Bitte geben Sie Ihre BIC ein."></td>
-</tr>
-<tr>
-    <td><label for="age">Alter:</label></td>
-    <td><input type="number" id="age" name="age" min="30" max="65" step="1" required data-validation-required="Bitte geben Sie Ihr Alter ein." data-validation-range="Eine Teilnahme ist nur im Alter von 30 bis 65 Jahren möglich." data-validation-step="Bitte geben Sie eine ganze Zahl ein."></td>
-</tr>
-<tr>
-    <td><label for="cigarettes">Zigaretten/Tag:</label></td>
-    <td><input type="number" id="cigarettes" name="cigarettes" min="10" step="1" required data-validation-required="Bitte geben Sie die Anzahl der Zigaretten pro Tag ein." data-validation-range="Eine Teilnahme ist nur bei mindestens 10 Zigaretten pro Tag möglich." data-validation-step="Bitte geben Sie eine ganze Zahl ein."></td>
-</tr>
-</table>
-<table class="agreements">
-<tr>
-    <td><input type="checkbox" id="studyinfo" name="studyinfo" required data-validation-required="Bitte bestätigen Sie, dass Sie die Studieninformation gelesen haben."></td>
-    <td><label for="studyinfo">Ich habe die <a href="/info">Studieninformation</a> gelesen</label></td>
-</tr>
-<tr>
-    <td><input type="checkbox" id="dataprot" name="dataprot" required data-validation-required="Bitte bestätigen Sie, dass Sie die Datenschutzerklärung akzeptieren."></td>
-    <td><label for="dataprot">Ich akzeptiere die <a href="/ds">Datenschutzerklärung</a></label></td>
-</tr>
-</table>
-<input
-    type="hidden"
-    name="csrf_token"
-    value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"
->
-<p id="form-validation-message" class="error form-validation-message" role="alert" hidden></p>
-<p><button type="submit">Absenden</button></p>
-</form>
-
-<?php if (!empty($message)): ?>
-    <p class="error"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
-<?php endif; ?>
-
-</body>
-<script src="index.js"></script>
-</html>
+require __DIR__ . '/lib/registration-page.php';

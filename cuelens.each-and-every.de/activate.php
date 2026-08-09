@@ -99,14 +99,35 @@ if (!is_array($payload)) {
     bad_request();
 }
 
-$email = normalize_activation_email(require_request_string($payload, 'email'));
-if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+try {
+    $identifier = activation_identifier_from_payload($payload);
+} catch (InvalidArgumentException) {
     bad_request();
 }
 $isConfirmation = array_key_exists('app_token', $payload);
 $appToken = $isConfirmation ? require_request_string($payload, 'app_token') : null;
 if ($appToken !== null && !is_uuid_v4($appToken)) {
     bad_request();
+}
+
+// Test seam for exercising the HTTP contract without database or notification
+// side effects. Production requests never define this process-local callable.
+$endpointHandler = $GLOBALS['cuelens_activation_endpoint_handler'] ?? null;
+if (is_callable($endpointHandler)) {
+    try {
+        $issuedToken = $endpointHandler($identifier, $appToken);
+        if ($appToken === null) {
+            if (!is_string($issuedToken) || !is_uuid_v4($issuedToken)) {
+                throw new RuntimeException('Activation handler returned an invalid token.');
+            }
+            json_response(200, ['app_token' => strtolower($issuedToken)]);
+        }
+        no_content();
+    } catch (ActivationRejectedException) {
+        bad_request();
+    } catch (Throwable $error) {
+        server_error($error);
+    }
 }
 
 $dbConfig = require ACTIVATION_DB_CONFIG_FILE;
@@ -133,7 +154,7 @@ try {
     if ($appToken === null) {
         $issuedToken = request_activation_token(
             $pdo,
-            $email,
+            $identifier,
             $hostConfig['secret']['activation']
         );
         json_response(200, ['app_token' => $issuedToken]);
@@ -143,7 +164,7 @@ try {
     confirm_activation_token(
         $pdo,
         $cravingPdo,
-        $email,
+        $identifier,
         $appToken,
         $hostConfig['secret']['activation'],
         $hostConfig['secret']['pseudonym']

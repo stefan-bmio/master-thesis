@@ -58,16 +58,26 @@ import androidx.compose.ui.zIndex
 import androidx.compose.foundation.shape.CircleShape
 import de.eachandevery.cuelens.prestudy.AndroidKeystoreAppTokenStore
 import de.eachandevery.cuelens.prestudy.AppTokenStore
-import de.eachandevery.cuelens.prestudy.KEY_COMPENSATION_CODE
+import de.eachandevery.cuelens.prestudy.CompletionState
 import de.eachandevery.cuelens.prestudy.KEY_CONFIRMED_SITUATION_COUNT
 import de.eachandevery.cuelens.prestudy.KEY_MATCHING_ORDER
 import de.eachandevery.cuelens.prestudy.KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS
 import de.eachandevery.cuelens.prestudy.KEY_PENDING_SUBMISSION_CRAVING
-import de.eachandevery.cuelens.prestudy.KEY_STUDY_COMPLETED
 import de.eachandevery.cuelens.prestudy.NO_PENDING_CRAVING
+import de.eachandevery.cuelens.prestudy.SelfReportResponse
+import de.eachandevery.cuelens.prestudy.SelfReportResponseParser
+import de.eachandevery.cuelens.prestudy.SharedPreferencesStudyProgressStore
 import de.eachandevery.cuelens.prestudy.STUDY_PREFERENCES_NAME
+import de.eachandevery.cuelens.prestudy.StudyCompletionContent
+import de.eachandevery.cuelens.prestudy.StudyProgress
+import de.eachandevery.cuelens.prestudy.StudyProtocolException
 import de.eachandevery.cuelens.prestudy.AndroidStudyReminderNotifier
 import de.eachandevery.cuelens.prestudy.StudyReminderScheduler
+import de.eachandevery.cuelens.prestudy.isCompleted
+import de.eachandevery.cuelens.prestudy.persistDirectCompletionConfirmed
+import de.eachandevery.cuelens.prestudy.persistDirectCompletionPending
+import de.eachandevery.cuelens.prestudy.persistProlificCompletion
+import de.eachandevery.cuelens.prestudy.requiresRecovery
 import de.eachandevery.cuelens.infofeed.AppLanguage
 import de.eachandevery.cuelens.infofeed.InfoFeedStrings
 import de.eachandevery.cuelens.infofeed.localizedStrings
@@ -146,20 +156,25 @@ internal fun ProductiveStudyApp(
     val preferences = remember {
         context.getSharedPreferences(STUDY_PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
+    val progressStore = remember { SharedPreferencesStudyProgressStore(context) }
+    val initialProgress = remember {
+        runCatching { progressStore.read() }.getOrElse {
+            StudyProgress(
+                hasPendingSubmission = true,
+                completionState = CompletionState.Invalid
+            )
+        }
+    }
     val appTokenStore = remember { AndroidKeystoreAppTokenStore(context) }
     var phase by remember { mutableStateOf(Phase.StartGate) }
     var itemIndex by remember { mutableIntStateOf(0) }
     var currentImageItems by remember { mutableStateOf(emptyList<ImageMatchItem>()) }
     var currentWordItems by remember { mutableStateOf(emptyList<WordMatchItem>()) }
     var completedSituationCount by remember {
-        mutableIntStateOf(
-            preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
-        )
+        mutableIntStateOf(initialProgress.confirmedSituationCount)
     }
     var nextRunAvailableAtMillis by remember {
-        mutableStateOf(
-            preferences.getLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, 0L)
-        )
+        mutableStateOf(initialProgress.nextSituationAvailableAtMillis)
     }
     var matchingOrder by remember {
         mutableStateOf(loadMatchingOrder(preferences, imageItems.size))
@@ -170,22 +185,22 @@ internal fun ProductiveStudyApp(
     var pendingSubmissionCraving by remember {
         mutableIntStateOf(preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING))
     }
-    var compensationCode by remember {
-        mutableStateOf(preferences.getString(KEY_COMPENSATION_CODE, null))
-    }
-    var studyCompleted by remember {
-        mutableStateOf(preferences.getBoolean(KEY_STUDY_COMPLETED, false))
-    }
+    var completionState by remember { mutableStateOf(initialProgress.completionState) }
     var syncInProgress by remember { mutableStateOf(false) }
     var syncMessage by remember { mutableStateOf<String?>(null) }
 
     val refreshPersistedState = {
-        completedSituationCount = preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0)
-        nextRunAvailableAtMillis = preferences.getLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, 0L)
+        val progress = runCatching { progressStore.read() }.getOrElse {
+            StudyProgress(
+                hasPendingSubmission = true,
+                completionState = CompletionState.Invalid
+            )
+        }
+        completedSituationCount = progress.confirmedSituationCount
+        nextRunAvailableAtMillis = progress.nextSituationAvailableAtMillis
         hasActivation = runCatching { appTokenStore.getAppToken() != null }.getOrDefault(false)
         pendingSubmissionCraving = preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING)
-        compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
-        studyCompleted = preferences.getBoolean(KEY_STUDY_COMPLETED, false)
+        completionState = progress.completionState
     }
 
     val syncPendingWork = {
@@ -296,8 +311,9 @@ internal fun ProductiveStudyApp(
     }
 
     val networkWorkPending = pendingSubmissionCraving != NO_PENDING_CRAVING ||
-        (!compensationCode.isNullOrBlank() && !studyCompleted)
-    val canStartNow = hasActivation && !networkWorkPending && !syncInProgress && !studyCompleted
+        completionState.requiresRecovery
+    val canStartNow = hasActivation && !networkWorkPending && !syncInProgress &&
+        !completionState.isCompleted
 
     LaunchedEffect(hasActivation) {
         if (!hasActivation) onExit()
@@ -310,8 +326,7 @@ internal fun ProductiveStudyApp(
             Phase.StartGate -> StartGateScreen(
                 nextRunAvailableAtMillis = nextRunAvailableAtMillis,
                 completedSituationCount = completedSituationCount,
-                studyCompleted = studyCompleted,
-                compensationCode = compensationCode,
+                completionState = completionState,
                 networkWorkPending = networkWorkPending,
                 syncInProgress = syncInProgress,
                 syncMessage = syncMessage,
@@ -364,8 +379,7 @@ internal fun ProductiveStudyApp(
 private fun StartGateScreen(
     nextRunAvailableAtMillis: Long,
     completedSituationCount: Int,
-    studyCompleted: Boolean,
-    compensationCode: String?,
+    completionState: CompletionState,
     networkWorkPending: Boolean,
     syncInProgress: Boolean,
     syncMessage: String?,
@@ -376,7 +390,7 @@ private fun StartGateScreen(
 ) {
     var nowMillis by remember { mutableStateOf(System.currentTimeMillis()) }
     val remainingMillis = max(0L, nextRunAvailableAtMillis - nowMillis)
-    val studyComplete = studyCompleted || completedSituationCount >= TOTAL_SITUATION_COUNT
+    val studyComplete = completionState.isCompleted
     val startEnabled = remainingMillis == 0L && canStartSituation && !studyComplete &&
         !networkWorkPending && !syncInProgress
     val nextSituationNumber = (completedSituationCount + 1).coerceAtMost(TOTAL_SITUATION_COUNT)
@@ -396,33 +410,22 @@ private fun StartGateScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = when {
-                studyComplete -> strings.studyCompleted
-                networkWorkPending || syncInProgress -> strings.studyTransferPending
-                canStartSituation -> strings.studyRunProgress(
-                    nextSituationNumber,
-                    TOTAL_SITUATION_COUNT
-                )
-                else -> strings.studyResourcesIncomplete
-            },
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        if (studyComplete && !compensationCode.isNullOrBlank()) {
+        if (studyComplete) {
+            StudyCompletionContent(completionState = completionState, strings = strings)
+        } else {
             Text(
-                text = strings.studyCompensationCode,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = compensationCode,
+                text = when {
+                    networkWorkPending || syncInProgress -> strings.studyTransferPending
+                    canStartSituation -> strings.studyRunProgress(
+                        nextSituationNumber,
+                        TOTAL_SITUATION_COUNT
+                    )
+                    else -> strings.studyResourcesIncomplete
+                },
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
-        } else {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = if (networkWorkPending || syncInProgress) {
                     strings.studyCompleteTransfer
@@ -734,23 +737,33 @@ internal suspend fun retryPersistedStudyTransfer(context: Context): Result<Unit>
         onStudyStateChanged = {}
     )
 
-private suspend fun recoverPendingNetworkWork(
+internal interface StudySubmissionService {
+    suspend fun submitSelfReport(appToken: String, craving: Int): SelfReportResponse
+    suspend fun confirmCompensation(compensationCode: String)
+}
+
+internal suspend fun recoverPendingNetworkWork(
     preferences: SharedPreferences,
     appTokenStore: AppTokenStore,
+    submissionService: StudySubmissionService = CravingSubmissionClient,
     onStudyStateChanged: suspend () -> Unit
 ): Result<Unit> =
     runCatching {
-        val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
-        val studyCompleted = preferences.getBoolean(KEY_STUDY_COMPLETED, false)
-        if (!compensationCode.isNullOrBlank() && !studyCompleted) {
-            CravingSubmissionClient.confirmCompensation(compensationCode)
-            preferences.edit()
-                .putBoolean(KEY_STUDY_COMPLETED, true)
-                .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
-                .remove(KEY_PENDING_SUBMISSION_CRAVING)
-                .apply()
-            runCatching { onStudyStateChanged() }
-            return@runCatching
+        when (
+            val completionState = SharedPreferencesStudyProgressStore(preferences)
+                .read()
+                .completionState
+        ) {
+            is CompletionState.DirectPendingConfirmation -> {
+                submissionService.confirmCompensation(completionState.code)
+                persistDirectCompletionConfirmed(preferences, completionState.code)
+                runCatching { onStudyStateChanged() }
+                return@runCatching
+            }
+            CompletionState.Invalid -> throw StudyProtocolException()
+            is CompletionState.DirectCompleted,
+            CompletionState.ProlificCompleted -> return@runCatching
+            CompletionState.Incomplete -> Unit
         }
 
         val activeToken = appTokenStore.getAppToken()
@@ -761,25 +774,34 @@ private suspend fun recoverPendingNetworkWork(
             return@runCatching
         }
 
-        when (val response = CravingSubmissionClient.submitSelfReport(
+        val expectedSituationIndex = preferences.getInt(KEY_CONFIRMED_SITUATION_COUNT, 0) + 1
+        when (val response = submissionService.submitSelfReport(
             appToken = activeToken,
             craving = pendingCraving
         )) {
             is SelfReportResponse.Next -> {
+                if (response.situationIndex != expectedSituationIndex) {
+                    throw StudyProtocolException()
+                }
                 advanceAfterConfirmedSubmission(preferences)
                 runCatching { onStudyStateChanged() }
                 Unit
             }
-            is SelfReportResponse.Complete -> {
-                preferences.edit()
-                    .putString(KEY_COMPENSATION_CODE, response.compensationCode)
-                    .remove(KEY_PENDING_SUBMISSION_CRAVING)
-                    .apply()
-                CravingSubmissionClient.confirmCompensation(response.compensationCode)
-                preferences.edit()
-                    .putBoolean(KEY_STUDY_COMPLETED, true)
-                    .putInt(KEY_CONFIRMED_SITUATION_COUNT, TOTAL_SITUATION_COUNT)
-                    .apply()
+            is SelfReportResponse.DirectComplete -> {
+                if (expectedSituationIndex != TOTAL_SITUATION_COUNT) {
+                    throw StudyProtocolException()
+                }
+                persistDirectCompletionPending(preferences, response.compensationCode)
+                submissionService.confirmCompensation(response.compensationCode)
+                persistDirectCompletionConfirmed(preferences, response.compensationCode)
+                runCatching { onStudyStateChanged() }
+                Unit
+            }
+            SelfReportResponse.ProlificComplete -> {
+                if (expectedSituationIndex != TOTAL_SITUATION_COUNT) {
+                    throw StudyProtocolException()
+                }
+                persistProlificCompletion(preferences)
                 runCatching { onStudyStateChanged() }
                 Unit
             }
@@ -796,17 +818,18 @@ private fun advanceAfterConfirmedSubmission(preferences: SharedPreferences) {
         .putInt(KEY_CONFIRMED_SITUATION_COUNT, nextCompletedSituationCount)
         .putLong(KEY_NEXT_SITUATION_AVAILABLE_AT_MILLIS, nextRunAt)
         .remove(KEY_PENDING_SUBMISSION_CRAVING)
-        .apply()
+        .commit()
+        .also { committed ->
+            if (!committed) throw IllegalStateException("Study progress could not be persisted.")
+        }
 }
 
-private fun hasPendingNetworkWork(preferences: SharedPreferences): Boolean {
-    val compensationCode = preferences.getString(KEY_COMPENSATION_CODE, null)
-    return preferences.getInt(KEY_PENDING_SUBMISSION_CRAVING, NO_PENDING_CRAVING) != NO_PENDING_CRAVING ||
-        (!compensationCode.isNullOrBlank() && !preferences.getBoolean(KEY_STUDY_COMPLETED, false))
-}
+private fun hasPendingNetworkWork(preferences: SharedPreferences): Boolean =
+    runCatching { SharedPreferencesStudyProgressStore(preferences).read().hasPendingSubmission }
+        .getOrDefault(true)
 
-private object CravingSubmissionClient {
-    suspend fun submitSelfReport(appToken: String, craving: Int): SelfReportResponse {
+private object CravingSubmissionClient : StudySubmissionService {
+    override suspend fun submitSelfReport(appToken: String, craving: Int): SelfReportResponse {
         val response = putJson(
             ServerRequest.SelfReportSubmission,
             JSONObject()
@@ -814,14 +837,9 @@ private object CravingSubmissionClient {
                 .put("craving", craving)
                 .put("app_version", BuildConfig.VERSION_NAME)
         )
-        val status = response.optString("status")
         return try {
-            if (status == "complete") {
-                SelfReportResponse.Complete(response.getString("compensation_code"))
-            } else {
-                SelfReportResponse.Next
-            }
-        } catch (e: JSONException) {
+            SelfReportResponseParser.parse(response)
+        } catch (e: StudyProtocolException) {
             logServerRequestError(
                 ServerRequest.SelfReportSubmission,
                 serverErrorMessage = "Unexpected JSON response shape",
@@ -831,7 +849,7 @@ private object CravingSubmissionClient {
         }
     }
 
-    suspend fun confirmCompensation(compensationCode: String) {
+    override suspend fun confirmCompensation(compensationCode: String) {
         putJsonNoContent(
             ServerRequest.CompensationConfirmation,
             JSONObject().put("compensation_code", compensationCode)
@@ -962,11 +980,6 @@ private data class WordMatchItem(
 
     fun wordB(language: AppLanguage): String =
         if (language == AppLanguage.English) englishWordB else germanWordB
-}
-
-private sealed interface SelfReportResponse {
-    data object Next : SelfReportResponse
-    data class Complete(val compensationCode: String) : SelfReportResponse
 }
 
 private data class CueLabelMapping(

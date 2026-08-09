@@ -10,7 +10,9 @@ require_once __DIR__ . '/PHPMailer/SMTP.php';
 const OPERATIONAL_EVENT_FEEDBACK_RECEIVED = 'feedback_received';
 const OPERATIONAL_EVENT_FEEDBACK_LIMIT_REACHED = 'feedback_limit_reached';
 const OPERATIONAL_EVENT_REGISTRATION_CREATED = 'registration_created';
+const OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED = 'prolific_registration_created';
 const OPERATIONAL_EVENT_ACTIVATION_COMPLETED = 'activation_completed';
+const OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED = 'prolific_study_completed';
 const OPERATIONAL_EVENT_CLIENT_ERROR = 'client_error';
 const OPERATIONAL_EVENT_SERVER_ERROR = 'server_error';
 
@@ -37,9 +39,17 @@ function build_operational_notification(
             'subject' => '[CueLens] Neue Registrierung',
             'notice' => 'Eine Registrierung wurde per Double-Opt-In bestaetigt.',
         ],
+        OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED => [
+            'subject' => '[CueLens] Neue Prolific-Registrierung',
+            'notice' => 'Eine Prolific-Registrierung wurde ohne direkte Identifikationsdaten erstellt.',
+        ],
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED => [
             'subject' => '[CueLens] App-Aktivierung abgeschlossen',
             'notice' => 'Eine App-Aktivierung wurde erfolgreich abgeschlossen.',
+        ],
+        OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED => [
+            'subject' => '[CueLens] Prolific-Teilnahme abgeschlossen',
+            'notice' => 'Die Zahlungsberechtigung liegt in der geschuetzten Registrierungsdatenbank vor.',
         ],
         OPERATIONAL_EVENT_CLIENT_ERROR => [
             'subject' => '[CueLens] Clientfehler',

@@ -78,9 +78,9 @@ class LocalHttpIntegrationTest {
             listOf("application/json; charset=UTF-8", "application/json; charset=UTF-8"),
             contentTypeHeaders
         )
-        assertEquals("person@example.org", org.json.JSONObject(bodies[0]).getString("email"))
+        assertEquals("person@example.org", org.json.JSONObject(bodies[0]).getString("identifier"))
         val confirmation = org.json.JSONObject(bodies[1])
-        assertEquals("person@example.org", confirmation.getString("email"))
+        assertEquals("person@example.org", confirmation.getString("identifier"))
         assertEquals(appToken, confirmation.getString("app_token"))
         assertEquals(appToken, token)
     }

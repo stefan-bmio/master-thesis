@@ -17,14 +17,14 @@ class PreStudyScreenTest {
     val composeRule = createComposeRule()
 
     @Test
-    fun homeShowsDemoAndDisablesOnlyEmailActivationForExistingToken() {
+    fun homeShowsDemoAndDisablesOnlyAppActivationForExistingToken() {
         composeRule.setContent {
             CueLensTheme(dynamicColor = false) {
                 HomeScreen(
                     hasAppToken = true,
                     language = AppLanguage.German,
                     onLanguageChange = {},
-                    onEmailActivation = {},
+                    onAppActivation = {},
                     onDemo = {},
                     onFeedback = {}
                 )
@@ -32,15 +32,15 @@ class PreStudyScreenTest {
         }
 
         composeRule.onNodeWithText("Willkommen bei CueLens").assertIsDisplayed()
-        composeRule.onNodeWithText("E-Mail-Aktivierung").assertIsNotEnabled()
+        composeRule.onNodeWithText("App-Aktivierung").assertIsNotEnabled()
         composeRule.onNodeWithText("Beispiel-Studiensituation").assertIsEnabled()
         composeRule.onNodeWithText("Feedback").assertIsEnabled()
-        composeRule.onNodeWithText("Die App wurde bereits aktiviert.").assertIsDisplayed()
+        composeRule.onNodeWithText("Die App ist aktiviert.").assertIsDisplayed()
         composeRule.onNodeWithText("EN").assertIsDisplayed()
     }
 
     @Test
-    fun activationRequiresPlausibleEmailAddress() {
+    fun activationAcceptsEmailAddressAndExplainsProlificIdentifier() {
         composeRule.setContent {
             CueLensTheme(dynamicColor = false) {
                 EmailActivationScreen(
@@ -54,8 +54,99 @@ class PreStudyScreenTest {
         }
 
         composeRule.onNodeWithText("Aktivieren").assertIsNotEnabled()
-        composeRule.onNodeWithText("E-Mail-Adresse").performTextInput("person@example.org")
+        composeRule.onNodeWithText("App-Aktivierung").assertIsDisplayed()
+        composeRule.onNodeWithText("E-Mail-Adresse oder Prolific-ID")
+            .performTextInput("person@example.org")
         composeRule.onNodeWithText("Aktivieren").assertIsEnabled()
+        composeRule.onNodeWithText(
+            "Wenn Sie über Prolific teilnehmen, geben Sie hier Ihre Prolific-ID ein."
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun activationAcceptsProlificId() {
+        composeRule.setContent {
+            CueLensTheme(dynamicColor = false) {
+                EmailActivationScreen(
+                    activationState = ActivationState.Idle,
+                    activationNeedsSupport = false,
+                    language = AppLanguage.German,
+                    onLanguageChange = {},
+                    onActivate = {}
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("E-Mail-Adresse oder Prolific-ID")
+            .performTextInput("AbCdEf1234567890GhIjKlMn")
+        composeRule.onNodeWithText("Aktivieren").assertIsEnabled()
+    }
+
+    @Test
+    fun directCompletionKeepsCodeAndCopyAction() {
+        composeRule.setContent {
+            CueLensTheme(dynamicColor = false) {
+                HomeScreen(
+                    hasAppToken = true,
+                    completionState = CompletionState.DirectCompleted("COMP-1234"),
+                    language = AppLanguage.German,
+                    onLanguageChange = {},
+                    onAppActivation = {},
+                    onDemo = {},
+                    onFeedback = {}
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Studie abgeschlossen").assertIsDisplayed()
+        composeRule.onNodeWithText("COMP-1234").assertIsDisplayed()
+        composeRule.onNodeWithText("Code kopieren").assertIsDisplayed()
+    }
+
+    @Test
+    fun prolificCompletionShowsExactGermanTextWithoutCodeUi() {
+        composeRule.setContent {
+            CueLensTheme(dynamicColor = false) {
+                HomeScreen(
+                    hasAppToken = true,
+                    completionState = CompletionState.ProlificCompleted,
+                    language = AppLanguage.German,
+                    onLanguageChange = {},
+                    onAppActivation = {},
+                    onDemo = {},
+                    onFeedback = {}
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(
+            "Studie abgeschlossen. Der Abschluss bei Prolific erfolgt üblicherweise innerhalb 2 Tagen."
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText("Code kopieren").assertDoesNotExist()
+        composeRule.onNodeWithText("Aufwandsentschädigungscode", substring = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun prolificCompletionShowsExactEnglishText() {
+        composeRule.setContent {
+            CueLensTheme(dynamicColor = false) {
+                HomeScreen(
+                    hasAppToken = true,
+                    completionState = CompletionState.ProlificCompleted,
+                    language = AppLanguage.English,
+                    onLanguageChange = {},
+                    onAppActivation = {},
+                    onDemo = {},
+                    onFeedback = {}
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(
+            "Study completed. Completion on Prolific usually takes place within 2 days."
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText("Copy code").assertDoesNotExist()
     }
 
     @Test

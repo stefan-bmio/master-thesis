@@ -5,10 +5,10 @@ header('Content-Type: application/json; charset=utf-8');
 
 require __DIR__ . '/lib/error-log.php';
 require __DIR__ . '/lib/feature-toggle.php';
-require __DIR__ . '/lib/token-identity.php';
+require __DIR__ . '/lib/study-completion.php';
 
-const TOTAL_SUBMISSION_COUNT = 20;
 const SUBMISSION_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-craving.php';
+const SUBMISSION_REGISTRATION_DB_CONFIG_FILE = __DIR__ . '/config/cuelens-signup.php';
 
 function json_response(int $statusCode, array $payload): never
 {
@@ -97,28 +97,6 @@ function parse_craving(mixed $value): int
     return $craving;
 }
 
-function generate_uuid_v4(): string
-{
-    $bytes = random_bytes(16);
-    $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
-    $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
-    $hex = bin2hex($bytes);
-
-    return sprintf(
-        '%s-%s-%s-%s-%s',
-        substr($hex, 0, 8),
-        substr($hex, 8, 4),
-        substr($hex, 12, 4),
-        substr($hex, 16, 4),
-        substr($hex, 20, 12)
-    );
-}
-
-function condition_code_for_index(int $situationIndex): string
-{
-    return $situationIndex <= 10 ? 'CUE_MATCHING' : 'CUE_LABELING';
-}
-
 function pdo_from_config(array $config): PDO
 {
     foreach (['host', 'dbname', 'user', 'pass'] as $key) {
@@ -139,7 +117,13 @@ function pdo_from_config(array $config): PDO
     );
 }
 
-function handle_self_report(PDO $pdo, array $payload, string $pseudonymSecret): never
+/** @param callable(): PDO $administrativePdoFactory */
+function handle_self_report(
+    PDO $pdo,
+    array $payload,
+    string $pseudonymSecret,
+    callable $administrativePdoFactory
+): never
 {
     $appToken = require_string($payload, 'app_token');
     $craving = parse_craving($payload['craving'] ?? null);
@@ -151,74 +135,23 @@ function handle_self_report(PDO $pdo, array $payload, string $pseudonymSecret): 
     }
 
     validate_uuid($appToken, 'app_token');
-    $validTokenHash = valid_app_token_hash($pseudonymSecret, $appToken);
-    $participantId = participant_id_for_app_token($pseudonymSecret, $appToken);
-
-    $pdo->beginTransaction();
     try {
-        $allowlist = $pdo->prepare(
-            'SELECT hash FROM valid_app_token_hashes WHERE hash = :hash'
+        $response = submit_study_report(
+            $pdo,
+            $appToken,
+            $craving,
+            $pseudonymSecret,
+            $administrativePdoFactory,
+            null,
+            static fn (): bool => send_operational_notification(
+                OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED,
+                'submission_endpoint'
+            )
         );
-        $allowlist->execute([':hash' => $validTokenHash]);
-        if ($allowlist->fetchColumn() === false) {
-            $pdo->rollBack();
-            bad_request('Bad request.');
-        }
-
-        $existing = $pdo->prepare(
-            'SELECT participant_id
-               FROM self_reports
-              WHERE participant_id = :participant_id
-              FOR UPDATE'
-        );
-        $existing->execute([':participant_id' => $participantId]);
-        $submittedCount = count($existing->fetchAll());
-
-        if ($submittedCount >= TOTAL_SUBMISSION_COUNT) {
-            $pdo->rollBack();
-            bad_request('Study is already complete.');
-        }
-
-        $situationIndex = $submittedCount + 1;
-        $conditionCode = condition_code_for_index($situationIndex);
-
-        $report = $pdo->prepare(
-            'INSERT INTO self_reports (participant_id, condition_code, craving)
-             VALUES (:participant_id, :condition_code, :craving)'
-        );
-        $report->bindValue(':participant_id', $participantId, PDO::PARAM_STR);
-        $report->bindValue(':condition_code', $conditionCode, PDO::PARAM_STR);
-        $report->bindValue(':craving', $craving, PDO::PARAM_INT);
-        $report->execute();
-
-        if ($situationIndex === TOTAL_SUBMISSION_COUNT) {
-            $compensationCode = generate_uuid_v4();
-            $code = $pdo->prepare(
-                'INSERT INTO compensation_code (compensation_code)
-                 VALUES (:compensation_code)'
-            );
-            $code->execute([':compensation_code' => $compensationCode]);
-
-            $pdo->commit();
-            json_response(200, [
-                'success' => true,
-                'status' => 'complete',
-                'situation_index' => $situationIndex,
-                'condition_code' => $conditionCode,
-                'compensation_code' => $compensationCode,
-            ]);
-        }
-
-        $pdo->commit();
-        json_response(200, [
-            'success' => true,
-            'situation_index' => $situationIndex,
-            'condition_code' => $conditionCode,
-        ]);
+        json_response(200, $response);
+    } catch (StudySubmissionRejectedException $error) {
+        bad_request($error->getMessage());
     } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
         server_error($e, $pdo);
     }
 }
@@ -229,38 +162,36 @@ function handle_compensation_confirmation(PDO $pdo, array $payload): never
     validate_uuid($compensationCode, 'compensation_code');
 
     try {
-        $stmt = $pdo->prepare(
-            'UPDATE compensation_code
-                SET confirmed_at = COALESCE(confirmed_at, CURRENT_TIMESTAMP)
-              WHERE compensation_code = :compensation_code'
-        );
-        $stmt->execute([':compensation_code' => $compensationCode]);
+        confirm_compensation_code($pdo, $compensationCode);
         no_content();
     } catch (Throwable $e) {
         server_error($e, $pdo);
     }
 }
 
-$config = [];
-try {
-    $loadedConfig = require SUBMISSION_DB_CONFIG_FILE;
-    $config = is_array($loadedConfig) ? $loadedConfig : [];
-    $pdo = pdo_from_config($config);
-    if (!feature_enabled($pdo, FEATURE_NEXT_STUDY_RUN)) {
-        not_found();
-    }
+$endpointHandler = $GLOBALS['cuelens_submission_endpoint_handler'] ?? null;
+if (!is_callable($endpointHandler)) {
+    $config = [];
+    try {
+        $loadedConfig = require SUBMISSION_DB_CONFIG_FILE;
+        $config = is_array($loadedConfig) ? $loadedConfig : [];
+        $pdo = pdo_from_config($config);
+        if (!feature_enabled($pdo, FEATURE_NEXT_STUDY_RUN)) {
+            not_found();
+        }
 
-    $hostConfig = require __DIR__ . '/config/host.php';
-    if (
-        !is_array($hostConfig) ||
-        !isset($hostConfig['secret']['pseudonym']) ||
-        !is_string($hostConfig['secret']['pseudonym']) ||
-        $hostConfig['secret']['pseudonym'] === ''
-    ) {
-        throw new RuntimeException('Missing pseudonym secret.');
+        $hostConfig = require __DIR__ . '/config/host.php';
+        if (
+            !is_array($hostConfig) ||
+            !isset($hostConfig['secret']['pseudonym']) ||
+            !is_string($hostConfig['secret']['pseudonym']) ||
+            $hostConfig['secret']['pseudonym'] === ''
+        ) {
+            throw new RuntimeException('Missing pseudonym secret.');
+        }
+    } catch (Throwable $e) {
+        server_error($e, $pdo ?? null, $config);
     }
-} catch (Throwable $e) {
-    server_error($e, $pdo ?? null, $config);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
@@ -285,8 +216,31 @@ if (!is_array($payload)) {
     bad_request('JSON body must be an object.');
 }
 
+if (is_callable($endpointHandler)) {
+    try {
+        $handlerResponse = $endpointHandler($payload);
+        if ($handlerResponse === null) {
+            no_content();
+        }
+        if (!is_array($handlerResponse)) {
+            throw new RuntimeException('Submission endpoint handler returned an invalid response.');
+        }
+        json_response(200, $handlerResponse);
+    } catch (Throwable $error) {
+        server_error($error);
+    }
+}
+
 if (isset($payload['app_token'], $payload['craving'])) {
-    handle_self_report($pdo, $payload, $hostConfig['secret']['pseudonym']);
+    handle_self_report(
+        $pdo,
+        $payload,
+        $hostConfig['secret']['pseudonym'],
+        static function (): PDO {
+            $loadedConfig = require SUBMISSION_REGISTRATION_DB_CONFIG_FILE;
+            return pdo_from_config(is_array($loadedConfig) ? $loadedConfig : []);
+        }
+    );
 }
 
 if (isset($payload['compensation_code'])) {

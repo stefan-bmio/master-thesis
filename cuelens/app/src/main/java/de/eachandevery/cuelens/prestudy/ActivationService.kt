@@ -10,8 +10,8 @@ import org.json.JSONException
 import org.json.JSONObject
 
 interface ActivationService {
-    suspend fun requestToken(email: String): String
-    suspend fun confirmToken(email: String, appToken: String)
+    suspend fun requestToken(identifier: String): String
+    suspend fun confirmToken(identifier: String, appToken: String)
 }
 
 class HttpActivationService(
@@ -20,8 +20,11 @@ class HttpActivationService(
         it.openConnection() as HttpURLConnection
     }
 ) : ActivationService {
-    override suspend fun requestToken(email: String): String = withContext(Dispatchers.IO) {
-        val response = executeRequest(JSONObject().put("email", email), expectedStatus = 200)
+    override suspend fun requestToken(identifier: String): String = withContext(Dispatchers.IO) {
+        val response = executeRequest(
+            JSONObject().put("identifier", identifier.trim()),
+            expectedStatus = 200
+        )
         val appToken = try {
             JSONObject(response).getString("app_token")
         } catch (error: JSONException) {
@@ -31,12 +34,12 @@ class HttpActivationService(
         appToken.lowercase()
     }
 
-    override suspend fun confirmToken(email: String, appToken: String): Unit =
+    override suspend fun confirmToken(identifier: String, appToken: String): Unit =
         withContext(Dispatchers.IO) {
             try {
                 executeRequest(
                     JSONObject()
-                        .put("email", email)
+                        .put("identifier", identifier.trim())
                         .put("app_token", appToken),
                     expectedStatus = 204
                 )
