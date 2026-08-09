@@ -7,21 +7,20 @@
 
 Die produktive CueLens-App verwendet als minimale Plattform Android 7.0 beziehungsweise API-Level 24. Sie wird gegen das aktuelle Android-SDK 36 kompiliert und auf dieses Ziel-SDK ausgerichtet. Mit dieser Untergrenze stehen die für die Implementierung benötigten Sicherheits- und Hintergrundmechanismen zur Verfügung, insbesondere Android Keystore, AES-GCM, DataStore und WorkManager. Ältere Android-Geräte können die App nicht installieren.
 
-Die Anwendung ist für die Nutzung im Hochformat konfiguriert. Benötigt werden ein Touchscreen, eine ausreichende Darstellung von Vollbildbildern und Textoptionen sowie eine Internetverbindung für Infofeed, Aktivierung, Datenschutzstatus, Feature-Freigabe, Feedback und wissenschaftliche Selbstberichte. Eine Kamera ist für die aktuelle produktive Studienfassung nicht erforderlich, weil die Studienaufgaben statische Ressourcen verwenden. Sie würde erst für eine spätere KI-gestützte Klassifikation selbst gewählter Bilder relevant.
+Die Anwendung ist für die Nutzung im Hochformat konfiguriert. Eine Kamera ist für die aktuelle produktive Studienfassung nicht erforderlich, weil die Studienaufgaben statische Ressourcen verwenden. Sie wird erst für eine spätere KI-gestützte Klassifikation selbst gewählter Bilder relevant.
 
 Die App fordert die Berechtigungen für Internetzugriff und Benachrichtigungen an. Die Internetberechtigung wird bereits bei der Installation erteilt. Die Benachrichtigungsberechtigung ist unter Android 13 oder neuer eine Laufzeitentscheidung und für die Teilnahme nicht zwingend. Wird sie verweigert, können Infofeed und Studienaufgaben weiterhin manuell geöffnet werden.
 
 \section{Netzwerk- und Transportanforderungen}
 
-Die Produktionsvariante verwendet ausschließlich HTTPS und verbietet unverschlüsselten Klartextverkehr in der Android-Konfiguration. Die Staging-Variante darf für eine abgegrenzte lokale Testumgebung HTTP verwenden. Diese Trennung verhindert, dass eine Testadresse oder eine unsichere Transportkonfiguration versehentlich in den Produktions-Build übernommen wird.
+Die Produktionsvariante verwendet ausschließlich HTTPS und verbietet unverschlüsselten Klartextverkehr in der Android-Konfiguration. Die Staging-Variante darf für eine abgegrenzte lokale Testumgebung HTTP verwenden.
 
 Für die Netzwerkaufrufe sind Verbindungs- und Lesezeitlimits von jeweils 15 Sekunden eingestellt. Kurzzeitige Störungen führen damit nicht zu unbegrenzt blockierenden Bedienzuständen. Die App unterscheidet erfolgreiche Antworten, unerwartete HTTP-Statuscodes, Netzwerkfehler und formal ungültige JSON-Antworten. Ausstehende wissenschaftliche Übertragungen werden lokal erhalten und können erneut angestoßen werden.
 
 Die Datenmenge der einzelnen Requests bleibt gering. Info-Nachrichten und Formulare bestehen aus JSON und Text; wissenschaftliche Selbstberichte enthalten im Wesentlichen UUID, Craving-Wert und App-Version. Bilder werden in der aktuellen Studienfassung weder hochgeladen noch serverseitig klassifiziert. Eine mobile Datenverbindung ist technisch ausreichend, für Installation und größere Dokumentdownloads wird dennoch WLAN empfohlen.
 
 \section{Lokaler Speicher und Gerätesicherheit}
-
-Der App-Token wird mit einem 256-Bit-AES-Schlüssel im GCM-Modus verschlüsselt. Der Schlüssel wird über den Android Keystore verwaltet. Diese Funktion steht auf allen unterstützten Geräten grundsätzlich zur Verfügung, kann aber durch Herstellerimplementierung, Gerätezustand oder eine beschädigte Schlüsseldatenbank beeinträchtigt werden. Kann der Schlüssel nicht mehr geladen werden oder schlägt die Authentizitätsprüfung des Chiffrats fehl, verwendet die App den Token nicht und fordert einen Supportvorgang statt einer unsicheren Wiederherstellung.
+Das App-Token wird mit einem 256-Bit-AES-Schlüssel im GCM-Modus verschlüsselt. Der Schlüssel wird über den Android Keystore verwaltet. Diese Funktion steht auf allen unterstützten Geräten grundsätzlich zur Verfügung, kann aber durch Herstellerimplementierung, Gerätezustand oder eine beschädigte Schlüsseldatenbank beeinträchtigt werden. Kann der Schlüssel nicht mehr geladen werden oder schlägt die Authentizitätsprüfung fehl, verwendet die App das Token nicht und erfordert einen Supportvorgang.
 
 Fortschritt, nächste Freigabezeit, Aufgabenreihenfolge, ausstehender Craving-Wert und Abrechnungscode werden in privaten App-Einstellungen gespeichert. Der benötigte Speicherplatz ist im Verhältnis zu Bildern und Programmbibliotheken vernachlässigbar. Die Android-Sicherung und die allgemeine Datenextraktion sind deaktiviert, damit diese Werte nicht in reguläre Geräte- oder Cloudbackups aufgenommen werden.
 
@@ -29,20 +28,11 @@ Geräte mit entsperrtem Bootloader, Root-Zugriff oder veränderter Systemsoftwar
 
 \section{Hintergrundarbeit und Energiesparmechanismen}
 
-Allgemeine Info-Nachrichten werden über eine periodische WorkManager-Aufgabe geprüft. Die Aufgabe ist auf einen Intervall von 24 Stunden mit einem Flexfenster von sechs Stunden und eine vorhandene Netzwerkverbindung eingestellt. Bei vorübergehenden Netzwerkproblemen verwendet sie exponentielles Backoff. Das Betriebssystem bestimmt den tatsächlichen Ausführungszeitpunkt und kann die Prüfung wegen Doze, App-Standby oder Energiesparmodus verschieben.
+Allgemeine Info-Nachrichten werden über eine periodische WorkManager-Aufgabe geprüft. Die Aufgabe ist auf einen Intervall von 24 Stunden mit einem Flexfenster von sechs Stunden und eine vorhandene Netzwerkverbindung eingestellt. Bei vorübergehenden Netzwerkproblemen verwendet sie exponentielles Backoff. Das Betriebssystem bestimmt den tatsächlichen Ausführungszeitpunkt und kann die Prüfung wegen App-Standby oder Energiesparmodus verschieben.
 
-Erinnerungen an die nächste Studiensituation werden als einmalige, eindeutige Aufgaben über WorkManager geplant. Auch diese Aufgaben sind nicht sekundengenau. Die App prüft beim Ausführen erneut die gespeicherte Freigabezeit. Wird ein Worker zu früh gestartet, wird er für die verbleibende Zeit neu eingeplant. Damit kann eine Erinnerung verspätet, aber nicht absichtlich vor Ablauf der Sperrzeit angezeigt werden.
-
-Für die Studienmethodik folgt daraus, dass Benachrichtigungen lediglich unterstützend wirken. Die dreistündige Sperrzeit wird durch den gespeicherten Studienzustand und nicht durch den Benachrichtigungszeitpunkt bestimmt. Teilnehmende müssen die App auch ohne rechtzeitig zugestellte Erinnerung verwenden können.
-
-\section{Installation und Aktualisierung}
-
-Die App wird derzeit als APK über die Studienwebseite verteilt. Die Installationsseite ist für Android 7.0 oder neuer ausgewiesen und enthält getrennte deutsche und englische Schrittfolgen mit Screenshots. Je nach Browser, Gerätehersteller und Android-Version können Dateidownload, Paketprüfung und Freigabe einer Installation aus unbekannter Quelle unterschiedlich dargestellt werden. Für die Teilnahme ist daher eine nachvollziehbare Anleitung und ein erreichbarer technischer Support erforderlich.
-
-Die direkte APK-Verteilung bietet keine automatische Aktualisierung über einen App-Store. Wird während der Studie eine neue Version erforderlich, müssen Teilnehmende aktiv informiert und durch die Installation geführt werden. Gleichzeitig darf ein Update den lokalen Token und Studienfortschritt nicht unbeabsichtigt löschen. Vor jeder produktiven Aktualisierung sind deshalb Installation über eine bestehende Version, Erhalt der privaten App-Daten und Kompatibilität der lokalen Speicherformate zu testen.
+Erinnerungen an die nächste Studiensituation werden als einmalige, eindeutige Aufgaben über WorkManager geplant. Auch diese Aufgaben sind nicht sekundengenau. Die App prüft beim Ausführen erneut die gespeicherte Freigabezeit. Wird ein Worker zu früh gestartet, wird er für die verbleibende Zeit neu eingeplant. Damit kann eine Erinnerung verspätet, aber nicht vor Ablauf der Sperrzeit angezeigt werden.
 
 \section{Anforderungen des KI-Prototyps}
-
 Der getrennte KI-Prototyp verwendet ebenfalls mindestens API-Level 24. Die TFLite-Modelle werden als unkomprimierte Assets eingebunden, damit sie direkt speicherabgebildet werden können. Die Inferenz ist derzeit auf zwei CPU-Threads konfiguriert. Der Benchmark-Flavor enthält zusätzlich den exportierten Testsplit und ist deshalb nicht für eine reguläre Studienverteilung vorgesehen.
 
 Die Vorverarbeitung benötigt genügend Arbeitsspeicher, um ein ausgewähltes Bild zu decodieren, zu orientieren, quadratisch zuzuschneiden und auf 224 mal 224 RGB-Pixel zu skalieren. Hinzu kommen Modellgewichte, Interpreter und Zwischenaktivierungen. Float32- und Int8-Modelle haben unterschiedliche Speicher- und Laufzeiteigenschaften. Konkrete Mindestwerte können erst aus Messungen auf mehreren Geräten abgeleitet werden.
