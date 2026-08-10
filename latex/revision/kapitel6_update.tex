@@ -1,0 +1,40 @@
+%%
+%% Ergänzung zu Kapitel 6: Planung und Durchführung der App-Studie
+%%
+
+\begin{neu}
+\section{Technischer Teilnahmeablauf}
+
+Der Teilnahmeablauf beginnt mit der webbasierten Registrierung und dem Double-Opt-In. Nach erfolgreicher Bestätigung wird nun unmittelbar auf eine zweisprachige Installationsanleitung verwiesen. Die Teilnehmenden laden die APK von der Studienwebseite, öffnen die Datei und bestätigen abhängig von Gerät und Android-Version die Installation aus dieser Quelle. Da die Dialoge der Hersteller voneinander abweichen können, sind Screenshots nur als Orientierung zu verstehen. Für Personen mit geringer technischer Erfahrung muss ein Supportkontakt angeboten werden.
+
+Beim ersten App-Start wird zunächst die Systemsprache übernommen, sofern noch keine Auswahl gespeichert ist. Die App lädt allgemeine Info-Nachrichten und zeigt noch nicht dauerhaft ausgeblendete Inhalte vor der Startseite. Anschließend erläutert sie die optionalen Benachrichtigungen. Eine Ablehnung verhindert weder Demo und Feedback noch eine spätere manuelle Studienteilnahme. Der Sprachwechsel bleibt auf allen wesentlichen Seiten erreichbar und wird lokal gespeichert.
+
+Auf der Startseite kann die Beispiel-Studiensituation ohne Aktivierung ausgeführt werden. Dadurch können Bedienung und Aufgabenart vor der produktiven Teilnahme kennengelernt werden. Die Demo überträgt keinen wissenschaftlichen Craving-Wert und verändert den produktiven Fortschritt nicht. Das freiwillige Feedbackformular ist ebenfalls ohne Aktivierung verfügbar und wird getrennt von den Selbstberichten gespeichert.
+
+\section{Freigabe der Studienphase}
+Die produktive Studienfunktion wird durch einen serverseitigen Feature-Toggle freigegeben. Vor der Freigabe können Installation, Aktivierung, Demo, Infofeed und Feedback bereits erprobt werden, ohne wissenschaftliche Selbstberichte anzunehmen. Die Studienleitung kann damit zunächst technische Probleme sammeln und die eigentliche Datenerhebung zu einem festgelegten Zeitpunkt global öffnen.
+
+\section{Studienabschluss und Abrechnungscode}
+Die Auszahlung darf nicht allein durch das Vorhandensein eines weitergegebenen Codes automatisiert werden. Die Studienleitung muss prüfen, ob der Code existiert, bestätigt und noch nicht verwendet wurde. Die Zuordnung zur Zahlung ist getrennt von der wissenschaftlichen Auswertung zu dokumentieren.
+
+\section{Installations- und Supportkonzept}
+Die Installation einer direkt verteilten APK ist für manche Zielgruppen eine zusätzliche Hürde. Sicherheitswarnungen können Misstrauen auslösen, und Herstelleroberflächen verwenden unterschiedliche Begriffe. Die zweisprachigen Schrittfolgen reduzieren diese Hürde, ersetzen aber keine barrierearme individuelle Unterstützung. Support muss so erfolgen, dass keine App-Tokens, Craving-Werte oder Screenshots mit sensiblen Inhalten über ungeschützte Kanäle angefordert werden.
+
+Bei Supportanfragen sollen zunächst App-Version, Android-Version, grober Bearbeitungsschritt und die sichtbare generische Fehlermeldung erfasst werden. Serverseitige Request-IDs und operative Meldungen ermöglichen die technische Zuordnung, ohne den Request-Payload per E-Mail zu senden. Zugriff auf detaillierte Fehlerprotokolle bleibt auf die hierfür verantwortlichen Personen beschränkt.
+
+Die direkte Verteilung kann eine Stichprobenselektion zugunsten technisch erfahrener Personen verursachen. Abbrüche zwischen Registrierung, Download, Installation und Aktivierung sind deshalb als eigene Rekrutierungsstufen zu erfassen. Nur so lässt sich unterscheiden, ob geringe Teilnahmezahlen aus mangelndem Interesse oder aus Installationsproblemen entstehen.
+
+\section{Monitoring während der Datenerhebung}
+Das Backend kann operative Hinweise zu bestätigten Registrierungen, abgeschlossenen Aktivierungen, neuem Feedback, erreichter Feedbackgrenze sowie Client- und Serverfehlern senden. Die E-Mails enthalten keine Nutzdaten, sondern Ereignisart, Zeit, Komponente, Request-ID und Fehlerkategorie. Damit können Störungen erkannt werden, ohne Selbstberichte oder Registrierungsangaben in einen weiteren Kommunikationskanal zu kopieren.
+
+Für den laufenden Betrieb sollten mindestens Erreichbarkeit der Endpunkte, Zahl bestätigter Aktivierungen, Rate technischer Fehler, ausstehende Supportfälle, vollständige Studienabschlüsse und Nutzung der Feedbackkapazität beobachtet werden. Diese Betriebskennzahlen sind von den wissenschaftlichen Selbstberichten zu trennen. Sie dienen der Qualitätssicherung und dürfen nicht zur Bewertung individueller Teilnehmender verwendet werden.
+
+Der weiche Grenzwert von 200 Feedbackeinträgen erfordert aktives Monitoring. Wird er erreicht, akzeptiert der Endpoint den Request formal, speichert den Inhalt aber nicht. Vor Beginn der Studie ist daher festzulegen, wer die Benachrichtigung erhält und ob die Grenze erhöht, vorhandenes Feedback exportiert oder das Formular vorübergehend deaktiviert wird.
+
+\section{Folgerungen für die Teilnehmerdokumente}
+Die den Teilnehmenden bereitgestellten Dokumente müssen den tatsächlichen technischen Ablauf abbilden. Zu ergänzen beziehungsweise zu prüfen sind insbesondere die Installation der direkt verteilten APK, die zweistufige Aktivierung, die verschlüsselte lokale Speicherung des App-Tokens, die lokale Speicherung ausstehender Craving-Werte, der optionale Infofeed und die optionalen Benachrichtigungen, die erneute Datenschutzbestätigung, das anonyme Feedback, der Feature-Toggle und der Umgang mit dem Abrechnungscode.
+
+Gleichzeitig entstehen technische Einflüsse, die bei der Interpretation berücksichtigt werden müssen. Dazu gehören unterschiedliche Installationshürden, optionale und möglicherweise verspätete Erinnerungen, Geräte- und Netzwerkunterschiede, Supportinterventionen sowie mögliche Duplikate nach verlorenem Serverresponse. Die feste Reihenfolge der beiden Bedingungen bleibt die stärkste methodische Einschränkung, weil sie Bedingung und Zeitverlauf koppelt.
+
+Für die Pilotstudie ist es angemessen, diese Einflüsse transparent zu dokumentieren und in Plausibilitätsanalysen einzubeziehen. Aussagen über einen kausalen Cue-Labeling-Effekt müssen jedoch entsprechend vorsichtig formuliert werden. Eine spätere Hauptstudie sollte neben einer idempotenten Übertragung insbesondere eine randomisierte oder ausbalancierte Bedingungsreihenfolge und einen vorab festgelegten Umgang mit technischen Sonderfällen vorsehen.
+\end{neu}

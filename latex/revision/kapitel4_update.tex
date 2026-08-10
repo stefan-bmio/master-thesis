@@ -1,0 +1,43 @@
+%%
+%% Ergänzung zu Kapitel 4: Technische Anforderungen an Endgeräte
+%%
+
+\begin{neu}
+\section{Aktualisierte Plattformanforderungen}
+
+Die produktive CueLens-App verwendet als minimale Plattform Android 7.0 beziehungsweise API-Level 24. Sie wird gegen das aktuelle Android-SDK 36 kompiliert und auf dieses Ziel-SDK ausgerichtet. Mit dieser Untergrenze stehen die für die Implementierung benötigten Sicherheits- und Hintergrundmechanismen zur Verfügung, insbesondere Android Keystore, AES-GCM, DataStore und WorkManager. Ältere Android-Geräte können die App nicht installieren.
+
+Die Anwendung ist für die Nutzung im Hochformat konfiguriert. Eine Kamera ist für die aktuelle produktive Studienfassung nicht erforderlich, weil die Studienaufgaben statische Ressourcen verwenden. Sie wird erst für eine spätere KI-gestützte Klassifikation selbst gewählter Bilder relevant.
+
+Die App fordert die Berechtigungen für Internetzugriff und Benachrichtigungen an. Die Internetberechtigung wird bereits bei der Installation erteilt. Die Benachrichtigungsberechtigung ist unter Android 13 oder neuer eine Laufzeitentscheidung und für die Teilnahme nicht zwingend. Wird sie verweigert, können Infofeed und Studienaufgaben weiterhin manuell geöffnet werden.
+
+\section{Netzwerk- und Transportanforderungen}
+
+Die Produktionsvariante verwendet ausschließlich HTTPS und verbietet unverschlüsselten Klartextverkehr in der Android-Konfiguration. Die Staging-Variante darf für eine abgegrenzte lokale Testumgebung HTTP verwenden.
+
+Für die Netzwerkaufrufe sind Verbindungs- und Lesezeitlimits von jeweils 15 Sekunden eingestellt. Kurzzeitige Störungen führen damit nicht zu unbegrenzt blockierenden Bedienzuständen. Die App unterscheidet erfolgreiche Antworten, unerwartete HTTP-Statuscodes, Netzwerkfehler und formal ungültige JSON-Antworten. Ausstehende wissenschaftliche Übertragungen werden lokal erhalten und können erneut angestoßen werden.
+
+Die Datenmenge der einzelnen Requests bleibt gering. Info-Nachrichten und Formulare bestehen aus JSON und Text; wissenschaftliche Selbstberichte enthalten im Wesentlichen UUID, Craving-Wert und App-Version. Bilder werden in der aktuellen Studienfassung weder hochgeladen noch serverseitig klassifiziert. Eine mobile Datenverbindung ist technisch ausreichend, für Installation und größere Dokumentdownloads wird dennoch WLAN empfohlen.
+
+\section{Lokaler Speicher und Gerätesicherheit}
+Das App-Token wird mit einem 256-Bit-AES-Schlüssel im GCM-Modus verschlüsselt. Der Schlüssel wird über den Android Keystore verwaltet. Diese Funktion steht auf allen unterstützten Geräten grundsätzlich zur Verfügung, kann aber durch Herstellerimplementierung, Gerätezustand oder eine beschädigte Schlüsseldatenbank beeinträchtigt werden. Kann der Schlüssel nicht mehr geladen werden oder schlägt die Authentizitätsprüfung fehl, verwendet die App das Token nicht und erfordert einen Supportvorgang.
+
+Fortschritt, nächste Freigabezeit, Aufgabenreihenfolge, ausstehender Craving-Wert und Abrechnungscode werden in privaten App-Einstellungen gespeichert. Der benötigte Speicherplatz ist im Verhältnis zu Bildern und Programmbibliotheken vernachlässigbar. Die Android-Sicherung und die allgemeine Datenextraktion sind deaktiviert, damit diese Werte nicht in reguläre Geräte- oder Cloudbackups aufgenommen werden.
+
+Geräte mit entsperrtem Bootloader, Root-Zugriff oder veränderter Systemsoftware können die vom Betriebssystem vorgesehenen Schutzgrenzen abschwächen. Eine technische Prüfung solcher Zustände ist im aktuellen Prototyp nicht als Teilnahmevoraussetzung implementiert. Die Studie setzt daher ein regulär betriebenes Android-Gerät voraus, ohne daraus eine vollständige Integritätsgarantie abzuleiten.
+
+\section{Hintergrundarbeit und Energiesparmechanismen}
+
+Allgemeine Info-Nachrichten werden über eine periodische WorkManager-Aufgabe geprüft. Die Aufgabe ist auf einen Intervall von 24 Stunden mit einem Flexfenster von sechs Stunden und eine vorhandene Netzwerkverbindung eingestellt. Bei vorübergehenden Netzwerkproblemen verwendet sie exponentielles Backoff. Das Betriebssystem bestimmt den tatsächlichen Ausführungszeitpunkt und kann die Prüfung wegen App-Standby oder Energiesparmodus verschieben.
+
+Erinnerungen an die nächste Studiensituation werden als einmalige, eindeutige Aufgaben über WorkManager geplant. Auch diese Aufgaben sind nicht sekundengenau. Die App prüft beim Ausführen erneut die gespeicherte Freigabezeit. Wird ein Worker zu früh gestartet, wird er für die verbleibende Zeit neu eingeplant. Damit kann eine Erinnerung verspätet, aber nicht vor Ablauf der Sperrzeit angezeigt werden.
+
+\section{Anforderungen des KI-Prototyps}
+Der getrennte KI-Prototyp verwendet ebenfalls mindestens API-Level 24. Die TFLite-Modelle werden als unkomprimierte Assets eingebunden, damit sie direkt speicherabgebildet werden können. Die Inferenz ist derzeit auf zwei CPU-Threads konfiguriert. Der Benchmark-Flavor enthält zusätzlich den exportierten Testsplit und ist deshalb nicht für eine reguläre Studienverteilung vorgesehen.
+
+Die Vorverarbeitung benötigt genügend Arbeitsspeicher, um ein ausgewähltes Bild zu decodieren, zu orientieren, quadratisch zuzuschneiden und auf 224 mal 224 RGB-Pixel zu skalieren. Hinzu kommen Modellgewichte, Interpreter und Zwischenaktivierungen. Float32- und Int8-Modelle haben unterschiedliche Speicher- und Laufzeiteigenschaften. Konkrete Mindestwerte können erst aus Messungen auf mehreren Geräten abgeleitet werden.
+
+Die in einem frühen Proof of Concept protokollierten Angaben zu Laufzeit und Arbeitsspeicher sind vor der Übernahme in die endgültigen Anforderungen mit einem reproduzierbaren Messverfahren und korrekter Einheit zu überprüfen. Insbesondere ist eine Speicherangabe in der Größenordnung mehrerer hundert Gigabyte für ein Smartphone technisch nicht plausibel und als Dokumentations- oder Einheitenfehler zu behandeln. Für die Endfassung sind Android-Profiler-Messungen, Modellgrößen, mittlere und 95-Prozent-Laufzeiten sowie das Verhalten auf einem leistungsschwächeren Referenzgerät anzugeben.
+
+Eine spätere Integration der KI-Funktion in die Studien-App würde außerdem die APK-Größe und den Installationsaufwand erhöhen. Die Entscheidung darf daher nicht allein auf der Klassifikationsgüte beruhen. Zu berücksichtigen sind Modellgröße, Startzeit, Energie- und Speicherbedarf sowie der Datenschutzvorteil der lokalen Verarbeitung. Ebenso relevant ist der methodische Nutzen gegenüber den bereits kontrolliert gebündelten Studienreizen.
+\end{neu}

@@ -54,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,7 @@ import de.eachandevery.cuelens.R
 import de.eachandevery.cuelens.ProductiveStudyApp
 import de.eachandevery.cuelens.retryPersistedStudyTransfer
 import de.eachandevery.cuelens.infofeed.AppLanguage
+import de.eachandevery.cuelens.infofeed.InfoFeedStrings
 import de.eachandevery.cuelens.infofeed.localizedStrings
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -139,11 +141,10 @@ fun PreStudyApp(
             studyTransferPending = state.studyTransferPending,
             studyTransferRetrying = state.studyTransferRetrying,
             studyTransferRetryFailed = state.studyTransferRetryFailed,
-            studyCompleted = state.studyCompleted,
-            compensationCode = state.compensationCode,
+            completionState = state.completionState,
             language = language,
             onLanguageChange = onLanguageChange,
-            onEmailActivation = controller::openEmailActivation,
+            onAppActivation = controller::openEmailActivation,
             onDemo = controller::openDemo,
             onFeedback = controller::openFeedback,
             onNextStudyRun = { scope.launch { controller.openNextStudyRun() } },
@@ -159,7 +160,7 @@ fun PreStudyApp(
                 activationNeedsSupport = state.activationNeedsSupport,
                 language = language,
                 onLanguageChange = onLanguageChange,
-                onActivate = { email -> scope.launch { controller.activate(email) } },
+                onActivate = { identifier -> scope.launch { controller.activate(identifier) } },
                 modifier = modifier
             )
         }
@@ -371,11 +372,10 @@ fun HomeScreen(
     studyTransferPending: Boolean = false,
     studyTransferRetrying: Boolean = false,
     studyTransferRetryFailed: Boolean = false,
-    studyCompleted: Boolean = false,
-    compensationCode: String? = null,
+    completionState: CompletionState = CompletionState.Incomplete,
     language: AppLanguage,
     onLanguageChange: () -> Unit,
-    onEmailActivation: () -> Unit,
+    onAppActivation: () -> Unit,
     onDemo: () -> Unit,
     onFeedback: () -> Unit,
     onNextStudyRun: () -> Unit = {},
@@ -404,35 +404,16 @@ fun HomeScreen(
         onLanguageChange = onLanguageChange,
         modifier = modifier
     ) {
-        if (studyCompleted) {
-            if (!compensationCode.isNullOrBlank()) {
-                Text(
-                    text = strings.studyCompensationCode,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = compensationCode,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedButton(
-                    onClick = {
-                        clipboardManager.setPrimaryClip(
-                            ClipData.newPlainText(strings.studyCompensationCode, compensationCode)
-                        )
-                    },
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PreStudyPrimary),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(strings.studyCopyCompensationCode)
+        if (completionState.isCompleted) {
+            StudyCompletionContent(
+                completionState = completionState,
+                strings = strings,
+                onCopyCompensationCode = { compensationCode ->
+                    clipboardManager.setPrimaryClip(
+                        ClipData.newPlainText(strings.studyCompensationCode, compensationCode)
+                    )
                 }
-            }
+            )
         } else {
             Text(
                 text = strings.homeWelcome,
@@ -513,12 +494,12 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 enabled = !hasAppToken && !tokenStorageFailed,
-                onClick = onEmailActivation,
+                onClick = onAppActivation,
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(strings.emailActivation)
+                Text(strings.appActivation)
             }
             Spacer(modifier = Modifier.height(12.dp))
             Button(
@@ -530,7 +511,7 @@ fun HomeScreen(
                 Text(strings.demoStudySituation)
             }
         }
-        Spacer(modifier = Modifier.height(if (studyCompleted) 24.dp else 12.dp))
+        Spacer(modifier = Modifier.height(if (completionState.isCompleted) 24.dp else 12.dp))
         Button(
             onClick = onFeedback,
             shape = RoundedCornerShape(4.dp),
@@ -539,6 +520,58 @@ fun HomeScreen(
         ) {
             Text(strings.feedback)
         }
+    }
+}
+
+@Composable
+internal fun StudyCompletionContent(
+    completionState: CompletionState,
+    strings: InfoFeedStrings,
+    onCopyCompensationCode: ((String) -> Unit)? = null
+) {
+    when (completionState) {
+        is CompletionState.DirectCompleted -> {
+            Text(
+                text = strings.studyCompleted,
+                color = Color.Black,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = strings.studyCompensationCode,
+                color = Color.Black,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = completionState.code,
+                color = Color.Black,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
+            )
+            if (onCopyCompensationCode != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { onCopyCompensationCode(completionState.code) },
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PreStudyPrimary),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(strings.studyCopyCompensationCode)
+                }
+            }
+        }
+        CompletionState.ProlificCompleted -> Text(
+            text = strings.studyProlificCompleted,
+            color = Color.Black,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        CompletionState.Incomplete,
+        CompletionState.Invalid,
+        is CompletionState.DirectPendingConfirmation -> Unit
     }
 }
 
@@ -815,8 +848,8 @@ fun EmailActivationScreen(
     modifier: Modifier = Modifier
 ) {
     val strings = localizedStrings(language)
-    var email by remember { mutableStateOf("") }
-    val validEmail = PreStudyController.isValidEmail(email)
+    var identifierInput by remember { mutableStateOf("") }
+    val validIdentifier = PreStudyController.isValidParticipantIdentifier(identifierInput)
     val activationInProgress = activationState == ActivationState.RequestingToken ||
         activationState == ActivationState.ConfirmingToken
     PreStudyScreenFrame(
@@ -825,22 +858,27 @@ fun EmailActivationScreen(
         modifier = modifier
     ) {
         Text(
-            text = strings.emailActivation,
+            text = strings.appActivation,
             color = Color.Black,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = identifierInput,
+            onValueChange = { identifierInput = it },
             enabled = !activationInProgress,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            label = { Text(strings.emailAddress) },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.None,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Email
+            ),
+            label = { Text(strings.participantIdentifier) },
             colors = preStudyTextFieldColors(),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(8.dp))
         if (activationState == ActivationState.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -856,8 +894,8 @@ fun EmailActivationScreen(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            enabled = validEmail && !activationInProgress,
-            onClick = { onActivate(email.trim()) },
+            enabled = validIdentifier && !activationInProgress,
+            onClick = { onActivate(identifierInput.trim()) },
             shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PreStudyPrimary),
             modifier = Modifier.fillMaxWidth()

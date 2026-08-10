@@ -8,7 +8,7 @@
     <string name="language_switch_label">DE</string>
     <string name="language_switch_description">Switch language to German</string>
     <string name="notification_consent_title">Notifications</string>
-    <string name="notification_consent_text">CueLens can notify you about new general information such as update notes and when a new study task becomes available.</string>
+    <string name="notification_consent_text">CueLens can notify you about new general information such as update notes and when a new study task becomes available. Notifications do not contain information about smoking status or tobacco cravings.</string>
     <string name="notification_consent_toggle">Allow notifications</string>
     <string name="continue_label">Continue</string>
     <string name="notification_channel_name">CueLens information</string>
@@ -21,9 +21,9 @@
     <string name="study_reminder_text">A new task is available.</string>
     <string name="study_reminder_public_text">New information is available.</string>
     <string name="home_welcome">Welcome to CueLens</string>
-    <string name="email_activation">Email activation</string>
+    <string name="app_activation">App activation</string>
     <string name="activation_already_completed">The app has been activated.</string>
-    <string name="email_address">Email address</string>
+    <string name="participant_identifier">Email address or Prolific ID</string>
     <string name="activate">Activate</string>
     <string name="activation_running">Activating</string>
     <string name="activation_failed">Activation failed. Please try again later.</string>
@@ -64,11 +64,12 @@
     <string name="next_study_run">Next study run</string>
     <string name="next_study_run_countdown">Next study run in %1$s</string>
     <string name="study_completed">Study completed</string>
+    <string name="study_prolific_completed">Study completed. Completion on Prolific usually takes place within 2 days.</string>
     <string name="study_transfer_pending">Data transfer pending</string>
     <string name="study_run_progress">Run %1$d of %2$d</string>
     <string name="study_resources_incomplete">Cue labeling is not yet complete</string>
     <string name="study_complete_transfer">Please complete the data transfer.</string>
-    <string name="study_compensation_code">Please send this ompensation code to cuelens@each-and-every.de:</string>
+    <string name="study_compensation_code">Please send this compensation code to cuelens@each-and-every.de:</string>
     <string name="study_copy_compensation_code">Copy code</string>
     <string name="study_transfer_running">Transferring data</string>
     <string name="study_retry">Try again</string>

@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import java.net.SocketTimeoutException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -146,8 +147,30 @@ class PreStudyControllerTest {
         assertEquals(ActivationState.Activated, controller.state.value.activationState)
         assertEquals(DataProtectionConsentState.Granted, controller.state.value.dataProtectionConsentState)
         assertTrue(consentStore.accepted)
-        assertEquals(listOf("person@example.org"), service.requestedEmails)
+        assertEquals(listOf("person@example.org"), service.requestedIdentifiers)
         assertEquals(listOf("person@example.org" to "new-token"), service.confirmations)
+    }
+
+    @Test
+    fun prolificActivationPreservesCaseAndUsesSameTrimmedIdentifier() = runBlocking {
+        val tokenStore = FakeAppTokenStore()
+        val service = FakeActivationService(requestResult = Result.success("new-token"))
+        val controller = PreStudyController(
+            activationService = service,
+            appTokenStore = tokenStore,
+            dataProtectionService = FakeDataProtectionService(status = true),
+            dataProtectionConsentStore = FakeDataProtectionConsentStore()
+        )
+        controller.openEmailActivation()
+
+        controller.activate("  AbCdEf1234567890GhIjKlMn\n")
+
+        assertEquals(listOf("AbCdEf1234567890GhIjKlMn"), service.requestedIdentifiers)
+        assertEquals(
+            listOf("AbCdEf1234567890GhIjKlMn" to "new-token"),
+            service.confirmations
+        )
+        assertEquals("new-token", tokenStore.token)
     }
 
     @Test
@@ -248,7 +271,7 @@ class PreStudyControllerTest {
     }
 
     @Test
-    fun invalidEmailDoesNotStartRequest() = runBlocking {
+    fun invalidIdentifierDoesNotStartRequest() = runBlocking {
         val service = FakeActivationService()
         val controller = PreStudyController(service, FakeAppTokenStore())
         controller.openEmailActivation()
@@ -371,8 +394,7 @@ class PreStudyControllerTest {
             },
             studyProgressStore = StudyProgressStore {
                 StudyProgress(
-                    completed = true,
-                    compensationCode = "COMP-1234"
+                    completionState = CompletionState.DirectCompleted("COMP-1234")
                 )
             }
         )
@@ -388,6 +410,47 @@ class PreStudyControllerTest {
         assertFalse(controller.state.value.nextStudyRunVisible)
         assertFalse(controller.state.value.studyTransferPending)
         assertEquals(0, configRequests)
+    }
+
+    @Test
+    fun prolificCompletionIsExposedWithoutCompensationCode() = runBlocking {
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(completionState = CompletionState.ProlificCompleted)
+            }
+        )
+
+        controller.refreshNextStudyRun()
+
+        assertSame(CompletionState.ProlificCompleted, controller.state.value.completionState)
+        assertTrue(controller.state.value.studyCompleted)
+        assertEquals(null, controller.state.value.compensationCode)
+        assertFalse(controller.state.value.nextStudyRunVisible)
+    }
+
+    @Test
+    fun twentiethCountWithoutValidCompletionRemainsPendingInsteadOfCompleted() = runBlocking {
+        val controller = PreStudyController(
+            activationService = FakeActivationService(),
+            appTokenStore = FakeAppTokenStore("existing-token"),
+            featureConfigService = FeatureConfigService { true },
+            studyProgressStore = StudyProgressStore {
+                StudyProgress(
+                    confirmedSituationCount = 20,
+                    hasPendingSubmission = true,
+                    completionState = CompletionState.Incomplete
+                )
+            }
+        )
+
+        controller.refreshNextStudyRun()
+
+        assertFalse(controller.state.value.studyCompleted)
+        assertTrue(controller.state.value.studyTransferPending)
+        assertFalse(controller.state.value.nextStudyRunAvailable)
     }
 
     @Test
@@ -518,18 +581,18 @@ class PreStudyControllerTest {
         private val requestResult: Result<String> = Result.success("token"),
         private val confirmResult: Result<Unit> = Result.success(Unit)
     ) : ActivationService {
-        val requestedEmails = mutableListOf<String>()
+        val requestedIdentifiers = mutableListOf<String>()
         val confirmations = mutableListOf<Pair<String, String>>()
         val callCount: Int
-            get() = requestedEmails.size
+            get() = requestedIdentifiers.size
 
-        override suspend fun requestToken(email: String): String {
-            requestedEmails += email
+        override suspend fun requestToken(identifier: String): String {
+            requestedIdentifiers += identifier
             return requestResult.getOrThrow()
         }
 
-        override suspend fun confirmToken(email: String, appToken: String) {
-            confirmations += email to appToken
+        override suspend fun confirmToken(identifier: String, appToken: String) {
+            confirmations += identifier to appToken
             confirmResult.getOrThrow()
         }
     }

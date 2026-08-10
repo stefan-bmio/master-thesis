@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/token-identity.php';
+require_once __DIR__ . '/participant-identifier.php';
+require_once __DIR__ . '/completion-mode.php';
 
 const ACTIVATION_VALIDITY_MINUTES = 5;
 
@@ -12,6 +14,57 @@ final class ActivationRejectedException extends RuntimeException
 function normalize_activation_email(string $email): string
 {
     return strtolower(trim($email));
+}
+
+function activation_identifier(ParticipantIdentifier|string $identifier): ParticipantIdentifier
+{
+    return $identifier instanceof ParticipantIdentifier
+        ? $identifier
+        : ParticipantIdentifier::parse($identifier);
+}
+
+/**
+ * Resolves the new identifier property and the legacy email alias without
+ * permitting two different participant identifiers in one request.
+ *
+ * @param array<string, mixed> $payload
+ */
+function activation_identifier_from_payload(array $payload): ParticipantIdentifier
+{
+    $hasIdentifier = array_key_exists('identifier', $payload);
+    $hasLegacyEmail = array_key_exists('email', $payload);
+    if (!$hasIdentifier && !$hasLegacyEmail) {
+        throw new InvalidArgumentException('Missing participant identifier.');
+    }
+
+    $parseProperty = static function (mixed $value): ParticipantIdentifier {
+        if (!is_string($value)) {
+            throw new InvalidArgumentException('Invalid participant identifier.');
+        }
+        return ParticipantIdentifier::parse($value);
+    };
+
+    $identifier = $hasIdentifier ? $parseProperty($payload['identifier']) : null;
+    $legacyIdentifier = $hasLegacyEmail ? $parseProperty($payload['email']) : null;
+    if (
+        $identifier !== null &&
+        $legacyIdentifier !== null &&
+        (
+            $identifier->channel() !== $legacyIdentifier->channel() ||
+            $identifier->activationValue() !== $legacyIdentifier->activationValue()
+        )
+    ) {
+        throw new InvalidArgumentException('Conflicting participant identifiers.');
+    }
+
+    if ($identifier !== null) {
+        return $identifier;
+    }
+    if ($legacyIdentifier !== null) {
+        return $legacyIdentifier;
+    }
+
+    throw new InvalidArgumentException('Missing participant identifier.');
 }
 
 function is_uuid_v4(string $value): bool
@@ -52,36 +105,87 @@ function activation_token_hash(string $secret, string $email, string $appToken):
     );
 }
 
+function activation_token_hash_for_identifier(
+    string $secret,
+    ParticipantIdentifier $identifier,
+    string $appToken
+): string {
+    if ($identifier->channel() === ParticipantIdentifier::DIRECT) {
+        return activation_token_hash($secret, $identifier->activationValue(), $appToken);
+    }
+    if ($secret === '') {
+        throw new RuntimeException('Missing activation secret.');
+    }
+
+    return hash_hmac(
+        'sha256',
+        "activation:prolific:v1\0" .
+            $identifier->activationValue() .
+            "\0" .
+            strtolower($appToken),
+        $secret
+    );
+}
+
+function completion_mode_for_registration_channel(string $registrationChannel): string
+{
+    return match ($registrationChannel) {
+        ParticipantIdentifier::DIRECT => COMPLETION_MODE_COMPENSATION_CODE,
+        ParticipantIdentifier::PROLIFIC => COMPLETION_MODE_PROLIFIC_MANUAL,
+        default => throw new RuntimeException('Unsupported registration channel.'),
+    };
+}
+
+function activation_registration_identifier_column(ParticipantIdentifier $identifier): string
+{
+    return match ($identifier->channel()) {
+        ParticipantIdentifier::DIRECT => 'email',
+        ParticipantIdentifier::PROLIFIC => 'prolific_id',
+        default => throw new RuntimeException('Unsupported registration channel.'),
+    };
+}
+
 /**
  * @param null|callable(): string $tokenGenerator
  */
 function request_activation_token(
     PDO $pdo,
-    string $email,
+    ParticipantIdentifier|string $identifier,
     string $secret,
     ?callable $tokenGenerator = null
 ): string {
-    $normalizedEmail = normalize_activation_email($email);
+    $participantIdentifier = activation_identifier($identifier);
+    $normalizedIdentifier = $participantIdentifier->activationValue();
+    $identifierColumn = activation_registration_identifier_column($participantIdentifier);
     $appToken = ($tokenGenerator ?? 'generate_activation_uuid_v4')();
     if (!is_uuid_v4($appToken)) {
         throw new RuntimeException('Token generator returned an invalid UUID-v4.');
     }
     $appToken = strtolower($appToken);
-    $appTokenHash = activation_token_hash($secret, $normalizedEmail, $appToken);
+    $appTokenHash = activation_token_hash_for_identifier(
+        $secret,
+        $participantIdentifier,
+        $appToken
+    );
 
     $pdo->beginTransaction();
     try {
         $registration = $pdo->prepare(
-            'SELECT email
+            'SELECT registration_id, registration_channel
                FROM register
-              WHERE email = :email
-                AND doi = 1
+              WHERE registration_channel = :registration_channel
+                AND ' . $identifierColumn . ' = :identifier
+                AND registration_confirmed_at IS NOT NULL
                 AND studyinfo = 1
                 AND app_token_issued_at IS NULL
               FOR UPDATE'
         );
-        $registration->execute([':email' => $normalizedEmail]);
-        if ($registration->fetchColumn() === false) {
+        $registration->execute([
+            ':registration_channel' => $participantIdentifier->channel(),
+            ':identifier' => $normalizedIdentifier,
+        ]);
+        $registrationRow = $registration->fetch(PDO::FETCH_ASSOC);
+        if (!is_array($registrationRow) || !isset($registrationRow['registration_id'])) {
             throw new ActivationRejectedException('Activation request rejected.');
         }
 
@@ -90,12 +194,12 @@ function request_activation_token(
                 SET app_token_hash = :app_token_hash,
                     activation_valid_through = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL ' .
                     ACTIVATION_VALIDITY_MINUTES . ' MINUTE)
-              WHERE email = :email
+              WHERE registration_id = :registration_id
                 AND app_token_issued_at IS NULL'
         );
         $update->execute([
             ':app_token_hash' => $appTokenHash,
-            ':email' => $normalizedEmail,
+            ':registration_id' => $registrationRow['registration_id'],
         ]);
         if ($update->rowCount() !== 1) {
             throw new RuntimeException('Activation pending state was not updated.');
@@ -114,34 +218,42 @@ function request_activation_token(
 function confirm_activation_token(
     PDO $registrationPdo,
     PDO $cravingPdo,
-    string $email,
+    ParticipantIdentifier|string $identifier,
     string $appToken,
     string $activationSecret,
     string $pseudonymSecret
 ): void {
-    $normalizedEmail = normalize_activation_email($email);
+    $participantIdentifier = activation_identifier($identifier);
+    $normalizedIdentifier = $participantIdentifier->activationValue();
+    $identifierColumn = activation_registration_identifier_column($participantIdentifier);
     $normalizedToken = strtolower($appToken);
     if (!is_uuid_v4($normalizedToken)) {
         throw new ActivationRejectedException('Activation confirmation rejected.');
     }
-    $candidateHash = activation_token_hash(
+    $candidateHash = activation_token_hash_for_identifier(
         $activationSecret,
-        $normalizedEmail,
+        $participantIdentifier,
         $normalizedToken
     );
     $validTokenHash = valid_app_token_hash($pseudonymSecret, $normalizedToken);
     $registrationTokenHash = registration_token_hash($pseudonymSecret, $normalizedToken);
 
     $registration = $registrationPdo->prepare(
-        'SELECT app_token_hash,
+        'SELECT registration_id,
+                registration_channel,
+                app_token_hash,
                 activation_valid_through > CURRENT_TIMESTAMP AS activation_is_valid
            FROM register
-          WHERE email = :email
-            AND doi = 1
+          WHERE registration_channel = :registration_channel
+            AND ' . $identifierColumn . ' = :identifier
+            AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
             AND app_token_issued_at IS NULL'
     );
-    $registration->execute([':email' => $normalizedEmail]);
+    $registration->execute([
+        ':registration_channel' => $participantIdentifier->channel(),
+        ':identifier' => $normalizedIdentifier,
+    ]);
     $row = $registration->fetch(PDO::FETCH_ASSOC);
     if (
         !is_array($row) ||
@@ -158,16 +270,16 @@ function confirm_activation_token(
                 activation_valid_through = NULL,
                 app_token_issued_at = CURRENT_TIMESTAMP,
                 registration_token_hash = :registration_token_hash
-          WHERE email = :email
+          WHERE registration_id = :registration_id
             AND app_token_hash = :app_token_hash
             AND activation_valid_through > CURRENT_TIMESTAMP
-            AND doi = 1
+            AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
             AND app_token_issued_at IS NULL'
     );
     $update->execute([
         ':registration_token_hash' => $registrationTokenHash,
-        ':email' => $normalizedEmail,
+        ':registration_id' => $row['registration_id'],
         ':app_token_hash' => $candidateHash,
     ]);
     if ($update->rowCount() !== 1) {
@@ -175,7 +287,13 @@ function confirm_activation_token(
     }
 
     $allowlist = $cravingPdo->prepare(
-        'INSERT INTO valid_app_token_hashes (hash) VALUES (:hash)'
+        'INSERT INTO valid_app_token_hashes (hash, completion_mode)
+         VALUES (:hash, :completion_mode)'
     );
-    $allowlist->execute([':hash' => $validTokenHash]);
+    $allowlist->execute([
+        ':hash' => $validTokenHash,
+        ':completion_mode' => completion_mode_for_registration_channel(
+            (string) $row['registration_channel']
+        ),
+    ]);
 }

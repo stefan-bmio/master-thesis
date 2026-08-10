@@ -8,7 +8,7 @@
     <string name="language_switch_label">EN</string>
     <string name="language_switch_description">Sprache auf Englisch umstellen</string>
     <string name="notification_consent_title">Benachrichtigungen</string>
-    <string name="notification_consent_text">CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über die Verfügbarkeit einer neuen Studienaufgabe informieren.</string>
+    <string name="notification_consent_text">CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über die Verfügbarkeit einer neuen Studienaufgabe informieren. Benachrichtigungen enthalten keine Angaben zu Rauchstatus oder Rauchverlangen.</string>
     <string name="notification_consent_toggle">Benachrichtigungen zulassen</string>
     <string name="continue_label">Weiter</string>
     <string name="notification_channel_name">CueLens-Informationen</string>
@@ -21,9 +21,9 @@
     <string name="study_reminder_text">Eine neue Aufgabe ist verfügbar.</string>
     <string name="study_reminder_public_text">Eine neue Information ist verfügbar.</string>
     <string name="home_welcome">Willkommen bei CueLens</string>
-    <string name="email_activation">E-Mail-Aktivierung</string>
+    <string name="app_activation">App-Aktivierung</string>
     <string name="activation_already_completed">Die App ist aktiviert.</string>
-    <string name="email_address">E-Mail-Adresse</string>
+    <string name="participant_identifier">E-Mail-Adresse oder Prolific-ID</string>
     <string name="activate">Aktivieren</string>
     <string name="activation_running">Aktivierung läuft</string>
     <string name="activation_failed">Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>
@@ -64,6 +64,7 @@
     <string name="next_study_run">Nächster Studiendurchgang</string>
     <string name="next_study_run_countdown">Nächster Studiendurchgang in %1$s</string>
     <string name="study_completed">Studie abgeschlossen</string>
+    <string name="study_prolific_completed">Studie abgeschlossen. Der Abschluss bei Prolific erfolgt üblicherweise innerhalb 2 Tagen.</string>
     <string name="study_transfer_pending">Datenübertragung ausstehend</string>
     <string name="study_run_progress">Durchgang %1$d von %2$d</string>
     <string name="study_resources_incomplete">Cue-Labeling noch unvollständig</string>

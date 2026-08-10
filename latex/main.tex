@@ -85,13 +85,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Die Kapitel der Arbeitw
 
+\newcommand{\insertrevisionatnextnull}[1]{%
+  \let\revisionOriginalNull\null
+  \def\null{%
+    \let\null\revisionOriginalNull
+    \input{#1}%
+    \revisionOriginalNull
+  }%
+}
+
 \input{einführung/einführung.tex}
+\insertrevisionatnextnull{revision/kapitel1_update.tex}
 \input{kapitel1/ch1.tex}
+\let\null\revisionOriginalNull
 \input{kapitel2/ch2.tex}
+\input{revision/kapitel2_update.tex}
+\insertrevisionatnextnull{revision/kapitel3_update.tex}
 \input{kapitel3/ch3.tex}
+\let\null\revisionOriginalNull
 \input{kapitel4/ch4.tex}
+\input{revision/kapitel4_update.tex}
 \input{kapitel5/ch5.tex}
+\input{revision/kapitel5_update.tex}
 \input{kapitel6/ch6.tex}
+\input{revision/kapitel6_update.tex}
 \input{kapitel7/ch7.tex}
 \input{kapitel8/ch8.tex}
 

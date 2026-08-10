@@ -55,12 +55,17 @@ data class PreStudyUiState(
     val studyTransferPending: Boolean = false,
     val studyTransferRetrying: Boolean = false,
     val studyTransferRetryFailed: Boolean = false,
-    val studyCompleted: Boolean = false,
-    val compensationCode: String? = null,
+    val completionState: CompletionState = CompletionState.Incomplete,
     val feedbackSubmitting: Boolean = false,
     val feedbackSubmitted: Boolean = false,
     val feedbackFailed: Boolean = false
-)
+) {
+    val studyCompleted: Boolean
+        get() = completionState.isCompleted
+
+    val compensationCode: String?
+        get() = completionState.compensationCode
+}
 
 class PreStudyController(
     private val activationService: ActivationService,
@@ -82,11 +87,15 @@ class PreStudyController(
         runCatching { appTokenStore.getAppToken() }
             .fold(
                 onSuccess = { token ->
-                    val progress = runCatching { studyProgressStore.read() }.getOrNull()
+                    val progress = runCatching { studyProgressStore.read() }.getOrElse {
+                        StudyProgress(
+                            hasPendingSubmission = true,
+                            completionState = CompletionState.Invalid
+                        )
+                    }
                     PreStudyUiState(
                         hasAppToken = token != null,
-                        studyCompleted = progress?.completed == true,
-                        compensationCode = progress?.compensationCode,
+                        completionState = progress.completionState,
                         activationState = if (token == null) {
                             ActivationState.Idle
                         } else {
@@ -120,11 +129,15 @@ class PreStudyController(
     }
 
     fun backToHome() {
-        val progress = runCatching { studyProgressStore.read() }.getOrNull()
+        val progress = runCatching { studyProgressStore.read() }.getOrElse {
+            StudyProgress(
+                hasPendingSubmission = true,
+                completionState = CompletionState.Invalid
+            )
+        }
         mutableState.value = mutableState.value.copy(
             route = PreStudyRoute.Home,
-            studyCompleted = progress?.completed == true,
-            compensationCode = progress?.compensationCode,
+            completionState = progress.completionState,
             activationState = if (mutableState.value.hasAppToken) {
                 ActivationState.Activated
             } else {
@@ -293,11 +306,15 @@ class PreStudyController(
 
     suspend fun refreshNextStudyRun() {
         val current = mutableState.value
-        val progress = runCatching { studyProgressStore.read() }.getOrNull()
-        if (progress?.completed == true) {
+        val progress = runCatching { studyProgressStore.read() }.getOrElse {
+            StudyProgress(
+                hasPendingSubmission = true,
+                completionState = CompletionState.Invalid
+            )
+        }
+        if (progress.completed) {
             mutableState.value = current.copy(
-                studyCompleted = true,
-                compensationCode = progress.compensationCode,
+                completionState = progress.completionState,
                 nextStudyRunVisible = false,
                 nextStudyRunEligible = false,
                 nextStudyRunAvailable = false,
@@ -310,8 +327,7 @@ class PreStudyController(
         }
         if (current.route != PreStudyRoute.Home || !current.hasAppToken) {
             mutableState.value = current.copy(
-                studyCompleted = false,
-                compensationCode = null,
+                completionState = CompletionState.Incomplete,
                 nextStudyRunVisible = false,
                 nextStudyRunEligible = false,
                 nextStudyRunAvailable = false,
@@ -325,22 +341,25 @@ class PreStudyController(
         val enabled = runCatching { featureConfigService.nextStudyRunEnabled() }
             .getOrDefault(false)
         val latest = mutableState.value
-        val validStudyState = progress?.let {
-            !it.completed && it.confirmedSituationCount < TOTAL_STUDY_SITUATIONS
-        } == true &&
+        val validStudyState = progress.let {
+            it.completionState == CompletionState.Incomplete &&
+                it.confirmedSituationCount < TOTAL_STUDY_SITUATIONS
+        } &&
             latest.route == PreStudyRoute.Home &&
             latest.hasAppToken
         val visible = enabled && validStudyState
-        val eligible = visible && progress?.hasPendingSubmission == false
-        val transferPending = validStudyState && progress?.hasPendingSubmission == true
+        val eligible = visible && !progress.hasPendingSubmission
+        val transferPending = latest.route == PreStudyRoute.Home &&
+            latest.hasAppToken &&
+            !progress.completed &&
+            progress.hasPendingSubmission
         mutableState.value = latest.copy(
-            studyCompleted = false,
-            compensationCode = null,
+            completionState = progress.completionState,
             nextStudyRunVisible = visible,
             nextStudyRunEligible = eligible,
-            nextStudyRunAvailable = eligible && progress?.canStart(nowMillis()) == true,
+            nextStudyRunAvailable = eligible && progress.canStart(nowMillis()),
             nextStudyRunAvailableAtMillis = if (visible) {
-                progress?.nextSituationAvailableAtMillis ?: 0L
+                progress.nextSituationAvailableAtMillis
             } else {
                 0L
             },
@@ -406,26 +425,25 @@ class PreStudyController(
         mutableState.value = mutableState.value.copy(route = nextRoute)
     }
 
-    suspend fun activate(email: String) {
+    suspend fun activate(identifierInput: String) {
         val current = mutableState.value
+        val identifier = ParticipantIdentifier.parse(identifierInput) ?: return
         if (
             current.hasAppToken ||
             current.tokenStorageFailed ||
             current.activationState == ActivationState.RequestingToken ||
-            current.activationState == ActivationState.ConfirmingToken ||
-            !isValidEmail(email)
+            current.activationState == ActivationState.ConfirmingToken
         ) return
         mutableState.value = current.copy(
             activationState = ActivationState.RequestingToken,
             activationNeedsSupport = false
         )
         try {
-            val normalizedEmail = email.trim()
-            val appToken = activationService.requestToken(normalizedEmail)
+            val appToken = activationService.requestToken(identifier.value)
             mutableState.value = mutableState.value.copy(
                 activationState = ActivationState.ConfirmingToken
             )
-            activationService.confirmToken(normalizedEmail, appToken)
+            activationService.confirmToken(identifier.value, appToken)
             appTokenStore.saveAppToken(appToken)
             mutableState.value = PreStudyUiState(
                 route = PreStudyRoute.Home,
@@ -472,7 +490,8 @@ class PreStudyController(
     }
 
     companion object {
-        fun isValidEmail(email: String): Boolean = EMAIL_PATTERN.matches(email.trim())
+        fun isValidParticipantIdentifier(input: String): Boolean =
+            ParticipantIdentifier.parse(input) != null
 
         fun isValidFeedback(source: String, comment: String): Boolean {
             val trimmedSource = source.trim()
@@ -482,7 +501,6 @@ class PreStudyController(
                 trimmedComment.length <= MAX_FEEDBACK_COMMENT_LENGTH
         }
 
-        private val EMAIL_PATTERN = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
         const val MAX_FEEDBACK_SOURCE_LENGTH = 500
         const val MAX_FEEDBACK_COMMENT_LENGTH = 5_000
     }

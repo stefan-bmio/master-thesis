@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException
 import java.net.URL
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -19,7 +20,7 @@ class HttpActivationServiceTest {
         )
         val service = HttpActivationService("https://example.invalid/activate.php") { connection }
 
-        service.requestToken("participant@example.org")
+        service.requestToken("  Participant@Example.ORG  ")
 
         assertEquals("PUT", connection.requestMethod)
         assertTrue(connection.doOutput)
@@ -34,9 +35,42 @@ class HttpActivationServiceTest {
             connection.getRequestProperty("Content-Length")
         )
         assertEquals(
-            "participant@example.org",
-            org.json.JSONObject(connection.output.toString(Charsets.UTF_8.name())).getString("email")
+            "Participant@Example.ORG",
+            org.json.JSONObject(connection.output.toString(Charsets.UTF_8.name()))
+                .getString("identifier")
         )
+        assertHasOnlyAllowedProperties(connection, setOf("identifier"))
+    }
+
+    @Test
+    fun prolificRequestAndConfirmationUseSameCasePreservingIdentifier() = runBlocking {
+        val request = SuccessfulHttpConnection(
+            URL("https://example.invalid/activate.php"),
+            """{"app_token":"$TOKEN"}"""
+        )
+        val confirmation = SuccessfulHttpConnection(
+            URL("https://example.invalid/activate.php"),
+            responseBody = "",
+            statusCode = HttpURLConnection.HTTP_NO_CONTENT
+        )
+        val connections = ArrayDeque(listOf(request, confirmation))
+        val service = HttpActivationService("https://example.invalid/activate.php") {
+            connections.removeFirst()
+        }
+
+        val identifier = "AbCdEf1234567890GhIjKlMn"
+        val token = service.requestToken("  $identifier  ")
+        service.confirmToken("\t$identifier\n", token)
+
+        val requestBody = org.json.JSONObject(request.output.toString(Charsets.UTF_8.name()))
+        val confirmationBody = org.json.JSONObject(
+            confirmation.output.toString(Charsets.UTF_8.name())
+        )
+        assertEquals(identifier, requestBody.getString("identifier"))
+        assertEquals(identifier, confirmationBody.getString("identifier"))
+        assertEquals(TOKEN, confirmationBody.getString("app_token"))
+        assertHasOnlyAllowedProperties(request, setOf("identifier"))
+        assertHasOnlyAllowedProperties(confirmation, setOf("identifier", "app_token"))
     }
 
     @Test
@@ -74,7 +108,22 @@ class HttpActivationServiceTest {
         override fun getResponseCode(): Int = throw SocketTimeoutException("test timeout")
     }
 
-    private class SuccessfulHttpConnection(url: URL, private val responseBody: String) :
+    private fun assertHasOnlyAllowedProperties(
+        connection: SuccessfulHttpConnection,
+        allowed: Set<String>
+    ) {
+        val body = org.json.JSONObject(connection.output.toString(Charsets.UTF_8.name()))
+        assertEquals(allowed, body.keys().asSequence().toSet())
+        listOf("email", "prolific_id", "iban", "bic", "name").forEach { prohibited ->
+            assertFalse(body.has(prohibited))
+        }
+    }
+
+    private class SuccessfulHttpConnection(
+        url: URL,
+        private val responseBody: String,
+        private val statusCode: Int = HTTP_OK
+    ) :
         HttpURLConnection(url) {
         val output = ByteArrayOutputStream()
 
@@ -82,7 +131,7 @@ class HttpActivationServiceTest {
         override fun disconnect() = Unit
         override fun usingProxy(): Boolean = false
         override fun getOutputStream() = output
-        override fun getResponseCode(): Int = HTTP_OK
+        override fun getResponseCode(): Int = statusCode
         override fun getInputStream() = ByteArrayInputStream(responseBody.toByteArray(Charsets.UTF_8))
     }
 
