@@ -58,4 +58,70 @@ final class GetRequestTest extends TestCase
             self::assertStringNotContainsString('participant_identifier', $output);
         }
     }
+
+    public function testRegistrationPagesContainLocalizedProlificEligibilityErrors(): void
+    {
+        $germanPage = file_get_contents(__DIR__ . '/../index-de.php');
+        $englishPage = file_get_contents(__DIR__ . '/../index-en.php');
+
+        self::assertNotFalse($germanPage);
+        self::assertNotFalse($englishPage);
+        self::assertStringContainsString(
+            'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.',
+            $germanPage
+        );
+        self::assertStringContainsString(
+            'Die Prolific-ID konnte vorübergehend nicht geprüft werden.',
+            $germanPage
+        );
+        self::assertStringContainsString(
+            'This Prolific ID is not registered for the CueLens study.',
+            $englishPage
+        );
+        self::assertStringContainsString(
+            'The Prolific ID could not be checked temporarily.',
+            $englishPage
+        );
+    }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testIneligibleProlificRegistrationShowsExactErrorBeforeDatabaseAccess(): void
+    {
+        $csrfToken = str_repeat('a', 64);
+        session_id('prolific-validation-test');
+        session_start();
+        $_SESSION['csrf_token'] = $csrfToken;
+        session_write_close();
+
+        $_GET = [];
+        $_REQUEST = [];
+        $_POST = [
+            'participant_identifier' => 'AbCdEf1234567890GhIjKlMn',
+            'age' => '30',
+            'cigarettes' => '10',
+            'studyinfo' => 'on',
+            'dataprot' => 'on',
+            'csrf_token' => $csrfToken,
+        ];
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $checkedParticipantId = null;
+        $prolificSubmissionValidator = static function (
+            array $hostConfig,
+            string $participantId
+        ) use (&$checkedParticipantId): bool {
+            $checkedParticipantId = $participantId;
+            return false;
+        };
+
+        ob_start();
+        require __DIR__ . '/../index-de.php';
+        $output = ob_get_clean();
+
+        self::assertSame('AbCdEf1234567890GhIjKlMn', $checkedParticipantId);
+        self::assertStringContainsString(
+            'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.',
+            $output
+        );
+    }
 }

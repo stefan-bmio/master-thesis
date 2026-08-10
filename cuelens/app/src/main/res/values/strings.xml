@@ -24,7 +24,6 @@
     <string name="app_activation">App-Aktivierung</string>
     <string name="activation_already_completed">Die App ist aktiviert.</string>
     <string name="participant_identifier">E-Mail-Adresse oder Prolific-ID</string>
-    <string name="activation_identifier_help">Wenn Sie über Prolific teilnehmen, geben Sie hier Ihre Prolific-ID ein.</string>
     <string name="activate">Aktivieren</string>
     <string name="activation_running">Aktivierung läuft</string>
     <string name="activation_failed">Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>

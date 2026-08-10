@@ -5,4 +5,6 @@ return [
 		'activation' => 'activation-secret',
 		'pseudonym' => 'pseudonym-secret',
 	],
+	'prolific_token' => 'api-token',
+	'prolific_study_id' => 'study-id',
 ];

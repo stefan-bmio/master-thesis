@@ -1050,7 +1050,7 @@ private const val TRIALS_PER_SITUATION = 5
 private const val MATCHING_SITUATION_COUNT = 10
 private const val LABELING_SITUATION_COUNT = 10
 private const val TOTAL_SITUATION_COUNT = MATCHING_SITUATION_COUNT + LABELING_SITUATION_COUNT
-private const val IMAGE_MATCH_WAIT_SECONDS = 4
+private const val IMAGE_MATCH_WAIT_SECONDS = 1
 
 private val StudyBackground = Color(0xFFD7ECE9)
 private val StudyPrimary = Color(0xFF006269)

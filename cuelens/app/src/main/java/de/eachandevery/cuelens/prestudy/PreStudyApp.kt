@@ -879,12 +879,6 @@ fun EmailActivationScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = strings.activationIdentifierHelp,
-            color = Color.Black,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
         if (activationState == ActivationState.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(

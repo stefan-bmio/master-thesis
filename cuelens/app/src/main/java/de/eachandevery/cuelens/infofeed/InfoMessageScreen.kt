@@ -175,7 +175,6 @@ data class InfoFeedStrings(
     val appActivation: String,
     val activationAlreadyCompleted: String,
     val participantIdentifier: String,
-    val activationIdentifierHelp: String,
     val activate: String,
     val activationRunning: String,
     val activationFailed: String,
@@ -264,9 +263,6 @@ fun localizedStrings(language: AppLanguage): InfoFeedStrings {
                 R.string.activation_already_completed
             ),
             participantIdentifier = localizedContext.getString(R.string.participant_identifier),
-            activationIdentifierHelp = localizedContext.getString(
-                R.string.activation_identifier_help
-            ),
             activate = localizedContext.getString(R.string.activate),
             activationRunning = localizedContext.getString(R.string.activation_running),
             activationFailed = localizedContext.getString(R.string.activation_failed),

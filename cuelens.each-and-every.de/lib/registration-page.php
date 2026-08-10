@@ -7,10 +7,16 @@ require_once __DIR__ . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/SMTP.php';
 require_once __DIR__ . '/error-log.php';
+require_once __DIR__ . '/prolific-submission-validation.php';
 require_once __DIR__ . '/registration.php';
 
 if (!isset($registrationPage) || !is_array($registrationPage)) {
     throw new RuntimeException('Missing registration page configuration.');
+}
+$prolificSubmissionValidator = $prolificSubmissionValidator
+    ?? 'prolific_participant_has_eligible_submission';
+if (!is_callable($prolificSubmissionValidator)) {
+    throw new RuntimeException('Invalid Prolific submission validator.');
 }
 
 $message = '';
@@ -29,51 +35,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $submission = $validation->submission();
             $dbConfig = require __DIR__ . '/../config/cuelens-signup.php';
             try {
-                $pdo = registration_pdo_from_config(is_array($dbConfig) ? $dbConfig : []);
-                $creation = create_registration($pdo, $submission);
+                if ($submission->identifier()->channel() === ParticipantIdentifier::PROLIFIC) {
+                    $hostConfig = require __DIR__ . '/../config/host.php';
+                    if (!is_array($hostConfig)) {
+                        throw new ProlificApiException('Invalid Prolific API configuration.');
+                    }
+                    $prolificId = $submission->identifier()->prolificId();
+                    if ($prolificId === null) {
+                        throw new LogicException('Missing Prolific participant ID.');
+                    }
+                    if (!$prolificSubmissionValidator($hostConfig, $prolificId)) {
+                        $message = $registrationPage['prolific_not_registered'];
+                    }
+                }
 
-                if ($creation->channel() === ParticipantIdentifier::PROLIFIC) {
-                    send_operational_notification(
-                        OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED,
-                        'registration_form'
-                    );
+                if ($message === '') {
+                    $pdo = registration_pdo_from_config(is_array($dbConfig) ? $dbConfig : []);
+                    $creation = create_registration($pdo, $submission);
+
+                    if ($creation->channel() === ParticipantIdentifier::PROLIFIC) {
+                        send_operational_notification(
+                            OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED,
+                            'registration_form'
+                        );
+                        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                        header('Location: ' . $registrationPage['prolific_success_path']);
+                        exit;
+                    }
+
+                    $email = $submission->identifier()->email();
+                    $name = $submission->name();
+                    $doubleOptInToken = $creation->doubleOptInToken();
+                    if ($email === null || $name === null || $doubleOptInToken === null) {
+                        throw new RuntimeException('Incomplete direct registration result.');
+                    }
+
+                    $smtpConfig = require __DIR__ . '/../config/noreply-smtp.php';
+                    $hostConfig = require __DIR__ . '/../config/host.php';
+                    $confirmUrl = $hostConfig['root'] . '/' . $registrationPage['confirm_path'] . '?' . http_build_query([
+                        'doiToken' => $doubleOptInToken,
+                    ]);
+                    $mail = new PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->Host = $smtpConfig['host'];
+                    $mail->SMTPAuth = $smtpConfig['smtpAuth'];
+                    $mail->Username = $smtpConfig['user'];
+                    $mail->Password = $smtpConfig['pass'];
+                    $mail->SMTPSecure = $smtpConfig['smtpSecure'];
+                    $mail->Port = $smtpConfig['port'];
+                    $mail->CharSet = $smtpConfig['charset'];
+                    $mail->setFrom($smtpConfig['from'], $smtpConfig['fromName']);
+                    $mail->addReplyTo($smtpConfig['replyTo'], $smtpConfig['replyToName']);
+                    $mail->addAddress($email, $name);
+                    $mail->Subject = $registrationPage['mail_subject'];
+                    $mail->Body = ($registrationPage['mail_body'])($confirmUrl);
+                    $mail->send();
+
+                    $_SESSION['email'] = $email;
                     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                    header('Location: ' . $registrationPage['prolific_success_path']);
+                    header('Location: ' . $registrationPage['double_opt_in_path']);
                     exit;
                 }
-
-                $email = $submission->identifier()->email();
-                $name = $submission->name();
-                $doubleOptInToken = $creation->doubleOptInToken();
-                if ($email === null || $name === null || $doubleOptInToken === null) {
-                    throw new RuntimeException('Incomplete direct registration result.');
+            } catch (ProlificApiException $error) {
+                $message = $registrationPage['prolific_check_error'];
+                if (isset($dbConfig) && is_array($dbConfig)) {
+                    log_error_from_config($dbConfig, $message, $error, 'registration_form');
                 }
-
-                $smtpConfig = require __DIR__ . '/../config/noreply-smtp.php';
-                $hostConfig = require __DIR__ . '/../config/host.php';
-                $confirmUrl = $hostConfig['root'] . '/' . $registrationPage['confirm_path'] . '?' . http_build_query([
-                    'doiToken' => $doubleOptInToken,
-                ]);
-                $mail = new PHPMailer(true);
-                $mail->isSMTP();
-                $mail->Host = $smtpConfig['host'];
-                $mail->SMTPAuth = $smtpConfig['smtpAuth'];
-                $mail->Username = $smtpConfig['user'];
-                $mail->Password = $smtpConfig['pass'];
-                $mail->SMTPSecure = $smtpConfig['smtpSecure'];
-                $mail->Port = $smtpConfig['port'];
-                $mail->CharSet = $smtpConfig['charset'];
-                $mail->setFrom($smtpConfig['from'], $smtpConfig['fromName']);
-                $mail->addReplyTo($smtpConfig['replyTo'], $smtpConfig['replyToName']);
-                $mail->addAddress($email, $name);
-                $mail->Subject = $registrationPage['mail_subject'];
-                $mail->Body = ($registrationPage['mail_body'])($confirmUrl);
-                $mail->send();
-
-                $_SESSION['email'] = $email;
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                header('Location: ' . $registrationPage['double_opt_in_path']);
-                exit;
             } catch (DuplicateRegistrationException $error) {
                 $message = $error->channel() === ParticipantIdentifier::PROLIFIC
                     ? $registrationPage['duplicate_prolific']
@@ -114,10 +141,6 @@ if (empty($_SESSION['csrf_token'])) {
 <tr>
     <td><label for="email"><?= htmlspecialchars($registrationPage['identifier_label'], ENT_QUOTES, 'UTF-8') ?>:</label></td>
     <td><input type="text" id="email" name="participant_identifier" required autocomplete="off" spellcheck="false" autocapitalize="none" aria-describedby="identifier-help registration-mode-help" data-validation-required="<?= htmlspecialchars($registrationPage['identifier_required'], ENT_QUOTES, 'UTF-8') ?>" data-validation-invalid="<?= htmlspecialchars($registrationPage['identifier_invalid'], ENT_QUOTES, 'UTF-8') ?>"></td>
-</tr>
-<tr>
-    <td></td>
-    <td><p id="identifier-help"><?= htmlspecialchars($registrationPage['identifier_help'], ENT_QUOTES, 'UTF-8') ?></p><p id="registration-mode-help" role="status" aria-live="polite" hidden><?= htmlspecialchars($registrationPage['prolific_mode_help'], ENT_QUOTES, 'UTF-8') ?></p></td>
 </tr>
 <tr>
     <td><label for="name"><?= htmlspecialchars($registrationPage['name_label'], ENT_QUOTES, 'UTF-8') ?>:</label></td>

@@ -10,7 +10,6 @@
 	const dataprotInput = document.getElementById('dataprot');
 	const form = document.querySelector('form');
 	const validationMessage = document.getElementById('form-validation-message');
-	const registrationModeHelp = document.getElementById('registration-mode-help');
 	const personalFields = [nameInput, ibanInput, bicInput].filter(Boolean);
 
 	if (!form || !emailInput) {
@@ -56,9 +55,6 @@
 				input.required = true;
 			}
 		});
-		if (registrationModeHelp) {
-			registrationModeHelp.hidden = !prolific;
-		}
 	}
 
 	const managedFields = [
