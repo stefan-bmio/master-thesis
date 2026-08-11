@@ -69,6 +69,7 @@ final class ProlificSubmissionValidationTest extends TestCase
 
         $transport = static function (string $url, array $headers) use (&$requestedPages, $firstPage): ProlificHttpResponse {
             parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+            self::assertSame('started_at', $query['ordering'] ?? null);
             $requestedPages[] = (int) ($query['page'] ?? 0);
             if (($query['page'] ?? null) === '1') {
                 return self::response($firstPage);
@@ -131,6 +132,7 @@ final class ProlificSubmissionValidationTest extends TestCase
         self::assertContains('Authorization: Token test-api-token', $seenHeaders);
         parse_str((string) parse_url($seenUrl, PHP_URL_QUERY), $query);
         self::assertSame(self::STUDY_ID, $query['study'] ?? null);
+        self::assertSame('started_at', $query['ordering'] ?? null);
         self::assertSame((string) PROLIFIC_SUBMISSIONS_PAGE_SIZE, $query['page_size'] ?? null);
         self::assertSame('1', $query['page'] ?? null);
     }

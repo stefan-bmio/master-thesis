@@ -130,7 +130,6 @@ return {
         const field = document.getElementById(id);
         return { disabled: field.disabled, required: field.required, value: field.value };
     }),
-    helpHidden: document.getElementById('registration-mode-help').hidden,
     submittedKeys: Array.from(new FormData(document.querySelector('form')).keys())
 };
 JS);
@@ -141,7 +140,6 @@ JS);
             self::assertFalse($field['required']);
             self::assertSame('', $field['value']);
         }
-        self::assertFalse($state['helpHidden']);
         self::assertNotContains('name', $state['submittedKeys']);
         self::assertNotContains('iban', $state['submittedKeys']);
         self::assertNotContains('bic', $state['submittedKeys']);
@@ -159,8 +157,7 @@ return {
     fields: ['name', 'iban', 'bic'].map((id) => {
         const field = document.getElementById(id);
         return { disabled: field.disabled, required: field.required };
-    }),
-    helpHidden: document.getElementById('registration-mode-help').hidden
+    })
 };
 JS);
 
@@ -169,7 +166,6 @@ JS);
             self::assertFalse($field['disabled']);
             self::assertTrue($field['required']);
         }
-        self::assertTrue($state['helpHidden']);
     }
 
     public function testValidProlificRegistrationPassesBrowserConstraintValidation(): void

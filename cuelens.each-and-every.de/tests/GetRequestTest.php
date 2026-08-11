@@ -89,39 +89,49 @@ final class GetRequestTest extends TestCase
     public function testIneligibleProlificRegistrationShowsExactErrorBeforeDatabaseAccess(): void
     {
         $csrfToken = str_repeat('a', 64);
-        session_id('prolific-validation-test');
-        session_start();
-        $_SESSION['csrf_token'] = $csrfToken;
-        session_write_close();
+        $previousSessionSavePath = session_save_path();
+        self::assertNotFalse(ini_set('session.save_path', sys_get_temp_dir()));
+        session_id('cuelens-prolific-validation-' . bin2hex(random_bytes(16)));
+        self::assertTrue(session_start());
 
-        $_GET = [];
-        $_REQUEST = [];
-        $_POST = [
-            'participant_identifier' => 'AbCdEf1234567890GhIjKlMn',
-            'age' => '30',
-            'cigarettes' => '10',
-            'studyinfo' => 'on',
-            'dataprot' => 'on',
-            'csrf_token' => $csrfToken,
-        ];
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $checkedParticipantId = null;
-        $prolificSubmissionValidator = static function (
-            array $hostConfig,
-            string $participantId
-        ) use (&$checkedParticipantId): bool {
-            $checkedParticipantId = $participantId;
-            return false;
-        };
+        try {
+            $_SESSION['csrf_token'] = $csrfToken;
+            self::assertTrue(session_write_close());
 
-        ob_start();
-        require __DIR__ . '/../index-de.php';
-        $output = ob_get_clean();
+            $_GET = [];
+            $_REQUEST = [];
+            $_POST = [
+                'participant_identifier' => 'AbCdEf1234567890GhIjKlMn',
+                'age' => '30',
+                'cigarettes' => '10',
+                'studyinfo' => 'on',
+                'dataprot' => 'on',
+                'csrf_token' => $csrfToken,
+            ];
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $checkedParticipantId = null;
+            $prolificSubmissionValidator = static function (
+                array $hostConfig,
+                string $participantId
+            ) use (&$checkedParticipantId): bool {
+                $checkedParticipantId = $participantId;
+                return false;
+            };
 
-        self::assertSame('AbCdEf1234567890GhIjKlMn', $checkedParticipantId);
-        self::assertStringContainsString(
-            'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.',
-            $output
-        );
+            ob_start();
+            require __DIR__ . '/../index-de.php';
+            $output = ob_get_clean();
+
+            self::assertSame('AbCdEf1234567890GhIjKlMn', $checkedParticipantId);
+            self::assertStringContainsString(
+                'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.',
+                $output
+            );
+        } finally {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
+            ini_set('session.save_path', $previousSessionSavePath);
+        }
     }
 }

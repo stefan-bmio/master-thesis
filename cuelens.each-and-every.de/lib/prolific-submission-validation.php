@@ -76,6 +76,10 @@ function prolific_participant_has_eligible_submission(
     for ($page = 1; $page <= PROLIFIC_SUBMISSIONS_MAX_PAGES; $page++) {
         $url = PROLIFIC_SUBMISSIONS_ENDPOINT . '?' . http_build_query([
             'study' => $studyId,
+            // Ascending start time keeps earlier pages stable while new
+            // submissions are added. Prolific's unspecified order can move
+            // records between separately requested pages.
+            'ordering' => 'started_at',
             'page_size' => PROLIFIC_SUBMISSIONS_PAGE_SIZE,
             'page' => $page,
         ], '', '&', PHP_QUERY_RFC3986);
