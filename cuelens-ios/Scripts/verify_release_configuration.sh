@@ -56,7 +56,7 @@ test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_FEATURES_URL' "$INFO_PLIST")"
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_SUBMIT_URL' "$INFO_PLIST")" = \
   'https://cuelens.each-and-every.de/submit.php'
 
-FORBIDDEN_KEYS='NSCameraUsageDescription NSPhotoLibraryUsageDescription NSPhotoLibraryAddUsageDescription NSMicrophoneUsageDescription NSLocationWhenInUseUsageDescription NSLocationAlwaysUsageDescription NSLocationAlwaysAndWhenInUseUsageDescription NSContactsUsageDescription NSCalendarsUsageDescription NSBluetoothAlwaysUsageDescription NSBluetoothPeripheralUsageDescription NSUserTrackingUsageDescription NSAppTransportSecurity'
+FORBIDDEN_KEYS='NSCameraUsageDescription NSPhotoLibraryUsageDescription NSPhotoLibraryAddUsageDescription NSMicrophoneUsageDescription NSLocationWhenInUseUsageDescription NSLocationAlwaysUsageDescription NSLocationAlwaysAndWhenInUseUsageDescription NSContactsUsageDescription NSCalendarsUsageDescription NSBluetoothAlwaysUsageDescription NSBluetoothPeripheralUsageDescription NSUserTrackingUsageDescription NSLocalNetworkUsageDescription NSAppTransportSecurity'
 for key in $FORBIDDEN_KEYS; do
   if /usr/libexec/PlistBuddy -c "Print :$key" "$INFO_PLIST" >/dev/null 2>&1; then
     echo "Unzulässiger Info.plist-Schlüssel: $key" >&2

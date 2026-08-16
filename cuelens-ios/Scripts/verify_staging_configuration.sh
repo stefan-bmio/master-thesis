@@ -23,6 +23,8 @@ INFO_PLIST="$DERIVED_DATA/Build/Products/Staging-iphonesimulator/CueLens.app/Inf
 test -f "$INFO_PLIST"
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLIST")" = 'YES'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSAppTransportSecurity:NSAllowsLocalNetworking' "$INFO_PLIST")" = 'true'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSLocalNetworkUsageDescription' "$INFO_PLIST")" = \
+  'CueLens benötigt in dieser Testversion Zugriff auf den lokalen Testserver, um Informationen zu laden.'
 if /usr/libexec/PlistBuddy -c 'Print :NSAppTransportSecurity:NSAllowsArbitraryLoads' "$INFO_PLIST" >/dev/null 2>&1; then
   echo 'Staging darf keine globale ATS-Ausnahme enthalten.' >&2
   exit 1

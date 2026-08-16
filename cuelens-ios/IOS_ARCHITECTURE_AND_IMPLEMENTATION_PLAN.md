@@ -778,6 +778,7 @@ Staging:
 - das freigegebene lokale Testsystem `192.168.1.243` darf in Debug/Staging über HTTP verwendet werden;
 - Konfigurationsloader und HTTP-Client verwenden dieselbe Transportpolicy; HTTP wird nur bei explizitem Build-Flag und nur für Loopback-, `.local`- und private IPv4-Ziele akzeptiert;
 - Staging verwendet ausschließlich `NSAllowsLocalNetworking`; eine globale ATS-Ausnahme bleibt unzulässig;
+- Staging deklariert den Zugriff auf den lokalen Testserver mit `NSLocalNetworkUsageDescription`, damit iOS die Local-Network-Privacy-Freigabe verständlich und zuverlässig anfordern kann;
 - eine solche Ausnahme DARF NICHT in Release-Artefakte gelangen;
 - `NSAllowsArbitraryLoads = true` ist auch in Staging unzulässig.
 

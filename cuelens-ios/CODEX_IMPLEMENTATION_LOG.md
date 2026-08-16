@@ -421,3 +421,16 @@ Der zentrale HTTP-Client validierte jeden Request unabhängig vom Build weiterhi
 - Release-Analyse und unsignierter Gerätebuild erfolgreich; Release bleibt ohne HTTP-Endpunkt und ATS-Ausnahme.
 
 Der davon unabhängige Staging-Serverfehler bleibt bestehen: `messages.php` lieferte beim dokumentierten Prüfaufruf PHP-Quelltext ohne JSON-Content-Type. Sobald der Client den Server erreicht, lehnt er eine solche Antwort erwartungsgemäß als ungültigen Content-Type ab.
+
+## 16.08.2026 – Korrektur zu Auftrag 5: Local-Network-Privacy auf Geräten
+
+**Anlass und Diagnose**
+Der Staging-Feed funktionierte im Simulator, meldete auf einem iPhone mit iOS 26.6 jedoch zunächst `URLError.notConnectedToInternet`, obwohl Safari den lokalen Server erreichte. Das gebaute Staging-Artefakt enthielt die ATS-Deklaration `NSAllowsLocalNetworking`, aber keine Nutzungserklärung für die davon unabhängige Local-Network-Privacy-Freigabe. Nach aktiviertem lokalen Netzwerkzugriff und einem Neustart des App-Prozesses war der Feed auf dem Gerät erreichbar.
+
+**Korrektur**
+Nur die Staging-Property-List enthält nun `NSLocalNetworkUsageDescription` mit einer sachlichen Erklärung des Zugriffs auf den lokalen Testserver. Das Staging-Gate verlangt die Erklärung im gebauten Artefakt. Das Release-Gate verbietet sowohl diese Erklärung als auch weiterhin jede ATS-Ausnahme, sodass der produktive HTTPS-Build unverändert keinen lokalen Netzwerkzugriff deklariert.
+
+**Prüfung**
+Die Property Lists werden syntaktisch validiert; anschließend werden Staging- und Release-Artefakt sowie das vollständige Quality-Gate geprüft. Der abschließende Gerätetest muss bei einer frischen Installation die systemseitige Freigabe anzeigen und nach Zustimmung den Feed laden.
+
+Staging- und Release-Artefaktprüfung sowie das vollständige Quality-Gate mit 98 Unit-Tests und je vier UI-Szenarien auf iPhone und iPad unter iOS 26.5 bestanden. Ein signierter Staging-Gerätebuild enthielt die erwartete Nutzungserklärung, wurde als datenbewahrendes Update auf dem verbundenen iPhone installiert und erfolgreich gestartet. Der erneute Dialogtest bleibt bewusst einer späteren frischen Installation vorbehalten, da eine Deinstallation den lokalen Staging-App-Container löschen würde.

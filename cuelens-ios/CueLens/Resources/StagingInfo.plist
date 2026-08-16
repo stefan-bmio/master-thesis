@@ -18,6 +18,8 @@
 	<key>CUELENS_ALLOWS_LOCAL_HTTP</key><string>$(CUELENS_ALLOWS_LOCAL_HTTP)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict><key>NSAllowsLocalNetworking</key><true/></dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>CueLens benötigt in dieser Testversion Zugriff auf den lokalen Testserver, um Informationen zu laden.</string>
 	<key>LSRequiresIPhoneOS</key><true/>
 	<key>UILaunchScreen</key><dict/>
 	<key>UISupportedInterfaceOrientations~iphone</key>
