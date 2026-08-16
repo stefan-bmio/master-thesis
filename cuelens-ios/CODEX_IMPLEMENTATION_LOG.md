@@ -179,4 +179,4 @@ Zur Wahrung der Einfachheit ist `CueLens/Domain/` ein logisch abgegrenzter Quell
 - Vor Auftrag 3 ist das Review-Gate mit fachlicher Gegenprüfung der 20 Situationen, fünf Trials, Bedingungsreihenfolge, Wartezeit und beiden Abschlussmodi durchzuführen.
 
 **Menschliche Freigabe**
-Ausstehend; erforderlich ist die fachliche Gegenprüfung gemäß Review-Gate von Auftrag 2.
+Am 16.08.2026 ohne Namensnennung erteilt; die Umsetzung von Auftrag 3 wurde ausdrücklich beauftragt.
