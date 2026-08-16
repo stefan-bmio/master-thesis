@@ -11,8 +11,10 @@ final class CueLensUITests: XCTestCase {
         app.launch()
 
         let titleExists = app.staticTexts["app.title"].waitForExistence(timeout: 10)
-        let foundationStatusExists = app.staticTexts["app.foundationStatus"].exists
+        let readyStatusExists = app.staticTexts["app.foundationStatus.ready"]
+            .waitForExistence(timeout: 10)
         XCTAssertTrue(titleExists)
-        XCTAssertTrue(foundationStatusExists)
+        XCTAssertTrue(readyStatusExists)
+        XCTAssertFalse(app.staticTexts["app.foundationStatus.failure"].exists)
     }
 }

@@ -13,7 +13,7 @@ struct ContentView: View {
             Text(statusKey)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .accessibilityIdentifier("app.foundationStatus")
+                .accessibilityIdentifier(statusAccessibilityIdentifier)
         }
         .padding()
     }
@@ -26,6 +26,17 @@ struct ContentView: View {
             "app.foundationStatus"
         case .secureStorageFailure:
             "app.secureStorageFailure"
+        }
+    }
+
+    private var statusAccessibilityIdentifier: String {
+        switch initializationState {
+        case .loading:
+            "app.foundationStatus.loading"
+        case .ready:
+            "app.foundationStatus.ready"
+        case .secureStorageFailure:
+            "app.foundationStatus.failure"
         }
     }
 }

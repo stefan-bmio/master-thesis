@@ -171,6 +171,15 @@ final class ProtectedStudyStateStoreTests: XCTestCase {
         XCTAssertTrue(stateSecurity.isExcludedFromBackup)
     }
 
+    func testSystemFileClientReportsMissingResourceAsAbsent() async throws {
+        let missingURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("cuelens-missing-\(UUID().uuidString)", isDirectory: false)
+
+        let exists = try await SystemProtectedFileClient().resourceExists(at: missingURL)
+
+        XCTAssertFalse(exists)
+    }
+
     private func sampleState(confirmedCount: Int = 1) throws -> StudyState {
         try StudyState(
             confirmedSituationCount: confirmedCount,

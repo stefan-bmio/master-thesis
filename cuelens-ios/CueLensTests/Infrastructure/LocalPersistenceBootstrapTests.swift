@@ -16,6 +16,32 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         XCTAssertEqual(snapshot.studyState, try StudyState.initial)
     }
 
+    func testFreshSystemFileBootstrapCreatesInstallationAndLoadsInitialState() async throws {
+        let applicationSupport = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        let rootDirectory = applicationSupport
+            .appendingPathComponent("cuelens-bootstrap-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+
+        let paths = PersistencePaths(rootDirectory: rootDirectory)
+        let tokenStore = KeychainAppTokenStore(client: FakeKeychainClient())
+        let bootstrap = LocalPersistenceBootstrap(
+            installation: InstallationCoordinator(paths: paths, tokenStore: tokenStore),
+            tokenStore: tokenStore,
+            stateStore: ProtectedStudyStateStore(paths: paths)
+        )
+
+        let snapshot = try await bootstrap.load()
+
+        XCTAssertEqual(snapshot.installation, .newInstallation)
+        XCTAssertEqual(snapshot.studyState, try StudyState.initial)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: paths.installationMarker.path))
+    }
+
     func testProgressWithoutTokenFailsClosed() async throws {
         let state = try StudyState(
             confirmedSituationCount: 1,

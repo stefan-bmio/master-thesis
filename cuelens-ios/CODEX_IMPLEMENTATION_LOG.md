@@ -238,3 +238,26 @@ Der Token wird als bereits vorhandener Domain-Typ `UUIDv4` repräsentiert. Ein i
 
 **Menschliche Freigabe**
 Ausstehend; vor Beginn von Auftrag 4 ist das Review-Gate fachlich und auf einem echten Gerät freizugeben.
+
+## 16.08.2026 – Korrektur zu Auftrag 3
+
+**Anlass**
+Beim ersten App-Start erschien auf Simulator und Gerät fälschlich der sichere Fehlerzustand „Lokale Daten konnten nicht sicher geladen werden.“
+
+**Ursache und Korrektur**
+`FileManager.attributesOfItem(atPath:)` meldet eine fehlende Datei als `NSFileReadNoSuchFileError` mit Code 260. Der Existenzcheck behandelte zuvor nur `NSFileNoSuchFileError` mit Code 4 als regulär nicht vorhanden. Dadurch wurde der bei einer frischen Installation erwartungsgemäß fehlende Marker als Dateisystemfehler bewertet. Der System-Dateiclient erkennt nun beide Foundation-Varianten als „nicht vorhanden“; andere Fehler bleiben fail-closed.
+
+Der UI-Smoke-Test hatte den Fehler nicht erkannt, weil Lade-, Bereitschafts- und Fehlerzustand denselben Accessibility-Identifier verwendeten. Die Zustände besitzen nun getrennte Identifier, und der Smoke-Test wartet explizit auf `app.foundationStatus.ready` und lehnt `app.foundationStatus.failure` ab.
+
+**Ergänzte Regressionstests**
+
+- tatsächlicher System-Dateizugriff auf einen nicht vorhandenen Pfad liefert `false` statt eines Fehlers;
+- vollständiger Bootstrap mit echten Application-Support-Dateien erzeugt bei einer frischen Installation einen geschützten Marker und lädt den initialen Studienzustand;
+- verschärfter UI-Smoke-Test bestätigt den erfolgreichen Bereitschaftszustand.
+
+**Testergebnis**
+
+- gezielte Persistenz-, Bootstrap- und UI-Regressionstests auf iOS 26.5 bestanden;
+- vollständiges Quality-Gate auf iOS 26.5 einschließlich iPhone- und iPad-Smoke-Test bestanden;
+- iOS 17.5: 60 von 60 Unit-Tests bestanden, keine Fehler oder übersprungenen Tests;
+- die Korrektur erzeugt oder löscht beim zuvor fehlgeschlagenen Start keine Studiendaten; eine Neuinstallation ist nicht erforderlich.

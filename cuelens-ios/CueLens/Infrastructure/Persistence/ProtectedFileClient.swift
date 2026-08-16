@@ -39,7 +39,8 @@ struct SystemProtectedFileClient: ProtectedFileAccessing {
         } catch {
             let cocoaError = error as NSError
             if cocoaError.domain == NSCocoaErrorDomain,
-               cocoaError.code == NSFileNoSuchFileError {
+               (cocoaError.code == NSFileNoSuchFileError
+                || cocoaError.code == NSFileReadNoSuchFileError) {
                 return false
             }
             throw error
