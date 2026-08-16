@@ -75,7 +75,7 @@ final class URLProtocolStub: URLProtocol, @unchecked Sendable {
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
-        request.url?.scheme == "https"
+        request.url?.scheme == "https" || request.url?.scheme == "http"
     }
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
@@ -136,12 +136,14 @@ final class URLProtocolStub: URLProtocol, @unchecked Sendable {
 }
 
 func makeHTTPClient(
+    transportPolicy: NetworkTransportPolicy = .httpsOnly,
     logger: any NetworkEventLogging = NoOpNetworkEventLogger()
 ) -> URLSessionHTTPClient {
     let configuration = URLSessionHTTPClient.ephemeralConfiguration()
     configuration.protocolClasses = [URLProtocolStub.self]
     return URLSessionHTTPClient(
         appVersion: "1.0.0",
+        transportPolicy: transportPolicy,
         configuration: configuration,
         logger: logger
     )

@@ -18,6 +18,7 @@ struct AppConfiguration: Equatable, Sendable {
 
     let endpoints: NetworkEndpoints
     let appVersion: String
+    let transportPolicy: NetworkTransportPolicy
 
     static func live(bundle: Bundle = .main) throws -> AppConfiguration {
         try parse(infoDictionary: bundle.infoDictionary ?? [:])
@@ -27,20 +28,27 @@ struct AppConfiguration: Equatable, Sendable {
         let appVersion = try validatedAppVersion(
             infoDictionary["CFBundleShortVersionString"] as? String
         )
-        let allowsLocalHTTP = (infoDictionary[allowsLocalHTTPKey] as? String) == "YES"
+        let transportPolicy: NetworkTransportPolicy =
+            (infoDictionary[allowsLocalHTTPKey] as? String) == "YES"
+            ? .httpsAndLocalHTTP
+            : .httpsOnly
         return AppConfiguration(
             endpoints: NetworkEndpoints(
-                activation: try validatedURL(infoDictionary[activationURLKey], allowsLocalHTTP: allowsLocalHTTP),
-                messages: try validatedURL(infoDictionary[messagesURLKey], allowsLocalHTTP: allowsLocalHTTP),
-                feedback: try validatedURL(infoDictionary[feedbackURLKey], allowsLocalHTTP: allowsLocalHTTP),
-                features: try validatedURL(infoDictionary[featuresURLKey], allowsLocalHTTP: allowsLocalHTTP),
-                submission: try validatedURL(infoDictionary[submissionURLKey], allowsLocalHTTP: allowsLocalHTTP)
+                activation: try validatedURL(infoDictionary[activationURLKey], policy: transportPolicy),
+                messages: try validatedURL(infoDictionary[messagesURLKey], policy: transportPolicy),
+                feedback: try validatedURL(infoDictionary[feedbackURLKey], policy: transportPolicy),
+                features: try validatedURL(infoDictionary[featuresURLKey], policy: transportPolicy),
+                submission: try validatedURL(infoDictionary[submissionURLKey], policy: transportPolicy)
             ),
-            appVersion: appVersion
+            appVersion: appVersion,
+            transportPolicy: transportPolicy
         )
     }
 
-    private static func validatedURL(_ rawValue: Any?, allowsLocalHTTP: Bool) throws -> URL {
+    private static func validatedURL(
+        _ rawValue: Any?,
+        policy: NetworkTransportPolicy
+    ) throws -> URL {
         guard let value = rawValue as? String,
               let components = URLComponents(string: value),
               components.host?.isEmpty == false,
@@ -50,29 +58,10 @@ struct AppConfiguration: Equatable, Sendable {
               components.fragment == nil,
               !components.path.isEmpty,
               let url = components.url,
-              isAllowedTransport(components, allowsLocalHTTP: allowsLocalHTTP) else {
+              policy.allows(url) else {
             throw NetworkError.invalidConfiguration
         }
         return url
-    }
-
-    private static func isAllowedTransport(
-        _ components: URLComponents,
-        allowsLocalHTTP: Bool
-    ) -> Bool {
-        let scheme = components.scheme?.lowercased()
-        if scheme == "https" { return true }
-        guard scheme == "http", allowsLocalHTTP, let host = components.host else { return false }
-        return host == "localhost" || host.hasSuffix(".local") || isPrivateIPv4(host)
-    }
-
-    private static func isPrivateIPv4(_ host: String) -> Bool {
-        let octets = host.split(separator: ".").compactMap { UInt8($0) }
-        guard octets.count == 4 else { return false }
-        return octets[0] == 10
-            || (octets[0] == 172 && (16...31).contains(octets[1]))
-            || (octets[0] == 192 && octets[1] == 168)
-            || octets[0] == 127
     }
 
     private static func validatedAppVersion(_ rawValue: String?) throws -> String {

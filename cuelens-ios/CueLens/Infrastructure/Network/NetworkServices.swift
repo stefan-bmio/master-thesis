@@ -9,7 +9,10 @@ struct NetworkServices: Sendable {
 
     static func live() throws -> NetworkServices {
         let configuration = try AppConfiguration.live()
-        let client = URLSessionHTTPClient(appVersion: configuration.appVersion)
+        let client = URLSessionHTTPClient(
+            appVersion: configuration.appVersion,
+            transportPolicy: configuration.transportPolicy
+        )
         return NetworkServices(
             activation: ActivationService(
                 endpoint: configuration.endpoints.activation,

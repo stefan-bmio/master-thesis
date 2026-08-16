@@ -776,7 +776,7 @@ Staging:
 
 - SOLL ebenfalls HTTPS verwenden;
 - das freigegebene lokale Testsystem `192.168.1.243` darf in Debug/Staging über HTTP verwendet werden;
-- HTTP wird nur bei explizitem Build-Flag und nur für Loopback-, `.local`- und private IPv4-Ziele akzeptiert;
+- Konfigurationsloader und HTTP-Client verwenden dieselbe Transportpolicy; HTTP wird nur bei explizitem Build-Flag und nur für Loopback-, `.local`- und private IPv4-Ziele akzeptiert;
 - Staging verwendet ausschließlich `NSAllowsLocalNetworking`; eine globale ATS-Ausnahme bleibt unzulässig;
 - eine solche Ausnahme DARF NICHT in Release-Artefakte gelangen;
 - `NSAllowsArbitraryLoads = true` ist auch in Staging unzulässig.

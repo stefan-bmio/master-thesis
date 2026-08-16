@@ -14,6 +14,8 @@ rg -q 'Accept-Encoding' "$NETWORK_DIR/HTTPClient.swift"
 rg -q '"identity"' "$NETWORK_DIR/HTTPClient.swift"
 rg -q 'CueLens/\\\(appVersion\)' "$NETWORK_DIR/HTTPClient.swift"
 rg -q 'completionHandler\(nil\)' "$NETWORK_DIR/HTTPClient.swift"
+rg -q 'transportPolicy\.allows' "$NETWORK_DIR/HTTPClient.swift"
+rg -q 'transportPolicy: configuration\.transportPolicy' "$NETWORK_DIR/NetworkServices.swift"
 
 if rg -n 'http://|NSAllowsArbitraryLoads|serverTrust|SecTrust|URLCredential' \
   "$NETWORK_DIR" "$PROJECT_ROOT/Config/Release.xcconfig"; then

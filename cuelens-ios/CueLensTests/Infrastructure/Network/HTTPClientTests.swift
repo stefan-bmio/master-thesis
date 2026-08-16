@@ -160,6 +160,28 @@ final class HTTPClientTests: XCTestCase {
         }
     }
 
+    func testExplicitLocalPolicyAllowsPrivateHTTP() async throws {
+        let url = try XCTUnwrap(URL(string: "http://192.168.1.243/cuelens/messages.php"))
+        URLProtocolStub.register(.init(body: Data(#"{"messages":[]}"#.utf8)), for: url)
+
+        let response = try await makeHTTPClient(
+            transportPolicy: .httpsAndLocalHTTP
+        ).execute(jsonRequestDefinition(to: url))
+
+        XCTAssertEqual(response.statusCode, 200)
+        XCTAssertEqual(URLProtocolStub.recordedRequests(for: url).count, 1)
+    }
+
+    func testExplicitLocalPolicyStillRejectsPublicHTTP() async {
+        let url = URL(string: "http://example.com/messages.php")
+            ?? URL(fileURLWithPath: "/invalid-test-url")
+        await assertNetworkError(.invalidConfiguration) {
+            _ = try await makeHTTPClient(
+                transportPolicy: .httpsAndLocalHTTP
+            ).execute(self.jsonRequestDefinition(to: url))
+        }
+    }
+
     private func jsonRequest(to url: URL) async throws -> HTTPResponse {
         try await makeHTTPClient().execute(jsonRequestDefinition(to: url))
     }

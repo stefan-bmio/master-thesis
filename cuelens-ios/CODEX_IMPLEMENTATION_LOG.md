@@ -396,3 +396,28 @@ Fehler unkritischer Einstellungen blockieren die App nicht: ungültige Werte wer
 
 **Menschliche Freigabe**
 Ausstehend; vor Beginn von Auftrag 6 ist das Review-Gate freizugeben.
+
+## 16.08.2026 – Korrektur zu Auftrag 5: lokale Staging-Transportpolicy
+
+**Anlass**
+Der Staging-Feed meldete `invalidConfiguration`, obwohl der Konfigurationsloader den explizit freigegebenen privaten HTTP-Endpunkt akzeptiert hatte.
+
+**Ursache und Korrektur**
+Der zentrale HTTP-Client validierte jeden Request unabhängig vom Build weiterhin pauschal als HTTPS-only. Eine gemeinsame `NetworkTransportPolicy` wird nun sowohl vom Konfigurationsloader als auch vom HTTP-Client verwendet und durch `NetworkServices` weitergereicht. HTTPS-only bleibt Standard und Release-Regel. Die lokale Policy akzeptiert HTTP ausschließlich für Loopback-, `.local`- und private IPv4-Ziele; öffentliche HTTP-Ziele bleiben gesperrt.
+
+**Ergänzte Regressionstests**
+
+- Standardclient lehnt HTTP weiterhin vor dem Transport ab;
+- explizite lokale Policy übermittelt einen aufgezeichneten HTTP-Request an `192.168.1.243`;
+- öffentliche HTTP-Ziele bleiben auch mit lokaler Policy abgelehnt;
+- geparste Staging-Konfiguration liefert die lokale Policy, normale HTTPS-Konfiguration die sichere Standardpolicy;
+- statisches Netzwerk-Gate prüft die Weitergabe der Policy vom Build bis zum Client.
+
+**Testergebnis**
+
+- gezielte Konfigurations- und HTTP-Clienttests bestanden;
+- vollständiges Quality-Gate mit 98 Unit-Tests und je vier UI-Szenarien auf iPhone und iPad unter iOS 26.5 bestanden;
+- 98 Unit-Tests unter iOS 17.5 bestanden;
+- Release-Analyse und unsignierter Gerätebuild erfolgreich; Release bleibt ohne HTTP-Endpunkt und ATS-Ausnahme.
+
+Der davon unabhängige Staging-Serverfehler bleibt bestehen: `messages.php` lieferte beim dokumentierten Prüfaufruf PHP-Quelltext ohne JSON-Content-Type. Sobald der Client den Server erreicht, lehnt er eine solche Antwort erwartungsgemäß als ungültigen Content-Type ab.

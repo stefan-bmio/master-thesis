@@ -72,7 +72,7 @@ CoreSimulator bestätigt Keychain-Roundtrips und Backup-Ausschlüsse, meldet jed
 ./Scripts/verify_network_security.sh
 ```
 
-Die buildabhängigen Endpunkte werden aus den `.xcconfig`-Dateien in die eingecheckten minimalen Property Lists expandiert. Debug bleibt nicht routbar, Staging darf das freigegebene private LAN-Testsystem verwenden und ausschließlich Release enthält die produktiven HTTPS-Endpunkte. Auftrag 4 stellt die Services bereit, beginnt aber noch keine produktiven Schreibrequests aus der App-Oberfläche.
+Die buildabhängigen Endpunkte werden aus den `.xcconfig`-Dateien in die eingecheckten minimalen Property Lists expandiert. Konfigurationsloader und HTTP-Client erzwingen gemeinsam dieselbe Transportpolicy. Debug bleibt nicht routbar, Staging darf das freigegebene private LAN-Testsystem verwenden und ausschließlich Release enthält die produktiven HTTPS-Endpunkte. Auftrag 4 stellt die Services bereit, beginnt aber noch keine produktiven Schreibrequests aus der App-Oberfläche.
 
 ## App-Shell und Informationsfeed aus Auftrag 5
 

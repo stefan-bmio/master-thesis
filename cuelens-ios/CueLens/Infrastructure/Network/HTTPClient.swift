@@ -19,14 +19,17 @@ actor URLSessionHTTPClient: HTTPClienting {
     private let session: URLSession
     private let redirectDelegate = RedirectRejectingDelegate()
     private let appVersion: String
+    private let transportPolicy: NetworkTransportPolicy
     private let logger: any NetworkEventLogging
 
     init(
         appVersion: String,
+        transportPolicy: NetworkTransportPolicy = .httpsOnly,
         configuration: URLSessionConfiguration = URLSessionHTTPClient.ephemeralConfiguration(),
         logger: any NetworkEventLogging = SystemNetworkEventLogger()
     ) {
         self.appVersion = appVersion
+        self.transportPolicy = transportPolicy
         self.logger = logger
         session = URLSession(configuration: configuration)
     }
@@ -91,7 +94,7 @@ actor URLSessionHTTPClient: HTTPClienting {
     }
 
     private func makeURLRequest(from request: HTTPRequest) throws -> URLRequest {
-        guard request.url.scheme?.lowercased() == "https",
+        guard transportPolicy.allows(request.url),
               request.url.host?.isEmpty == false,
               request.url.user == nil,
               request.url.password == nil,

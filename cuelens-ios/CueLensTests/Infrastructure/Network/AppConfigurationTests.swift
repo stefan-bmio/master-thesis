@@ -15,6 +15,7 @@ final class AppConfigurationTests: XCTestCase {
         XCTAssertEqual(configuration.endpoints.feedback.path, "/feedback.php")
         XCTAssertEqual(configuration.endpoints.features.path, "/features.php")
         XCTAssertEqual(configuration.endpoints.submission.path, "/submit.php")
+        XCTAssertEqual(configuration.transportPolicy, .httpsOnly)
     }
 
     func testRejectsMissingMalformedAndUnsafeValues() {
@@ -42,10 +43,9 @@ final class AppConfigurationTests: XCTestCase {
             var dictionary = validDictionary()
             dictionary[AppConfiguration.allowsLocalHTTPKey] = "YES"
             dictionary[AppConfiguration.messagesURLKey] = "http://\(host)/cuelens/messages.php"
-            XCTAssertEqual(
-                try AppConfiguration.parse(infoDictionary: dictionary).endpoints.messages.host,
-                host
-            )
+            let configuration = try AppConfiguration.parse(infoDictionary: dictionary)
+            XCTAssertEqual(configuration.endpoints.messages.host, host)
+            XCTAssertEqual(configuration.transportPolicy, .httpsAndLocalHTTP)
         }
     }
 
