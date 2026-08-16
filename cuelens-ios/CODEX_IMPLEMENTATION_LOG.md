@@ -119,3 +119,64 @@ Wegen der adaptiven iPad-Fensterverwaltung werden auf iPadOS alle Systemausricht
 
 **Menschliche Freigabe**
 Am 16.08.2026 ohne Namensnennung erteilt; die Fortsetzung mit Auftrag 2 wurde ausdrücklich beauftragt.
+
+## 16.08.2026 – Auftrag 2
+
+**Datum und Branch**
+16.08.2026; Branch `codex/ios-auftrag-2`; Umsetzung auf Basis des freigegebenen Auftrags 1.
+
+**Auftragsnummer**
+Auftrag 2 – Reines Domain-Modul.
+
+**Ziel**
+Fachliche Zustände, Wertgrenzen, Parser und Entscheidungsregeln der CueLens-Studie als UI- und infrastrukturunabhängige Swift-6-Schicht mit fail-closed Invarianten und reproduzierbaren Tests bereitstellen.
+
+**Geänderte Dateien**
+
+- Logisch abgegrenztes Domain-Modul unter `CueLens/Domain/` mit Bereichen für Aktivierung, gemeinsame Werttypen, Informationsfeed, Feedback, Studie und Abschluss ergänzt.
+- `AppLanguage`, `ParticipantIdentifier`, `InfoMessage`, `FeedbackDraft`, `StudyState`, `CompletionState`, `SelfReportResponse`, UUID-v4-, Craving- und Situationswerttypen implementiert.
+- Vollständige Permutation der 50 Cue-Matching-Items, fünf Trials je Situation und feste Fünferblöcke der zehn Cue-Labeling-Situationen abgebildet.
+- Start-Gate mit expliziten Sperrgründen für ungültigen/abgeschlossenen Zustand, ausstehende Übertragung beziehungsweise Abschlussbestätigung, Token, Feature, Ressourcen, Geometrie und Cooldown implementiert.
+- Strikte JSON-Parser mit exakten Schlüsselmengen, ganzzahligen Typprüfungen, kalendarisch gültigen UTC-Zeitpunkten, erwarteten Situationen/Bedingungen und getrennten Direct-/Prolific-Abschlüssen ergänzt.
+- Stabil getaggte `Codable`-Repräsentation für Studien- und Abschlusszustand mit Millisekunden-Zeitpunkten und Invariantenprüfung bei Initialisierung sowie Decodierung ergänzt.
+- 16 synthetische Message- und Submission-Fixtures sowie 27 Domain-Unit-Tests ergänzt; vorhandene drei Geometrie-Unit-Tests bleiben bestehen.
+- `Scripts/verify_domain_boundaries.sh` ergänzt und in das Quality-Gate aufgenommen; es prüft erlaubte Imports, verbotene Infrastruktursymbole und die eigenständige Swift-6-Typprüfung.
+- README und Architekturplanung auf Dokumentversion 1.2 um den tatsächlich gewählten Modulzuschnitt und die festgelegten Repräsentationen ergänzt.
+
+**Ausgeführte Tests**
+
+- `Scripts/verify_domain_boundaries.sh`
+- `plutil -lint CueLens.xcodeproj/project.pbxproj`
+- `xcodebuild -project CueLens.xcodeproj -list`
+- Debug-Build für den generischen iOS-Simulator
+- vollständiges `Scripts/quality_gate.sh` mit Debug-/Staging-Build, Unit-Tests, iPhone-/iPad-UI-Smoke-Tests und Release-Verifikation auf iOS 26.5
+- alle Unit-Tests zusätzlich auf iPhone 15 Pro mit iOS 17.5 (Build 21F79)
+- `git diff --check` und statische Prüfung der Domain-Imports
+
+**Testergebnis**
+
+- Domain-Grenzprüfung und eigenständige Swift-6-Typprüfung mit Strict Concurrency und Warnungen als Fehler erfolgreich.
+- Xcode-Projekt syntaktisch gültig; Debug und Staging bauen ohne Signing.
+- iOS 26.5: 30 von 30 Unit-Tests sowie je ein UI-Smoke-Test auf iPhone und iPad bestanden; Release-Konfiguration erfolgreich verifiziert.
+- iOS 17.5: 30 von 30 Unit-Tests bestanden, keine Fehler und keine übersprungenen Tests.
+- Alle 20 Situationen liefern die festgelegte Bedingungsreihenfolge und genau fünf Trials; Matching verwendet jeden Index `0...49` genau einmal.
+- Ungültige Zustands-, Abschluss-, Message- und Submission-Kombinationen werden vollständig abgelehnt.
+
+**Sicherheits-/Datenschutzprüfung**
+
+- Domain enthält keine UI-, Netzwerk-, Keychain-, Notification-, Datei- oder Logging-Zugriffe und keine Drittanbieterabhängigkeiten.
+- Keine Force-Unwraps, `try!` oder erzwungenen Casts im Produktionscode ergänzt.
+- Fixtures enthalten ausschließlich synthetische Protokolldaten und keine realen Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten.
+- Keine Plattform-, OS-, Geräte- oder Trackingfelder ergänzt.
+- Android-App, KI-PoC und Backend wurden nicht geändert.
+
+**Abweichungen und Annahmen**
+Zur Wahrung der Einfachheit ist `CueLens/Domain/` ein logisch abgegrenzter Quellbereich im bestehenden App-Target und kein zusätzliches Framework oder Swift Package. Die Grenze wird durch eine separate Compiler- und Importprüfung technisch abgesichert. Unbekannte Felder in Serverantworten werden fail-closed abgelehnt. Feedbacklängen werden als Unicode-Skalare gezählt, entsprechend der serverseitigen Unicode-Zeichenzählung. Lokale Zeitpunkte werden stabil als Millisekunden seit Unix-Epoche codiert. Der erste vollständige Quality-Gate-Versuch traf beim Start des zuvor erfolgreichen Unit-Test-Runners auf einen transienten CoreSimulator-Mach-Fehler; der unveränderte vollständige Wiederholungslauf war erfolgreich. Das Quality-Gate selbst erhielt keinen Unit-Test-Retry.
+
+**Offene Punkte**
+
+- Die Infrastruktur aus den Folgeaufträgen muss die Domain-Parser und Zustandsinvarianten verwenden; Auftrag 2 führt bewusst noch keine Netzwerk- oder Persistenzzugriffe aus.
+- Vor Auftrag 3 ist das Review-Gate mit fachlicher Gegenprüfung der 20 Situationen, fünf Trials, Bedingungsreihenfolge, Wartezeit und beiden Abschlussmodi durchzuführen.
+
+**Menschliche Freigabe**
+Ausstehend; erforderlich ist die fachliche Gegenprüfung gemäß Review-Gate von Auftrag 2.

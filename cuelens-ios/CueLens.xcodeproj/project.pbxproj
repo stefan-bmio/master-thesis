@@ -14,6 +14,28 @@
 		100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000105 /* PrivacyInfo.xcprivacy */; };
 		100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000106 /* StudyViewportPolicyTests.swift */; };
 		100000000000000000000407 /* CueLensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000107 /* CueLensUITests.swift */; };
+		100000000000000000000410 /* DomainValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000130 /* DomainValidationError.swift */; };
+		100000000000000000000411 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000131 /* AppLanguage.swift */; };
+		100000000000000000000412 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000132 /* DomainDependencies.swift */; };
+		100000000000000000000413 /* StrictJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000133 /* StrictJSON.swift */; };
+		100000000000000000000414 /* UUIDv4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000134 /* UUIDv4.swift */; };
+		100000000000000000000415 /* ParticipantIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000135 /* ParticipantIdentifier.swift */; };
+		100000000000000000000416 /* FeedbackDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000136 /* FeedbackDraft.swift */; };
+		100000000000000000000417 /* InfoMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000137 /* InfoMessage.swift */; };
+		100000000000000000000418 /* StudyValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000138 /* StudyValues.swift */; };
+		100000000000000000000419 /* MatchingOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000139 /* MatchingOrder.swift */; };
+		100000000000000000000420 /* Cooldown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000140 /* Cooldown.swift */; };
+		100000000000000000000421 /* StudyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000141 /* StudyState.swift */; };
+		100000000000000000000422 /* StartGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000142 /* StartGate.swift */; };
+		100000000000000000000423 /* CompletionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000143 /* CompletionState.swift */; };
+		100000000000000000000424 /* SelfReportResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000144 /* SelfReportResponse.swift */; };
+		100000000000000000000430 /* FixtureLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000150 /* FixtureLoader.swift */; };
+		100000000000000000000431 /* InfoMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000151 /* InfoMessageTests.swift */; };
+		100000000000000000000432 /* ParticipantAndFeedbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000152 /* ParticipantAndFeedbackTests.swift */; };
+		100000000000000000000433 /* StudyRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000153 /* StudyRulesTests.swift */; };
+		100000000000000000000434 /* StudyStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000154 /* StudyStateTests.swift */; };
+		100000000000000000000435 /* StartGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000155 /* StartGateTests.swift */; };
+		100000000000000000000436 /* SelfReportResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000156 /* SelfReportResponseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,9 +71,32 @@
 		100000000000000000000113 /* quality_gate.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = quality_gate.sh; sourceTree = "<group>"; };
 		100000000000000000000114 /* select_ci_simulator.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = select_ci_simulator.sh; sourceTree = "<group>"; };
 		100000000000000000000115 /* verify_release_configuration.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_configuration.sh; sourceTree = "<group>"; };
+		100000000000000000000116 /* verify_domain_boundaries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_domain_boundaries.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		100000000000000000000130 /* DomainValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainValidationError.swift; sourceTree = "<group>"; };
+		100000000000000000000131 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		100000000000000000000132 /* DomainDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainDependencies.swift; sourceTree = "<group>"; };
+		100000000000000000000133 /* StrictJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrictJSON.swift; sourceTree = "<group>"; };
+		100000000000000000000134 /* UUIDv4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUIDv4.swift; sourceTree = "<group>"; };
+		100000000000000000000135 /* ParticipantIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantIdentifier.swift; sourceTree = "<group>"; };
+		100000000000000000000136 /* FeedbackDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackDraft.swift; sourceTree = "<group>"; };
+		100000000000000000000137 /* InfoMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoMessage.swift; sourceTree = "<group>"; };
+		100000000000000000000138 /* StudyValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyValues.swift; sourceTree = "<group>"; };
+		100000000000000000000139 /* MatchingOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchingOrder.swift; sourceTree = "<group>"; };
+		100000000000000000000140 /* Cooldown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cooldown.swift; sourceTree = "<group>"; };
+		100000000000000000000141 /* StudyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyState.swift; sourceTree = "<group>"; };
+		100000000000000000000142 /* StartGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartGate.swift; sourceTree = "<group>"; };
+		100000000000000000000143 /* CompletionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionState.swift; sourceTree = "<group>"; };
+		100000000000000000000144 /* SelfReportResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfReportResponse.swift; sourceTree = "<group>"; };
+		100000000000000000000150 /* FixtureLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureLoader.swift; sourceTree = "<group>"; };
+		100000000000000000000151 /* InfoMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoMessageTests.swift; sourceTree = "<group>"; };
+		100000000000000000000152 /* ParticipantAndFeedbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantAndFeedbackTests.swift; sourceTree = "<group>"; };
+		100000000000000000000153 /* StudyRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyRulesTests.swift; sourceTree = "<group>"; };
+		100000000000000000000154 /* StudyStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyStateTests.swift; sourceTree = "<group>"; };
+		100000000000000000000155 /* StartGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartGateTests.swift; sourceTree = "<group>"; };
+		100000000000000000000156 /* SelfReportResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfReportResponseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000005 /* App */,
+				100000000000000000000011 /* Domain */,
 				100000000000000000000006 /* Resources */,
 			);
 			path = CueLens;
@@ -133,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000106 /* StudyViewportPolicyTests.swift */,
+				100000000000000000000018 /* Domain */,
 			);
 			path = CueLensTests;
 			sourceTree = "<group>";
@@ -163,8 +210,93 @@
 				100000000000000000000113 /* quality_gate.sh */,
 				100000000000000000000114 /* select_ci_simulator.sh */,
 				100000000000000000000115 /* verify_release_configuration.sh */,
+				100000000000000000000116 /* verify_domain_boundaries.sh */,
 			);
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		100000000000000000000011 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000013 /* Activation */,
+				100000000000000000000012 /* Common */,
+				100000000000000000000017 /* Completion */,
+				100000000000000000000014 /* InfoFeed */,
+				100000000000000000000015 /* PreStudy */,
+				100000000000000000000016 /* Study */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		100000000000000000000012 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000131 /* AppLanguage.swift */,
+				100000000000000000000132 /* DomainDependencies.swift */,
+				100000000000000000000130 /* DomainValidationError.swift */,
+				100000000000000000000133 /* StrictJSON.swift */,
+				100000000000000000000134 /* UUIDv4.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		100000000000000000000013 /* Activation */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000135 /* ParticipantIdentifier.swift */,
+			);
+			path = Activation;
+			sourceTree = "<group>";
+		};
+		100000000000000000000014 /* InfoFeed */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000137 /* InfoMessage.swift */,
+			);
+			path = InfoFeed;
+			sourceTree = "<group>";
+		};
+		100000000000000000000015 /* PreStudy */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000136 /* FeedbackDraft.swift */,
+			);
+			path = PreStudy;
+			sourceTree = "<group>";
+		};
+		100000000000000000000016 /* Study */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000140 /* Cooldown.swift */,
+				100000000000000000000139 /* MatchingOrder.swift */,
+				100000000000000000000142 /* StartGate.swift */,
+				100000000000000000000141 /* StudyState.swift */,
+				100000000000000000000138 /* StudyValues.swift */,
+			);
+			path = Study;
+			sourceTree = "<group>";
+		};
+		100000000000000000000017 /* Completion */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000143 /* CompletionState.swift */,
+				100000000000000000000144 /* SelfReportResponse.swift */,
+			);
+			path = Completion;
+			sourceTree = "<group>";
+		};
+		100000000000000000000018 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000150 /* FixtureLoader.swift */,
+				100000000000000000000151 /* InfoMessageTests.swift */,
+				100000000000000000000152 /* ParticipantAndFeedbackTests.swift */,
+				100000000000000000000156 /* SelfReportResponseTests.swift */,
+				100000000000000000000155 /* StartGateTests.swift */,
+				100000000000000000000153 /* StudyRulesTests.swift */,
+				100000000000000000000154 /* StudyStateTests.swift */,
+			);
+			path = Domain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -301,6 +433,21 @@
 				100000000000000000000401 /* CueLensApp.swift in Sources */,
 				100000000000000000000402 /* ContentView.swift in Sources */,
 				100000000000000000000403 /* StudyViewportPolicy.swift in Sources */,
+				100000000000000000000410 /* DomainValidationError.swift in Sources */,
+				100000000000000000000411 /* AppLanguage.swift in Sources */,
+				100000000000000000000412 /* DomainDependencies.swift in Sources */,
+				100000000000000000000413 /* StrictJSON.swift in Sources */,
+				100000000000000000000414 /* UUIDv4.swift in Sources */,
+				100000000000000000000415 /* ParticipantIdentifier.swift in Sources */,
+				100000000000000000000416 /* FeedbackDraft.swift in Sources */,
+				100000000000000000000417 /* InfoMessage.swift in Sources */,
+				100000000000000000000418 /* StudyValues.swift in Sources */,
+				100000000000000000000419 /* MatchingOrder.swift in Sources */,
+				100000000000000000000420 /* Cooldown.swift in Sources */,
+				100000000000000000000421 /* StudyState.swift in Sources */,
+				100000000000000000000422 /* StartGate.swift in Sources */,
+				100000000000000000000423 /* CompletionState.swift in Sources */,
+				100000000000000000000424 /* SelfReportResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +456,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */,
+				100000000000000000000430 /* FixtureLoader.swift in Sources */,
+				100000000000000000000431 /* InfoMessageTests.swift in Sources */,
+				100000000000000000000432 /* ParticipantAndFeedbackTests.swift in Sources */,
+				100000000000000000000433 /* StudyRulesTests.swift in Sources */,
+				100000000000000000000434 /* StudyStateTests.swift in Sources */,
+				100000000000000000000435 /* StartGateTests.swift in Sources */,
+				100000000000000000000436 /* SelfReportResponseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

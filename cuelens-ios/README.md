@@ -36,12 +36,22 @@ open CueLens.xcodeproj
 ./Scripts/quality_gate.sh
 ```
 
-Das Gate baut Debug und Staging, führt drei Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
+Das Gate prüft zuerst die technische Grenze des Pure-Swift-Domain-Moduls, baut Debug und Staging, führt alle Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
 
 Die Kompatibilitätsuntergrenze wurde zusätzlich mit der installierten iOS-17.5-Runtime (Build 21F79) auf iPhone und iPad geprüft. Die aktuelle Testobergrenze ist iOS 26.5 (Build 23F77).
 
 Für ein signiertes Release-Archiv wird `Config/LocalSigning.xcconfig.example` nach `Config/LocalSigning.xcconfig` kopiert und dort die lokale Apple-Team-ID eingetragen. Diese Datei bleibt ignoriert; Zertifikate und Provisioning Profiles werden nicht versioniert. Ohne Apple-Development- oder Distribution-Identität sind Simulator-Builds, Tests, Analyze und ein unsigniertes Gerätearchiv möglich, aber kein installierbares signiertes Release-Archiv.
 
+## Reines Domain-Modul aus Auftrag 2
+
+`CueLens/Domain/` enthält Zustände, Werttypen, Invarianten, Studienregeln und strikte Response-Parser ohne UI-, Netzwerk-, Keychain- oder Benachrichtigungsabhängigkeit. Es bleibt zur Vermeidung unnötiger Build-Komplexität ein logisch abgegrenzter Quellbereich im App-Target. Seine technische Unabhängigkeit lässt sich separat prüfen:
+
+```sh
+./Scripts/verify_domain_boundaries.sh
+```
+
+Die synthetischen JSON-Fixtures unter `Fixtures/messages/` und `Fixtures/submission/` decken gültige und ungültige Protokollantworten ab. Sie enthalten keine realen Teilnehmenden- oder Gesundheitsdaten.
+
 ## Datenschutz und Abgrenzung
 
-Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Das Grundgerüst aus Auftrag 1 enthält noch keine Netzwerk-, Aktivierungs- oder Persistenzlogik. Fixtures bleiben bis zu den zugehörigen späteren Aufträgen leer.
+Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Das Domain-Modul enthält weder Netzwerk-, Keychain- noch Dateizugriffe; diese Infrastruktur folgt in späteren Aufträgen.

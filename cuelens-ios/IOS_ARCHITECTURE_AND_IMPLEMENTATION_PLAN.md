@@ -10,7 +10,7 @@
 | Bundle Identifier | `de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/IOS_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` |
 | Empfohlener Projektpfad | `cuelens-ios/` |
-| Dokumentversion | 1.1 |
+| Dokumentversion | 1.2 |
 | Status | Verbindliche Planung für die native iOS-Portierung |
 | Stand | 16. August 2026 |
 | Referenzimplementierung | Android-App `de.eachandevery.cuelens` |
@@ -264,7 +264,13 @@ Das Domain-Modul DARF NICHT importieren:
 
 Dadurch können Studienlogik, Parser und Zustandsinvarianten ohne Simulator und ohne Betriebssystemdienste getestet werden.
 
-### 5.2 Composition Root
+### 5.2 Technische Abgrenzung des Domain-Moduls
+
+Das Domain-Modul wird in Version 1 als logisch abgegrenzter Pure-Swift-Quellbereich `CueLens/Domain/` im bestehenden App-Target umgesetzt. Ein zusätzliches Framework- oder Swift-Package-Produkt ist für die kleine Codebasis nicht erforderlich. Die Architekturgrenze wird stattdessen automatisiert geprüft: Im Domain-Verzeichnis ist ausschließlich der Import von `Foundation` für elementare Datentypen, Codierung und Kalenderarithmetik zulässig; eine eigenständige Swift-6-Typprüfung ohne App- oder Testquellen MUSS erfolgreich sein.
+
+Serverantworten werden fail-closed gegen exakt erlaubte Schlüssel, Typen und fachliche Kombinationen validiert. Persistierte Abschlusszustände verwenden eine explizite, getaggte `Codable`-Darstellung; Zeitpunkte werden als Millisekunden seit Unix-Epoche codiert. Feedbackgrenzen werden als Anzahl von Unicode-Skalaren geprüft, entsprechend der serverseitigen Unicode-Zeichenzählung. Diese Festlegungen vermeiden zusätzliche Build-Komplexität, ohne die geforderte UI- und Infrastrukturunabhängigkeit aufzuweichen.
+
+### 5.3 Composition Root
 
 Die Datei `CueLensApp.swift` beziehungsweise ein separater `AppEnvironment` bildet den einzigen Composition Root. Dort werden konkrete Implementierungen erzeugt und über Protokolle injiziert.
 
@@ -2544,3 +2550,4 @@ Abrufdatum: 11.08.2026.
 | 1.0 | 11.08.2026 | Erste iOS-Architektur- und Implementierungsplanung auf Basis der plattformunabhängigen Spezifikation; KI-PoC ausgeschlossen; bestehendes Backend, Studiendesign und Auswertung unverändert; Codex-Aufträge, Teststrategie und Definition of Done festgelegt. |
 | 1.0.1 | 15.08.2026 | iOS-Portierung als eigenständiges Geschwisterprojekt `cuelens-ios/` strukturiert; kopierte Studienressourcen, Schemata und Werkzeuge dem iOS-Projekt zugeordnet; keine fachliche Änderung. |
 | 1.1 | 16.08.2026 | Auftrag 1 auf Xcode 26.6 und Swift 6 festgelegt; lokales Quality-Gate statt serverseitiger CI, fail-closed Staging-Defaults, minimales Privacy Manifest und adaptive iPad-Geometrie statt nicht mehr garantierbarem Vollbildmodus spezifiziert. |
+| 1.2 | 16.08.2026 | Auftrag 2 als logisch abgegrenzten Pure-Swift-Quellbereich im bestehenden App-Target konkretisiert; automatisierte Importgrenze und eigenständige Swift-6-Typprüfung sowie strikte Parser-, Codable-, Zeit- und Unicode-Repräsentationen festgelegt. |

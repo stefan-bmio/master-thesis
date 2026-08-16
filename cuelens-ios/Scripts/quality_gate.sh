@@ -13,6 +13,8 @@ trap cleanup EXIT HUP INT TERM
 
 cd "$PROJECT_ROOT"
 
+$SCRIPT_DIR/verify_domain_boundaries.sh
+
 EXPECTED_XCODE='Xcode 26.6'
 EXPECTED_BUILD='Build version 17F113'
 XCODE_VERSION=$(xcodebuild -version)
