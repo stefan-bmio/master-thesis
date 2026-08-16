@@ -58,8 +58,7 @@ Wegen des auf dem Entwicklungs-Mac vorhandenen Python 3.9 wurde `check-jsonschem
 
 **Offene Punkte**
 
-- Menschliche Freigabe der dokumentierten Fünferstichprobe.
 - Die separat identifizierte Anpassung der iPad-Vollbildvorgabe an iPadOS 26 ist vor Auftrag 1 zu entscheiden und umzusetzen.
 
 **Menschliche Freigabe**  
-16.8.26
+Am 16.08.2026 ohne Namensnennung erteilt; die Fortsetzung mit Auftrag 1 wurde ausdrücklich beauftragt.
