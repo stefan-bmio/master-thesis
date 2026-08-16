@@ -10,7 +10,7 @@
 | Bundle Identifier | `de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/IOS_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` |
 | Empfohlener Projektpfad | `cuelens-ios/` |
-| Dokumentversion | 1.3 |
+| Dokumentversion | 1.4 |
 | Status | Verbindliche Planung für die native iOS-Portierung |
 | Stand | 16. August 2026 |
 | Referenzimplementierung | Android-App `de.eachandevery.cuelens` |
@@ -528,7 +528,12 @@ protocol FeedbackServicing: Sendable {
 }
 
 protocol StudySubmissionServicing: Sendable {
-    func submitSelfReport(token: UUIDv4, craving: Int) async throws -> SelfReportResponse
+    func submitSelfReport(
+        token: UUIDv4,
+        craving: Int,
+        appVersion: String,
+        expectedSituation: SituationNumber
+    ) async throws -> SelfReportResponse
     func confirmCompensation(code: UUIDv4) async throws
 }
 
@@ -797,10 +802,19 @@ User-Agent: CueLens/<CFBundleShortVersionString>
 ```
 
 Der User-Agent enthält keine Plattformbezeichnung, Gerätemodell- oder OS-Angabe.
+Als Versionswert wird das tatsächliche `CFBundleShortVersionString` verwendet.
+Optionale leere Feedbackfelder werden nach der Domain-Validierung nicht in das
+JSON aufgenommen; `app_version` wird immer übertragen.
+
+`application/json` wird als Medientyp unabhängig von Groß-/Kleinschreibung und
+mit optionalen Parametern wie `charset=utf-8` akzeptiert. Bei Antworten mit
+fachlichem JSON-Payload ist ein fehlender oder anderer Medientyp ein Fehler.
+Für erwartete leere 204-Antworten ist kein Content-Type erforderlich; ein Body
+wird als Protokollverletzung abgelehnt.
 
 ### 10.5 Redirects
 
-Die Endpunkte werden direkt adressiert. HTTP-Redirects SOLLEN abgelehnt werden. Mindestens Redirects zu:
+Die Endpunkte werden direkt adressiert. Version 1 lehnt sämtliche HTTP-Redirects ab, einschließlich Redirects innerhalb derselben Domain. Dadurch werden insbesondere Redirects zu:
 
 - einer anderen Domain;
 - HTTP statt HTTPS;
@@ -833,6 +847,7 @@ enum NetworkError: Error, Equatable {
     case cancelled
     case redirectRejected
     case invalidTLS
+    case transportFailure
     case httpStatus(Int)
     case invalidContentType
     case bodyTooLarge
@@ -842,6 +857,8 @@ enum NetworkError: Error, Equatable {
 ```
 
 Feature-Konfiguration mappt sämtliche Fehler auf `false`. Andere Services propagieren eine fachlich geeignete Fehlerklasse an den Coordinator.
+`transportFailure` umfasst technische URL-Ladefehler, die weder zuverlässig als
+Offlinezustand, Timeout, Abbruch noch TLS-Fehler klassifiziert werden können.
 
 ### 10.8 Strikte Servervalidierung
 
@@ -887,6 +904,9 @@ Dieses Restrisiko wird in der technischen Diskussion der Masterarbeit transparen
 ### 11.1 `.xcconfig`
 
 Endpunkte und Cooldown werden ausschließlich in `.xcconfig` definiert.
+Die URL-Werte werden über die eingecheckte minimale `Info.plist`-Vorlage in das
+jeweilige App-Artefakt expandiert und beim Laden als absolute HTTPS-URLs ohne
+Credentials, Query oder Fragment validiert.
 
 ```text
 Base.xcconfig
@@ -1656,6 +1676,15 @@ Zentraler sicherer HTTP-Client und typisierte Services.
 **Review-Gate**
 
 Requests aus Tests mit den Android-Vertragstests und PHP-Endpunkten vergleichen.
+
+**Festgelegte Detailentscheidungen**
+
+- alle Redirects werden abgelehnt;
+- Antwortlimits greifen während des Empfangs und brechen den Task bei Überschreitung ab;
+- Feedback lässt nicht belegte optionale Felder aus;
+- leere 204-Antworten benötigen keinen Content-Type, dürfen aber keinen Body besitzen;
+- Logging enthält ausschließlich abstrakten Requesttyp, Status und Fehlerkategorie;
+- Auftrag 4 stellt Services bereit, integriert aber noch keine Netzwerkabläufe in die UI.
 
 ---
 
@@ -2566,3 +2595,4 @@ Abrufdatum: 11.08.2026.
 | 1.1 | 16.08.2026 | Auftrag 1 auf Xcode 26.6 und Swift 6 festgelegt; lokales Quality-Gate statt serverseitiger CI, fail-closed Staging-Defaults, minimales Privacy Manifest und adaptive iPad-Geometrie statt nicht mehr garantierbarem Vollbildmodus spezifiziert. |
 | 1.2 | 16.08.2026 | Auftrag 2 als logisch abgegrenzten Pure-Swift-Quellbereich im bestehenden App-Target konkretisiert; automatisierte Importgrenze und eigenständige Swift-6-Typprüfung sowie strikte Parser-, Codable-, Zeit- und Unicode-Repräsentationen festgelegt. |
 | 1.3 | 16.08.2026 | Auftrag 3 konkretisiert: `UUIDv4` als Token-Typ, konfliktfreies idempotentes Speichern, 32-Byte-Installationsmarker, fail-closed Abgleich von Marker und Zustandsdatei, expliziter Schema-Router ohne erfundene Altmigration, Required-Reason-Deklaration `C617.1` sowie Simulatorgrenze der Data-Protection-Prüfung dokumentiert. |
+| 1.4 | 16.08.2026 | Auftrag 4 konkretisiert: explizite buildabhängige `Info.plist`-Konfiguration, vollständige Redirect-Ablehnung, Streaming-Antwortlimits, JSON-Content-Type-Regeln, minimales Feedbackpayload, tatsächliche Bundle-Version, zusätzliche Transportfehlerklasse und erwartete Situation als Submission-Vertragsparameter festgelegt. |

@@ -36,7 +36,7 @@ open CueLens.xcodeproj
 ./Scripts/quality_gate.sh
 ```
 
-Das Gate prüft zuerst die technische Grenze des Pure-Swift-Domain-Moduls und die Persistenz-Sicherheitsinvarianten, baut Debug und Staging, führt alle Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
+Das Gate prüft zuerst die technische Grenze des Pure-Swift-Domain-Moduls sowie Persistenz- und Netzwerk-Sicherheitsinvarianten, baut Debug und Staging, führt alle Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Endpunktkonfiguration, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
 
 Die Kompatibilitätsuntergrenze wurde zusätzlich mit der installierten iOS-17.5-Runtime (Build 21F79) auf iPhone und iPad geprüft. Die aktuelle Testobergrenze ist iOS 26.5 (Build 23F77).
 
@@ -63,6 +63,16 @@ Das Privacy Manifest deklariert den Apple-Grund `C617.1`, weil die Schutzprüfun
 ```
 
 CoreSimulator bestätigt Keychain-Roundtrips und Backup-Ausschlüsse, meldet jedoch keine verlässliche effektive Data-Protection-Klasse. Gerätesperre, Update und Neuinstallation müssen deshalb zusätzlich auf einem echten Gerät geprüft werden.
+
+## Netzwerkbasis aus Auftrag 4
+
+`CueLens/Infrastructure/Network/` enthält den zentralen ephemeren `URLSession`-Client und die typisierten Services für Aktivierung, Informationsfeed, Feature-Konfiguration, Feedback und Studiensubmission. Sämtliche Redirects werden abgelehnt, Antworten während des Empfangs größenbegrenzt und fachliche JSON-Antworten strikt validiert. Der Logger erhält ausschließlich abstrakten Requesttyp, Status und technische Fehlerkategorie.
+
+```sh
+./Scripts/verify_network_security.sh
+```
+
+Die buildabhängigen Endpunkte werden aus den `.xcconfig`-Dateien in die eingecheckte minimale `Info.plist` expandiert. Debug und Staging bleiben nicht routbar; ausschließlich Release enthält die produktiven HTTPS-Endpunkte. Auftrag 4 stellt die Services bereit, beginnt aber noch keine produktiven Netzwerkrequests aus der App-Oberfläche.
 
 ## Datenschutz und Abgrenzung
 

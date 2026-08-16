@@ -44,6 +44,17 @@ MINIMUM_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")
 test "$BUNDLE_ID" = 'de.eachandevery.cuelens'
 test "$MINIMUM_OS" = '17.0'
 
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ACTIVATION_URL' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/activate.php'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_MESSAGES_URL' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/messages.php'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_FEEDBACK_URL' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/feedback.php'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_FEATURES_URL' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/features.php'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_SUBMIT_URL' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/submit.php'
+
 FORBIDDEN_KEYS='NSCameraUsageDescription NSPhotoLibraryUsageDescription NSPhotoLibraryAddUsageDescription NSMicrophoneUsageDescription NSLocationWhenInUseUsageDescription NSLocationAlwaysUsageDescription NSLocationAlwaysAndWhenInUseUsageDescription NSContactsUsageDescription NSCalendarsUsageDescription NSBluetoothAlwaysUsageDescription NSBluetoothPeripheralUsageDescription NSUserTrackingUsageDescription NSAppTransportSecurity'
 for key in $FORBIDDEN_KEYS; do
   if /usr/libexec/PlistBuddy -c "Print :$key" "$INFO_PLIST" >/dev/null 2>&1; then
@@ -89,10 +100,19 @@ if find CueLens -name '*.entitlements' -print -quit | grep -q .; then
 fi
 
 BUILD_SETTINGS=$(xcodebuild -project CueLens.xcodeproj -scheme CueLens -configuration Release -destination 'generic/platform=iOS Simulator' -showBuildSettings)
-printf '%s\n' "$BUILD_SETTINGS" | grep -q 'SWIFT_STRICT_CONCURRENCY = complete'
-printf '%s\n' "$BUILD_SETTINGS" | grep -q 'SWIFT_TREAT_WARNINGS_AS_ERRORS = YES'
-printf '%s\n' "$BUILD_SETTINGS" | grep -q 'GCC_TREAT_WARNINGS_AS_ERRORS = YES'
-printf '%s\n' "$BUILD_SETTINGS" | grep -q 'DEBUG_INFORMATION_FORMAT = dwarf-with-dsym'
-printf '%s\n' "$BUILD_SETTINGS" | grep -q 'PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens'
+require_build_setting() {
+  case "$BUILD_SETTINGS" in
+    *"$1"*) ;;
+    *)
+      echo "Erwartetes Release-Buildsetting fehlt: $1" >&2
+      exit 1
+      ;;
+  esac
+}
+require_build_setting 'SWIFT_STRICT_CONCURRENCY = complete'
+require_build_setting 'SWIFT_TREAT_WARNINGS_AS_ERRORS = YES'
+require_build_setting 'GCC_TREAT_WARNINGS_AS_ERRORS = YES'
+require_build_setting 'DEBUG_INFORMATION_FORMAT = dwarf-with-dsym'
+require_build_setting 'PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens'
 
 echo 'Release-Konfiguration erfolgreich verifiziert.'

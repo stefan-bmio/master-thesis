@@ -263,3 +263,70 @@ Der UI-Smoke-Test hatte den Fehler nicht erkannt, weil Lade-, Bereitschafts- und
 - vollständiges Quality-Gate auf iOS 26.5 einschließlich iPhone- und iPad-Smoke-Test bestanden;
 - iOS 17.5: 60 von 60 Unit-Tests bestanden, keine Fehler oder übersprungenen Tests;
 - die Korrektur erzeugt oder löscht beim zuvor fehlgeschlagenen Start keine Studiendaten; eine Neuinstallation ist nicht erforderlich.
+
+## 16.08.2026 – Auftrag 4
+
+**Datum und Branch**
+16.08.2026; Branch `codex/ios-auftrag-4`; Umsetzung auf Basis des ausdrücklich und per Gerätetest freigegebenen Auftrags 3.
+
+**Auftragsnummer**
+Auftrag 4 – Netzwerkbasis und API-Vertragstests.
+
+**Ziel**
+Eine zentrale datensparsame und fail-closed arbeitende HTTPS-Infrastruktur sowie typisierte Clientservices für die unveränderten CueLens-Backendverträge bereitstellen, ohne bereits Netzwerkabläufe aus der App-Oberfläche zu starten.
+
+**Geänderte Dateien**
+
+- Domain-Schnittstellen für Aktivierung, Informationsfeed, Feature-Konfiguration, Feedback und Studiensubmission ergänzt; der Submission-Vertrag erhält die lokal erwartete Situation für die strikte Antwortvalidierung.
+- Zentralen Actor-basierten `URLSession`-Client mit ephemerer Konfiguration, ausgeschalteten Cookies/Credentials/Caches, 15-/30-Sekunden-Timeouts, vollständiger Redirect-Ablehnung und während des Empfangs greifenden Antwortlimits implementiert.
+- Buildabhängige Endpunkte über eine eingecheckte minimale `Info.plist` und einen strikt validierenden Konfigurationsloader angebunden; nur absolute HTTPS-URLs ohne Credentials, Query oder Fragment werden akzeptiert.
+- Typisierte Services für den zweistufigen Aktivierungsvertrag, Messages, Features, Feedback, Selbstbericht und Kompensationsbestätigung implementiert und mit den vorhandenen strikten Domain-Decodern verbunden.
+- Fehlerklassen einschließlich nicht näher klassifizierbarem `transportFailure` sowie einen Logger ergänzt, dessen Schnittstelle ausschließlich Requesttyp, Status und technische Fehlerkategorie akzeptiert.
+- 24 Contract-, Konfigurations-, Transport- und Servicetests mit isoliertem `URLProtocol`-Stub sowie acht neue synthetische Fixtures für Aktivierung, Features und Feedback ergänzt.
+- Netzwerk-Sicherheitsprüfung in das Quality-Gate und die produktiven Endpunkte in die Release-Artefaktprüfung aufgenommen.
+- Architekturplanung auf Version 1.4 und README um die tatsächlich festgelegten Netzwerkregeln ergänzt.
+
+**Ausgeführte Tests**
+
+- `Scripts/verify_domain_boundaries.sh`
+- `Scripts/verify_persistence_security.sh`
+- `Scripts/verify_network_security.sh`
+- `plutil -lint` für Xcode-Projekt, App- und Privacy-Property-List sowie `jq empty` für den String Catalog
+- gezielte neue `AppConfigurationTests`, `HTTPClientTests` und `NetworkServiceContractTests`
+- vollständiges `Scripts/quality_gate.sh` mit Debug-/Staging-Build, Unit-Tests, iPhone-/iPad-UI-Smoke-Tests und Release-Artefaktprüfung auf iOS 26.5
+- alle Unit-Tests zusätzlich auf iPhone 15 Pro mit iOS 17.5 (Build 21F79)
+- `xcodebuild analyze` in Release für den generischen Simulator
+- unsignierter Release-Build für `generic/platform=iOS`
+- statischer Vergleich mit den Android-Clients/-Vertragstests und den fünf PHP-Endpunkten
+- `git diff --check` sowie statische Prüfung auf verbotene Persistenz-, Cloud-, Plattform-, Logging- und Force-Unwrap-Nutzung
+
+**Testergebnis**
+
+- iOS 26.5: 84 von 84 Unit-Tests sowie je ein UI-Smoke-Test auf iPhone und iPad bestanden; vollständiges Quality-Gate erfolgreich.
+- iOS 17.5: 84 von 84 Unit-Tests bestanden; keine Fehler, erwarteten Fehler oder übersprungenen Tests.
+- Release-Analyse, Release-Artefaktprüfung und unsignierter Geräte-Build erfolgreich und ohne Projektwarnungen.
+- Contract-Tests bestätigen Methoden, Pfade, Header, User-Agent, Unicode und exakt erlaubte Payloadfelder sowie 200/204, 400/401/404/405/429/500, Timeout, Offline, Abbruch, TLS-, sonstige Transport-, Content-Type-, Größen-, Empty-Body-, Malformed-JSON-, Protokoll- und Redirectfehler.
+- Das Feature-Gate liefert ausschließlich bei explizitem Boolean `true` einen positiven Wert; sämtliche Fehler und Schemaabweichungen ergeben `false`.
+- Die fünf produktiven HTTPS-Endpunkte sind im Release-Artefakt vorhanden; Debug und Staging bleiben bei nicht routbaren `.invalid`-Endpunkten.
+
+**Sicherheits-/Datenschutzprüfung**
+
+- Keine Cookies, Credentials, Responses oder Caches werden durch die Netzwerkkonfiguration persistent gespeichert.
+- Sämtliche Redirects und Cleartext-URLs werden abgelehnt; System-Trust bleibt unverändert aktiv und es gibt weder Trust-Override noch Certificate Pinning.
+- Requests enthalten keine Plattform-, Geräte-, OS-, Sprach-, Zeitzonen-, Installations- oder Zeitstempelfelder; der User-Agent lautet ausschließlich `CueLens/<Bundle-Version>`.
+- Logger-API und statische Prüfung verhindern die Übergabe von Identifier, Token, Craving, Kompensationscode, Feedback-, Nachrichten-, Body- oder Payloaddaten.
+- Tests und Fixtures enthalten ausschließlich synthetische Werte; es wurden keine produktiven schreibenden Endpunkte aufgerufen.
+- Privacy Manifest benötigt durch die verwendeten Foundation-Netzwerk-APIs keine zusätzliche Required-Reason-Kategorie.
+
+**Abweichungen und Annahmen**
+Alle Redirects werden zur Vereinfachung strenger als die Mindestvorgabe abgelehnt. `application/json` wird als Medientyp mit optionalen Parametern akzeptiert; erwartete leere 204-Antworten benötigen keinen Content-Type und dürfen keinen Body enthalten. Nicht belegte optionale Feedbackfelder werden ausgelassen. Als `app_version` und User-Agent-Version wird die tatsächliche iOS-Bundle-Version `1.0.0` verwendet. Antwortlimits werden per `URLSession.AsyncBytes` während des Empfangs durchgesetzt. Der Submission-Service verlangt die erwartete Situation, weil eine strikte Antwortprüfung ohne lokalen Sollindex nicht möglich wäre. Auftrag 4 stellt nur Infrastruktur bereit; Aktivierungs-, Feed- und Studien-UI folgen in späteren Aufträgen.
+
+Die vorhandenen PHP- und Android-Verträge wurden statisch verglichen. Ihre zusätzlichen Referenztests konnten auf dem Entwicklungs-Mac nicht ausgeführt werden, weil weder PHP-CLI noch eine Java-Laufzeit installiert ist; dies beeinträchtigt die isolierten iOS-Contract-Tests nicht.
+
+**Offene Punkte**
+
+- Vor Auftrag 5 ist das Review-Gate durch Gegenprüfung der aufgezeichneten iOS-Requests mit den Android-Vertragstests und PHP-Endpunkten menschlich freizugeben.
+- Produktive Live-Schreibrequests bleiben bewusst ungetestet; eine spätere Ende-zu-Ende-Prüfung benötigt synthetische serverseitige Testregistrierungen beziehungsweise ein freigegebenes Staging-System.
+
+**Menschliche Freigabe**
+Ausstehend; vor Beginn von Auftrag 5 ist das Review-Gate freizugeben.

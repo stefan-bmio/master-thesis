@@ -15,6 +15,7 @@ cd "$PROJECT_ROOT"
 
 $SCRIPT_DIR/verify_domain_boundaries.sh
 $SCRIPT_DIR/verify_persistence_security.sh
+$SCRIPT_DIR/verify_network_security.sh
 
 EXPECTED_XCODE='Xcode 26.6'
 EXPECTED_BUILD='Build version 17F113'

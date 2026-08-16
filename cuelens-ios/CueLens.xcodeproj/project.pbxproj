@@ -52,6 +52,23 @@
 		100000000000000000000453 /* ProtectedStudyStateStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */; };
 		100000000000000000000454 /* CueLensAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000174 /* CueLensAppModel.swift */; };
 		100000000000000000000455 /* LocalPersistenceBootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */; };
+		100000000000000000000456 /* NetworkingProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000176 /* NetworkingProtocols.swift */; };
+		100000000000000000000457 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000177 /* AppConfiguration.swift */; };
+		100000000000000000000458 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000178 /* NetworkError.swift */; };
+		100000000000000000000459 /* NetworkLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000179 /* NetworkLogging.swift */; };
+		100000000000000000000460 /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000180 /* HTTPTypes.swift */; };
+		100000000000000000000461 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000181 /* HTTPClient.swift */; };
+		100000000000000000000462 /* JSONContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000182 /* JSONContract.swift */; };
+		100000000000000000000463 /* ActivationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000183 /* ActivationService.swift */; };
+		100000000000000000000464 /* InfoFeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000184 /* InfoFeedService.swift */; };
+		100000000000000000000465 /* FeatureConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000185 /* FeatureConfigService.swift */; };
+		100000000000000000000466 /* FeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000186 /* FeedbackService.swift */; };
+		100000000000000000000467 /* StudySubmissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000187 /* StudySubmissionService.swift */; };
+		100000000000000000000468 /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000188 /* NetworkServices.swift */; };
+		100000000000000000000469 /* NetworkTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000189 /* NetworkTestDoubles.swift */; };
+		100000000000000000000470 /* AppConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000190 /* AppConfigurationTests.swift */; };
+		100000000000000000000471 /* HTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000191 /* HTTPClientTests.swift */; };
+		100000000000000000000472 /* NetworkServiceContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000192 /* NetworkServiceContractTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +106,8 @@
 		100000000000000000000115 /* verify_release_configuration.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_configuration.sh; sourceTree = "<group>"; };
 		100000000000000000000116 /* verify_domain_boundaries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_domain_boundaries.sh; sourceTree = "<group>"; };
 		100000000000000000000117 /* verify_persistence_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_persistence_security.sh; sourceTree = "<group>"; };
+		100000000000000000000193 /* verify_network_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_network_security.sh; sourceTree = "<group>"; };
+		100000000000000000000194 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,6 +149,23 @@
 		100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedStudyStateStoreTests.swift; sourceTree = "<group>"; };
 		100000000000000000000174 /* CueLensAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueLensAppModel.swift; sourceTree = "<group>"; };
 		100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPersistenceBootstrapTests.swift; sourceTree = "<group>"; };
+		100000000000000000000176 /* NetworkingProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingProtocols.swift; sourceTree = "<group>"; };
+		100000000000000000000177 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		100000000000000000000178 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		100000000000000000000179 /* NetworkLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLogging.swift; sourceTree = "<group>"; };
+		100000000000000000000180 /* HTTPTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTypes.swift; sourceTree = "<group>"; };
+		100000000000000000000181 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		100000000000000000000182 /* JSONContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONContract.swift; sourceTree = "<group>"; };
+		100000000000000000000183 /* ActivationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationService.swift; sourceTree = "<group>"; };
+		100000000000000000000184 /* InfoFeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoFeedService.swift; sourceTree = "<group>"; };
+		100000000000000000000185 /* FeatureConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigService.swift; sourceTree = "<group>"; };
+		100000000000000000000186 /* FeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackService.swift; sourceTree = "<group>"; };
+		100000000000000000000187 /* StudySubmissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudySubmissionService.swift; sourceTree = "<group>"; };
+		100000000000000000000188 /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
+		100000000000000000000189 /* NetworkTestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTestDoubles.swift; sourceTree = "<group>"; };
+		100000000000000000000190 /* AppConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigurationTests.swift; sourceTree = "<group>"; };
+		100000000000000000000191 /* HTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientTests.swift; sourceTree = "<group>"; };
+		100000000000000000000192 /* NetworkServiceContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceContractTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +242,7 @@
 			children = (
 				100000000000000000000104 /* Localizable.xcstrings */,
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
+				100000000000000000000194 /* Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -248,6 +285,7 @@
 				100000000000000000000115 /* verify_release_configuration.sh */,
 				100000000000000000000116 /* verify_domain_boundaries.sh */,
 				100000000000000000000117 /* verify_persistence_security.sh */,
+				100000000000000000000193 /* verify_network_security.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -274,6 +312,7 @@
 				100000000000000000000133 /* StrictJSON.swift */,
 				100000000000000000000134 /* UUIDv4.swift */,
 				100000000000000000000160 /* PersistenceProtocols.swift */,
+				100000000000000000000176 /* NetworkingProtocols.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -342,6 +381,7 @@
 			children = (
 				100000000000000000000020 /* Keychain */,
 				100000000000000000000021 /* Persistence */,
+				100000000000000000000023 /* Network */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -372,6 +412,7 @@
 		100000000000000000000022 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				100000000000000000000024 /* Network */,
 				100000000000000000000172 /* InstallationCoordinatorTests.swift */,
 				100000000000000000000171 /* KeychainAppTokenStoreTests.swift */,
 				100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */,
@@ -379,6 +420,36 @@
 				100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		100000000000000000000024 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000190 /* AppConfigurationTests.swift */,
+				100000000000000000000191 /* HTTPClientTests.swift */,
+				100000000000000000000192 /* NetworkServiceContractTests.swift */,
+				100000000000000000000189 /* NetworkTestDoubles.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		100000000000000000000023 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000177 /* AppConfiguration.swift */,
+				100000000000000000000183 /* ActivationService.swift */,
+				100000000000000000000186 /* FeedbackService.swift */,
+				100000000000000000000185 /* FeatureConfigService.swift */,
+				100000000000000000000181 /* HTTPClient.swift */,
+				100000000000000000000180 /* HTTPTypes.swift */,
+				100000000000000000000184 /* InfoFeedService.swift */,
+				100000000000000000000182 /* JSONContract.swift */,
+				100000000000000000000178 /* NetworkError.swift */,
+				100000000000000000000179 /* NetworkLogging.swift */,
+				100000000000000000000188 /* NetworkServices.swift */,
+				100000000000000000000187 /* StudySubmissionService.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -541,6 +612,19 @@
 				100000000000000000000448 /* ProtectedStudyStateStore.swift in Sources */,
 				100000000000000000000449 /* LocalPersistenceBootstrap.swift in Sources */,
 				100000000000000000000454 /* CueLensAppModel.swift in Sources */,
+				100000000000000000000456 /* NetworkingProtocols.swift in Sources */,
+				100000000000000000000457 /* AppConfiguration.swift in Sources */,
+				100000000000000000000458 /* NetworkError.swift in Sources */,
+				100000000000000000000459 /* NetworkLogging.swift in Sources */,
+				100000000000000000000460 /* HTTPTypes.swift in Sources */,
+				100000000000000000000461 /* HTTPClient.swift in Sources */,
+				100000000000000000000462 /* JSONContract.swift in Sources */,
+				100000000000000000000463 /* ActivationService.swift in Sources */,
+				100000000000000000000464 /* InfoFeedService.swift in Sources */,
+				100000000000000000000465 /* FeatureConfigService.swift in Sources */,
+				100000000000000000000466 /* FeedbackService.swift in Sources */,
+				100000000000000000000467 /* StudySubmissionService.swift in Sources */,
+				100000000000000000000468 /* NetworkServices.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +645,10 @@
 				100000000000000000000452 /* InstallationCoordinatorTests.swift in Sources */,
 				100000000000000000000453 /* ProtectedStudyStateStoreTests.swift in Sources */,
 				100000000000000000000455 /* LocalPersistenceBootstrapTests.swift in Sources */,
+				100000000000000000000469 /* NetworkTestDoubles.swift in Sources */,
+				100000000000000000000470 /* AppConfigurationTests.swift in Sources */,
+				100000000000000000000471 /* HTTPClientTests.swift in Sources */,
+				100000000000000000000472 /* NetworkServiceContractTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,7 +710,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */;
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CueLens/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -640,7 +729,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */;
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CueLens/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -658,7 +748,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */;
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CueLens/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
