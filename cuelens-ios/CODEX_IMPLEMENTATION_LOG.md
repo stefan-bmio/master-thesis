@@ -118,4 +118,4 @@ Wegen der adaptiven iPad-Fensterverwaltung werden auf iPadOS alle Systemausricht
 - Auf dem Entwicklungs-Mac ist keine gültige Apple-Codesigning-Identität vorhanden. Ein signiertes Geräte-/Distributionsarchiv erfordert außerhalb des Repositorys eine Apple-Team-ID, ein Zertifikat und das passende Provisioning.
 
 **Menschliche Freigabe**
-Noch ausstehend; eine Namensnennung ist nicht erforderlich.
+Am 16.08.2026 ohne Namensnennung erteilt; die Fortsetzung mit Auftrag 2 wurde ausdrücklich beauftragt.

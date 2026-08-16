@@ -55,9 +55,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		100000000000000000000302 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000312 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000322 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		100000000000000000000302 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000312 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000322 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -73,23 +91,97 @@
 			);
 			sourceTree = "<group>";
 		};
-		100000000000000000000003 /* Products */ = {isa = PBXGroup; children = (100000000000000000000121 /* CueLens.app */, 100000000000000000000122 /* CueLensTests.xctest */, 100000000000000000000123 /* CueLensUITests.xctest */); name = Products; sourceTree = "<group>"; };
-		100000000000000000000004 /* CueLens */ = {isa = PBXGroup; children = (100000000000000000000005 /* App */, 100000000000000000000006 /* Resources */); path = CueLens; sourceTree = "<group>"; };
-		100000000000000000000005 /* App */ = {isa = PBXGroup; children = (100000000000000000000101 /* CueLensApp.swift */, 100000000000000000000102 /* ContentView.swift */, 100000000000000000000103 /* StudyViewportPolicy.swift */); path = App; sourceTree = "<group>"; };
-		100000000000000000000006 /* Resources */ = {isa = PBXGroup; children = (100000000000000000000104 /* Localizable.xcstrings */, 100000000000000000000105 /* PrivacyInfo.xcprivacy */); path = Resources; sourceTree = "<group>"; };
-		100000000000000000000007 /* CueLensTests */ = {isa = PBXGroup; children = (100000000000000000000106 /* StudyViewportPolicyTests.swift */); path = CueLensTests; sourceTree = "<group>"; };
-		100000000000000000000008 /* CueLensUITests */ = {isa = PBXGroup; children = (100000000000000000000107 /* CueLensUITests.swift */); path = CueLensUITests; sourceTree = "<group>"; };
-		100000000000000000000009 /* Config */ = {isa = PBXGroup; children = (100000000000000000000108 /* Base.xcconfig */, 100000000000000000000109 /* Debug.xcconfig */, 100000000000000000000110 /* Staging.xcconfig */, 100000000000000000000111 /* Release.xcconfig */, 100000000000000000000112 /* LocalSigning.xcconfig.example */); path = Config; sourceTree = "<group>"; };
-		100000000000000000000010 /* Scripts */ = {isa = PBXGroup; children = (100000000000000000000113 /* quality_gate.sh */, 100000000000000000000114 /* select_ci_simulator.sh */, 100000000000000000000115 /* verify_release_configuration.sh */); path = Scripts; sourceTree = "<group>"; };
+		100000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000121 /* CueLens.app */,
+				100000000000000000000122 /* CueLensTests.xctest */,
+				100000000000000000000123 /* CueLensUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		100000000000000000000004 /* CueLens */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000005 /* App */,
+				100000000000000000000006 /* Resources */,
+			);
+			path = CueLens;
+			sourceTree = "<group>";
+		};
+		100000000000000000000005 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000101 /* CueLensApp.swift */,
+				100000000000000000000102 /* ContentView.swift */,
+				100000000000000000000103 /* StudyViewportPolicy.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		100000000000000000000006 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000104 /* Localizable.xcstrings */,
+				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		100000000000000000000007 /* CueLensTests */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000106 /* StudyViewportPolicyTests.swift */,
+			);
+			path = CueLensTests;
+			sourceTree = "<group>";
+		};
+		100000000000000000000008 /* CueLensUITests */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000107 /* CueLensUITests.swift */,
+			);
+			path = CueLensUITests;
+			sourceTree = "<group>";
+		};
+		100000000000000000000009 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000108 /* Base.xcconfig */,
+				100000000000000000000109 /* Debug.xcconfig */,
+				100000000000000000000110 /* Staging.xcconfig */,
+				100000000000000000000111 /* Release.xcconfig */,
+				100000000000000000000112 /* LocalSigning.xcconfig.example */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		100000000000000000000010 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000113 /* quality_gate.sh */,
+				100000000000000000000114 /* select_ci_simulator.sh */,
+				100000000000000000000115 /* verify_release_configuration.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
 		100000000000000000000201 /* CueLens */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 100000000000000000000702 /* Build configuration list for PBXNativeTarget "CueLens" */;
-			buildPhases = (100000000000000000000301 /* Sources */, 100000000000000000000302 /* Frameworks */, 100000000000000000000303 /* Resources */);
-			buildRules = ();
-			dependencies = ();
+			buildPhases = (
+				100000000000000000000301 /* Sources */,
+				100000000000000000000302 /* Frameworks */,
+				100000000000000000000303 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
 			name = CueLens;
 			productName = CueLens;
 			productReference = 100000000000000000000121 /* CueLens.app */;
@@ -98,9 +190,16 @@
 		100000000000000000000202 /* CueLensTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 100000000000000000000703 /* Build configuration list for PBXNativeTarget "CueLensTests" */;
-			buildPhases = (100000000000000000000311 /* Sources */, 100000000000000000000312 /* Frameworks */, 100000000000000000000313 /* Resources */);
-			buildRules = ();
-			dependencies = (100000000000000000000611 /* PBXTargetDependency */);
+			buildPhases = (
+				100000000000000000000311 /* Sources */,
+				100000000000000000000312 /* Frameworks */,
+				100000000000000000000313 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				100000000000000000000611 /* PBXTargetDependency */,
+			);
 			name = CueLensTests;
 			productName = CueLensTests;
 			productReference = 100000000000000000000122 /* CueLensTests.xctest */;
@@ -109,9 +208,16 @@
 		100000000000000000000203 /* CueLensUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 100000000000000000000704 /* Build configuration list for PBXNativeTarget "CueLensUITests" */;
-			buildPhases = (100000000000000000000321 /* Sources */, 100000000000000000000322 /* Frameworks */, 100000000000000000000323 /* Resources */);
-			buildRules = ();
-			dependencies = (100000000000000000000612 /* PBXTargetDependency */);
+			buildPhases = (
+				100000000000000000000321 /* Sources */,
+				100000000000000000000322 /* Frameworks */,
+				100000000000000000000323 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				100000000000000000000612 /* PBXTargetDependency */,
+			);
 			name = CueLensUITests;
 			productName = CueLensUITests;
 			productReference = 100000000000000000000123 /* CueLensUITests.xctest */;
@@ -127,64 +233,299 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
-					100000000000000000000201 = {CreatedOnToolsVersion = 26.6; };
-					100000000000000000000202 = {CreatedOnToolsVersion = 26.6; TestTargetID = 100000000000000000000201; };
-					100000000000000000000203 = {CreatedOnToolsVersion = 26.6; TestTargetID = 100000000000000000000201; };
+					100000000000000000000201 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					100000000000000000000202 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 100000000000000000000201;
+					};
+					100000000000000000000203 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 100000000000000000000201;
+					};
 				};
 			};
 			buildConfigurationList = 100000000000000000000701 /* Build configuration list for PBXProject "CueLens" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = de;
 			hasScannedForEncodings = 0;
-			knownRegions = (de, en, Base);
+			knownRegions = (
+				de,
+				en,
+				Base,
+			);
 			mainGroup = 100000000000000000000002;
 			productRefGroup = 100000000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (100000000000000000000201 /* CueLens */, 100000000000000000000202 /* CueLensTests */, 100000000000000000000203 /* CueLensUITests */);
+			targets = (
+				100000000000000000000201 /* CueLens */,
+				100000000000000000000202 /* CueLensTests */,
+				100000000000000000000203 /* CueLensUITests */,
+			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		100000000000000000000303 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000404 /* Localizable.xcstrings in Resources */, 100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000313 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000323 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		100000000000000000000303 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000404 /* Localizable.xcstrings in Resources */,
+				100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000313 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000323 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		100000000000000000000301 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000401 /* CueLensApp.swift in Sources */, 100000000000000000000402 /* ContentView.swift in Sources */, 100000000000000000000403 /* StudyViewportPolicy.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000311 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		100000000000000000000321 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000407 /* CueLensUITests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		100000000000000000000301 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000401 /* CueLensApp.swift in Sources */,
+				100000000000000000000402 /* ContentView.swift in Sources */,
+				100000000000000000000403 /* StudyViewportPolicy.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000311 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000321 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000407 /* CueLensUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		100000000000000000000611 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 100000000000000000000201 /* CueLens */; targetProxy = 100000000000000000000601 /* PBXContainerItemProxy */; };
-		100000000000000000000612 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 100000000000000000000201 /* CueLens */; targetProxy = 100000000000000000000602 /* PBXContainerItemProxy */; };
+		100000000000000000000611 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 100000000000000000000201 /* CueLens */;
+			targetProxy = 100000000000000000000601 /* PBXContainerItemProxy */;
+		};
+		100000000000000000000612 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 100000000000000000000201 /* CueLens */;
+			targetProxy = 100000000000000000000602 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		100000000000000000000501 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; ENABLE_USER_SCRIPT_SANDBOXING = YES; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; }; name = Debug; };
-		100000000000000000000502 /* Staging */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; ENABLE_USER_SCRIPT_SANDBOXING = YES; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; }; name = Staging; };
-		100000000000000000000503 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; ENABLE_USER_SCRIPT_SANDBOXING = YES; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; }; name = Release; };
-
-		100000000000000000000511 /* Debug */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = CueLens; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_MODULE_NAME = CueLens; }; name = Debug; };
-		100000000000000000000512 /* Staging */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = CueLens; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_MODULE_NAME = CueLens; }; name = Staging; };
-		100000000000000000000513 /* Release */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = CueLens; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_MODULE_NAME = CueLens; }; name = Release; };
-
-		100000000000000000000521 /* Debug */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens"; }; name = Debug; };
-		100000000000000000000522 /* Staging */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens"; }; name = Staging; };
-		100000000000000000000523 /* Release */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens"; }; name = Release; };
-
-		100000000000000000000531 /* Debug */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests; TEST_TARGET_NAME = CueLens; }; name = Debug; };
-		100000000000000000000532 /* Staging */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests; TEST_TARGET_NAME = CueLens; }; name = Staging; };
-		100000000000000000000533 /* Release */ = {isa = XCBuildConfiguration; baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */; buildSettings = {GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests; TEST_TARGET_NAME = CueLens; }; name = Release; };
+		100000000000000000000501 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			};
+			name = Debug;
+		};
+		100000000000000000000502 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			};
+			name = Staging;
+		};
+		100000000000000000000503 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			};
+			name = Release;
+		};
+		100000000000000000000511 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_MODULE_NAME = CueLens;
+			};
+			name = Debug;
+		};
+		100000000000000000000512 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_MODULE_NAME = CueLens;
+			};
+			name = Staging;
+		};
+		100000000000000000000513 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_MODULE_NAME = CueLens;
+			};
+			name = Release;
+		};
+		100000000000000000000521 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens";
+			};
+			name = Debug;
+		};
+		100000000000000000000522 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens";
+			};
+			name = Staging;
+		};
+		100000000000000000000523 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.tests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CueLens.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CueLens";
+			};
+			name = Release;
+		};
+		100000000000000000000531 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000109 /* Debug.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests;
+				TEST_TARGET_NAME = CueLens;
+			};
+			name = Debug;
+		};
+		100000000000000000000532 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests;
+				TEST_TARGET_NAME = CueLens;
+			};
+			name = Staging;
+		};
+		100000000000000000000533 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.uitests;
+				TEST_TARGET_NAME = CueLens;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		100000000000000000000701 /* Build configuration list for PBXProject "CueLens" */ = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000501 /* Debug */, 100000000000000000000502 /* Staging */, 100000000000000000000503 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		100000000000000000000702 /* Build configuration list for PBXNativeTarget "CueLens" */ = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000511 /* Debug */, 100000000000000000000512 /* Staging */, 100000000000000000000513 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		100000000000000000000703 /* Build configuration list for PBXNativeTarget "CueLensTests" */ = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000521 /* Debug */, 100000000000000000000522 /* Staging */, 100000000000000000000523 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		100000000000000000000704 /* Build configuration list for PBXNativeTarget "CueLensUITests" */ = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000531 /* Debug */, 100000000000000000000532 /* Staging */, 100000000000000000000533 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		100000000000000000000701 /* Build configuration list for PBXProject "CueLens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000501 /* Debug */,
+				100000000000000000000502 /* Staging */,
+				100000000000000000000503 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000702 /* Build configuration list for PBXNativeTarget "CueLens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000511 /* Debug */,
+				100000000000000000000512 /* Staging */,
+				100000000000000000000513 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000703 /* Build configuration list for PBXNativeTarget "CueLensTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000521 /* Debug */,
+				100000000000000000000522 /* Staging */,
+				100000000000000000000523 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000704 /* Build configuration list for PBXNativeTarget "CueLensUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000531 /* Debug */,
+				100000000000000000000532 /* Staging */,
+				100000000000000000000533 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 	};
 	rootObject = 100000000000000000000001 /* Project object */;
