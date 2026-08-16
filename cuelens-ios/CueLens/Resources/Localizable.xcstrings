@@ -18,6 +18,40 @@
         }
       }
     },
+    "app.initializing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sicherer lokaler Speicher wird geprüft …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking secure local storage…"
+          }
+        }
+      }
+    },
+    "app.secureStorageFailure" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokale Daten konnten nicht sicher geladen werden. Bitte wenden Sie sich an cuelens@each-and-every.de."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local data could not be loaded securely. Please contact cuelens@each-and-every.de."
+          }
+        }
+      }
+    },
     "app.title" : {
       "extractionState" : "manual",
       "localizations" : {

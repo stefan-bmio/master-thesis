@@ -36,6 +36,22 @@
 		100000000000000000000434 /* StudyStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000154 /* StudyStateTests.swift */; };
 		100000000000000000000435 /* StartGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000155 /* StartGateTests.swift */; };
 		100000000000000000000436 /* SelfReportResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000156 /* SelfReportResponseTests.swift */; };
+		100000000000000000000440 /* PersistenceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000160 /* PersistenceProtocols.swift */; };
+		100000000000000000000441 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000161 /* PersistenceError.swift */; };
+		100000000000000000000442 /* KeychainClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000162 /* KeychainClient.swift */; };
+		100000000000000000000443 /* KeychainAppTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000163 /* KeychainAppTokenStore.swift */; };
+		100000000000000000000444 /* ProtectedFileClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000164 /* ProtectedFileClient.swift */; };
+		100000000000000000000445 /* PersistencePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000165 /* PersistencePaths.swift */; };
+		100000000000000000000446 /* SecureRandomByteGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000166 /* SecureRandomByteGenerator.swift */; };
+		100000000000000000000447 /* InstallationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000167 /* InstallationCoordinator.swift */; };
+		100000000000000000000448 /* ProtectedStudyStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000168 /* ProtectedStudyStateStore.swift */; };
+		100000000000000000000449 /* LocalPersistenceBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000169 /* LocalPersistenceBootstrap.swift */; };
+		100000000000000000000450 /* PersistenceTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000170 /* PersistenceTestDoubles.swift */; };
+		100000000000000000000451 /* KeychainAppTokenStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000171 /* KeychainAppTokenStoreTests.swift */; };
+		100000000000000000000452 /* InstallationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000172 /* InstallationCoordinatorTests.swift */; };
+		100000000000000000000453 /* ProtectedStudyStateStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */; };
+		100000000000000000000454 /* CueLensAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000174 /* CueLensAppModel.swift */; };
+		100000000000000000000455 /* LocalPersistenceBootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +88,7 @@
 		100000000000000000000114 /* select_ci_simulator.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = select_ci_simulator.sh; sourceTree = "<group>"; };
 		100000000000000000000115 /* verify_release_configuration.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_configuration.sh; sourceTree = "<group>"; };
 		100000000000000000000116 /* verify_domain_boundaries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_domain_boundaries.sh; sourceTree = "<group>"; };
+		100000000000000000000117 /* verify_persistence_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_persistence_security.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +114,22 @@
 		100000000000000000000154 /* StudyStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyStateTests.swift; sourceTree = "<group>"; };
 		100000000000000000000155 /* StartGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartGateTests.swift; sourceTree = "<group>"; };
 		100000000000000000000156 /* SelfReportResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfReportResponseTests.swift; sourceTree = "<group>"; };
+		100000000000000000000160 /* PersistenceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceProtocols.swift; sourceTree = "<group>"; };
+		100000000000000000000161 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
+		100000000000000000000162 /* KeychainClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainClient.swift; sourceTree = "<group>"; };
+		100000000000000000000163 /* KeychainAppTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAppTokenStore.swift; sourceTree = "<group>"; };
+		100000000000000000000164 /* ProtectedFileClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedFileClient.swift; sourceTree = "<group>"; };
+		100000000000000000000165 /* PersistencePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePaths.swift; sourceTree = "<group>"; };
+		100000000000000000000166 /* SecureRandomByteGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureRandomByteGenerator.swift; sourceTree = "<group>"; };
+		100000000000000000000167 /* InstallationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallationCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000168 /* ProtectedStudyStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedStudyStateStore.swift; sourceTree = "<group>"; };
+		100000000000000000000169 /* LocalPersistenceBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPersistenceBootstrap.swift; sourceTree = "<group>"; };
+		100000000000000000000170 /* PersistenceTestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceTestDoubles.swift; sourceTree = "<group>"; };
+		100000000000000000000171 /* KeychainAppTokenStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAppTokenStoreTests.swift; sourceTree = "<group>"; };
+		100000000000000000000172 /* InstallationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallationCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedStudyStateStoreTests.swift; sourceTree = "<group>"; };
+		100000000000000000000174 /* CueLensAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueLensAppModel.swift; sourceTree = "<group>"; };
+		100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPersistenceBootstrapTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +184,7 @@
 			children = (
 				100000000000000000000005 /* App */,
 				100000000000000000000011 /* Domain */,
+				100000000000000000000019 /* Infrastructure */,
 				100000000000000000000006 /* Resources */,
 			);
 			path = CueLens;
@@ -162,6 +196,7 @@
 				100000000000000000000101 /* CueLensApp.swift */,
 				100000000000000000000102 /* ContentView.swift */,
 				100000000000000000000103 /* StudyViewportPolicy.swift */,
+				100000000000000000000174 /* CueLensAppModel.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -180,6 +215,7 @@
 			children = (
 				100000000000000000000106 /* StudyViewportPolicyTests.swift */,
 				100000000000000000000018 /* Domain */,
+				100000000000000000000022 /* Infrastructure */,
 			);
 			path = CueLensTests;
 			sourceTree = "<group>";
@@ -211,6 +247,7 @@
 				100000000000000000000114 /* select_ci_simulator.sh */,
 				100000000000000000000115 /* verify_release_configuration.sh */,
 				100000000000000000000116 /* verify_domain_boundaries.sh */,
+				100000000000000000000117 /* verify_persistence_security.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -236,6 +273,7 @@
 				100000000000000000000130 /* DomainValidationError.swift */,
 				100000000000000000000133 /* StrictJSON.swift */,
 				100000000000000000000134 /* UUIDv4.swift */,
+				100000000000000000000160 /* PersistenceProtocols.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -297,6 +335,50 @@
 				100000000000000000000154 /* StudyStateTests.swift */,
 			);
 			path = Domain;
+			sourceTree = "<group>";
+		};
+		100000000000000000000019 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000020 /* Keychain */,
+				100000000000000000000021 /* Persistence */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		100000000000000000000020 /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000163 /* KeychainAppTokenStore.swift */,
+				100000000000000000000162 /* KeychainClient.swift */,
+			);
+			path = Keychain;
+			sourceTree = "<group>";
+		};
+		100000000000000000000021 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000167 /* InstallationCoordinator.swift */,
+				100000000000000000000169 /* LocalPersistenceBootstrap.swift */,
+				100000000000000000000161 /* PersistenceError.swift */,
+				100000000000000000000165 /* PersistencePaths.swift */,
+				100000000000000000000164 /* ProtectedFileClient.swift */,
+				100000000000000000000168 /* ProtectedStudyStateStore.swift */,
+				100000000000000000000166 /* SecureRandomByteGenerator.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		100000000000000000000022 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000172 /* InstallationCoordinatorTests.swift */,
+				100000000000000000000171 /* KeychainAppTokenStoreTests.swift */,
+				100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */,
+				100000000000000000000170 /* PersistenceTestDoubles.swift */,
+				100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */,
+			);
+			path = Infrastructure;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -448,6 +530,17 @@
 				100000000000000000000422 /* StartGate.swift in Sources */,
 				100000000000000000000423 /* CompletionState.swift in Sources */,
 				100000000000000000000424 /* SelfReportResponse.swift in Sources */,
+				100000000000000000000440 /* PersistenceProtocols.swift in Sources */,
+				100000000000000000000441 /* PersistenceError.swift in Sources */,
+				100000000000000000000442 /* KeychainClient.swift in Sources */,
+				100000000000000000000443 /* KeychainAppTokenStore.swift in Sources */,
+				100000000000000000000444 /* ProtectedFileClient.swift in Sources */,
+				100000000000000000000445 /* PersistencePaths.swift in Sources */,
+				100000000000000000000446 /* SecureRandomByteGenerator.swift in Sources */,
+				100000000000000000000447 /* InstallationCoordinator.swift in Sources */,
+				100000000000000000000448 /* ProtectedStudyStateStore.swift in Sources */,
+				100000000000000000000449 /* LocalPersistenceBootstrap.swift in Sources */,
+				100000000000000000000454 /* CueLensAppModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +556,11 @@
 				100000000000000000000434 /* StudyStateTests.swift in Sources */,
 				100000000000000000000435 /* StartGateTests.swift in Sources */,
 				100000000000000000000436 /* SelfReportResponseTests.swift in Sources */,
+				100000000000000000000450 /* PersistenceTestDoubles.swift in Sources */,
+				100000000000000000000451 /* KeychainAppTokenStoreTests.swift in Sources */,
+				100000000000000000000452 /* InstallationCoordinatorTests.swift in Sources */,
+				100000000000000000000453 /* ProtectedStudyStateStoreTests.swift in Sources */,
+				100000000000000000000455 /* LocalPersistenceBootstrapTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

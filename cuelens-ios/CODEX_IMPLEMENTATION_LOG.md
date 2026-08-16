@@ -180,3 +180,61 @@ Zur Wahrung der Einfachheit ist `CueLens/Domain/` ein logisch abgegrenzter Quell
 
 **Menschliche Freigabe**
 Am 16.08.2026 ohne Namensnennung erteilt; die Umsetzung von Auftrag 3 wurde ausdrücklich beauftragt.
+
+## 16.08.2026 – Auftrag 3
+
+**Datum und Branch**
+16.08.2026; Branch `codex/ios-auftrag-3`; Umsetzung auf Basis des freigegebenen Auftrags 2.
+
+**Auftragsnummer**
+Auftrag 3 – Sicherer Tokenstore und geschützter Studienzustand.
+
+**Ziel**
+Installationsgebundene, atomare und fail-closed arbeitende lokale Persistenz für App-Token und kritischen Studienzustand ohne Cloud-Synchronisierung oder Speicherung zusätzlicher Forschungsdaten.
+
+**Geänderte Dateien**
+
+- Domain-Schnittstellen für Token- und Zustandsstore ergänzt; konkrete Betriebssystemzugriffe bleiben vollständig in `CueLens/Infrastructure/` gekapselt.
+- Actor-basierten Keychain-Store mit festem Service und Account, `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`, ausgeschalteter Synchronisierung, UUID-v4-Prüfung, idempotentem Speichern und vollständiger OSStatus-Abbildung implementiert.
+- 32-Byte-Installationsmarker aus `SecRandomCopyBytes` sowie fail-closed Abgleich von Marker, Zustandsdatei und Keychain-Token ergänzt.
+- Deterministischen, größenbegrenzten und atomaren JSON-Zustandsstore mit Schema-Router, strikter Strukturprüfung, Domain-Invarianten, vollständigem Dateischutz und Backup-Ausschluss implementiert.
+- Sicheren App-Bootstrap und neutralen lokalisierten Fehlerzustand ergänzt; ein ungültiger Persistenzzustand wird nicht als verwendbarer UI-Zustand veröffentlicht.
+- 28 Infrastrukturtests mit In-Memory-Doubles sowie realen, synthetisch isolierten Simulator-Roundtrips für Keychain und Application Support ergänzt.
+- Persistenz-Sicherheitsprüfung in das Quality-Gate aufgenommen und das Privacy Manifest wegen der Metadatenprüfung im eigenen Container um `NSPrivacyAccessedAPICategoryFileTimestamp` mit Grund `C617.1` ergänzt.
+
+**Ausgeführte Tests**
+
+- `Scripts/verify_domain_boundaries.sh`
+- `Scripts/verify_persistence_security.sh`
+- `plutil -lint` für Xcode-Projekt und Privacy Manifest sowie `jq empty` für den String Catalog
+- vollständiges `Scripts/quality_gate.sh` mit Debug-/Staging-Build, Unit-Tests, iPhone-/iPad-UI-Smoke-Tests und Release-Verifikation auf iOS 26.5
+- alle Unit-Tests zusätzlich auf iPhone 15 Pro mit iOS 17.5 (Build 21F79)
+- `xcodebuild analyze` in Release für den generischen iOS-Simulator
+- unsignierter Release-Build für `generic/platform=iOS`
+- `git diff --check` und statische Prüfung auf verbotene Persistenz-, Logging- und Force-Unwrap-Nutzung
+
+**Testergebnis**
+
+- iOS 26.5: 58 von 58 Unit-Tests sowie je ein UI-Smoke-Test auf iPhone und iPad bestanden; Debug, Staging und Release-Verifikation erfolgreich.
+- iOS 17.5: 58 von 58 Unit-Tests bestanden; keine Fehler, erwarteten Fehler oder übersprungenen Tests.
+- Release-Analyse und unsignierter Geräte-Build erfolgreich und ohne Projektwarnungen.
+- Keychain-Fehler, Tokenkonflikt, verwaister Token, beschädigter beziehungsweise fehlender Marker, beschädigter oder unbekannter Zustandsstand, Datei- und Zufallsfehler sowie konkurrierende Zugriffe werden getestet fail-closed behandelt.
+- Reale Simulator-Roundtrips bestätigen synthetisch isolierte Keychain-Nutzung, atomare Zustandswiederherstellung und Backup-Ausschluss.
+
+**Sicherheits-/Datenschutzprüfung**
+
+- App-Token wird weder in Datei noch `UserDefaults` gespeichert und nicht synchronisiert; ein vorhandener abweichender oder formal ungültiger Wert wird nie still überschrieben oder gelöscht.
+- Studienzustand und Installationsmarker liegen ausschließlich unter Application Support, erhalten vollständigen Dateischutz und werden aus Backups ausgeschlossen.
+- Beschädigte Zustände werden weder zurückgesetzt noch überschrieben; die App zeigt ausschließlich eine neutrale Supportmeldung.
+- Keine echten Teilnehmendenkennungen, Tokens oder Gesundheitsdaten, keine Cloud-, Analyse-, Tracking- oder Drittanbieterkomponenten ergänzt.
+- Die Required-Reason-Deklaration `C617.1` entspricht der ausschließlichen Metadatennutzung im eigenen App-Container und wird automatisiert im Release-Artefakt geprüft.
+
+**Abweichungen und Annahmen**
+Der Token wird als bereits vorhandener Domain-Typ `UUIDv4` repräsentiert. Ein identischer erneuter Speichervorgang ist idempotent; ein anderer vorhandener Token erzeugt einen Konflikt. Fehlen Marker und Zustand, wird ein möglicher Keychain-Rest vor Anlage eines neuen Markers gelöscht. Fehlt nur der Marker bei vorhandener Zustandsdatei, wird nichts gelöscht. Da Schema 1 das erste reale Format ist, lehnt der explizite Router alle anderen Versionen ab, statt eine nicht belegte Migration zu erfinden. CoreSimulator meldet die effektive Data-Protection-Klasse trotz erfolgreicher Schutz-APIs nicht zuverlässig; Backup-Ausschluss und alle Schutzaufrufe sind automatisiert geprüft, die effektive Klasse wird auf echten Geräten zusätzlich strikt verifiziert.
+
+**Offene Punkte**
+
+- Das Review-Gate auf einem echten Gerät ist noch auszuführen: synthetischen Testtoken aktivieren, bei Gerätesperre Zugriffsschutz prüfen sowie Update- und Neuinstallationssimulation durchführen. Am Entwicklungs-Mac ist derzeit kein iOS-Gerät verbunden.
+
+**Menschliche Freigabe**
+Ausstehend; vor Beginn von Auftrag 4 ist das Review-Gate fachlich und auf einem echten Gerät freizugeben.

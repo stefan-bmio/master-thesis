@@ -36,7 +36,7 @@ open CueLens.xcodeproj
 ./Scripts/quality_gate.sh
 ```
 
-Das Gate prüft zuerst die technische Grenze des Pure-Swift-Domain-Moduls, baut Debug und Staging, führt alle Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
+Das Gate prüft zuerst die technische Grenze des Pure-Swift-Domain-Moduls und die Persistenz-Sicherheitsinvarianten, baut Debug und Staging, führt alle Unit-Tests und je einen UI-Smoke-Test auf einem verfügbaren iPhone- und iPad-Simulator aus und prüft das Release-Artefakt einschließlich Bundle ID, Mindestversion, Privacy Manifest, Ausrichtungen, verbotener Berechtigungsschlüssel, Abhängigkeiten und Compilerkonfiguration. Die Simulatoren werden deterministisch aus der neuesten installierten iOS-Runtime gewählt. Bei einer frisch installierten Runtime darf die einmalige System- und Accessibility-Initialisierung mehrere Minuten dauern; das Gate wiederholt ausschließlich einen dadurch fehlgeschlagenen UI-Smoke-Test genau einmal.
 
 Die Kompatibilitätsuntergrenze wurde zusätzlich mit der installierten iOS-17.5-Runtime (Build 21F79) auf iPhone und iPad geprüft. Die aktuelle Testobergrenze ist iOS 26.5 (Build 23F77).
 
@@ -52,6 +52,18 @@ Für ein signiertes Release-Archiv wird `Config/LocalSigning.xcconfig.example` n
 
 Die synthetischen JSON-Fixtures unter `Fixtures/messages/` und `Fixtures/submission/` decken gültige und ungültige Protokollantworten ab. Sie enthalten keine realen Teilnehmenden- oder Gesundheitsdaten.
 
+## Sichere Persistenz aus Auftrag 3
+
+Der App-Token liegt ausschließlich als nicht synchronisierbares Generic Password mit `WhenUnlockedThisDeviceOnly` im Keychain. Ein geschützter 32-Byte-Installationsmarker verhindert die unkontrollierte Wiederverwendung eines nach einer Neuinstallation verbliebenen Tokens. Der kleine Studienzustand wird deterministisch, atomar, vollständig dateigeschützt und aus Backups ausgeschlossen unter `Library/Application Support/CueLens/` gespeichert. Die App prüft diese Infrastruktur beim Start und bleibt bei Integritäts- oder Speicherfehlern fail-closed.
+
+Das Privacy Manifest deklariert den Apple-Grund `C617.1`, weil die Schutzprüfung ausschließlich Metadaten der eigenen Dateien im App-Container liest. Das Release-Gate prüft diese Deklaration mit.
+
+```sh
+./Scripts/verify_persistence_security.sh
+```
+
+CoreSimulator bestätigt Keychain-Roundtrips und Backup-Ausschlüsse, meldet jedoch keine verlässliche effektive Data-Protection-Klasse. Gerätesperre, Update und Neuinstallation müssen deshalb zusätzlich auf einem echten Gerät geprüft werden.
+
 ## Datenschutz und Abgrenzung
 
-Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Das Domain-Modul enthält weder Netzwerk-, Keychain- noch Dateizugriffe; diese Infrastruktur folgt in späteren Aufträgen.
+Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.

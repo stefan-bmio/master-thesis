@@ -10,7 +10,7 @@
 | Bundle Identifier | `de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/IOS_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` |
 | Empfohlener Projektpfad | `cuelens-ios/` |
-| Dokumentversion | 1.2 |
+| Dokumentversion | 1.3 |
 | Status | Verbindliche Planung für die native iOS-Portierung |
 | Stand | 16. August 2026 |
 | Referenzimplementierung | Android-App `de.eachandevery.cuelens` |
@@ -432,10 +432,11 @@ Menschliche Freigabe
 
 ```swift
 @MainActor
-final class CueLensAppModel: ObservableObject {
-    @Published private(set) var route: AppRoute = .loading
-    @Published private(set) var language: AppLanguage = .german
-    @Published private(set) var notice: UserNotice?
+@Observable
+final class CueLensAppModel {
+    private(set) var route: AppRoute = .loading
+    private(set) var language: AppLanguage = .german
+    private(set) var notice: UserNotice?
 }
 ```
 
@@ -503,8 +504,8 @@ Folgende Aktionen müssen serialisiert und gegen Doppel-Taps geschützt werden:
 
 ```swift
 protocol AppTokenStore: Sendable {
-    func readToken() async throws -> UUID?
-    func saveToken(_ token: UUID) async throws
+    func readToken() async throws -> UUIDv4?
+    func saveToken(_ token: UUIDv4) async throws
     func clearToken() async throws
 }
 
@@ -514,8 +515,8 @@ protocol StudyStateStore: Sendable {
 }
 
 protocol ActivationServicing: Sendable {
-    func requestToken(identifier: ParticipantIdentifier) async throws -> UUID
-    func confirmToken(identifier: ParticipantIdentifier, token: UUID) async throws
+    func requestToken(identifier: ParticipantIdentifier) async throws -> UUIDv4
+    func confirmToken(identifier: ParticipantIdentifier, token: UUIDv4) async throws
 }
 
 protocol FeatureConfigServicing: Sendable {
@@ -527,8 +528,8 @@ protocol FeedbackServicing: Sendable {
 }
 
 protocol StudySubmissionServicing: Sendable {
-    func submitSelfReport(token: UUID, craving: Int) async throws -> SelfReportResponse
-    func confirmCompensation(code: UUID) async throws
+    func submitSelfReport(token: UUIDv4, craving: Int) async throws -> SelfReportResponse
+    func confirmCompensation(code: UUIDv4) async throws
 }
 
 protocol InfoFeedServicing: Sendable {
@@ -570,8 +571,8 @@ struct StudyState: Codable, Equatable, Sendable {
 enum CompletionState: Codable, Equatable, Sendable {
     case incomplete
     case invalid
-    case directPendingConfirmation(code: UUID)
-    case directCompleted(code: UUID)
+    case directPendingConfirmation(code: UUIDv4)
+    case directCompleted(code: UUIDv4)
     case prolificCompleted
 }
 ```
@@ -661,6 +662,7 @@ Zusätzliche Anforderungen:
 - unbekannter Keychain-Status führt zu `secureStorageFailure`;
 - ein leerer oder formal ungültiger Wert wird nicht still gelöscht, sondern als Sicherheitsfehler behandelt;
 - ein Speichervorgang gilt nur bei `errSecSuccess` als erfolgreich.
+- erneutes Speichern desselben Tokens ist idempotent; ein abweichender bereits vorhandener Token wird nicht überschrieben und führt fail-closed zu einem Konfliktfehler.
 
 ### 9.3 Bindung an die Installation
 
@@ -671,6 +673,8 @@ Keychain-Einträge können technische Lebenszyklen besitzen, die nicht identisch
 3. Danach wird ein neuer zufälliger Installationsmarker atomar angelegt.
 4. Bei normalen App-Updates bleibt der Marker erhalten.
 5. Bei beschädigtem Marker oder fehlgeschlagenem Löschen wird fail-closed verfahren.
+
+Der Marker besteht exakt aus 32 mit `SecRandomCopyBytes` erzeugten Bytes. Eine andere Länge gilt als Beschädigung. Fehlen Marker und Zustandsdatei, wird der Fall als neuer Container behandelt. Fehlt nur der Marker, während eine Zustandsdatei vorhanden ist, wird weder Token noch Zustand verändert und fail-closed abgebrochen.
 
 Damit kann ein alter Token nach einer vollständigen Neuinstallation nicht unkontrolliert wiederverwendet werden.
 
@@ -699,9 +703,13 @@ Die Implementierung SOLL `Data.write(options: [.atomic, .completeFileProtection]
 - Bekannte ältere Schema-Version: explizite, getestete Migration.
 - Unbekannte neuere Schema-Version: fail-closed.
 - JSON-Fehler: fail-closed.
-- Invariantenverletzung: `CompletionState.invalid`.
+- Invariantenverletzung: typisierter `stateCorrupted`-Fehler; die App-Initialisierung bleibt fail-closed und veröffentlicht keinen produktiv nutzbaren Zustand.
 - Es gibt keinen automatischen Reset, weil dadurch ausstehende wissenschaftliche Daten oder Abschlussinformationen verloren gehen könnten.
 - Die UI zeigt eine neutrale Fehlermeldung und den Supportkontakt.
+
+Version 1 kennt ausschließlich Zustands-Schema 1. Der Store prüft die Versionsnummer vor der vollständigen Decodierung. Unbekannte ältere oder neuere Versionen werden über einen typisierten Fehler fail-closed abgelehnt; eine konkrete Migration wird erst ergänzt, wenn ein reales Vorgängerformat existiert. Beschädigte Daten werden nicht überschrieben oder automatisch gelöscht. Die App-Initialisierung bildet Lese-, Integritäts- und Schutzfehler auf einen neutralen sicheren Fehlerzustand ab.
+
+CoreSimulator bildet die effektive Data-Protection-Klasse nicht zuverlässig ab. Automatisierte Tests prüfen daher die gesetzten Schreiboptionen, den Backup-Ausschluss und die Fehlerpfade; die effektive Schutzklasse bei Gerätesperre bleibt Bestandteil des echten Geräte-Review-Gates.
 
 ### 9.6 `UserDefaults`
 
@@ -1164,6 +1172,12 @@ Die E-Mail-Adresse kann als `mailto:`-Link angeboten werden. Die App darf dabei 
 - alle tatsächlich verwendeten Required-Reason-APIs mit zum Zeitpunkt der Einreichung gültigen Begründungen deklarieren;
 - die tatsächliche Datenerhebung konsistent mit den App-Store-Connect-Angaben abbilden;
 - bei jeder neuen SDK- oder API-Nutzung erneut geprüft werden.
+
+Der geschützte Dateistore liest Metadaten ausschließlich für Dateien im eigenen
+App-Container. Solange Apple diese Nutzung der Kategorie
+`NSPrivacyAccessedAPICategoryFileTimestamp` zuordnet, wird dafür der genehmigte
+Grund `C617.1` deklariert. Die Deklaration ist vor der Einreichung erneut gegen
+Apples dann aktuelle Liste zu prüfen.
 
 Die App-Store-Datenschutzangaben dürfen nicht fälschlich „keine Daten erhoben“ angeben, da Aktivierungskennung, App-Token und Rauchverlangenswerte an das eigene Backend übertragen werden. Die genaue Zuordnung zu Apples Kategorien wird vor Einreichung anhand der realen Datenflüsse geprüft und dokumentiert.
 
@@ -2551,3 +2565,4 @@ Abrufdatum: 11.08.2026.
 | 1.0.1 | 15.08.2026 | iOS-Portierung als eigenständiges Geschwisterprojekt `cuelens-ios/` strukturiert; kopierte Studienressourcen, Schemata und Werkzeuge dem iOS-Projekt zugeordnet; keine fachliche Änderung. |
 | 1.1 | 16.08.2026 | Auftrag 1 auf Xcode 26.6 und Swift 6 festgelegt; lokales Quality-Gate statt serverseitiger CI, fail-closed Staging-Defaults, minimales Privacy Manifest und adaptive iPad-Geometrie statt nicht mehr garantierbarem Vollbildmodus spezifiziert. |
 | 1.2 | 16.08.2026 | Auftrag 2 als logisch abgegrenzten Pure-Swift-Quellbereich im bestehenden App-Target konkretisiert; automatisierte Importgrenze und eigenständige Swift-6-Typprüfung sowie strikte Parser-, Codable-, Zeit- und Unicode-Repräsentationen festgelegt. |
+| 1.3 | 16.08.2026 | Auftrag 3 konkretisiert: `UUIDv4` als Token-Typ, konfliktfreies idempotentes Speichern, 32-Byte-Installationsmarker, fail-closed Abgleich von Marker und Zustandsdatei, expliziter Schema-Router ohne erfundene Altmigration, Required-Reason-Deklaration `C617.1` sowie Simulatorgrenze der Data-Protection-Prüfung dokumentiert. |

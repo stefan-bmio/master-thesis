@@ -66,6 +66,10 @@ done
 
 TRACKING=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyTracking' "$PRIVACY_MANIFEST")
 test "$TRACKING" = 'false'
+ACCESSED_API_TYPE=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPIType' "$PRIVACY_MANIFEST")
+ACCESSED_API_REASON=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")
+test "$ACCESSED_API_TYPE" = 'NSPrivacyAccessedAPICategoryFileTimestamp'
+test "$ACCESSED_API_REASON" = 'C617.1'
 
 if grep -R -a -q -E 'debug\.invalid|staging\.invalid' "$APP_BUNDLE"; then
   echo 'Release-Artefakt enthält Debug-/Staging-Endpunkte.' >&2
