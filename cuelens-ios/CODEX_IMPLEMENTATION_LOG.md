@@ -326,7 +326,10 @@ Die vorhandenen PHP- und Android-Verträge wurden statisch verglichen. Ihre zus�
 **Offene Punkte**
 
 - Vor Auftrag 5 ist das Review-Gate durch Gegenprüfung der aufgezeichneten iOS-Requests mit den Android-Vertragstests und PHP-Endpunkten menschlich freizugeben.
+Requests werden durch Akzeptanztest zu einem späteren Zeitpunkt getestet
 - Produktive Live-Schreibrequests bleiben bewusst ungetestet; eine spätere Ende-zu-Ende-Prüfung benötigt synthetische serverseitige Testregistrierungen beziehungsweise ein freigegebenes Staging-System.
+freigegebenes Staging-System: http://192.168.1.243/cuelens
 
 **Menschliche Freigabe**
 Ausstehend; vor Beginn von Auftrag 5 ist das Review-Gate freizugeben.
+16.8.2026
