@@ -1767,6 +1767,15 @@ Optionale Benachrichtigungen ohne neue Backend-Infrastruktur.
 - Vordergrundabruf bleibt funktional ohne Background-Ausführung;
 - keine Push-Entitlements und keine Push-Tokens.
 
+**Umsetzungsentscheidungen vom 17.08.2026**
+
+- Die Systemberechtigung umfasst ausschließlich `.alert`; Ton, Badge, zeitkritische beziehungsweise kritische Hinweise und Remote Notifications sind ausgeschlossen.
+- Für Deutsch und Englisch werden eigene Kategorien registriert. Der öffentliche Vorschautext der Studienerinnerung ist als `hiddenPreviewsBodyPlaceholder` hinterlegt; Notification-Payloads enthalten keine fachlichen Zustandswerte.
+- Die gemeinsame lokale Präferenz wird nur nach dem App-internen Dialog gesetzt. Ein verweigerter oder nachträglich entzogener Systemzugriff normalisiert die effektive Funktion auf deaktiviert und entfernt alle CueLens-Requests.
+- Der BG-Refresh-Identifier wird beim App-Aufbau registriert und nur bei aktiver lokaler Präferenz und aktueller Systemberechtigung erneut geplant. Er verwendet ausschließlich den bestehenden lesenden Feedservice.
+- Die Reminder-Policy ist vollständig gegen Aktivierung, Feature-Konfiguration, Abschluss, Pending-Zustand, bestätigte Situation, Freischaltzeitpunkt und bereits angezeigte Situation abgegrenzt. Auftrag 6 stellt die produktive Reconcile-Schnittstelle bereit; Aktivierung und Fortschrittsänderungen aus den Folgeaufträgen liefern später die noch nicht vorhandenen Laufzeitzustände.
+- Die CueLens-Referenzfarben werden unabhängig von der hellen oder dunklen Systemdarstellung verwendet, damit kein semantischer Systemfarbwechsel den Kontrast auf dem festen hellen Hintergrund verändert.
+
 **Review-Gate**
 
 Echtes Gerät: Erlauben, Ablehnen, nachträglich in Settings entziehen, Reminder öffnen, Sprache wechseln.

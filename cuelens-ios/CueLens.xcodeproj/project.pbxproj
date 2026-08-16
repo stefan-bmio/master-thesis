@@ -73,6 +73,12 @@
 		100000000000000000000474 /* AppSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000196 /* AppSettingsStore.swift */; };
 		100000000000000000000475 /* InfoFeedRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000197 /* InfoFeedRepository.swift */; };
 		100000000000000000000476 /* AppShellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000198 /* AppShellTests.swift */; };
+		100000000000000000000477 /* NotificationTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000220 /* NotificationTypes.swift */; };
+		100000000000000000000478 /* NotificationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000221 /* NotificationCoordinator.swift */; };
+		100000000000000000000479 /* BackgroundRefreshCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000222 /* BackgroundRefreshCoordinator.swift */; };
+		100000000000000000000480 /* CueLensAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000223 /* CueLensAppDelegate.swift */; };
+		100000000000000000000481 /* NotificationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000224 /* NotificationCoordinatorTests.swift */; };
+		100000000000000000000482 /* BackgroundRefreshCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000225 /* BackgroundRefreshCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +124,13 @@
 		100000000000000000000198 /* AppShellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellTests.swift; sourceTree = "<group>"; };
 		100000000000000000000199 /* StagingInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = StagingInfo.plist; sourceTree = "<group>"; };
 		100000000000000000000200 /* verify_staging_configuration.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_staging_configuration.sh; sourceTree = "<group>"; };
+		100000000000000000000220 /* NotificationTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTypes.swift; sourceTree = "<group>"; };
+		100000000000000000000221 /* NotificationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000222 /* BackgroundRefreshCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefreshCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000223 /* CueLensAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueLensAppDelegate.swift; sourceTree = "<group>"; };
+		100000000000000000000224 /* NotificationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000225 /* BackgroundRefreshCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefreshCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000226 /* verify_notification_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_notification_security.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -244,6 +257,7 @@
 				100000000000000000000103 /* StudyViewportPolicy.swift */,
 				100000000000000000000174 /* CueLensAppModel.swift */,
 				100000000000000000000195 /* AppEnvironment.swift */,
+				100000000000000000000223 /* CueLensAppDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -299,6 +313,7 @@
 				100000000000000000000117 /* verify_persistence_security.sh */,
 				100000000000000000000193 /* verify_network_security.sh */,
 				100000000000000000000200 /* verify_staging_configuration.sh */,
+				100000000000000000000226 /* verify_notification_security.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -395,6 +410,7 @@
 				100000000000000000000020 /* Keychain */,
 				100000000000000000000021 /* Persistence */,
 				100000000000000000000023 /* Network */,
+				100000000000000000000025 /* Notifications */,
 				100000000000000000000196 /* AppSettingsStore.swift */,
 				100000000000000000000197 /* InfoFeedRepository.swift */,
 			);
@@ -428,6 +444,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000024 /* Network */,
+				100000000000000000000026 /* Notifications */,
 				100000000000000000000172 /* InstallationCoordinatorTests.swift */,
 				100000000000000000000171 /* KeychainAppTokenStoreTests.swift */,
 				100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */,
@@ -466,6 +483,25 @@
 				100000000000000000000187 /* StudySubmissionService.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		100000000000000000000025 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000222 /* BackgroundRefreshCoordinator.swift */,
+				100000000000000000000221 /* NotificationCoordinator.swift */,
+				100000000000000000000220 /* NotificationTypes.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		100000000000000000000026 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000225 /* BackgroundRefreshCoordinatorTests.swift */,
+				100000000000000000000224 /* NotificationCoordinatorTests.swift */,
+			);
+			path = Notifications;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -644,6 +680,10 @@
 				100000000000000000000473 /* AppEnvironment.swift in Sources */,
 				100000000000000000000474 /* AppSettingsStore.swift in Sources */,
 				100000000000000000000475 /* InfoFeedRepository.swift in Sources */,
+				100000000000000000000477 /* NotificationTypes.swift in Sources */,
+				100000000000000000000478 /* NotificationCoordinator.swift in Sources */,
+				100000000000000000000479 /* BackgroundRefreshCoordinator.swift in Sources */,
+				100000000000000000000480 /* CueLensAppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,6 +709,8 @@
 				100000000000000000000471 /* HTTPClientTests.swift in Sources */,
 				100000000000000000000472 /* NetworkServiceContractTests.swift in Sources */,
 				100000000000000000000476 /* AppShellTests.swift in Sources */,
+				100000000000000000000481 /* NotificationCoordinatorTests.swift in Sources */,
+				100000000000000000000482 /* BackgroundRefreshCoordinatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

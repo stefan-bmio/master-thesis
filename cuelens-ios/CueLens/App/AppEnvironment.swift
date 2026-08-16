@@ -4,6 +4,28 @@ struct AppEnvironment: Sendable {
     let persistence: any LocalPersistenceLoading
     let settings: any AppSettingsStoring
     let infoFeed: any InfoFeedRepositoryServing
+    let notifications: any NotificationManaging
+    let backgroundRefresh: any BackgroundRefreshManaging
+    let notificationRoutes: NotificationRouteInbox
+    let features: any FeatureConfigServicing
+
+    init(
+        persistence: any LocalPersistenceLoading,
+        settings: any AppSettingsStoring,
+        infoFeed: any InfoFeedRepositoryServing,
+        notifications: any NotificationManaging = DisabledNotificationManager(),
+        backgroundRefresh: any BackgroundRefreshManaging = DisabledBackgroundRefreshManager(),
+        notificationRoutes: NotificationRouteInbox = NotificationRouteInbox(),
+        features: any FeatureConfigServicing = DisabledFeatureConfigService()
+    ) {
+        self.persistence = persistence
+        self.settings = settings
+        self.infoFeed = infoFeed
+        self.notifications = notifications
+        self.backgroundRefresh = backgroundRefresh
+        self.notificationRoutes = notificationRoutes
+        self.features = features
+    }
 
     static func live() throws -> AppEnvironment {
         #if DEBUG
@@ -17,17 +39,33 @@ struct AppEnvironment: Sendable {
                 infoFeed: InfoFeedRepository(
                     service: UITestInfoFeedService(scenario: scenario),
                     settings: settings
-                )
+                ),
+                notificationRoutes: .live
             )
         }
         #else
         let settings = UserDefaultsAppSettingsStore()
         #endif
         let services = try NetworkServices.live()
+        let notifications = NotificationCoordinator()
+        let checker = InfoFeedBackgroundChecker(
+            settings: settings,
+            service: services.messages,
+            notifications: notifications
+        )
+        let backgroundRefresh = BackgroundRefreshCoordinator(
+            checker: checker,
+            notifications: notifications
+        )
+        _ = backgroundRefresh.register()
         return AppEnvironment(
             persistence: LiveLocalPersistenceBootstrap(),
             settings: settings,
-            infoFeed: InfoFeedRepository(service: services.messages, settings: settings)
+            infoFeed: InfoFeedRepository(service: services.messages, settings: settings),
+            notifications: notifications,
+            backgroundRefresh: backgroundRefresh,
+            notificationRoutes: .live,
+            features: services.features
         )
     }
 
@@ -39,6 +77,10 @@ struct AppEnvironment: Sendable {
         return arguments[index + 1]
     }
     #endif
+}
+
+private struct DisabledFeatureConfigService: FeatureConfigServicing {
+    func isNextStudyRunEnabled() async -> Bool { false }
 }
 
 #if DEBUG

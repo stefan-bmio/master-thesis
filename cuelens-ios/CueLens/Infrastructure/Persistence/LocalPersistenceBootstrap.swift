@@ -3,6 +3,17 @@ import Foundation
 struct LocalPersistenceSnapshot: Equatable, Sendable {
     let installation: InstallationPreparation
     let studyState: StudyState
+    let isActivated: Bool
+
+    init(
+        installation: InstallationPreparation,
+        studyState: StudyState,
+        isActivated: Bool = false
+    ) {
+        self.installation = installation
+        self.studyState = studyState
+        self.isActivated = isActivated
+    }
 }
 
 protocol LocalPersistenceLoading: Sendable {
@@ -39,7 +50,8 @@ actor LocalPersistenceBootstrap: LocalPersistenceLoading {
 
         return LocalPersistenceSnapshot(
             installation: preparation,
-            studyState: state
+            studyState: state,
+            isActivated: token != nil
         )
     }
 }

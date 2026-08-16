@@ -10,6 +10,8 @@
 	<key>CFBundlePackageType</key><string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array><string>de.eachandevery.cuelens.infofeed.refresh</string></array>
 	<key>CUELENS_ACTIVATION_URL</key><string>$(CUELENS_ACTIVATION_URL)</string>
 	<key>CUELENS_FEATURES_URL</key><string>$(CUELENS_FEATURES_URL)</string>
 	<key>CUELENS_FEEDBACK_URL</key><string>$(CUELENS_FEEDBACK_URL)</string>
@@ -22,6 +24,8 @@
 	<string>CueLens benötigt in dieser Testversion Zugriff auf den lokalen Testserver, um Informationen zu laden.</string>
 	<key>LSRequiresIPhoneOS</key><true/>
 	<key>UILaunchScreen</key><dict/>
+	<key>UIBackgroundModes</key>
+	<array><string>fetch</string></array>
 	<key>UISupportedInterfaceOrientations~iphone</key>
 	<array><string>UIInterfaceOrientationPortrait</string></array>
 	<key>UISupportedInterfaceOrientations~ipad</key>

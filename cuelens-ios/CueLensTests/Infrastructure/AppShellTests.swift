@@ -93,6 +93,83 @@ final class AppShellTests: XCTestCase {
     }
 
     @MainActor
+    func testSuccessfulFeedShowsAppConsentBeforeAnySystemRequest() async throws {
+        let settings = SettingsStub(settings: .empty)
+        let notifications = AppNotificationStub(requestResult: true)
+        let model = makeModel(settings: settings, notifications: notifications)
+
+        await model.initialize(lifecyclePhase: .active)
+
+        XCTAssertEqual(model.route, .notificationConsent)
+        XCTAssertTrue(model.notificationOptionEnabled)
+        let requestCount = await notifications.currentRequestCount()
+        XCTAssertEqual(requestCount, 0)
+    }
+
+    @MainActor
+    func testDisabledConsentSkipsSystemRequestPersistsFalseAndKeepsCoreAppUsable() async throws {
+        let settings = SettingsStub(settings: .empty)
+        let notifications = AppNotificationStub(requestResult: true)
+        let background = AppBackgroundStub()
+        let model = makeModel(
+            settings: settings,
+            notifications: notifications,
+            backgroundRefresh: background
+        )
+        await model.initialize(lifecyclePhase: .active)
+
+        model.setNotificationOptionEnabled(false)
+        await model.completeNotificationConsent()
+
+        XCTAssertEqual(model.route, .home)
+        let restored = try await settings.load()
+        let requestCount = await notifications.currentRequestCount()
+        let disableCount = await notifications.currentDisableCount()
+        XCTAssertTrue(restored.notificationPromptCompleted)
+        XCTAssertFalse(restored.notificationsEnabled)
+        XCTAssertEqual(requestCount, 0)
+        XCTAssertEqual(disableCount, 1)
+    }
+
+    @MainActor
+    func testGrantedConsentPersistsTrueAndReconcilesBackgroundRefresh() async throws {
+        let settings = SettingsStub(settings: .empty)
+        let notifications = AppNotificationStub(requestResult: true, systemAllowed: true)
+        let background = AppBackgroundStub()
+        let model = makeModel(
+            settings: settings,
+            notifications: notifications,
+            backgroundRefresh: background
+        )
+        await model.initialize(lifecyclePhase: .active)
+
+        await model.completeNotificationConsent()
+
+        let restored = try await settings.load()
+        let requestCount = await notifications.currentRequestCount()
+        let backgroundValues = await background.currentValues()
+        XCTAssertTrue(restored.notificationPromptCompleted)
+        XCTAssertTrue(restored.notificationsEnabled)
+        XCTAssertEqual(requestCount, 1)
+        XCTAssertEqual(backgroundValues.last, true)
+    }
+
+    @MainActor
+    func testDeniedSystemPermissionPersistsFalseAndShowsHome() async throws {
+        let settings = SettingsStub(settings: .empty)
+        let notifications = AppNotificationStub(requestResult: false)
+        let model = makeModel(settings: settings, notifications: notifications)
+        await model.initialize(lifecyclePhase: .active)
+
+        await model.completeNotificationConsent()
+
+        let restored = try await settings.load()
+        XCTAssertEqual(model.route, .home)
+        XCTAssertTrue(restored.notificationPromptCompleted)
+        XCTAssertFalse(restored.notificationsEnabled)
+    }
+
+    @MainActor
     func testFeedNavigationDismissalAndKnownIDs() async throws {
         let feed = FeedStub(messages: [message(id: 1, seconds: 1), message(id: 2, seconds: 2)])
         let model = makeModel(feed: feed)
@@ -142,25 +219,79 @@ final class AppShellTests: XCTestCase {
         try await first.dismissMessage(id: 7)
         try await first.dismissMessage(id: -1)
         try await first.markMessagesKnown(ids: [7, 8, 0])
+        try await first.completeNotificationPrompt(enabled: true)
 
         let restored = try await UserDefaultsAppSettingsStore(suiteName: suiteName).load()
         XCTAssertEqual(restored.selectedLanguage, .english)
         XCTAssertEqual(restored.dismissedMessageIDs, [7])
         XCTAssertEqual(restored.knownMessageIDs, [7, 8])
+        XCTAssertTrue(restored.notificationPromptCompleted)
+        XCTAssertTrue(restored.notificationsEnabled)
         XCTAssertNil(defaults.string(forKey: "message_text"))
+    }
+
+    func testNotificationPreferenceCannotBeEnabledBeforeConsentWasCompleted() async throws {
+        let suiteName = "de.eachandevery.cuelens.tests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set(true, forKey: "notifications_enabled")
+
+        let settings = try await UserDefaultsAppSettingsStore(suiteName: suiteName).load()
+
+        XCTAssertFalse(settings.notificationPromptCompleted)
+        XCTAssertFalse(settings.notificationsEnabled)
+    }
+
+    @MainActor
+    func testInformationNotificationRouteReloadsFeedWhenAppBecomesActive() async {
+        let routes = NotificationRouteInbox()
+        let feed = FeedStub()
+        let model = CueLensAppModel(
+            environment: AppEnvironment(
+                persistence: PersistenceLoaderStub(),
+                settings: SettingsStub(settings: AppSettings(
+                    selectedLanguage: nil,
+                    dismissedMessageIDs: [],
+                    knownMessageIDs: [],
+                    notificationPromptCompleted: true,
+                    notificationsEnabled: false
+                )),
+                infoFeed: feed,
+                notificationRoutes: routes
+            )
+        )
+        await model.initialize(lifecyclePhase: .active)
+        await model.updateLifecycle(.background)
+        await routes.record(.informationFeed)
+
+        await model.updateLifecycle(.active)
+
+        let loadCount = await feed.currentLoadCount()
+        XCTAssertEqual(loadCount, 2)
+        XCTAssertEqual(model.route, .home)
     }
 
     @MainActor
     private func makeModel(
-        settings: SettingsStub = SettingsStub(),
+        settings: SettingsStub = SettingsStub(settings: AppSettings(
+            selectedLanguage: nil,
+            dismissedMessageIDs: [],
+            knownMessageIDs: [],
+            notificationPromptCompleted: true,
+            notificationsEnabled: false
+        )),
         feed: FeedStub = FeedStub(),
-        preferredLanguages: [String] = ["de-CH"]
+        preferredLanguages: [String] = ["de-CH"],
+        notifications: AppNotificationStub = AppNotificationStub(),
+        backgroundRefresh: AppBackgroundStub = AppBackgroundStub()
     ) -> CueLensAppModel {
         CueLensAppModel(
             environment: AppEnvironment(
                 persistence: PersistenceLoaderStub(),
                 settings: settings,
-                infoFeed: feed
+                infoFeed: feed,
+                notifications: notifications,
+                backgroundRefresh: backgroundRefresh
             ),
             preferredLanguages: preferredLanguages
         )
@@ -192,6 +323,10 @@ private actor SettingsStub: AppSettingsStoring {
     func saveLanguage(_ language: AppLanguage) async throws { settings.selectedLanguage = language }
     func dismissMessage(id: Int64) async throws { if id > 0 { settings.dismissedMessageIDs.insert(id) } }
     func markMessagesKnown(ids: Set<Int64>) async throws { settings.knownMessageIDs.formUnion(ids.filter { $0 > 0 }) }
+    func completeNotificationPrompt(enabled: Bool) async throws {
+        settings.notificationPromptCompleted = true
+        settings.notificationsEnabled = enabled
+    }
 }
 
 private actor FailingSettingsStub: AppSettingsStoring {
@@ -199,6 +334,7 @@ private actor FailingSettingsStub: AppSettingsStoring {
     func saveLanguage(_ language: AppLanguage) async throws { throw TestError.expected }
     func dismissMessage(id: Int64) async throws { throw TestError.expected }
     func markMessagesKnown(ids: Set<Int64>) async throws { throw TestError.expected }
+    func completeNotificationPrompt(enabled: Bool) async throws { throw TestError.expected }
 }
 
 private actor FeedStub: InfoFeedRepositoryServing {
@@ -240,3 +376,32 @@ private actor MessageServiceStub: InfoFeedServicing {
 }
 
 private enum TestError: Error { case expected }
+
+private actor AppNotificationStub: NotificationManaging {
+    private let requestResult: Bool
+    private let systemAllowed: Bool
+    private var requestCount = 0
+    private var disableCount = 0
+
+    init(requestResult: Bool = false, systemAllowed: Bool = false) {
+        self.requestResult = requestResult
+        self.systemAllowed = systemAllowed
+    }
+
+    func requestAuthorization() async -> Bool {
+        requestCount += 1
+        return requestResult
+    }
+    func systemAuthorizationAllowed() async -> Bool { systemAllowed }
+    func reconcileStudyReminder(_ context: StudyReminderContext) async {}
+    func scheduleInformationNotification(language: AppLanguage) async {}
+    func disableAll() async { disableCount += 1 }
+    func currentRequestCount() -> Int { requestCount }
+    func currentDisableCount() -> Int { disableCount }
+}
+
+private actor AppBackgroundStub: BackgroundRefreshManaging {
+    private var values: [Bool] = []
+    func reconcile(enabled: Bool) async { values.append(enabled) }
+    func currentValues() -> [Bool] { values }
+}

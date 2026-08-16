@@ -396,6 +396,7 @@ Fehler unkritischer Einstellungen blockieren die App nicht: ungültige Werte wer
 
 **Menschliche Freigabe**
 Ausstehend; vor Beginn von Auftrag 6 ist das Review-Gate freizugeben.
+16.8.2026
 
 ## 16.08.2026 – Korrektur zu Auftrag 5: lokale Staging-Transportpolicy
 
@@ -434,3 +435,33 @@ Nur die Staging-Property-List enthält nun `NSLocalNetworkUsageDescription` mit 
 Die Property Lists werden syntaktisch validiert; anschließend werden Staging- und Release-Artefakt sowie das vollständige Quality-Gate geprüft. Der abschließende Gerätetest muss bei einer frischen Installation die systemseitige Freigabe anzeigen und nach Zustimmung den Feed laden.
 
 Staging- und Release-Artefaktprüfung sowie das vollständige Quality-Gate mit 98 Unit-Tests und je vier UI-Szenarien auf iPhone und iPad unter iOS 26.5 bestanden. Ein signierter Staging-Gerätebuild enthielt die erwartete Nutzungserklärung, wurde als datenbewahrendes Update auf dem verbundenen iPhone installiert und erfolgreich gestartet. Der erneute Dialogtest bleibt bewusst einer späteren frischen Installation vorbehalten, da eine Deinstallation den lokalen Staging-App-Container löschen würde.
+
+## 17.08.2026 – Auftrag 6
+
+**Freigabe und Umfang**
+
+Die unter Auftrag 5 nachgetragene Datumszeile und die ausdrückliche Nutzerbestätigung geben das Review-Gate frei. Umgesetzt wurden der App-interne Benachrichtigungsdialog, die optionale Systemberechtigung, lokale Studienerinnerungen, Notification-Routing, die best-effort Hintergrundprüfung des Informationsfeeds sowie eine modusunabhängige CueLens-Farbpalette.
+
+**Implementierung**
+
+- Der eigene Dialog erscheint nur nach einem erfolgreichen Feedabschluss und vor einer möglichen Systemanfrage. Auswahl, abgeschlossene Entscheidung und effektive Aktivierung werden ohne Gesundheitsdaten in `UserDefaults` gespeichert; Ablehnung und Fehler bleiben fail-safe deaktiviert.
+- `NotificationCoordinator` plant ausschließlich Alert-Benachrichtigungen ohne Ton, Badge, Nutzdaten oder sensible Texte. Deterministische Reminder-IDs, Berechtigungsprüfung, Zustandsregeln, Entfernen obsoleter Requests, Sprachwechsel und neutrale Vorschautexte sind zentral gekapselt.
+- Ein Hinweis auf neue Informationen öffnet den Informationsfeed erneut; eine Studienerinnerung führt nur zur Startseite und löst keine Studienaktion aus.
+- `BGAppRefreshTask` ist unter `de.eachandevery.cuelens.infofeed.refresh` registriert, wird nur bei wirksamer Einwilligung ungefähr täglich erneut geplant und verwendet den bestehenden lesenden Feedservice. Alle abgerufenen IDs werden bekannt gesetzt; pro Lauf entsteht höchstens ein generischer Hinweis.
+- Es gibt keine APNs-Registrierung, kein Push-Entitlement und keinen neuen Backend- oder Android-Eingriff.
+- Die gesamte App erzwingt die festgelegte helle CueLens-Palette auch bei dunkler Systemdarstellung. Nachrichtentexte behalten dadurch auf dem hellen Hintergrund den vorgesehenen dunklen Kontrast.
+
+**Tests und technische Prüfung**
+
+- 116 Unit-Tests prüfen zusätzlich Consent-Reihenfolge und alle Entscheidungen, Preference-Normalisierung, Permission-Entzug, Reminder-Policy und Kennungen, Cancel-/Reconcile-Logik, Sprachwechsel, Routing sowie erfolgreiche, bekannte, ausgeblendete, deaktivierte und fehlschlagende Hintergrundabrufe.
+- Sechs UI-Szenarien liefen auf iPhone und iPad unter iOS 26.5; dazu gehört die Lesbarkeit des Informationsfeeds bei erzwungener dunkler Systemdarstellung.
+- Alle 116 Unit-Tests bestanden zusätzlich unter iOS 17.5.
+- Das vollständige lokale Quality-Gate einschließlich Debug, Staging und Release, die Notification-, Persistenz-, Netzwerk- und Domain-Gates, Release-Analyze sowie ein unsignierter Release-Gerätebuild bestanden.
+- Statische Prüfungen bestätigen ausschließlich `.alert`, das Fehlen von Push, Sound, Badge und sensitiven Payload-Feldern, die Hintergrunddeklaration `fetch`, syntaktisch gültige Property Lists und Lokalisierung sowie das Fehlen erzwungener Casts und Force-Unwraps im Produktionscode.
+- Ein signierter Staging-Build wurde als datenbewahrendes Update auf dem verbundenen iPhone installiert. Der anschließende automatisierte Start wurde ausschließlich durch den gesperrten Gerätezustand abgewiesen; Installation und Signatur waren erfolgreich.
+
+**Abgrenzung und Review-Gate**
+
+Aktivierung und Studienablauf werden erst in den Folgeaufträgen umgesetzt. Die produktive Reminder-Schnittstelle und ihre vollständige Policy sind vorhanden, erhalten bis dahin aber noch keinen aktivierten Fortschrittszustand und planen folgerichtig keine Studienerinnerung. Die Hintergrundausführung bleibt systemseitig best effort; der Vordergrundabruf ist weiterhin maßgeblich.
+
+Ausstehend ist das menschliche Review auf einem echten Gerät: erstmaliges Erlauben und Ablehnen, nachträglicher Berechtigungsentzug, Öffnen beider Notification-Typen und Sprachwechsel. Ein bestehender App-Container wird für diesen Test nicht ohne ausdrückliche Freigabe gelöscht.

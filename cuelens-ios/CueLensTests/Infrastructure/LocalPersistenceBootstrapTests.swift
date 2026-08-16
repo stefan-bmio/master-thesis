@@ -14,6 +14,20 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         let snapshot = try await bootstrap.load()
         XCTAssertEqual(snapshot.installation, .newInstallation)
         XCTAssertEqual(snapshot.studyState, try StudyState.initial)
+        XCTAssertFalse(snapshot.isActivated)
+    }
+
+    func testBootstrapExposesOnlyActivationStatusWithoutExposingToken() async throws {
+        let token = try UUIDv4("550e8400-e29b-41d4-a716-446655440000")
+        let bootstrap = LocalPersistenceBootstrap(
+            installation: StubInstallationPreparer(result: .existingInstallation),
+            tokenStore: StubTokenStore(token: token),
+            stateStore: StubStudyStateStore(state: try StudyState.initial)
+        )
+
+        let snapshot = try await bootstrap.load()
+
+        XCTAssertTrue(snapshot.isActivated)
     }
 
     func testFreshSystemFileBootstrapCreatesInstallationAndLoadsInitialState() async throws {
@@ -94,10 +108,19 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
 }
 
 private actor AppModelSettingsStub: AppSettingsStoring {
-    func load() async throws -> AppSettings { .empty }
+    func load() async throws -> AppSettings {
+        AppSettings(
+            selectedLanguage: nil,
+            dismissedMessageIDs: [],
+            knownMessageIDs: [],
+            notificationPromptCompleted: true,
+            notificationsEnabled: false
+        )
+    }
     func saveLanguage(_ language: AppLanguage) async throws {}
     func dismissMessage(id: Int64) async throws {}
     func markMessagesKnown(ids: Set<Int64>) async throws {}
+    func completeNotificationPrompt(enabled: Bool) async throws {}
 }
 
 private actor AppModelFeedStub: InfoFeedRepositoryServing {

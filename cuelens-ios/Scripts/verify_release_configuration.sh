@@ -44,6 +44,9 @@ MINIMUM_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")
 test "$BUNDLE_ID" = 'de.eachandevery.cuelens'
 test "$MINIMUM_OS" = '17.0'
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLIST")" = 'NO'
+test "$(/usr/libexec/PlistBuddy -c 'Print :BGTaskSchedulerPermittedIdentifiers:0' "$INFO_PLIST")" = \
+  'de.eachandevery.cuelens.infofeed.refresh'
+test "$(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:0' "$INFO_PLIST")" = 'fetch'
 
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ACTIVATION_URL' "$INFO_PLIST")" = \
   'https://cuelens.each-and-every.de/activate.php'
@@ -105,6 +108,10 @@ if grep -q -E 'XCRemoteSwiftPackageReference|XCSwiftPackageProductDependency' Cu
 fi
 if find CueLens -name '*.entitlements' -print -quit | grep -q .; then
   echo 'Unerwartete Entitlement-Datei gefunden.' >&2
+  exit 1
+fi
+if /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:1' "$INFO_PLIST" >/dev/null 2>&1; then
+  echo 'Release enthält einen unerwarteten zusätzlichen Background Mode.' >&2
   exit 1
 fi
 

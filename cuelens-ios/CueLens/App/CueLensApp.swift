@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct CueLensApp: App {
+    @UIApplicationDelegateAdaptor(CueLensAppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @State private var appModel: CueLensAppModel
 

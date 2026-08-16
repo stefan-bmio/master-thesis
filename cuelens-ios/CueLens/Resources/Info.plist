@@ -18,6 +18,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>de.eachandevery.cuelens.infofeed.refresh</string>
+	</array>
 	<key>CUELENS_ACTIVATION_URL</key>
 	<string>$(CUELENS_ACTIVATION_URL)</string>
 	<key>CUELENS_FEATURES_URL</key>
@@ -34,6 +38,10 @@
 	<true/>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~iphone</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

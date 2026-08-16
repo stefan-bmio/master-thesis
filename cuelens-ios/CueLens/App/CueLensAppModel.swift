@@ -4,6 +4,7 @@ import Observation
 enum AppRoute: Equatable, Sendable {
     case loading
     case infoFeed
+    case notificationConsent
     case home
     case secureStorageFailure
 }
@@ -37,6 +38,9 @@ final class CueLensAppModel {
     private var initializationStarted = false
     private var localStateLoaded = false
     private var feedLoadPending = false
+    private var notificationPromptCompleted = false
+    private var notificationsEnabled = false
+    private var appActivated = false
 
     private(set) var route: AppRoute = .loading
     private(set) var language: AppLanguage = .german
@@ -44,6 +48,8 @@ final class CueLensAppModel {
     private(set) var feed: InfoFeedPresentation?
     private(set) var studyState: StudyState?
     private(set) var lifecyclePhase: AppLifecyclePhase = .inactive
+    private(set) var notificationOptionEnabled = true
+    private(set) var isCompletingNotificationConsent = false
 
     var showsPrivacyCurtain: Bool { lifecyclePhase != .active }
 
@@ -70,26 +76,45 @@ final class CueLensAppModel {
             let settings = try await environment.settings.load()
             language = settings.selectedLanguage
                 ?? SystemLanguageResolver.resolve(preferredLanguages: preferredLanguages)
+            notificationPromptCompleted = settings.notificationPromptCompleted
+            notificationsEnabled = settings.notificationsEnabled
         } catch {
             language = SystemLanguageResolver.resolve(preferredLanguages: preferredLanguages)
+            notificationPromptCompleted = true
+            notificationsEnabled = false
             notice = .settingSaveFailed
         }
         do {
             let snapshot = try await environment.persistence.load()
             studyState = snapshot.studyState
+            appActivated = snapshot.isActivated
             localStateLoaded = true
         } catch {
             route = .secureStorageFailure
             return
         }
 
+        await reconcileNotificationInfrastructure()
         await loadFeedWhenActive()
     }
 
     func updateLifecycle(_ phase: AppLifecyclePhase) async {
         lifecyclePhase = phase
-        if phase == .active, localStateLoaded, feedLoadPending {
-            await loadFeedWhenActive()
+        if phase == .active, localStateLoaded {
+            if let notificationRoute = await environment?.notificationRoutes.consume() {
+                switch notificationRoute {
+                case .informationFeed:
+                    route = .loading
+                    feedLoadPending = true
+                case .studyHome:
+                    feed = nil
+                    route = .home
+                }
+            }
+            await reconcileNotificationInfrastructure()
+            if feedLoadPending {
+                await loadFeedWhenActive()
+            }
         }
     }
 
@@ -101,6 +126,37 @@ final class CueLensAppModel {
         } catch {
             notice = .settingSaveFailed
         }
+        await reconcileNotificationInfrastructure()
+    }
+
+    func setNotificationOptionEnabled(_ value: Bool) {
+        guard route == .notificationConsent, !isCompletingNotificationConsent else { return }
+        notificationOptionEnabled = value
+    }
+
+    func completeNotificationConsent() async {
+        guard route == .notificationConsent,
+              !isCompletingNotificationConsent,
+              let environment else { return }
+        isCompletingNotificationConsent = true
+        let enabled = notificationOptionEnabled
+            ? await environment.notifications.requestAuthorization()
+            : false
+        do {
+            try await environment.settings.completeNotificationPrompt(enabled: enabled)
+            notificationPromptCompleted = true
+            notificationsEnabled = enabled
+        } catch {
+            notificationPromptCompleted = true
+            notificationsEnabled = false
+            notice = .settingSaveFailed
+        }
+        if !notificationsEnabled {
+            await environment.notifications.disableAll()
+        }
+        await reconcileNotificationInfrastructure()
+        isCompletingNotificationConsent = false
+        route = .home
     }
 
     func setHidePermanently(_ value: Bool) {
@@ -188,6 +244,42 @@ final class CueLensAppModel {
             }
         }
         feed = nil
-        route = .home
+        if notificationPromptCompleted {
+            route = .home
+        } else {
+            notificationOptionEnabled = true
+            route = .notificationConsent
+        }
+    }
+
+    private func reconcileNotificationInfrastructure() async {
+        guard let environment, let studyState else { return }
+        let systemAllowed = await environment.notifications.systemAuthorizationAllowed()
+        let effectivelyEnabled = notificationsEnabled && systemAllowed
+        let featureEnabled: Bool
+        if effectivelyEnabled, appActivated, reminderStateIsEligibleForFeatureCheck(studyState) {
+            featureEnabled = await environment.features.isNextStudyRunEnabled()
+        } else {
+            featureEnabled = false
+        }
+        await environment.notifications.reconcileStudyReminder(
+            StudyReminderContext(
+                notificationsEnabled: notificationsEnabled,
+                systemAuthorizationAllowed: systemAllowed,
+                appActivated: appActivated,
+                featureEnabled: featureEnabled,
+                state: studyState,
+                language: language,
+                now: Date()
+            )
+        )
+        await environment.backgroundRefresh.reconcile(enabled: effectivelyEnabled)
+    }
+
+    private func reminderStateIsEligibleForFeatureCheck(_ state: StudyState) -> Bool {
+        state.completion == .incomplete
+            && state.pendingCraving == nil
+            && (1..<StudySchedule.totalSituationCount).contains(state.confirmedSituationCount)
+            && state.nextSituationAvailableAt != nil
     }
 }

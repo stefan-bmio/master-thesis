@@ -84,6 +84,20 @@ Deutsch und Englisch lassen sich ohne Neustart umschalten; die Auswahl bleibt in
 ./Scripts/verify_staging_configuration.sh
 ```
 
+Die Oberfläche verwendet die festgelegte CueLens-Farbpalette unabhängig von der iOS-Systemdarstellung. Dadurch bleiben insbesondere Nachrichtentexte auch bei aktiviertem dunklem Systemmodus dunkel und auf dem hellen Hintergrund lesbar.
+
+## Optionale Benachrichtigungen aus Auftrag 6
+
+Nach einem erfolgreichen ersten Feedabschluss zeigt die App genau einmal einen eigenen Benachrichtigungsdialog. Nur bei aktivierter Option folgt die iOS-Systemanfrage; Ablehnung oder ein späterer Entzug beeinträchtigen die Kernfunktionen nicht. Die lokal gespeicherte Einstellung gilt gemeinsam für generische Hinweise auf neue Informationen und Studienerinnerungen.
+
+`NotificationCoordinator` verwendet ausschließlich Alert-Benachrichtigungen ohne Ton, Badge, sensible Nutzdaten oder Push-Registrierung. Studienerinnerungen besitzen deterministische Kennungen und werden nur für einen fachlich zulässigen, aktivierten Studienzustand geplant. Sprachwechsel ersetzen eine ausstehende Erinnerung, deaktivierte Berechtigungen oder nicht zulässige Zustände entfernen sie. Das Öffnen einer Erinnerung führt nur zur Startseite; das Öffnen eines Informationshinweises lädt den Feed erneut.
+
+Die best-effort Hintergrundprüfung nutzt `BGAppRefreshTask` ungefähr täglich. Ihr tatsächlicher Ausführungszeitpunkt wird von iOS bestimmt; der Feedabruf beim Aktivieren der App bleibt deshalb autoritativ. Die produktive Studienzustandsanbindung für Erinnerungen erfolgt über den bereits implementierten Reconcile-Einstieg, sobald Aktivierung und Studiendurchführung in den Folgeaufträgen verfügbar sind.
+
+```sh
+./Scripts/verify_notification_security.sh
+```
+
 ## Datenschutz und Abgrenzung
 
 Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.

@@ -118,6 +118,34 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Dismiss" } }
       }
     },
+    "notification.consent.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } }
+      }
+    },
+    "notification.consent.text" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über die Verfügbarkeit einer neuen Studienaufgabe informieren. Benachrichtigungen enthalten keine Angaben zu Rauchstatus oder Rauchverlangen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "CueLens can notify you about new general information such as update notes and when a new study task becomes available. Notifications do not contain information about smoking status or tobacco cravings." } }
+      }
+    },
+    "notification.consent.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benachrichtigungen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notifications" } }
+      }
+    },
+    "notification.consent.toggle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benachrichtigungen zulassen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Allow notifications" } }
+      }
+    },
     "settings.saveFailed" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -5,7 +5,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
+            CueLensPalette.background
                 .ignoresSafeArea()
             routeContent
             if appModel.showsPrivacyCurtain {
@@ -13,6 +13,8 @@ struct ContentView: View {
                     .zIndex(100)
             }
         }
+        .foregroundStyle(CueLensPalette.text)
+        .preferredColorScheme(.light)
         .overlay(alignment: .bottom) {
             if let notice = appModel.notice {
                 NoticeView(notice: notice) {
@@ -32,12 +34,22 @@ struct ContentView: View {
             if let feed = appModel.feed {
                 InfoMessageView(feed: feed, appModel: appModel)
             }
+        case .notificationConsent:
+            NotificationConsentView(appModel: appModel)
         case .home:
             HomePlaceholderView(appModel: appModel)
         case .secureStorageFailure:
             SecureStorageFailureView()
         }
     }
+}
+
+private enum CueLensPalette {
+    static let background = Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
+    static let primary = Color(red: 0, green: 98 / 255, blue: 105 / 255)
+    static let text = Color(red: 32 / 255, green: 42 / 255, blue: 41 / 255)
+    static let secondaryText = Color(red: 63 / 255, green: 74 / 255, blue: 73 / 255)
+    static let noticeBackground = Color.white.opacity(0.96)
 }
 
 private struct HomePlaceholderView: View {
@@ -52,9 +64,47 @@ private struct HomePlaceholderView: View {
                 .font(.largeTitle.bold())
                 .accessibilityIdentifier("app.title")
             Text("home.placeholder")
-                .foregroundStyle(Color(red: 63 / 255, green: 74 / 255, blue: 73 / 255))
+                .foregroundStyle(CueLensPalette.secondaryText)
                 .multilineTextAlignment(.center)
                 .accessibilityIdentifier("app.foundationStatus.ready")
+            Spacer()
+        }
+        .padding(20)
+    }
+}
+
+private struct NotificationConsentView: View {
+    let appModel: CueLensAppModel
+
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Spacer()
+                LanguageButton(appModel: appModel)
+            }
+            Spacer()
+            Text("notification.consent.title")
+                .font(.title.bold())
+                .accessibilityIdentifier("notification.consent.title")
+            Text("notification.consent.text")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(CueLensPalette.secondaryText)
+            Toggle(
+                "notification.consent.toggle",
+                isOn: Binding(
+                    get: { appModel.notificationOptionEnabled },
+                    set: { appModel.setNotificationOptionEnabled($0) }
+                )
+            )
+            .tint(CueLensPalette.primary)
+            .disabled(appModel.isCompletingNotificationConsent)
+            .accessibilityIdentifier("notification.consent.toggle")
+            Button("notification.consent.continue") {
+                Task { await appModel.completeNotificationConsent() }
+            }
+            .buttonStyle(CueLensPrimaryButtonStyle())
+            .disabled(appModel.isCompletingNotificationConsent)
+            .accessibilityIdentifier("notification.consent.continue")
             Spacer()
         }
         .padding(20)
@@ -117,7 +167,7 @@ private struct LanguageButton: View {
             Task { await appModel.toggleLanguage() }
         }
         .buttonStyle(.bordered)
-        .tint(Color(red: 0, green: 98 / 255, blue: 105 / 255))
+        .tint(CueLensPalette.primary)
         .accessibilityLabel(Text("language.switch.accessibility"))
         .accessibilityIdentifier("language.switch")
     }
@@ -140,7 +190,7 @@ private struct SecureStorageFailureView: View {
 private struct PrivacyCurtainView: View {
     var body: some View {
         ZStack {
-            Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
+            CueLensPalette.background
                 .ignoresSafeArea()
             Text("app.title")
                 .font(.largeTitle.bold())
@@ -160,7 +210,7 @@ private struct NoticeView: View {
             Button("notice.dismiss", action: dismiss)
         }
         .padding()
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .background(CueLensPalette.noticeBackground, in: RoundedRectangle(cornerRadius: 12))
         .padding()
     }
 
@@ -178,7 +228,7 @@ private struct CueLensPrimaryButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .foregroundStyle(.white)
-            .background(Color(red: 0, green: 98 / 255, blue: 105 / 255), in: RoundedRectangle(cornerRadius: 6))
+            .background(CueLensPalette.primary, in: RoundedRectangle(cornerRadius: 6))
             .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

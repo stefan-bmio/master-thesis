@@ -16,6 +16,7 @@ cd "$PROJECT_ROOT"
 $SCRIPT_DIR/verify_domain_boundaries.sh
 $SCRIPT_DIR/verify_persistence_security.sh
 $SCRIPT_DIR/verify_network_security.sh
+$SCRIPT_DIR/verify_notification_security.sh
 $SCRIPT_DIR/verify_staging_configuration.sh "$DERIVED_DATA"
 
 EXPECTED_XCODE='Xcode 26.6'

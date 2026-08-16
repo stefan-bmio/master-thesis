@@ -25,6 +25,9 @@ test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLI
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSAppTransportSecurity:NSAllowsLocalNetworking' "$INFO_PLIST")" = 'true'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSLocalNetworkUsageDescription' "$INFO_PLIST")" = \
   'CueLens benötigt in dieser Testversion Zugriff auf den lokalen Testserver, um Informationen zu laden.'
+test "$(/usr/libexec/PlistBuddy -c 'Print :BGTaskSchedulerPermittedIdentifiers:0' "$INFO_PLIST")" = \
+  'de.eachandevery.cuelens.infofeed.refresh'
+test "$(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:0' "$INFO_PLIST")" = 'fetch'
 if /usr/libexec/PlistBuddy -c 'Print :NSAppTransportSecurity:NSAllowsArbitraryLoads' "$INFO_PLIST" >/dev/null 2>&1; then
   echo 'Staging darf keine globale ATS-Ausnahme enthalten.' >&2
   exit 1
