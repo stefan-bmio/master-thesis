@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cuelens.each-and-every.de/schemas/study-content-v1.schema.json",
+  "title": "CueLens study content version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "matching", "labeling", "demo"],
+  "properties": {
+    "version": {"const": 1},
+    "matching": {
+      "type": "array",
+      "minItems": 50,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "cue", "match_a", "match_b"],
+        "properties": {
+          "index": {"type": "integer", "minimum": 0, "maximum": 49},
+          "cue": {"type": "string", "pattern": "^cue_[0-9]{3}$"},
+          "match_a": {"type": "string", "pattern": "^match_a_[0-9]{3}$"},
+          "match_b": {"type": "string", "pattern": "^match_b_[0-9]{3}$"}
+        }
+      }
+    },
+    "labeling": {
+      "type": "array",
+      "minItems": 50,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "cue", "de", "en"],
+        "properties": {
+          "index": {"type": "integer", "minimum": 0, "maximum": 49},
+          "cue": {"type": "string", "pattern": "^cue_[0-9]{3}$"},
+          "de": {"$ref": "#/$defs/labelPair"},
+          "en": {"$ref": "#/$defs/labelPair"}
+        }
+      }
+    },
+    "demo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["matching_index", "labeling_index"],
+      "properties": {
+        "matching_index": {"const": 0},
+        "labeling_index": {"const": 1}
+      }
+    }
+  },
+  "$defs": {
+    "labelPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fitting", "less_fitting"],
+      "properties": {
+        "fitting": {"type": "string", "minLength": 1},
+        "less_fitting": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
+

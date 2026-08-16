@@ -1,0 +1,911 @@
+{
+  "version": 1,
+  "matching": [
+    {
+      "index": 0,
+      "cue": "cue_000",
+      "match_a": "match_a_000",
+      "match_b": "match_b_000"
+    },
+    {
+      "index": 1,
+      "cue": "cue_001",
+      "match_a": "match_a_001",
+      "match_b": "match_b_001"
+    },
+    {
+      "index": 2,
+      "cue": "cue_002",
+      "match_a": "match_a_002",
+      "match_b": "match_b_002"
+    },
+    {
+      "index": 3,
+      "cue": "cue_003",
+      "match_a": "match_a_003",
+      "match_b": "match_b_003"
+    },
+    {
+      "index": 4,
+      "cue": "cue_004",
+      "match_a": "match_a_004",
+      "match_b": "match_b_004"
+    },
+    {
+      "index": 5,
+      "cue": "cue_005",
+      "match_a": "match_a_005",
+      "match_b": "match_b_005"
+    },
+    {
+      "index": 6,
+      "cue": "cue_006",
+      "match_a": "match_a_006",
+      "match_b": "match_b_006"
+    },
+    {
+      "index": 7,
+      "cue": "cue_007",
+      "match_a": "match_a_007",
+      "match_b": "match_b_007"
+    },
+    {
+      "index": 8,
+      "cue": "cue_008",
+      "match_a": "match_a_008",
+      "match_b": "match_b_008"
+    },
+    {
+      "index": 9,
+      "cue": "cue_009",
+      "match_a": "match_a_009",
+      "match_b": "match_b_009"
+    },
+    {
+      "index": 10,
+      "cue": "cue_010",
+      "match_a": "match_a_010",
+      "match_b": "match_b_010"
+    },
+    {
+      "index": 11,
+      "cue": "cue_011",
+      "match_a": "match_a_011",
+      "match_b": "match_b_011"
+    },
+    {
+      "index": 12,
+      "cue": "cue_012",
+      "match_a": "match_a_012",
+      "match_b": "match_b_012"
+    },
+    {
+      "index": 13,
+      "cue": "cue_013",
+      "match_a": "match_a_013",
+      "match_b": "match_b_013"
+    },
+    {
+      "index": 14,
+      "cue": "cue_014",
+      "match_a": "match_a_014",
+      "match_b": "match_b_014"
+    },
+    {
+      "index": 15,
+      "cue": "cue_015",
+      "match_a": "match_a_015",
+      "match_b": "match_b_015"
+    },
+    {
+      "index": 16,
+      "cue": "cue_016",
+      "match_a": "match_a_016",
+      "match_b": "match_b_016"
+    },
+    {
+      "index": 17,
+      "cue": "cue_017",
+      "match_a": "match_a_017",
+      "match_b": "match_b_017"
+    },
+    {
+      "index": 18,
+      "cue": "cue_018",
+      "match_a": "match_a_018",
+      "match_b": "match_b_018"
+    },
+    {
+      "index": 19,
+      "cue": "cue_019",
+      "match_a": "match_a_019",
+      "match_b": "match_b_019"
+    },
+    {
+      "index": 20,
+      "cue": "cue_020",
+      "match_a": "match_a_020",
+      "match_b": "match_b_020"
+    },
+    {
+      "index": 21,
+      "cue": "cue_021",
+      "match_a": "match_a_021",
+      "match_b": "match_b_021"
+    },
+    {
+      "index": 22,
+      "cue": "cue_022",
+      "match_a": "match_a_022",
+      "match_b": "match_b_022"
+    },
+    {
+      "index": 23,
+      "cue": "cue_023",
+      "match_a": "match_a_023",
+      "match_b": "match_b_023"
+    },
+    {
+      "index": 24,
+      "cue": "cue_024",
+      "match_a": "match_a_024",
+      "match_b": "match_b_024"
+    },
+    {
+      "index": 25,
+      "cue": "cue_025",
+      "match_a": "match_a_025",
+      "match_b": "match_b_025"
+    },
+    {
+      "index": 26,
+      "cue": "cue_026",
+      "match_a": "match_a_026",
+      "match_b": "match_b_026"
+    },
+    {
+      "index": 27,
+      "cue": "cue_027",
+      "match_a": "match_a_027",
+      "match_b": "match_b_027"
+    },
+    {
+      "index": 28,
+      "cue": "cue_028",
+      "match_a": "match_a_028",
+      "match_b": "match_b_028"
+    },
+    {
+      "index": 29,
+      "cue": "cue_029",
+      "match_a": "match_a_029",
+      "match_b": "match_b_029"
+    },
+    {
+      "index": 30,
+      "cue": "cue_030",
+      "match_a": "match_a_030",
+      "match_b": "match_b_030"
+    },
+    {
+      "index": 31,
+      "cue": "cue_031",
+      "match_a": "match_a_031",
+      "match_b": "match_b_031"
+    },
+    {
+      "index": 32,
+      "cue": "cue_032",
+      "match_a": "match_a_032",
+      "match_b": "match_b_032"
+    },
+    {
+      "index": 33,
+      "cue": "cue_033",
+      "match_a": "match_a_033",
+      "match_b": "match_b_033"
+    },
+    {
+      "index": 34,
+      "cue": "cue_034",
+      "match_a": "match_a_034",
+      "match_b": "match_b_034"
+    },
+    {
+      "index": 35,
+      "cue": "cue_035",
+      "match_a": "match_a_035",
+      "match_b": "match_b_035"
+    },
+    {
+      "index": 36,
+      "cue": "cue_036",
+      "match_a": "match_a_036",
+      "match_b": "match_b_036"
+    },
+    {
+      "index": 37,
+      "cue": "cue_037",
+      "match_a": "match_a_037",
+      "match_b": "match_b_037"
+    },
+    {
+      "index": 38,
+      "cue": "cue_038",
+      "match_a": "match_a_038",
+      "match_b": "match_b_038"
+    },
+    {
+      "index": 39,
+      "cue": "cue_039",
+      "match_a": "match_a_039",
+      "match_b": "match_b_039"
+    },
+    {
+      "index": 40,
+      "cue": "cue_040",
+      "match_a": "match_a_040",
+      "match_b": "match_b_040"
+    },
+    {
+      "index": 41,
+      "cue": "cue_041",
+      "match_a": "match_a_041",
+      "match_b": "match_b_041"
+    },
+    {
+      "index": 42,
+      "cue": "cue_042",
+      "match_a": "match_a_042",
+      "match_b": "match_b_042"
+    },
+    {
+      "index": 43,
+      "cue": "cue_043",
+      "match_a": "match_a_043",
+      "match_b": "match_b_043"
+    },
+    {
+      "index": 44,
+      "cue": "cue_044",
+      "match_a": "match_a_044",
+      "match_b": "match_b_044"
+    },
+    {
+      "index": 45,
+      "cue": "cue_045",
+      "match_a": "match_a_045",
+      "match_b": "match_b_045"
+    },
+    {
+      "index": 46,
+      "cue": "cue_046",
+      "match_a": "match_a_046",
+      "match_b": "match_b_046"
+    },
+    {
+      "index": 47,
+      "cue": "cue_047",
+      "match_a": "match_a_047",
+      "match_b": "match_b_047"
+    },
+    {
+      "index": 48,
+      "cue": "cue_048",
+      "match_a": "match_a_048",
+      "match_b": "match_b_048"
+    },
+    {
+      "index": 49,
+      "cue": "cue_049",
+      "match_a": "match_a_049",
+      "match_b": "match_b_049"
+    }
+  ],
+  "labeling": [
+    {
+      "index": 0,
+      "cue": "cue_000",
+      "de": {
+        "fitting": "Rauchschleier",
+        "less_fitting": "Abendlicht"
+      },
+      "en": {
+        "fitting": "smoke haze",
+        "less_fitting": "evening light"
+      }
+    },
+    {
+      "index": 1,
+      "cue": "cue_001",
+      "de": {
+        "fitting": "Aschegeruch",
+        "less_fitting": "Regenschirmmoment"
+      },
+      "en": {
+        "fitting": "smell of ash",
+        "less_fitting": "umbrella moment"
+      }
+    },
+    {
+      "index": 2,
+      "cue": "cue_002",
+      "de": {
+        "fitting": "Kaffee dazu",
+        "less_fitting": "Handy in der Hand"
+      },
+      "en": {
+        "fitting": "coffee with it",
+        "less_fitting": "phone in hand"
+      }
+    },
+    {
+      "index": 3,
+      "cue": "cue_003",
+      "de": {
+        "fitting": "nachglimmen",
+        "less_fitting": "Tischrunde"
+      },
+      "en": {
+        "fitting": "smoldering",
+        "less_fitting": "around the table"
+      }
+    },
+    {
+      "index": 4,
+      "cue": "cue_004",
+      "de": {
+        "fitting": "ausdrücken",
+        "less_fitting": "Nachtluft"
+      },
+      "en": {
+        "fitting": "stubbing it out",
+        "less_fitting": "night air"
+      }
+    },
+    {
+      "index": 5,
+      "cue": "cue_005",
+      "de": {
+        "fitting": "abaschen",
+        "less_fitting": "Packung öffnen"
+      },
+      "en": {
+        "fitting": "tapping off ash",
+        "less_fitting": "opening the pack"
+      }
+    },
+    {
+      "index": 6,
+      "cue": "cue_006",
+      "de": {
+        "fitting": "Zigarette nehmen",
+        "less_fitting": "Rauchkringel"
+      },
+      "en": {
+        "fitting": "taking a cigarette",
+        "less_fitting": "smoke ring"
+      }
+    },
+    {
+      "index": 7,
+      "cue": "cue_007",
+      "de": {
+        "fitting": "Packung klopfen",
+        "less_fitting": "Fensterpause"
+      },
+      "en": {
+        "fitting": "tapping the pack",
+        "less_fitting": "window break"
+      }
+    },
+    {
+      "index": 8,
+      "cue": "cue_008",
+      "de": {
+        "fitting": "Zigarette nehmen",
+        "less_fitting": "gemeinsam draußen"
+      },
+      "en": {
+        "fitting": "taking a cigarette",
+        "less_fitting": "outside together"
+      }
+    },
+    {
+      "index": 9,
+      "cue": "cue_009",
+      "de": {
+        "fitting": "Stadtluft",
+        "less_fitting": "Balkonmoment"
+      },
+      "en": {
+        "fitting": "city air",
+        "less_fitting": "balcony moment"
+      }
+    },
+    {
+      "index": 10,
+      "cue": "cue_010",
+      "de": {
+        "fitting": "Packungsrascheln",
+        "less_fitting": "Rauchschleier"
+      },
+      "en": {
+        "fitting": "pack rustling",
+        "less_fitting": "smoke haze"
+      }
+    },
+    {
+      "index": 11,
+      "cue": "cue_011",
+      "de": {
+        "fitting": "Wegbegleiter",
+        "less_fitting": "Tischrunde"
+      },
+      "en": {
+        "fitting": "companion",
+        "less_fitting": "around the table"
+      }
+    },
+    {
+      "index": 12,
+      "cue": "cue_012",
+      "de": {
+        "fitting": "Feuer suchen",
+        "less_fitting": "Wolke"
+      },
+      "en": {
+        "fitting": "looking for a light",
+        "less_fitting": "cloud"
+      }
+    },
+    {
+      "index": 13,
+      "cue": "cue_013",
+      "de": {
+        "fitting": "Klick",
+        "less_fitting": "Geselligkeit"
+      },
+      "en": {
+        "fitting": "click",
+        "less_fitting": "company"
+      }
+    },
+    {
+      "index": 14,
+      "cue": "cue_014",
+      "de": {
+        "fitting": "Haltestellenpause",
+        "less_fitting": "Glutmoment"
+      },
+      "en": {
+        "fitting": "bus-stop break",
+        "less_fitting": "glowing moment"
+      }
+    },
+    {
+      "index": 15,
+      "cue": "cue_015",
+      "de": {
+        "fitting": "Papiergeschmack",
+        "less_fitting": "Hofpause"
+      },
+      "en": {
+        "fitting": "taste of paper",
+        "less_fitting": "courtyard break"
+      }
+    },
+    {
+      "index": 16,
+      "cue": "cue_016",
+      "de": {
+        "fitting": "Gewohnheitsgriff",
+        "less_fitting": "Kneipenluft"
+      },
+      "en": {
+        "fitting": "habitual reach",
+        "less_fitting": "pub air"
+      }
+    },
+    {
+      "index": 17,
+      "cue": "cue_017",
+      "de": {
+        "fitting": "Fingergefühl",
+        "less_fitting": "Feuerzeugklick"
+      },
+      "en": {
+        "fitting": "feeling in the fingers",
+        "less_fitting": "lighter click"
+      }
+    },
+    {
+      "index": 18,
+      "cue": "cue_018",
+      "de": {
+        "fitting": "Aufglimmen",
+        "less_fitting": "gemeinsam draußen"
+      },
+      "en": {
+        "fitting": "lighting up",
+        "less_fitting": "outside together"
+      }
+    },
+    {
+      "index": 19,
+      "cue": "cue_019",
+      "de": {
+        "fitting": "Tischrunde",
+        "less_fitting": "Filtergeschmack"
+      },
+      "en": {
+        "fitting": "around the table",
+        "less_fitting": "taste of the filter"
+      }
+    },
+    {
+      "index": 20,
+      "cue": "cue_020",
+      "de": {
+        "fitting": "Gesprächspause",
+        "less_fitting": "erster Zug"
+      },
+      "en": {
+        "fitting": "pause in conversation",
+        "less_fitting": "first drag"
+      }
+    },
+    {
+      "index": 21,
+      "cue": "cue_021",
+      "de": {
+        "fitting": "Nachtluft",
+        "less_fitting": "verbrannter Geruch"
+      },
+      "en": {
+        "fitting": "night air",
+        "less_fitting": "burnt smell"
+      }
+    },
+    {
+      "index": 22,
+      "cue": "cue_022",
+      "de": {
+        "fitting": "rauchige Luft",
+        "less_fitting": "Kaffee dazu"
+      },
+      "en": {
+        "fitting": "smoky air",
+        "less_fitting": "coffee with it"
+      }
+    },
+    {
+      "index": 23,
+      "cue": "cue_023",
+      "de": {
+        "fitting": "Tischrunde",
+        "less_fitting": "Glutpunkt"
+      },
+      "en": {
+        "fitting": "around the table",
+        "less_fitting": "glowing tip"
+      }
+    },
+    {
+      "index": 24,
+      "cue": "cue_024",
+      "de": {
+        "fitting": "Gewohnheitsgriff",
+        "less_fitting": "trockener Tabak"
+      },
+      "en": {
+        "fitting": "habitual reach",
+        "less_fitting": "dry tobacco"
+      }
+    },
+    {
+      "index": 25,
+      "cue": "cue_025",
+      "de": {
+        "fitting": "Dazugehören",
+        "less_fitting": "Filter an den Lippen"
+      },
+      "en": {
+        "fitting": "belonging",
+        "less_fitting": "filter on the lips"
+      }
+    },
+    {
+      "index": 26,
+      "cue": "cue_026",
+      "de": {
+        "fitting": "gemeinsam draußen",
+        "less_fitting": "Papiergeschmack"
+      },
+      "en": {
+        "fitting": "outside together",
+        "less_fitting": "taste of paper"
+      }
+    },
+    {
+      "index": 27,
+      "cue": "cue_027",
+      "de": {
+        "fitting": "Flamme",
+        "less_fitting": "Asche abstreifen"
+      },
+      "en": {
+        "fitting": "flame",
+        "less_fitting": "brushing off ash"
+      }
+    },
+    {
+      "index": 28,
+      "cue": "cue_028",
+      "de": {
+        "fitting": "leiser Moment",
+        "less_fitting": "Mundzug"
+      },
+      "en": {
+        "fitting": "quiet moment",
+        "less_fitting": "draw in the mouth"
+      }
+    },
+    {
+      "index": 29,
+      "cue": "cue_029",
+      "de": {
+        "fitting": "Wartezeit",
+        "less_fitting": "herber Duft"
+      },
+      "en": {
+        "fitting": "waiting time",
+        "less_fitting": "tart scent"
+      }
+    },
+    {
+      "index": 30,
+      "cue": "cue_030",
+      "de": {
+        "fitting": "kleine Ruhe",
+        "less_fitting": "Feuerzeugklick"
+      },
+      "en": {
+        "fitting": "brief calm",
+        "less_fitting": "lighter click"
+      }
+    },
+    {
+      "index": 31,
+      "cue": "cue_031",
+      "de": {
+        "fitting": "Jetzt eine",
+        "less_fitting": "Mundzug"
+      },
+      "en": {
+        "fitting": "one right now",
+        "less_fitting": "draw in the mouth"
+      }
+    },
+    {
+      "index": 32,
+      "cue": "cue_032",
+      "de": {
+        "fitting": "Nachtluft",
+        "less_fitting": "Filtergeschmack"
+      },
+      "en": {
+        "fitting": "night air",
+        "less_fitting": "taste of the filter"
+      }
+    },
+    {
+      "index": 33,
+      "cue": "cue_033",
+      "de": {
+        "fitting": "Anzündmoment",
+        "less_fitting": "Stadtluft"
+      },
+      "en": {
+        "fitting": "lighting moment",
+        "less_fitting": "city air"
+      }
+    },
+    {
+      "index": 34,
+      "cue": "cue_034",
+      "de": {
+        "fitting": "Fensterpause",
+        "less_fitting": "Flamme"
+      },
+      "en": {
+        "fitting": "window break",
+        "less_fitting": "flame"
+      }
+    },
+    {
+      "index": 35,
+      "cue": "cue_035",
+      "de": {
+        "fitting": "Schreibtischpause",
+        "less_fitting": "Regenschirmmoment"
+      },
+      "en": {
+        "fitting": "desk break",
+        "less_fitting": "umbrella moment"
+      }
+    },
+    {
+      "index": 36,
+      "cue": "cue_036",
+      "de": {
+        "fitting": "Halskratzen",
+        "less_fitting": "Balkonmoment"
+      },
+      "en": {
+        "fitting": "scratchy throat",
+        "less_fitting": "balcony moment"
+      }
+    },
+    {
+      "index": 37,
+      "cue": "cue_037",
+      "de": {
+        "fitting": "runterkommen",
+        "less_fitting": "Knistern"
+      },
+      "en": {
+        "fitting": "winding down",
+        "less_fitting": "crackling"
+      }
+    },
+    {
+      "index": 38,
+      "cue": "cue_038",
+      "de": {
+        "fitting": "dichter Zug",
+        "less_fitting": "Packung klopfen"
+      },
+      "en": {
+        "fitting": "dense drag",
+        "less_fitting": "tapping the pack"
+      }
+    },
+    {
+      "index": 39,
+      "cue": "cue_039",
+      "de": {
+        "fitting": "Feierabendzug",
+        "less_fitting": "Folie öffnen"
+      },
+      "en": {
+        "fitting": "after-work drag",
+        "less_fitting": "opening the foil"
+      }
+    },
+    {
+      "index": 40,
+      "cue": "cue_040",
+      "de": {
+        "fitting": "vertrauter Moment",
+        "less_fitting": "Flamme"
+      },
+      "en": {
+        "fitting": "familiar moment",
+        "less_fitting": "flame"
+      }
+    },
+    {
+      "index": 41,
+      "cue": "cue_041",
+      "de": {
+        "fitting": "draußen stehen",
+        "less_fitting": "Schreibtischpause"
+      },
+      "en": {
+        "fitting": "standing outside",
+        "less_fitting": "desk break"
+      }
+    },
+    {
+      "index": 42,
+      "cue": "cue_042",
+      "de": {
+        "fitting": "Haltestellenpause",
+        "less_fitting": "würziges Aroma"
+      },
+      "en": {
+        "fitting": "bus-stop break",
+        "less_fitting": "spicy aroma"
+      }
+    },
+    {
+      "index": 43,
+      "cue": "cue_043",
+      "de": {
+        "fitting": "vor die Tür",
+        "less_fitting": "Nachgeschmack"
+      },
+      "en": {
+        "fitting": "stepping outside",
+        "less_fitting": "aftertaste"
+      }
+    },
+    {
+      "index": 44,
+      "cue": "cue_044",
+      "de": {
+        "fitting": "ziehen",
+        "less_fitting": "Dazugehören"
+      },
+      "en": {
+        "fitting": "taking a drag",
+        "less_fitting": "belonging"
+      }
+    },
+    {
+      "index": 45,
+      "cue": "cue_045",
+      "de": {
+        "fitting": "nur kurz",
+        "less_fitting": "Feierabendzug"
+      },
+      "en": {
+        "fitting": "just briefly",
+        "less_fitting": "after-work drag"
+      }
+    },
+    {
+      "index": 46,
+      "cue": "cue_046",
+      "de": {
+        "fitting": "Automatismus",
+        "less_fitting": "Aschegeruch"
+      },
+      "en": {
+        "fitting": "automatic habit",
+        "less_fitting": "smell of ash"
+      }
+    },
+    {
+      "index": 47,
+      "cue": "cue_047",
+      "de": {
+        "fitting": "Lust auf Zug",
+        "less_fitting": "Knistern"
+      },
+      "en": {
+        "fitting": "wanting a drag",
+        "less_fitting": "crackling"
+      }
+    },
+    {
+      "index": 48,
+      "cue": "cue_048",
+      "de": {
+        "fitting": "Feierabendzug",
+        "less_fitting": "Tabakduft"
+      },
+      "en": {
+        "fitting": "after-work drag",
+        "less_fitting": "tobacco scent"
+      }
+    },
+    {
+      "index": 49,
+      "cue": "cue_049",
+      "de": {
+        "fitting": "Rauchkringel",
+        "less_fitting": "Aufglimmen"
+      },
+      "en": {
+        "fitting": "smoke ring",
+        "less_fitting": "lighting up"
+      }
+    }
+  ],
+  "demo": {
+    "matching_index": 0,
+    "labeling_index": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cuelens.each-and-every.de/schemas/study-assets-manifest-v1.schema.json",
+  "title": "CueLens study asset manifest version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "hash_algorithm", "assets"],
+  "properties": {
+    "version": {"const": 1},
+    "hash_algorithm": {"const": "sha256"},
+    "assets": {
+      "type": "array",
+      "minItems": 150,
+      "maxItems": 150,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "filename", "sha256", "pixel_width", "pixel_height"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^(cue|match_a|match_b)_[0-9]{3}$"},
+          "filename": {"type": "string", "pattern": "^(cue|match_a|match_b)_[0-9]{3}\\.png$"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "pixel_width": {"const": 512},
+          "pixel_height": {"const": 512}
+        }
+      }
+    }
+  }
+}
+
