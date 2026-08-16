@@ -1,0 +1,16 @@
+#include "Base.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.staging
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG STAGING
+SWIFT_OPTIMIZATION_LEVEL = -Onone
+ENABLE_TESTABILITY = YES
+DEBUG_INFORMATION_FORMAT = dwarf
+
+CUELENS_ACTIVATION_URL = https:/$()/staging.invalid/activate
+CUELENS_MESSAGES_URL = https:/$()/staging.invalid/messages
+CUELENS_FEEDBACK_URL = https:/$()/staging.invalid/feedback
+CUELENS_FEATURES_URL = https:/$()/staging.invalid/features
+CUELENS_SUBMIT_URL = https:/$()/staging.invalid/submit
+CUELENS_PRIVACY_URL_DE = https:/$()/staging.invalid/privacy-de
+CUELENS_PRIVACY_URL_EN = https:/$()/staging.invalid/privacy-en
+CUELENS_RUN_COOLDOWN_SECONDS = 3

@@ -5,3 +5,5 @@ DerivedData/
 build/
 *.xcuserstate
 xcuserdata/
+Config/LocalSigning.xcconfig
+*.xcresult

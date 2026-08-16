@@ -62,3 +62,60 @@ Wegen des auf dem Entwicklungs-Mac vorhandenen Python 3.9 wurde `check-jsonschem
 
 **Menschliche Freigabe**  
 Am 16.08.2026 ohne Namensnennung erteilt; die Fortsetzung mit Auftrag 1 wurde ausdrücklich beauftragt.
+
+## 16.08.2026 – Auftrag 1
+
+**Datum und Branch**
+16.08.2026; Branch `codex/ios-auftrag-1`; Umsetzung auf Basis des freigegebenen Auftrags 0.
+
+**Auftragsnummer**
+Auftrag 1 – Xcode-Projekt, Build-Konfiguration und lokales CI-/Quality-Gate-Grundgerüst.
+
+**Ziel**
+Ein reproduzierbar baubares natives iOS-/iPadOS-Projekt ab Version 17.0 mit getrennten Umgebungen, strengen Compilerprüfungen, minimaler datenschutzkonformer App-Hülle und automatisierter lokaler Abnahme auf iPhone und iPad.
+
+**Geänderte Dateien**
+
+- Xcode-Projekt mit den Targets `CueLens`, `CueLensTests` und `CueLensUITests` sowie den geteilten Schemes `CueLens` und `CueLens Staging` ergänzt.
+- Build-Konfigurationen `Debug`, `Staging` und `Release` in `.xcconfig`-Dateien getrennt; Debug/Staging verwenden nicht routbare `.invalid`-Endpunkte, produktive Werte liegen ausschließlich in Release.
+- Deployment Target 17.0, Swift-6-Sprachmodus, vollständige Strict-Concurrency-Prüfung und Warnungen-als-Fehler festgelegt.
+- Minimale lokalisierte SwiftUI-App, gültiges Privacy Manifest und testbare Fail-closed-Geometrieentscheidung ergänzt.
+- Lokales Quality-Gate, Simulatorauswahl und Release-Artefaktprüfung ergänzt.
+- Spezifikationen auf Version 1.1 präzisiert: adaptive iPad-Fenster und Systemrotation, produktive Reizdarstellung nur bei geeigneter hochformatiger Geometrie.
+
+**Ausgeführte Tests**
+
+- `xcodebuild -project CueLens.xcodeproj -list`
+- Debug- und Staging-Build für den generischen iOS-Simulator
+- drei Unit-Tests auf iPhone Air mit iOS 26.5 sowie auf iPhone 15 Pro mit iOS 17.5
+- je ein UI-Smoke-Test auf iPhone Air und iPad mini (A17 Pro) mit iOS 26.5
+- je ein UI-Smoke-Test auf iPhone 15 Pro und iPad (10. Generation) mit iOS 17.5
+- `xcodebuild analyze` für Release
+- unsigniertes Release-Archiv für ein generisches iOS-Gerät
+- `Scripts/verify_release_configuration.sh`
+- vollständiges `Scripts/quality_gate.sh`
+
+**Testergebnis**
+
+- iOS-17.5- (Build 21F79) und iOS-26.5-Simulator-Runtime (Build 23F77) installiert und auf iPhone sowie iPad betriebsbereit.
+- Debug, Staging, Release, Analyze und unsigniertes Archiv erfolgreich und ohne Projektwarnungen.
+- Unit-Tests: auf iOS 17.5 und iOS 26.5 jeweils 3 von 3 bestanden; UI-Smoke-Tests auf beiden Versionen und Geräteklassen jeweils 1 von 1 bestanden.
+- Release-Prüfung bestätigt Bundle ID `de.eachandevery.cuelens`, Mindestversion 17.0, Privacy Manifest ohne Tracking, keine verbotenen Berechtigungsschlüssel oder ATS-Ausnahmen und keine Drittanbieterabhängigkeiten.
+- iPhone ist auf Hochformat begrenzt; iPad unterstützt die erforderliche adaptive Systemrotation, während die produktive Studiengeometrie Querformat und zu kleine Szenen fail-closed ablehnt.
+
+**Sicherheits-/Datenschutzprüfung**
+
+- Keine Berechtigungen, Entitlements, Analyse-, Werbe-, Tracking- oder Crash-Reporting-SDKs ergänzt.
+- Keine Geheimnisse, Zertifikate, Profile, Teilnehmendenkennungen oder Gesundheitsdaten eingecheckt.
+- Lokale Signierparameter sind über eine ignorierte Datei vorgesehen.
+- Android-App und Backend wurden nicht geändert.
+
+**Abweichungen und Annahmen**
+Wegen der adaptiven iPad-Fensterverwaltung werden auf iPadOS alle Systemausrichtungen deklariert. Die spätere produktive Studienansicht darf dennoch ausschließlich bei mindestens 375 × 667 Punkten und `Höhe >= Breite` laufen. Serverbasierte CI wurde entsprechend der Planung nicht eingerichtet; das reproduzierbare Shell-Gate bildet das CI-Grundgerüst lokal ab. Die erstmalige Datenmigration frisch installierter Simulatoren meldete teilweise einen nicht fatalen Abschlussfehler; der erste UI-Test traf dadurch auf einen noch nicht geladenen Accessibility-Dienst. Nach abgeschlossener Initialisierung bestanden die Wiederholungsläufe. Das Quality-Gate erlaubt deshalb genau einen UI-Retry, während Unit- und Buildfehler weiterhin unmittelbar fehlschlagen.
+
+**Offene Punkte**
+
+- Auf dem Entwicklungs-Mac ist keine gültige Apple-Codesigning-Identität vorhanden. Ein signiertes Geräte-/Distributionsarchiv erfordert außerhalb des Repositorys eine Apple-Team-ID, ein Zertifikat und das passende Provisioning.
+
+**Menschliche Freigabe**
+Noch ausstehend; eine Namensnennung ist nicht erforderlich.

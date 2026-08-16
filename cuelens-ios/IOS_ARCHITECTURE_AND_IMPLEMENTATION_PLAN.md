@@ -10,12 +10,12 @@
 | Bundle Identifier | `de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/IOS_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` |
 | Empfohlener Projektpfad | `cuelens-ios/` |
-| Dokumentversion | 1.0.1 |
+| Dokumentversion | 1.1 |
 | Status | Verbindliche Planung für die native iOS-Portierung |
-| Stand | 15. August 2026 |
+| Stand | 16. August 2026 |
 | Referenzimplementierung | Android-App `de.eachandevery.cuelens` |
 | Referenz-Commit | `main`, Commit `9ef5f38ee341a0f59a1b2844773c8cadc8a807c2` |
-| Übergeordnete Spezifikation | `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md`, Version 1.0.1 |
+| Übergeordnete Spezifikation | `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md`, Version 1.1 |
 | Nicht enthalten | `AI_PoC`, Kamera, Fotos, Bildklassifikation, Core ML, LiteRT und spätere KI-Major-Version |
 
 Dieses Dokument konkretisiert die plattformunabhängige CueLens-Spezifikation für eine native iOS- und iPadOS-App. Die plattformunabhängige Spezifikation besitzt Vorrang. Widerspricht eine technische Einzelentscheidung dieses Dokuments einer dort festgelegten fachlichen, studienmethodischen, datenschutzbezogenen oder sicherheitstechnischen Anforderung, MUSS die technische Entscheidung korrigiert werden.
@@ -93,10 +93,10 @@ Nicht Bestandteil dieser Portierung sind:
 | Nebenläufigkeit | Swift Concurrency mit `async`/`await`, `actor` und `@MainActor` |
 | Mindestziel | iOS 17.0 und iPadOS 17.0 |
 | Geräte | iPhone und iPad |
-| Ausrichtung | ausschließlich Hochformat |
-| iPad-Multitasking | deaktiviert; App läuft vollflächig |
-| Xcode | jeweils aktuelle stabile, für App Store Connect zugelassene Version |
-| Swift-Sprachmodus | aktueller stabiler Modus mit vollständigen Strict-Concurrency-Prüfungen |
+| Ausrichtung | iPhone ausschließlich Hochformat; iPad systemseitig adaptiv in allen Ausrichtungen, produktive Studie nur bei hochformatiger Geometrie |
+| iPad-Multitasking | adaptive Fensterdarstellung; produktive Studienansicht fail-closed bei ungeeigneter Geometrie |
+| Xcode | für Auftrag 1: Xcode 26.6, Build 17F113; spätere Aktualisierung nur dokumentiert |
+| Swift-Sprachmodus | Swift 6 mit vollständigen Strict-Concurrency-Prüfungen; Compiler in Auftrag 1: Swift 6.3.3 |
 | Drittanbieterabhängigkeiten | keine |
 | Netzwerk | `URLSession` mit ephemerer Konfiguration |
 | sicherer Tokenstore | Keychain Services |
@@ -110,6 +110,7 @@ Nicht Bestandteil dieser Portierung sind:
 | Distribution | zunächst interne Tests, danach TestFlight und App Store |
 | Bundle Identifier Release | `de.eachandevery.cuelens` |
 | Bundle Identifier Staging | `de.eachandevery.cuelens.staging` |
+| Bundle Identifier Debug | `de.eachandevery.cuelens.debug` |
 
 ### 3.2 Begründung des Mindestziels
 
@@ -122,14 +123,19 @@ iOS/iPadOS 17.0 ist der anfängliche Deployment Target. Diese Festlegung:
 
 Eine Absenkung auf iOS 16 DARF nur nach einem separaten Kompatibilitätssprint erfolgen. Eine Anhebung DARF nur nach dokumentierter Prüfung der Auswirkungen auf die Rekrutierung erfolgen.
 
-### 3.3 Hochformat auf iPad
+### 3.3 Hochformat und adaptive iPad-Fenster
 
-Da das Studiendesign eine kontrollierte Hochformatdarstellung vorsieht, MUSS die iPad-App:
+`UIRequiresFullScreen` ist unter iPadOS 26 veraltet und bietet keine belastbare Garantie für exklusiven Vollbildbetrieb oder den Ausschluss paralleler Fenster. Die App DARF diese Eigenschaft daher nicht als Studieninvariante voraussetzen.
 
-- ausschließlich `UIInterfaceOrientationPortrait` unterstützen;
-- als Full-Screen-App konfiguriert werden;
-- iPad-Multitasking und Stage-Manager-Mehrfensterdarstellung für diese Version nicht unterstützen;
-- dieselbe logische Vollbild-Reizdarstellung wie die iPhone-App bieten.
+Verbindlich ist stattdessen:
+
+- auf dem iPhone wird ausschließlich `UIInterfaceOrientationPortrait` unterstützt;
+- auf dem iPad werden die systemseitig erforderlichen Hoch- und Querformate deklariert; diese Freigabe ist keine Freigabe der produktiven Reizdarstellung im Querformat;
+- die gesamte iPad-Oberfläche reagiert ohne Inhaltsverlust auf dynamische Fenstergrößen;
+- ein produktiver Reizschritt darf nur beginnen oder fortgesetzt werden, wenn die verfügbare Szenengeometrie mindestens 375 × 667 Punkte umfasst und `Höhe >= Breite` gilt;
+- bei ungeeigneter Geometrie wird die produktive Studie fail-closed pausiert und ein neutraler Hinweis zum Vergrößern beziehungsweise hochformatigen Ausrichten angezeigt;
+- Demo, Informationen und allgemeine Navigation bleiben auch in kleineren Fenstern nutzbar;
+- die konkrete Studienansicht behält bei geeigneter Geometrie dieselbe logische Vollbild-Reizdarstellung wie die Android-Referenz.
 
 ---
 
@@ -870,12 +876,18 @@ Endpunkte und Cooldown werden ausschließlich in `.xcconfig` definiert.
 
 ```text
 Base.xcconfig
-- PRODUCT_BUNDLE_IDENTIFIER
 - MARKETING_VERSION
 - CURRENT_PROJECT_VERSION
 - IPHONEOS_DEPLOYMENT_TARGET
+- Swift-6-/Strict-Concurrency- und Warnungsregeln
+
+Debug.xcconfig
+- PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.debug
+- ausschließlich nicht routbare HTTPS-Endpunkte unter `debug.invalid`
+- CUELENS_RUN_COOLDOWN_SECONDS = 3
 
 Staging.xcconfig
+- PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens.staging
 - CUELENS_ACTIVATION_URL
 - CUELENS_MESSAGES_URL
 - CUELENS_FEEDBACK_URL
@@ -884,11 +896,21 @@ Staging.xcconfig
 - CUELENS_PRIVACY_URL_DE
 - CUELENS_PRIVACY_URL_EN
 - CUELENS_RUN_COOLDOWN_SECONDS = 3
+- bis zur Freigabe eines echten Testsystems ausschließlich nicht routbare HTTPS-Endpunkte unter `staging.invalid`
 
 Release.xcconfig
+- PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens
 - dieselben Produktions-URLs wie Android
 - CUELENS_RUN_COOLDOWN_SECONDS = 10800
+- optionale lokale Einbindung von `LocalSigning.xcconfig`; diese Datei wird nicht versioniert
 ```
+
+Scheme-Zuordnung:
+
+- `CueLens`: Run/Test mit `Debug`, Profile/Analyze/Archive mit `Release`;
+- `CueLens Staging`: Run/Test/Profile/Analyze/Archive mit `Staging`.
+
+Das lokale Quality-Gate sowie alle nicht archivierenden Prüfungen setzen `CODE_SIGNING_ALLOWED = NO`. Ein signiertes Release-Archiv verwendet eine lokal gesetzte Apple-Team-ID und keine eingecheckten Zertifikate oder Profile.
 
 ### 11.2 Secrets
 
@@ -1347,7 +1369,7 @@ Atomar speichern, Erinnerungen entfernen, Abschlussseite anzeigen.
 | ID | Funktion | Verbindliche iOS-Umsetzung | Abnahme |
 |---|---|---|---|
 | IOS-FUN-001 | App-Identität | Name CueLens, Bundle ID `de.eachandevery.cuelens` | Release-Build geprüft |
-| IOS-FUN-002 | Hochformat | iPhone/iPad nur Hochformat, iPad vollflächig | UI-Test auf beiden Idioms |
+| IOS-FUN-002 | Hochformat | iPhone nur Hochformat; iPad adaptiv, produktive Reizdarstellung nur bei geeigneter hochformatiger Geometrie | UI-Test auf beiden Idioms und Unit-Test der Geometrieentscheidung |
 | IOS-FUN-003 | Deutsch/Englisch | persistenter Umschalter auf allen regulären Seiten | Neustarttest |
 | IOS-FUN-004 | Informationsfeed | Abruf, Sortierung, Validierung, Seitenfolge | Contract- und UI-Test |
 | IOS-FUN-005 | dauerhaft ausblenden | nur Nachrichten-ID lokal speichern | Persistenztest |
@@ -1474,7 +1496,7 @@ Manuelle Stichprobe mindestens fünf zufällig ausgewählter Cue-/Matching-/Labe
 
 ---
 
-### Auftrag 1 – Xcode-Projekt, Build-Konfiguration und CI-Grundgerüst
+### Auftrag 1 – Xcode-Projekt, Build-Konfiguration und lokales Quality-Gate
 
 **Ziel**
 
@@ -1488,10 +1510,10 @@ Ein leeres, nativ startendes und reproduzierbar testbares Projekt.
 - `.xcconfig`-Dateien;
 - Bundle IDs;
 - iOS/iPadOS 17.0;
-- Hochformat und iPad-Full-Screen;
+- Hochformatpräferenz und adaptive iPad-Basis einschließlich testbarer Geometrieentscheidung;
 - deutscher und englischer String Catalog;
-- leere `PrivacyInfo.xcprivacy`;
-- CI-Build und leerer Test;
+- syntaktisch gültige minimale `PrivacyInfo.xcprivacy` mit `NSPrivacyTracking = false` und leeren Daten-/API-Arrays;
+- reproduzierbarer lokaler Build, aussagekräftiger Unit-Test und UI-Smoke-Test;
 - Release-Verifikationsskript.
 
 **Akzeptanzkriterien**
@@ -1502,7 +1524,8 @@ Ein leeres, nativ startendes und reproduzierbar testbares Projekt.
 - keine Drittanbieterabhängigkeiten;
 - keine verbotenen Usage-Description-Keys;
 - Release-Info.plist enthält keine ATS-Ausnahmen;
-- iPhone- und iPad-Simulator starten im Hochformat.
+- iPhone- und iPad-Simulator starten; die Oberfläche reagiert auf die jeweilige Fenstergeometrie ohne Absturz oder Inhaltsverlust;
+- das lokale Quality-Gate läuft ohne serverseitige CI und dokumentiert die verwendete Xcode- und Simulatorversion.
 
 **Review-Gate**
 
@@ -2473,7 +2496,7 @@ Dieses Dokument eignet sich insbesondere für:
 
 ### Repository
 
-- `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md`, Version 1.0.1.
+- `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md`, Version 1.1.
 - Android-App und PHP-Hintergrundsystem, `main`, Commit `9ef5f38ee341a0f59a1b2844773c8cadc8a807c2`.
 - `masterarbeit.pdf`.
 - `Exposee.pdf`.
@@ -2520,3 +2543,4 @@ Abrufdatum: 11.08.2026.
 |---|---|---|
 | 1.0 | 11.08.2026 | Erste iOS-Architektur- und Implementierungsplanung auf Basis der plattformunabhängigen Spezifikation; KI-PoC ausgeschlossen; bestehendes Backend, Studiendesign und Auswertung unverändert; Codex-Aufträge, Teststrategie und Definition of Done festgelegt. |
 | 1.0.1 | 15.08.2026 | iOS-Portierung als eigenständiges Geschwisterprojekt `cuelens-ios/` strukturiert; kopierte Studienressourcen, Schemata und Werkzeuge dem iOS-Projekt zugeordnet; keine fachliche Änderung. |
+| 1.1 | 16.08.2026 | Auftrag 1 auf Xcode 26.6 und Swift 6 festgelegt; lokales Quality-Gate statt serverseitiger CI, fail-closed Staging-Defaults, minimales Privacy Manifest und adaptive iPad-Geometrie statt nicht mehr garantierbarem Vollbildmodus spezifiziert. |

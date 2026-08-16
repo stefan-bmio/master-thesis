@@ -8,9 +8,9 @@
 | Produkt | CueLens |
 | Referenzimplementierung | Android-App mit `applicationId = de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md` |
-| Dokumentversion | 1.0.1 |
+| Dokumentversion | 1.1 |
 | Status | Verbindliche Ausgangsbasis für die native iOS-Portierung; Android-Referenz bleibt unverändert |
-| Stand | 15. August 2026 |
+| Stand | 16. August 2026 |
 | Abgeleitet aus | `main`, Commit `9ef5f38ee341a0f59a1b2844773c8cadc8a807c2` |
 | Geltungsbereich | Aktuelle CueLens-Studien-App und bestehendes PHP-Hintergrundsystem |
 | Nicht enthalten | KI-PoC unter `AI_PoC`, Kamera, eigene Bilder, On-Device-Klassifikation und spätere KI-Major-Version |
@@ -96,7 +96,7 @@ Die folgenden Entscheidungen sind Bestandteil dieser Spezifikation:
 | Android-Anwendungskennung | `de.eachandevery.cuelens` |
 | Logische Produktidentität | identische CueLens-Studien-App auf Android und iOS |
 | Gerätetyp | Smartphone oder Tablet |
-| Ausrichtung | ausschließlich Hochformat |
+| Ausrichtung | produktive Reizdarstellung ausschließlich in geeigneter hochformatiger Szenengeometrie; allgemeine iPad-Oberfläche adaptiv |
 | Sprachen | Deutsch und Englisch |
 | Netz | für Aktivierung, Informationen, Feedback, Feature-Konfiguration und Studiendaten erforderlich |
 | Offline nutzbar | Startseite, bereits geladene lokale Zustände und Demo; produktive Übermittlung wird bei Fehler als ausstehend gehalten |
@@ -662,7 +662,7 @@ Die konkrete Zufallsfolge MUSS zwischen Android und iOS nicht identisch sein.
 
 Für produktive Cue-Darbietungen gelten folgende interventionsrelevante Anforderungen:
 
-- Hochformat-Vollbild;
+- hochformatige Darstellung, die auf dem iPhone den Vollbildbereich und auf dem iPad die gesamte geeignete Szenenfläche nutzt;
 - Cue-Bild füllt die sichtbare Fläche mit zentriertem Crop-Verhalten;
 - kein Letterboxing um das Cue-Bild;
 - Match-Bilder beziehungsweise Labelschaltflächen liegen als Overlay im unteren Bildschirmbereich;
@@ -1107,6 +1107,7 @@ Die iOS-App SOLL die visuelle Identität beibehalten, darf jedoch native Control
 | Datenschutz-Zusatzeinwilligung | Android behält bestehenden Dialog; iOS nutzt Webeinwilligung | kein produktiver iOS-Zugang ohne dokumentierte externe Einwilligung |
 | Controls und Layoutdetails | native Abstände, Schriften und Slider | Skala, Standardwert, Reizfolge und Wartezeit bleiben gleich |
 | Bundle-/Application-Metadaten | plattformspezifische Store-Metadaten | keine Erhebung der Plattform in Studiendaten |
+| iPad-Fensterdarstellung | adaptive Fenstergröße; produktive Studie bei ungeeigneter Geometrie fail-closed | keine verkleinerte oder querformatige produktive Reizdarbietung |
 
 ## 25. Abnahmekriterien der plattformunabhängigen Funktion
 
@@ -1273,3 +1274,4 @@ Die Reihenfolge der beiden angezeigten Labels darf pro Darbietung randomisiert w
 |---|---|---|
 | 1.0 | 10.08.2026 | Erste plattformunabhängige Spezifikation auf Basis der produktiven Android-App; KI-PoC ausgeschlossen; Webeinwilligung für iOS, E-Mail-basierter Widerruf/Löschung, keine Plattformvariable und unveränderte Auswertung festgelegt. |
 | 1.0.1 | 15.08.2026 | Repository-Pfad an das eigenständige Geschwisterverzeichnis `cuelens-ios/` angepasst; keine fachliche Änderung. |
+| 1.1 | 16.08.2026 | Hochformatanforderung für die unter iPadOS 26 adaptive Fensterdarstellung präzisiert: allgemeine UI adaptiv, produktive Reizdarstellung nur bei geeigneter hochformatiger Szenengeometrie. |

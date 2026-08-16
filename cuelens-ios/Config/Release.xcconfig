@@ -1,0 +1,19 @@
+#include "Base.xcconfig"
+#include? "LocalSigning.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE
+SWIFT_OPTIMIZATION_LEVEL = -O
+SWIFT_COMPILATION_MODE = wholemodule
+ENABLE_TESTABILITY = NO
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+VALIDATE_PRODUCT = YES
+
+CUELENS_ACTIVATION_URL = https:/$()/cuelens.each-and-every.de/activate.php
+CUELENS_MESSAGES_URL = https:/$()/cuelens.each-and-every.de/messages.php
+CUELENS_FEEDBACK_URL = https:/$()/cuelens.each-and-every.de/feedback.php
+CUELENS_FEATURES_URL = https:/$()/cuelens.each-and-every.de/features.php
+CUELENS_SUBMIT_URL = https:/$()/cuelens.each-and-every.de/submit.php
+CUELENS_PRIVACY_URL_DE = https:/$()/cuelens.each-and-every.de/ds
+CUELENS_PRIVACY_URL_EN = https:/$()/cuelens.each-and-every.de/privacypolicy.pdf
+CUELENS_RUN_COOLDOWN_SECONDS = 10800
