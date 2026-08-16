@@ -180,6 +180,7 @@ Zur Wahrung der Einfachheit ist `CueLens/Domain/` ein logisch abgegrenzter Quell
 
 **Menschliche Freigabe**
 Am 16.08.2026 ohne Namensnennung erteilt; die Umsetzung von Auftrag 3 wurde ausdrücklich beauftragt.
+Freigegeben 16.8.2026
 
 ## 16.08.2026 – Auftrag 3
 
@@ -235,9 +236,10 @@ Der Token wird als bereits vorhandener Domain-Typ `UUIDv4` repräsentiert. Ein i
 **Offene Punkte**
 
 - Das Review-Gate auf einem echten Gerät ist noch auszuführen: synthetischen Testtoken aktivieren, bei Gerätesperre Zugriffsschutz prüfen sowie Update- und Neuinstallationssimulation durchführen. Am Entwicklungs-Mac ist derzeit kein iOS-Gerät verbunden.
+Ausgeführt am 16.8.2026
 
 **Menschliche Freigabe**
-Ausstehend; vor Beginn von Auftrag 4 ist das Review-Gate fachlich und auf einem echten Gerät freizugeben.
+16.8.2026
 
 ## 16.08.2026 – Korrektur zu Auftrag 3
 
