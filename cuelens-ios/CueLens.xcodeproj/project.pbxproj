@@ -69,6 +69,10 @@
 		100000000000000000000470 /* AppConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000190 /* AppConfigurationTests.swift */; };
 		100000000000000000000471 /* HTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000191 /* HTTPClientTests.swift */; };
 		100000000000000000000472 /* NetworkServiceContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000192 /* NetworkServiceContractTests.swift */; };
+		100000000000000000000473 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000195 /* AppEnvironment.swift */; };
+		100000000000000000000474 /* AppSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000196 /* AppSettingsStore.swift */; };
+		100000000000000000000475 /* InfoFeedRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000197 /* InfoFeedRepository.swift */; };
+		100000000000000000000476 /* AppShellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000198 /* AppShellTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +112,12 @@
 		100000000000000000000117 /* verify_persistence_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_persistence_security.sh; sourceTree = "<group>"; };
 		100000000000000000000193 /* verify_network_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_network_security.sh; sourceTree = "<group>"; };
 		100000000000000000000194 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		100000000000000000000195 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		100000000000000000000196 /* AppSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences/AppSettingsStore.swift; sourceTree = "<group>"; };
+		100000000000000000000197 /* InfoFeedRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoFeed/InfoFeedRepository.swift; sourceTree = "<group>"; };
+		100000000000000000000198 /* AppShellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellTests.swift; sourceTree = "<group>"; };
+		100000000000000000000199 /* StagingInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = StagingInfo.plist; sourceTree = "<group>"; };
+		100000000000000000000200 /* verify_staging_configuration.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_staging_configuration.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -233,6 +243,7 @@
 				100000000000000000000102 /* ContentView.swift */,
 				100000000000000000000103 /* StudyViewportPolicy.swift */,
 				100000000000000000000174 /* CueLensAppModel.swift */,
+				100000000000000000000195 /* AppEnvironment.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -243,6 +254,7 @@
 				100000000000000000000104 /* Localizable.xcstrings */,
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
 				100000000000000000000194 /* Info.plist */,
+				100000000000000000000199 /* StagingInfo.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -286,6 +298,7 @@
 				100000000000000000000116 /* verify_domain_boundaries.sh */,
 				100000000000000000000117 /* verify_persistence_security.sh */,
 				100000000000000000000193 /* verify_network_security.sh */,
+				100000000000000000000200 /* verify_staging_configuration.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -382,6 +395,8 @@
 				100000000000000000000020 /* Keychain */,
 				100000000000000000000021 /* Persistence */,
 				100000000000000000000023 /* Network */,
+				100000000000000000000196 /* AppSettingsStore.swift */,
+				100000000000000000000197 /* InfoFeedRepository.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -418,6 +433,7 @@
 				100000000000000000000175 /* LocalPersistenceBootstrapTests.swift */,
 				100000000000000000000170 /* PersistenceTestDoubles.swift */,
 				100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */,
+				100000000000000000000198 /* AppShellTests.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -625,6 +641,9 @@
 				100000000000000000000466 /* FeedbackService.swift in Sources */,
 				100000000000000000000467 /* StudySubmissionService.swift in Sources */,
 				100000000000000000000468 /* NetworkServices.swift in Sources */,
+				100000000000000000000473 /* AppEnvironment.swift in Sources */,
+				100000000000000000000474 /* AppSettingsStore.swift in Sources */,
+				100000000000000000000475 /* InfoFeedRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,6 +668,7 @@
 				100000000000000000000470 /* AppConfigurationTests.swift in Sources */,
 				100000000000000000000471 /* HTTPClientTests.swift in Sources */,
 				100000000000000000000472 /* NetworkServiceContractTests.swift in Sources */,
+				100000000000000000000476 /* AppShellTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,7 +750,7 @@
 			baseConfigurationReference = 100000000000000000000110 /* Staging.xcconfig */;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = CueLens/Resources/Info.plist;
+				INFOPLIST_FILE = CueLens/Resources/StagingInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

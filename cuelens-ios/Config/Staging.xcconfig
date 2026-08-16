@@ -6,11 +6,12 @@ SWIFT_OPTIMIZATION_LEVEL = -Onone
 ENABLE_TESTABILITY = YES
 DEBUG_INFORMATION_FORMAT = dwarf
 
-CUELENS_ACTIVATION_URL = https:/$()/staging.invalid/activate
-CUELENS_MESSAGES_URL = https:/$()/staging.invalid/messages
-CUELENS_FEEDBACK_URL = https:/$()/staging.invalid/feedback
-CUELENS_FEATURES_URL = https:/$()/staging.invalid/features
-CUELENS_SUBMIT_URL = https:/$()/staging.invalid/submit
+CUELENS_ACTIVATION_URL = http:/$()/192.168.1.243/cuelens/activate.php
+CUELENS_MESSAGES_URL = http:/$()/192.168.1.243/cuelens/messages.php
+CUELENS_FEEDBACK_URL = http:/$()/192.168.1.243/cuelens/feedback.php
+CUELENS_FEATURES_URL = http:/$()/192.168.1.243/cuelens/features.php
+CUELENS_SUBMIT_URL = http:/$()/192.168.1.243/cuelens/submit.php
 CUELENS_PRIVACY_URL_DE = https:/$()/staging.invalid/privacy-de
 CUELENS_PRIVACY_URL_EN = https:/$()/staging.invalid/privacy-en
 CUELENS_RUN_COOLDOWN_SECONDS = 3
+CUELENS_ALLOWS_LOCAL_HTTP = YES

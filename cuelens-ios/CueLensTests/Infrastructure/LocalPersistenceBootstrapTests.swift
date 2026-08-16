@@ -63,25 +63,49 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
     func testAppModelPublishesStateOnlyAfterSuccessfulLoad() async throws {
         let initial = try StudyState.initial
         let successfulModel = CueLensAppModel(
-            persistence: StubPersistenceLoader(result: .success(
-                LocalPersistenceSnapshot(
-                    installation: .existingInstallation,
-                    studyState: initial
-                )
-            ))
+            environment: AppEnvironment(
+                persistence: StubPersistenceLoader(result: .success(
+                    LocalPersistenceSnapshot(
+                        installation: .existingInstallation,
+                        studyState: initial
+                    )
+                )),
+                settings: AppModelSettingsStub(),
+                infoFeed: AppModelFeedStub()
+            )
         )
-        XCTAssertEqual(successfulModel.initializationState, .loading)
-        await successfulModel.initialize()
-        XCTAssertEqual(successfulModel.initializationState, .ready(initial))
+        XCTAssertEqual(successfulModel.route, .loading)
+        await successfulModel.initialize(lifecyclePhase: .active)
+        XCTAssertEqual(successfulModel.route, .home)
+        XCTAssertEqual(successfulModel.studyState, initial)
 
         let failingModel = CueLensAppModel(
-            persistence: StubPersistenceLoader(result: .failure(
-                PersistenceError.stateCorrupted
-            ))
+            environment: AppEnvironment(
+                persistence: StubPersistenceLoader(result: .failure(
+                    PersistenceError.stateCorrupted
+                )),
+                settings: AppModelSettingsStub(),
+                infoFeed: AppModelFeedStub()
+            )
         )
-        await failingModel.initialize()
-        XCTAssertEqual(failingModel.initializationState, .secureStorageFailure)
+        await failingModel.initialize(lifecyclePhase: .active)
+        XCTAssertEqual(failingModel.route, .secureStorageFailure)
     }
+}
+
+private actor AppModelSettingsStub: AppSettingsStoring {
+    func load() async throws -> AppSettings { .empty }
+    func saveLanguage(_ language: AppLanguage) async throws {}
+    func dismissMessage(id: Int64) async throws {}
+    func markMessagesKnown(ids: Set<Int64>) async throws {}
+}
+
+private actor AppModelFeedStub: InfoFeedRepositoryServing {
+    func loadMessages() async throws -> InfoFeedBatch {
+        InfoFeedBatch(visibleMessages: [], fetchedMessageIDs: [])
+    }
+    func dismissMessage(id: Int64) async throws {}
+    func markMessagesKnown(ids: Set<Int64>) async throws {}
 }
 
 private actor StubInstallationPreparer: InstallationPreparing {

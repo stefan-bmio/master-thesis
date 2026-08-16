@@ -16,6 +16,7 @@ cd "$PROJECT_ROOT"
 $SCRIPT_DIR/verify_domain_boundaries.sh
 $SCRIPT_DIR/verify_persistence_security.sh
 $SCRIPT_DIR/verify_network_security.sh
+$SCRIPT_DIR/verify_staging_configuration.sh "$DERIVED_DATA"
 
 EXPECTED_XCODE='Xcode 26.6'
 EXPECTED_BUILD='Build version 17F113'
@@ -42,17 +43,17 @@ xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -configuration Debu
 xcodebuild -quiet -project CueLens.xcodeproj -scheme 'CueLens Staging' -configuration Staging -destination 'generic/platform=iOS Simulator' -derivedDataPath "$DERIVED_DATA" CODE_SIGNING_ALLOWED=NO build
 xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -destination "platform=iOS Simulator,id=$IPHONE_ID" -derivedDataPath "$DERIVED_DATA" -resultBundlePath "$RESULTS_DIR/unit.xcresult" -only-testing:CueLensTests test
 
-run_ui_smoke_test() {
+run_ui_tests() {
   device_id=$1
   result_name=$2
-  if ! xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath "$DERIVED_DATA" -resultBundlePath "$RESULTS_DIR/$result_name-attempt-1.xcresult" -only-testing:CueLensUITests/CueLensUITests/testLaunchesOnSupportedDevice test; then
-    echo "UI-Smoke-Test wird nach abgeschlossener Simulator-Erstinitialisierung einmal wiederholt: $device_id" >&2
-    xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath "$DERIVED_DATA" -resultBundlePath "$RESULTS_DIR/$result_name-attempt-2.xcresult" -only-testing:CueLensUITests/CueLensUITests/testLaunchesOnSupportedDevice test
+  if ! xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath "$DERIVED_DATA" -resultBundlePath "$RESULTS_DIR/$result_name-attempt-1.xcresult" -only-testing:CueLensUITests test; then
+    echo "UI-Tests werden nach abgeschlossener Simulator-Erstinitialisierung einmal wiederholt: $device_id" >&2
+    xcodebuild -quiet -project CueLens.xcodeproj -scheme CueLens -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath "$DERIVED_DATA" -resultBundlePath "$RESULTS_DIR/$result_name-attempt-2.xcresult" -only-testing:CueLensUITests test
   fi
 }
 
-run_ui_smoke_test "$IPHONE_ID" iphone
-run_ui_smoke_test "$IPAD_ID" ipad
+run_ui_tests "$IPHONE_ID" iphone
+run_ui_tests "$IPAD_ID" ipad
 $SCRIPT_DIR/verify_release_configuration.sh "$DERIVED_DATA"
 
 echo 'Lokales CueLens-Quality-Gate erfolgreich.'

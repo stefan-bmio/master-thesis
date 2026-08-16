@@ -26,6 +26,8 @@
 	<string>$(CUELENS_FEEDBACK_URL)</string>
 	<key>CUELENS_MESSAGES_URL</key>
 	<string>$(CUELENS_MESSAGES_URL)</string>
+	<key>CUELENS_ALLOWS_LOCAL_HTTP</key>
+	<string>$(CUELENS_ALLOWS_LOCAL_HTTP)</string>
 	<key>CUELENS_SUBMIT_URL</key>
 	<string>$(CUELENS_SUBMIT_URL)</string>
 	<key>LSRequiresIPhoneOS</key>

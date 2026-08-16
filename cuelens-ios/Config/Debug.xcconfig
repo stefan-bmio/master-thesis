@@ -14,3 +14,4 @@ CUELENS_SUBMIT_URL = https:/$()/debug.invalid/submit
 CUELENS_PRIVACY_URL_DE = https:/$()/debug.invalid/privacy-de
 CUELENS_PRIVACY_URL_EN = https:/$()/debug.invalid/privacy-en
 CUELENS_RUN_COOLDOWN_SECONDS = 3
+CUELENS_ALLOWS_LOCAL_HTTP = YES

@@ -43,6 +43,7 @@ BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST"
 MINIMUM_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")
 test "$BUNDLE_ID" = 'de.eachandevery.cuelens'
 test "$MINIMUM_OS" = '17.0'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLIST")" = 'NO'
 
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ACTIVATION_URL' "$INFO_PLIST")" = \
   'https://cuelens.each-and-every.de/activate.php'
@@ -81,9 +82,17 @@ ACCESSED_API_TYPE=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes
 ACCESSED_API_REASON=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")
 test "$ACCESSED_API_TYPE" = 'NSPrivacyAccessedAPICategoryFileTimestamp'
 test "$ACCESSED_API_REASON" = 'C617.1'
+USER_DEFAULTS_API_TYPE=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:1:NSPrivacyAccessedAPIType' "$PRIVACY_MANIFEST")
+USER_DEFAULTS_API_REASON=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:1:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")
+test "$USER_DEFAULTS_API_TYPE" = 'NSPrivacyAccessedAPICategoryUserDefaults'
+test "$USER_DEFAULTS_API_REASON" = 'CA92.1'
 
 if grep -R -a -q -E 'debug\.invalid|staging\.invalid' "$APP_BUNDLE"; then
   echo 'Release-Artefakt enthält Debug-/Staging-Endpunkte.' >&2
+  exit 1
+fi
+if grep -R -a -q '192\.168\.1\.243' "$APP_BUNDLE"; then
+  echo 'Release-Artefakt enthält den lokalen Staging-Host.' >&2
   exit 1
 fi
 if grep -q 'cuelens\.each-and-every\.de' Config/Debug.xcconfig Config/Staging.xcconfig; then

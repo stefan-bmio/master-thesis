@@ -28,7 +28,7 @@ Ohne `--check` erzeugt beziehungsweise aktualisiert der Generator die bytegleich
 
 ## Xcode-Projekt und lokales Quality-Gate aus Auftrag 1
 
-Vorausgesetzt werden Xcode 26.6 (Build 17F113), Swift 6.3.3 und eine installierte iOS-Simulator-Runtime. Das Projekt hat ein Deployment Target von iOS/iPadOS 17.0, verwendet keine Drittanbieterabhängigkeiten und trennt `Debug`, `Staging` und `Release` über eingecheckte `.xcconfig`-Dateien. Debug und Staging verwenden absichtlich nicht routbare `.invalid`-Endpunkte.
+Vorausgesetzt werden Xcode 26.6 (Build 17F113), Swift 6.3.3 und eine installierte iOS-Simulator-Runtime. Das Projekt hat ein Deployment Target von iOS/iPadOS 17.0, verwendet keine Drittanbieterabhängigkeiten und trennt `Debug`, `Staging` und `Release` über eingecheckte `.xcconfig`-Dateien. Debug verwendet absichtlich nicht routbare `.invalid`-Endpunkte. Staging verwendet das freigegebene lokale Testsystem; lokale HTTP-Verbindungen sind dort eng auf private Ziele begrenzt. Release bleibt ausschließlich HTTPS.
 
 ```sh
 cd cuelens-ios
@@ -72,7 +72,17 @@ CoreSimulator bestätigt Keychain-Roundtrips und Backup-Ausschlüsse, meldet jed
 ./Scripts/verify_network_security.sh
 ```
 
-Die buildabhängigen Endpunkte werden aus den `.xcconfig`-Dateien in die eingecheckte minimale `Info.plist` expandiert. Debug und Staging bleiben nicht routbar; ausschließlich Release enthält die produktiven HTTPS-Endpunkte. Auftrag 4 stellt die Services bereit, beginnt aber noch keine produktiven Netzwerkrequests aus der App-Oberfläche.
+Die buildabhängigen Endpunkte werden aus den `.xcconfig`-Dateien in die eingecheckten minimalen Property Lists expandiert. Debug bleibt nicht routbar, Staging darf das freigegebene private LAN-Testsystem verwenden und ausschließlich Release enthält die produktiven HTTPS-Endpunkte. Auftrag 4 stellt die Services bereit, beginnt aber noch keine produktiven Schreibrequests aus der App-Oberfläche.
+
+## App-Shell und Informationsfeed aus Auftrag 5
+
+Der App-Start lädt Sprache und unkritische Einstellungen, validiert den geschützten Studienzustand und ruft anschließend im aktiven Vordergrund den Informationsfeed ab. Nachrichten werden sortiert als einzelne Seiten angezeigt. Dauerhaft gespeichert werden ausschließlich positive ausgeblendete beziehungsweise bekannte IDs, niemals Nachrichtentexte. Feedfehler führen zu einem neutralen Hinweis, blockieren die Startseite aber nicht.
+
+Deutsch und Englisch lassen sich ohne Neustart umschalten; die Auswahl bleibt in `UserDefaults` erhalten. Das Privacy Manifest deklariert dafür den Apple-Grund `CA92.1` für ausschließlich app-eigene Einstellungen. Bei inaktiver oder im Hintergrund befindlicher App verdeckt ein undurchsichtiger Privacy Curtain die gesamte Oberfläche. Die erweiterten UI-Tests verwenden synthetische Debug-Feeds und lösen keine Backendrequests aus.
+
+```sh
+./Scripts/verify_staging_configuration.sh
+```
 
 ## Datenschutz und Abgrenzung
 

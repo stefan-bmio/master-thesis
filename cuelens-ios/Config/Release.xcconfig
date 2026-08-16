@@ -16,3 +16,4 @@ CUELENS_SUBMIT_URL = https:/$()/cuelens.each-and-every.de/submit.php
 CUELENS_PRIVACY_URL_DE = https:/$()/cuelens.each-and-every.de/ds
 CUELENS_PRIVACY_URL_EN = https:/$()/cuelens.each-and-every.de/privacypolicy.pdf
 CUELENS_RUN_COOLDOWN_SECONDS = 10800
+CUELENS_ALLOWS_LOCAL_HTTP = NO

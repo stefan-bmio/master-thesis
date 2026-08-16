@@ -37,6 +37,31 @@ final class AppConfigurationTests: XCTestCase {
         }
     }
 
+    func testAllowsHTTPOnlyForExplicitLocalDevelopmentHosts() throws {
+        for host in ["192.168.1.243", "10.0.0.2", "172.16.4.2", "127.0.0.1", "localhost", "cuelens.local"] {
+            var dictionary = validDictionary()
+            dictionary[AppConfiguration.allowsLocalHTTPKey] = "YES"
+            dictionary[AppConfiguration.messagesURLKey] = "http://\(host)/cuelens/messages.php"
+            XCTAssertEqual(
+                try AppConfiguration.parse(infoDictionary: dictionary).endpoints.messages.host,
+                host
+            )
+        }
+    }
+
+    func testRejectsLocalHTTPWithoutFlagAndPublicHTTPWithFlag() {
+        for (url, flag) in [
+            ("http://192.168.1.243/cuelens/messages.php", "NO"),
+            ("http://example.com/messages.php", "YES"),
+            ("http://172.15.0.1/messages.php", "YES")
+        ] {
+            var dictionary = validDictionary()
+            dictionary[AppConfiguration.allowsLocalHTTPKey] = flag
+            dictionary[AppConfiguration.messagesURLKey] = url
+            XCTAssertThrowsError(try AppConfiguration.parse(infoDictionary: dictionary))
+        }
+    }
+
     func testEphemeralConfigurationDisablesPersistentStateAndWaiting() {
         let configuration = URLSessionHTTPClient.ephemeralConfiguration()
 

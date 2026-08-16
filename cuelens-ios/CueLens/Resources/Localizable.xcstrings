@@ -68,6 +68,62 @@
           }
         }
       }
+    },
+    "home.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Willkommen bei CueLens" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to CueLens" } }
+      }
+    },
+    "info.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+      }
+    },
+    "info.hidePermanently" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese Nachricht nicht mehr anzeigen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Do not show this message again" } }
+      }
+    },
+    "info.loadFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Informationen konnten nicht geladen werden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Information could not be loaded." } }
+      }
+    },
+    "language.switch.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sprache auf Englisch umstellen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch language to German" } }
+      }
+    },
+    "navigation.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zurück" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back" } }
+      }
+    },
+    "notice.dismiss" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schließen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dismiss" } }
+      }
+    },
+    "settings.saveFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Auswahl konnte nicht gespeichert werden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your selection could not be saved." } }
+      }
     }
   },
   "version" : "1.0"

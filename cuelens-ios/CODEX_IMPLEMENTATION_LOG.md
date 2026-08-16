@@ -333,3 +333,66 @@ freigegebenes Staging-System: http://192.168.1.243/cuelens
 **Menschliche Freigabe**
 Ausstehend; vor Beginn von Auftrag 5 ist das Review-Gate freizugeben.
 16.8.2026
+
+## 16.08.2026 – Auftrag 5
+
+**Datum und Branch**
+16.08.2026; Branch `codex/ios-auftrag-5`; Umsetzung auf Basis der durch den datierten Freigabevermerk ausdrücklich erteilten Freigabe von Auftrag 4. Der produktive Live-Schreibtest bleibt wie freigegeben einem späteren Akzeptanztest vorbehalten.
+
+**Auftragsnummer**
+Auftrag 5 – App-Shell, Sprache, Lifecycle und Informationsfeed.
+
+**Ziel**
+Vollständiger datensparsamer App-Start bis zur vorläufigen Startseite mit persistentem Sprachwechsel, fehlertolerantem Informationsfeed und blickdichtem Lifecycle-Sichtschutz.
+
+**Geänderte Dateien**
+
+- `AppEnvironment` und das `@MainActor`-isolierte App-Modell zur geordneten Komposition von Einstellungen, sicherer Persistenz und Feed ergänzt.
+- Actor-gekapselten `UserDefaults`-Store für Sprache sowie positive ausgeblendete und bekannte Nachrichten-IDs implementiert; Nachrichtentexte werden nicht gespeichert.
+- Feed-Repository, vollständige Seitenfolge, Sortierung, sitzungsweises Schließen, dauerhaftes Ausblenden, spezifikationsgemäße Zurücknavigation und neutrale Fehlerhinweise ergänzt.
+- Sofortigen Deutsch-/Englisch-Wechsel mit persistenter Auswahl und Systemsprachregel für den Erststart implementiert.
+- Vollständig undurchsichtigen Privacy Curtain für inaktive beziehungsweise im Hintergrund befindliche Scenes ergänzt; neue Feedrequests beginnen nur im aktiven Vordergrund.
+- Lokales Staging-System unter `192.168.1.243` ausschließlich für Staging konfiguriert; HTTP wird vom Loader nur bei explizitem Flag und für Loopback-, `.local`- oder private IPv4-Ziele akzeptiert. Release bleibt HTTPS-only und ohne ATS-Ausnahme.
+- Synthetische, ausschließlich in Debug kompilierte UI-Testfeeds sowie neue Unit- und UI-Tests ergänzt.
+- Privacy Manifest um `NSPrivacyAccessedAPICategoryUserDefaults` mit Grund `CA92.1` für ausschließlich app-eigene Einstellungen ergänzt.
+- Architekturplanung auf Version 1.5 und README auf den umgesetzten Stand aktualisiert.
+
+**Ausgeführte Tests**
+
+- `Scripts/verify_domain_boundaries.sh`
+- `Scripts/verify_persistence_security.sh`
+- `Scripts/verify_network_security.sh`
+- `Scripts/verify_staging_configuration.sh`
+- vollständiges `Scripts/quality_gate.sh` mit Debug-/Staging-Build, Unit-Tests, vier UI-Szenarien auf iPhone und iPad sowie Release-Artefaktprüfung auf iOS 26.5
+- sämtliche Unit-Tests zusätzlich auf iOS 17.5
+- `xcodebuild analyze` in Release und unsignierter Release-Gerätebuild
+- read-only HTTP-Abruf des lokalen Staging-Nachrichtenendpunkts
+- `plutil -lint`, `jq empty`, `git diff --check` und statische Prüfung auf direkte Infrastrukturzugriffe aus Views, Force-Unwraps und sensible Persistenz
+
+**Testergebnis**
+
+- iOS 26.5: 96 von 96 Unit-Tests bestanden; alle vier UI-Szenarien auf iPhone und iPad bestanden.
+- iOS 17.5: 96 von 96 Unit-Tests bestanden.
+- Debug, Staging, Release, Analyze und unsignierter Gerätebuild erfolgreich und ohne Projektwarnungen.
+- Systemsprachregel, sofortiger und persistenter Sprachwechsel, Feed mit null/einer/mehreren Nachrichten, Sortierung, Zurücknavigation, Ausblendung, bekannte IDs, Speicher- und Feedfehler sowie Lifecycle-Sichtschutz sind automatisiert geprüft.
+- Das Release-Artefakt enthält weder die lokale IP-Adresse noch lokales HTTP oder eine ATS-Ausnahme. Staging enthält ausschließlich `NSAllowsLocalNetworking`, keine globale ATS-Freigabe.
+- Der lokale Staging-Endpunkt antwortete auf `messages.php` mit HTTP 200, jedoch ohne JSON-Content-Type und mit ausgeliefertem PHP-Quelltext. Der iOS-Client lehnt diese Antwort korrekt als Protokollfehler ab; ein Live-Feed-Akzeptanztest ist serverseitig noch nicht möglich.
+
+**Sicherheits-/Datenschutzprüfung**
+
+- In `UserDefaults` liegen ausschließlich Sprache und positive Nachrichten-IDs; keine Nachrichtentexte, Tokens, Kennungen, Craving-Werte oder Studienfortschritte.
+- Der Privacy Curtain verdeckt die gesamte Oberfläche vor App-Switcher-Snapshots; Hinweise bleiben neutral und enthalten keine Backenddetails.
+- Synthetische UI-Testfeeds enthalten keine realen Teilnehmenden- oder Gesundheitsdaten und führen keine Netzwerkrequests aus.
+- Release erzwingt weiterhin HTTPS, System-Trust und die vorhandenen Netzwerkgrenzen; die lokale HTTP-Ausnahme ist build- und zielgebunden.
+- Android-App, Backend und KI-PoC wurden nicht verändert.
+
+**Abweichungen und Annahmen**
+Fehler unkritischer Einstellungen blockieren die App nicht: ungültige Werte werden verworfen, die Sprache wird erneut aus der primären Systemsprache abgeleitet und Schreibfehler erzeugen einen neutralen Hinweis. Bekannte IDs werden erst beim Feedende geschrieben und umfassen alle erfolgreich abgerufenen IDs einschließlich bereits ausgeblendeter Nachrichten. Benachrichtigungseinwilligung und Hintergrundprüfung bleiben Auftrag 6 vorbehalten. Wegen der fehlerhaften PHP-Auslieferung wird der freigegebene Staging-Host bis zur Serverkorrektur nur als konfiguriertes Ziel und nicht als bestandener Ende-zu-Ende-Nachweis bewertet.
+
+**Offene Punkte**
+
+- Review-Gate: manuelle Prüfung auf kleinem iPhone und iPad mit Deutsch, Englisch, Feedfehler und App-Switcher-Sichtschutz.
+- Das lokale Staging-System muss PHP serverseitig ausführen, `application/json` liefern und sollte vor weitergehenden Akzeptanztests auf HTTPS umgestellt werden. Bis dahin dürfen keine schreibenden Staging-Akzeptanztests erfolgen.
+
+**Menschliche Freigabe**
+Ausstehend; vor Beginn von Auftrag 6 ist das Review-Gate freizugeben.

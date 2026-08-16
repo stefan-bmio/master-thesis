@@ -18,6 +18,10 @@ test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacy
   'NSPrivacyAccessedAPICategoryFileTimestamp'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")" = \
   'C617.1'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:1:NSPrivacyAccessedAPIType' "$PRIVACY_MANIFEST")" = \
+  'NSPrivacyAccessedAPICategoryUserDefaults'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:1:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")" = \
+  'CA92.1'
 
 forbidden=$(rg -n '\b(UserDefaults|NSUbiquitous|CloudKit|CKContainer|Logger|os_log|print)\b' \
   "$KEYCHAIN_DIR" "$PERSISTENCE_DIR" || true)

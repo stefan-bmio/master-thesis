@@ -10,7 +10,7 @@
 | Bundle Identifier | `de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/IOS_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` |
 | Empfohlener Projektpfad | `cuelens-ios/` |
-| Dokumentversion | 1.4 |
+| Dokumentversion | 1.5 |
 | Status | Verbindliche Planung für die native iOS-Portierung |
 | Stand | 16. August 2026 |
 | Referenzimplementierung | Android-App `de.eachandevery.cuelens` |
@@ -775,7 +775,9 @@ Release:
 Staging:
 
 - SOLL ebenfalls HTTPS verwenden;
-- falls lokale Entwicklung zwingend HTTP benötigt, darf nur die Staging-Konfiguration eine eng begrenzte Ausnahme enthalten;
+- das freigegebene lokale Testsystem `192.168.1.243` darf in Debug/Staging über HTTP verwendet werden;
+- HTTP wird nur bei explizitem Build-Flag und nur für Loopback-, `.local`- und private IPv4-Ziele akzeptiert;
+- Staging verwendet ausschließlich `NSAllowsLocalNetworking`; eine globale ATS-Ausnahme bleibt unzulässig;
 - eine solche Ausnahme DARF NICHT in Release-Artefakte gelangen;
 - `NSAllowsArbitraryLoads = true` ist auch in Staging unzulässig.
 
@@ -930,7 +932,8 @@ Staging.xcconfig
 - CUELENS_PRIVACY_URL_DE
 - CUELENS_PRIVACY_URL_EN
 - CUELENS_RUN_COOLDOWN_SECONDS = 3
-- bis zur Freigabe eines echten Testsystems ausschließlich nicht routbare HTTPS-Endpunkte unter `staging.invalid`
+- freigegebene lokale HTTP-Endpunkte unter `192.168.1.243/cuelens/`
+- explizites lokales HTTP-Flag; keine öffentlichen HTTP-Ziele
 
 Release.xcconfig
 - PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens
@@ -1721,6 +1724,15 @@ Vollständiger App-Start bis zur Startseite.
 **Review-Gate**
 
 Manuelle Prüfung auf kleinem iPhone und iPad mit Deutsch/Englisch und Feedfehler.
+
+**Festgelegte Detailentscheidungen**
+
+- unkritische Einstellungen werden in einem actor-gekapselten `UserDefaults`-Store abgelegt;
+- ungültige gespeicherte Sprache oder IDs werden ignoriert und blockieren die App nicht;
+- beim Feedende werden alle abgerufenen IDs als bekannt markiert, auch wenn einzelne Nachrichten bereits dauerhaft ausgeblendet waren;
+- UI-Tests verwenden ausschließlich synthetische, nur in Debug kompilierte Feedantworten;
+- der Privacy Curtain liegt bei `.inactive` und `.background` vollständig undurchsichtig über der Oberfläche;
+- Benachrichtigungsdialog und Hintergrundprüfung bleiben Auftrag 6 vorbehalten.
 
 ---
 
