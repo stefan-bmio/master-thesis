@@ -465,3 +465,5 @@ Die unter Auftrag 5 nachgetragene Datumszeile und die ausdrückliche Nutzerbest�
 Aktivierung und Studienablauf werden erst in den Folgeaufträgen umgesetzt. Die produktive Reminder-Schnittstelle und ihre vollständige Policy sind vorhanden, erhalten bis dahin aber noch keinen aktivierten Fortschrittszustand und planen folgerichtig keine Studienerinnerung. Die Hintergrundausführung bleibt systemseitig best effort; der Vordergrundabruf ist weiterhin maßgeblich.
 
 Ausstehend ist das menschliche Review auf einem echten Gerät: erstmaliges Erlauben und Ablehnen, nachträglicher Berechtigungsentzug, Öffnen beider Notification-Typen und Sprachwechsel. Ein bestehender App-Container wird für diesen Test nicht ohne ausdrückliche Freigabe gelöscht.
+
+Freigabe erfolgte am 17.8.26
