@@ -38,6 +38,8 @@ struct ContentView: View {
             NotificationConsentView(appModel: appModel)
         case .home:
             HomePlaceholderView(appModel: appModel)
+        case .activation:
+            ActivationView(appModel: appModel)
         case .secureStorageFailure:
             SecureStorageFailureView()
         }
@@ -47,6 +49,7 @@ struct ContentView: View {
 private enum CueLensPalette {
     static let background = Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
     static let primary = Color(red: 0, green: 98 / 255, blue: 105 / 255)
+    static let disabledPrimary = Color(red: 82 / 255, green: 124 / 255, blue: 121 / 255)
     static let text = Color(red: 32 / 255, green: 42 / 255, blue: 41 / 255)
     static let secondaryText = Color(red: 63 / 255, green: 74 / 255, blue: 73 / 255)
     static let noticeBackground = Color.white.opacity(0.96)
@@ -67,6 +70,85 @@ private struct HomePlaceholderView: View {
                 .foregroundStyle(CueLensPalette.secondaryText)
                 .multilineTextAlignment(.center)
                 .accessibilityIdentifier("app.foundationStatus.ready")
+            if appModel.isActivated {
+                Text("activation.alreadyCompleted")
+                    .foregroundStyle(CueLensPalette.secondaryText)
+                    .accessibilityIdentifier("activation.completed")
+            } else {
+                Button("activation.open") {
+                    appModel.openActivation()
+                }
+                .buttonStyle(CueLensPrimaryButtonStyle())
+                .accessibilityIdentifier("activation.open")
+            }
+            Spacer()
+        }
+        .padding(20)
+    }
+}
+
+private struct ActivationView: View {
+    let appModel: CueLensAppModel
+
+    private var isRunning: Bool {
+        appModel.activationState == .requestingToken
+            || appModel.activationState == .confirmingToken
+    }
+
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Button {
+                    appModel.cancelActivation()
+                } label: {
+                    Label("navigation.back", systemImage: "chevron.left")
+                }
+                .disabled(isRunning)
+                .accessibilityIdentifier("activation.back")
+                Spacer()
+                LanguageButton(appModel: appModel)
+            }
+            Spacer()
+            Text("activation.title")
+                .font(.title.bold())
+                .multilineTextAlignment(.center)
+                .accessibilityIdentifier("activation.title")
+            TextField(
+                "activation.identifier",
+                text: Binding(
+                    get: { appModel.activationInput },
+                    set: { appModel.updateActivationInput($0) }
+                )
+            )
+            .textFieldStyle(.roundedBorder)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .keyboardType(.emailAddress)
+            .disabled(!appModel.activationInputIsEnabled)
+            .accessibilityIdentifier("activation.identifier")
+            if appModel.activationState == .failed {
+                Text("activation.failed")
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("activation.error")
+            } else if appModel.activationState == .supportRequired {
+                Text("activation.supportRequired")
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("activation.support")
+            }
+            Button(isRunning ? "activation.running" : "activation.submit") {
+                Task { await appModel.activate() }
+            }
+            .buttonStyle(CueLensPrimaryButtonStyle())
+            .disabled(!appModel.activationInputIsValid || isRunning)
+            .accessibilityIdentifier("activation.submit")
+            if isRunning {
+                ProgressView()
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text("activation.running"))
+                    .accessibilityIdentifier("activation.progress")
+            }
             Spacer()
         }
         .padding(20)
@@ -223,12 +305,17 @@ private struct NoticeView: View {
 }
 
 private struct CueLensPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .foregroundStyle(.white)
-            .background(CueLensPalette.primary, in: RoundedRectangle(cornerRadius: 6))
+            .background(
+                isEnabled ? CueLensPalette.primary : CueLensPalette.disabledPrimary,
+                in: RoundedRectangle(cornerRadius: 6)
+            )
             .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

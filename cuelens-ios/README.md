@@ -98,6 +98,18 @@ Die best-effort Hintergrundprüfung nutzt `BGAppRefreshTask` ungefähr täglich.
 ./Scripts/verify_notification_security.sh
 ```
 
+## Sichere Aktivierung aus Auftrag 7
+
+Nicht aktivierte Apps bieten eine deutsch/englisch lokalisierte Aktivierungsseite für eine syntaktisch gültige E-Mail-Adresse oder eine 24-stellige alphanumerische Prolific-ID. Ein actor-gekapselter Koordinator führt exakt einen zweistufigen Handshake aus. Der vom ersten Request gelieferte UUID-v4-Token bleibt flüchtig und wird erst nach der erfolgreichen `204`-Bestätigung im gerätegebundenen Keychain gespeichert. Eingaben werden weder in `UserDefaults` noch in Dateien oder Logs übernommen und nach Abschluss beziehungsweise Fehler aus dem AppModel entfernt.
+
+Vor der Bestätigung wird ein inhaltlich neutraler Marker vollständig dateigeschützt und vom Backup ausgeschlossen gespeichert. Bei Bestätigungstimeout, Prozessabbruch oder Keychainfehler wird eine möglicherweise widersprüchliche erneute Aktivierung sowohl im laufenden Prozess als auch nach dem nächsten Start verhindert. Ein bereits sicher vorhandener Token hat Vorrang und bereinigt einen verbliebenen Marker. Allgemeine Fehler bleiben wiederholbar; ein Timeout im Bestätigungsschritt führt zum Supporthinweis.
+
+```sh
+./Scripts/verify_activation_security.sh
+```
+
+Die automatisierten Aktivierungsszenarien verwenden ausschließlich synthetische Test-Doubles und erzeugen keine Backendrequests. Das Staging-Review benötigt deshalb weiterhin je eine freigegebene, zurücksetzbare E-Mail- und Prolific-Testregistrierung sowie eine kontrollierbare Simulation des Bestätigungstimeouts.
+
 ## Datenschutz und Abgrenzung
 
 Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.

@@ -467,3 +467,32 @@ Aktivierung und Studienablauf werden erst in den Folgeaufträgen umgesetzt. Die 
 Ausstehend ist das menschliche Review auf einem echten Gerät: erstmaliges Erlauben und Ablehnen, nachträglicher Berechtigungsentzug, Öffnen beider Notification-Typen und Sprachwechsel. Ein bestehender App-Container wird für diesen Test nicht ohne ausdrückliche Freigabe gelöscht.
 
 Freigabe erfolgte am 17.8.26
+
+## 17.08.2026 – Auftrag 7
+
+**Freigabe und Umfang**
+
+Auftrag 6 wurde durch den datierten Vermerk ausdrücklich freigegeben. Auftrag 7 wurde auf Branch `codex/ios-auftrag-7` umgesetzt und umfasst die E-Mail-/Prolific-Aktivierungsseite, lokale Validierung, den zweistufigen Aktivierungshandshake, Keychainpersistenz nach Bestätigung, Timeout- und Recovery-Behandlung sowie die vorläufige Startseitenintegration.
+
+**Implementierung**
+
+- `ActivationCoordinator` serialisiert Anforderung und Bestätigung und akzeptiert während eines laufenden oder ausstehenden Handshakes keinen zweiten Versuch. Der UUID-v4-Token bleibt innerhalb des Actors und wird erst nach der erwarteten leeren 204-Antwort gespeichert.
+- Die Aktivierungsseite akzeptiert dieselben E-Mail- und Prolific-Regeln wie Domain und Android-Referenz. Sie deaktiviert Eingabe, Zurücknavigation und Submit während des Handshakes, unterstützt sofortigen Sprachwechsel und entfernt die Teilnehmerkennung nach Erfolg oder Fehler aus dem AppModel.
+- Der Bestätigungstimeout zeigt den vorgeschriebenen Supporttext. Andere Request-, HTTP- und Protokollfehler bleiben neutral und wiederholbar. Ein Keychain- oder sicherheitskritischer Dateifehler wechselt fail-closed in den sicheren Supportzustand.
+- Vor dem Bestätigungsrequest wird ohne Kennung oder Token der Marker `activation-confirmation-uncertain-v1` atomar, vollständig dateigeschützt und vom Backup ausgeschlossen gespeichert. Nach eindeutigem Fehler oder sicherer Tokenspeicherung wird er entfernt. Bei Timeout, Prozessabbruch oder Keychainfehler bleibt eine unkontrollierte erneute Aktivierung im laufenden Prozess und nach einem Neustart gesperrt; ein bereits vorhandener gültiger Token bereinigt einen verbliebenen Marker.
+- Nicht aktivierte Apps bieten die Aktivierung an; aktivierte Apps zeigen nur den abgeschlossenen Zustand und können die Seite nicht erneut öffnen. Nach Erfolg wird unmittelbar die bestehende Notification-Reconcile-Schnittstelle aktualisiert.
+- Alle sichtbaren Texte entsprechen der deutschen und englischen Android-Referenz. Es wurde kein iOS-interner Datenschutz-Zustimmungsdialog ergänzt.
+
+**Tests und technische Prüfung**
+
+- 133 Unit-Tests bestanden unter iOS 26.5 und zusätzlich unter iOS 17.5. Neue Tests prüfen beide Kennungstypen, Trimmen und Case-Erhalt, Doppelaufrufe, beide Handshakephasen, Fehler- und Timeoutklassifikation, Speichern erst nach Bestätigung, Marker-Lebenszyklus, Keychain- und Dateifehler, Neustart-Recovery sowie den realen geschützten Dateizugriff im Simulatorcontainer.
+- Zwölf synthetische UI-Szenarien bestanden jeweils auf iPhone und iPad unter iOS 26.5. Sie prüfen zusätzlich ungültige Eingabe, E-Mail, Prolific-ID, Sprachwechsel, laufenden Zustand, allgemeinen Fehler, Bestätigungstimeout, sicheren Speicherfehler, Recovery und eine bereits aktivierte App.
+- Das vollständige Quality-Gate mit Debug-, Staging- und Release-Prüfung, sämtliche Domain-, Persistenz-, Netzwerk-, Notification- und Aktivierungsgates, Release-Analyze sowie der unsignierte Release-Gerätebuild bestanden.
+- Ein signierter Staging-Build wurde als datenbewahrendes Update auf dem verbundenen iPhone installiert und erfolgreich gestartet.
+- Automatisierte Aktivierungstests verwenden ausschließlich synthetische Kennungen und Test-Doubles. Es wurden keine produktiven oder Staging-Aktivierungsrequests ausgelöst und keine Teilnehmerkennungen, Tokens oder Serverdetails geloggt.
+
+**Abweichungen, Annahmen und Review-Gate**
+
+Die Datenflussmatrix begrenzt die Teilnehmerkennung strenger als der Android-Retry-Komfort; deshalb wird sie bei einem Fehler geleert und muss für einen Retry erneut eingegeben werden. Die geschützte Unklarheitsmarkierung konkretisiert den nicht vollständig spezifizierten Prozessabbruch beziehungsweise Keychainfehler nach möglicherweise erfolgreicher Serverbestätigung konservativ fail-closed.
+
+Das menschliche Review-Gate bleibt ausstehend. Erforderlich sind je eine freigegebene, zurücksetzbare Staging-Testregistrierung für E-Mail und Prolific sowie eine kontrollierbare Simulation eines Timeouts beim zweiten Request. Ohne diese externen Voraussetzungen darf kein schreibender Aktivierungs-E2E-Test durchgeführt werden.

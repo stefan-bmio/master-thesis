@@ -11,6 +11,13 @@ struct PersistencePaths: Equatable, Sendable {
         rootDirectory.appendingPathComponent("study-state-v1.json", isDirectory: false)
     }
 
+    var activationConfirmationMarker: URL {
+        rootDirectory.appendingPathComponent(
+            "activation-confirmation-uncertain-v1",
+            isDirectory: false
+        )
+    }
+
     static func applicationSupport() throws -> PersistencePaths {
         let base = try FileManager.default.url(
             for: .applicationSupportDirectory,

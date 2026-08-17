@@ -16,6 +16,10 @@ enum ProtectedFileOperation: String, Equatable, Sendable {
     case protectState
     case readState
     case writeState
+    case inspectActivationMarker
+    case protectActivationMarker
+    case writeActivationMarker
+    case deleteActivationMarker
 }
 
 enum PersistenceError: Error, Equatable, Sendable {

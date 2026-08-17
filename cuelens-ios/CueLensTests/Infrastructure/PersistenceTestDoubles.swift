@@ -54,6 +54,7 @@ enum FakeFileOperation: Hashable, Sendable {
     case exists
     case read
     case write
+    case remove
     case secure
     case attributes
 }
@@ -93,6 +94,12 @@ actor InMemoryProtectedFileClient: ProtectedFileAccessing {
             isExcludedFromBackup: true
         )
         writes.append(url)
+    }
+
+    func removeResource(at url: URL) async throws {
+        try failIfNeeded(.remove)
+        resources[url] = nil
+        security[url] = nil
     }
 
     func secureExistingResource(at url: URL) async throws {

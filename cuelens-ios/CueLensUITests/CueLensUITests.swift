@@ -80,11 +80,108 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testActivationValidatesInputAndAcceptsEmail() {
+        let app = makeApp(feed: "empty", activation: "success")
+        app.launch()
+        openActivation(in: app)
+        let field = app.textFields["activation.identifier"]
+        field.tap()
+        field.typeText("invalid")
+        XCTAssertFalse(app.buttons["activation.submit"].isEnabled)
+        field.clearAndTypeText("person@example.org")
+        XCTAssertTrue(app.buttons["activation.submit"].isEnabled)
+        app.buttons["activation.submit"].tap()
+        XCTAssertTrue(app.staticTexts["activation.completed"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["activation.open"].exists)
+    }
+
+    @MainActor
+    func testActivationAcceptsProlificIDAndSwitchesLanguage() {
+        let app = makeApp(feed: "empty", activation: "success")
+        app.launch()
+        openActivation(in: app)
+        app.buttons["language.switch"].tap()
+        XCTAssertTrue(app.staticTexts["App activation"].waitForExistence(timeout: 2))
+        let field = app.textFields["activation.identifier"]
+        field.tap()
+        field.typeText("AbCdEf1234567890GhIjKlMn")
+        app.buttons["activation.submit"].tap()
+        XCTAssertTrue(app.staticTexts["The app has been activated."].waitForExistence(timeout: 3))
+    }
+
+    @MainActor
+    func testActivationShowsRunningStateAndBlocksNavigation() {
+        let app = makeApp(feed: "empty", activation: "running")
+        app.launch()
+        openActivation(in: app)
+        let field = app.textFields["activation.identifier"]
+        field.tap()
+        field.typeText("person@example.org")
+        app.buttons["activation.submit"].tap()
+        let progress = app.descendants(matching: .any)["activation.progress"]
+        XCTAssertTrue(progress.waitForExistence(timeout: 2))
+        XCTAssertFalse(app.buttons["activation.submit"].isEnabled)
+        XCTAssertFalse(app.buttons["activation.back"].isEnabled)
+        XCTAssertTrue(app.staticTexts["activation.completed"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testActivationDistinguishesGeneralFailureAndConfirmationTimeout() {
+        let failed = makeApp(feed: "empty", activation: "failure")
+        failed.launch()
+        openActivation(in: failed)
+        failed.textFields["activation.identifier"].tap()
+        failed.textFields["activation.identifier"].typeText("person@example.org")
+        failed.buttons["activation.submit"].tap()
+        XCTAssertTrue(failed.staticTexts["activation.error"].waitForExistence(timeout: 2))
+        XCTAssertEqual(failed.textFields["activation.identifier"].value as? String,
+                       "E-Mail-Adresse oder Prolific-ID")
+        failed.terminate()
+
+        let timeout = makeApp(feed: "empty", activation: "timeout")
+        timeout.launch()
+        openActivation(in: timeout)
+        timeout.textFields["activation.identifier"].tap()
+        timeout.textFields["activation.identifier"].typeText("person@example.org")
+        timeout.buttons["activation.submit"].tap()
+        XCTAssertTrue(timeout.staticTexts["activation.support"].waitForExistence(timeout: 2))
+        XCTAssertFalse(timeout.textFields["activation.identifier"].isEnabled)
+        XCTAssertFalse(timeout.buttons["activation.submit"].isEnabled)
+    }
+
+    @MainActor
+    func testActivationStorageFailureAndRecoveredUncertaintyAreFailClosed() {
+        let failed = makeApp(feed: "empty", activation: "storage-failure")
+        failed.launch()
+        openActivation(in: failed)
+        failed.textFields["activation.identifier"].tap()
+        failed.textFields["activation.identifier"].typeText("person@example.org")
+        failed.buttons["activation.submit"].tap()
+        XCTAssertTrue(failed.staticTexts["app.foundationStatus.failure"].waitForExistence(timeout: 2))
+        failed.terminate()
+
+        let restored = makeApp(feed: "empty", activation: "recovered-support")
+        restored.launch()
+        XCTAssertTrue(restored.staticTexts["app.foundationStatus.failure"].waitForExistence(timeout: 10))
+        XCTAssertFalse(restored.buttons["activation.open"].exists)
+    }
+
+    @MainActor
+    func testAlreadyActivatedAppDoesNotOfferActivation() {
+        let app = makeApp(feed: "empty", activation: "activated")
+        app.launch()
+        declineConsentIfShown(in: app)
+        XCTAssertTrue(app.staticTexts["activation.completed"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["activation.open"].exists)
+    }
+
+    @MainActor
     private func makeApp(
         feed: String,
         language: String = "de",
         suite: String = "de.eachandevery.cuelens.uitest.\(UUID().uuidString)",
-        interfaceStyle: String? = nil
+        interfaceStyle: String? = nil,
+        activation: String? = nil
     ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -94,6 +191,9 @@ final class CueLensUITests: XCTestCase {
         ]
         if let interfaceStyle {
             app.launchArguments += ["-AppleInterfaceStyle", interfaceStyle]
+        }
+        if let activation {
+            app.launchArguments += ["--ui-test-activation", activation]
         }
         return app
     }
@@ -106,5 +206,23 @@ final class CueLensUITests: XCTestCase {
         }
         app.switches["notification.consent.toggle"].tap()
         app.buttons["notification.consent.continue"].tap()
+    }
+
+    @MainActor
+    private func openActivation(in app: XCUIApplication) {
+        declineConsentIfShown(in: app)
+        XCTAssertTrue(app.buttons["activation.open"].waitForExistence(timeout: 10))
+        app.buttons["activation.open"].tap()
+        XCTAssertTrue(app.staticTexts["activation.title"].waitForExistence(timeout: 2))
+    }
+}
+
+private extension XCUIElement {
+    func clearAndTypeText(_ text: String) {
+        tap()
+        if let current = value as? String, !current.isEmpty {
+            typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+        }
+        typeText(text)
     }
 }

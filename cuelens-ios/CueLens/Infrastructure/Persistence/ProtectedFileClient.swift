@@ -18,6 +18,7 @@ protocol ProtectedFileAccessing: Sendable {
     func resourceExists(at url: URL) async throws -> Bool
     func read(at url: URL) async throws -> Data
     func writeProtectedAtomically(_ data: Data, to url: URL) async throws
+    func removeResource(at url: URL) async throws
     func secureExistingResource(at url: URL) async throws
     func securityAttributes(at url: URL) async throws -> ResourceSecurity
 }
@@ -54,6 +55,19 @@ struct SystemProtectedFileClient: ProtectedFileAccessing {
     func writeProtectedAtomically(_ data: Data, to url: URL) async throws {
         try data.write(to: url, options: [.atomic, .completeFileProtection])
         try await secureExistingResource(at: url)
+    }
+
+    func removeResource(at url: URL) async throws {
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            let cocoaError = error as NSError
+            guard cocoaError.domain == NSCocoaErrorDomain,
+                  (cocoaError.code == NSFileNoSuchFileError
+                   || cocoaError.code == NSFileReadNoSuchFileError) else {
+                throw error
+            }
+        }
     }
 
     func secureExistingResource(at url: URL) async throws {

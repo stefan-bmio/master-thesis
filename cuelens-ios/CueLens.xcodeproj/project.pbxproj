@@ -79,6 +79,10 @@
 		100000000000000000000480 /* CueLensAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000223 /* CueLensAppDelegate.swift */; };
 		100000000000000000000481 /* NotificationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000224 /* NotificationCoordinatorTests.swift */; };
 		100000000000000000000482 /* BackgroundRefreshCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000225 /* BackgroundRefreshCoordinatorTests.swift */; };
+		100000000000000000000483 /* ActivationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000230 /* ActivationCoordinator.swift */; };
+		100000000000000000000484 /* ProtectedActivationRecoveryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000231 /* ProtectedActivationRecoveryStore.swift */; };
+		100000000000000000000485 /* ActivationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000232 /* ActivationCoordinatorTests.swift */; };
+		100000000000000000000486 /* ProtectedActivationRecoveryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000233 /* ProtectedActivationRecoveryStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,6 +135,11 @@
 		100000000000000000000224 /* NotificationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000225 /* BackgroundRefreshCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefreshCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000226 /* verify_notification_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_notification_security.sh; sourceTree = "<group>"; };
+		100000000000000000000230 /* ActivationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000231 /* ProtectedActivationRecoveryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedActivationRecoveryStore.swift; sourceTree = "<group>"; };
+		100000000000000000000232 /* ActivationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000233 /* ProtectedActivationRecoveryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedActivationRecoveryStoreTests.swift; sourceTree = "<group>"; };
+		100000000000000000000234 /* verify_activation_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_activation_security.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -314,6 +323,7 @@
 				100000000000000000000193 /* verify_network_security.sh */,
 				100000000000000000000200 /* verify_staging_configuration.sh */,
 				100000000000000000000226 /* verify_notification_security.sh */,
+				100000000000000000000234 /* verify_activation_security.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -407,6 +417,7 @@
 		100000000000000000000019 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				100000000000000000000027 /* Activation */,
 				100000000000000000000020 /* Keychain */,
 				100000000000000000000021 /* Persistence */,
 				100000000000000000000023 /* Network */,
@@ -434,6 +445,7 @@
 				100000000000000000000161 /* PersistenceError.swift */,
 				100000000000000000000165 /* PersistencePaths.swift */,
 				100000000000000000000164 /* ProtectedFileClient.swift */,
+				100000000000000000000231 /* ProtectedActivationRecoveryStore.swift */,
 				100000000000000000000168 /* ProtectedStudyStateStore.swift */,
 				100000000000000000000166 /* SecureRandomByteGenerator.swift */,
 			);
@@ -443,6 +455,7 @@
 		100000000000000000000022 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				100000000000000000000028 /* Activation */,
 				100000000000000000000024 /* Network */,
 				100000000000000000000026 /* Notifications */,
 				100000000000000000000172 /* InstallationCoordinatorTests.swift */,
@@ -502,6 +515,23 @@
 				100000000000000000000224 /* NotificationCoordinatorTests.swift */,
 			);
 			path = Notifications;
+			sourceTree = "<group>";
+		};
+		100000000000000000000027 /* Activation */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000230 /* ActivationCoordinator.swift */,
+			);
+			path = Activation;
+			sourceTree = "<group>";
+		};
+		100000000000000000000028 /* Activation */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000232 /* ActivationCoordinatorTests.swift */,
+				100000000000000000000233 /* ProtectedActivationRecoveryStoreTests.swift */,
+			);
+			name = Activation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -684,6 +714,8 @@
 				100000000000000000000478 /* NotificationCoordinator.swift in Sources */,
 				100000000000000000000479 /* BackgroundRefreshCoordinator.swift in Sources */,
 				100000000000000000000480 /* CueLensAppDelegate.swift in Sources */,
+				100000000000000000000483 /* ActivationCoordinator.swift in Sources */,
+				100000000000000000000484 /* ProtectedActivationRecoveryStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -711,6 +743,8 @@
 				100000000000000000000476 /* AppShellTests.swift in Sources */,
 				100000000000000000000481 /* NotificationCoordinatorTests.swift in Sources */,
 				100000000000000000000482 /* BackgroundRefreshCoordinatorTests.swift in Sources */,
+				100000000000000000000485 /* ActivationCoordinatorTests.swift in Sources */,
+				100000000000000000000486 /* ProtectedActivationRecoveryStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

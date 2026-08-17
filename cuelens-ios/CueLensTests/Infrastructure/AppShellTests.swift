@@ -272,7 +272,122 @@ final class AppShellTests: XCTestCase {
     }
 
     @MainActor
+    func testActivationAcceptsEmailAndReturnsActivatedAppToHome() async throws {
+        let activation = AppActivationStub(
+            requestOutcome: .readyToConfirm,
+            confirmationOutcome: .activated
+        )
+        let model = makeModel(activation: activation)
+        await model.initialize(lifecyclePhase: .active)
+        model.openActivation()
+        model.updateActivationInput("  Person@Example.org  ")
+
+        XCTAssertEqual(model.route, .activation)
+        XCTAssertTrue(model.activationInputIsValid)
+        await model.activate()
+
+        XCTAssertEqual(model.route, .home)
+        XCTAssertTrue(model.isActivated)
+        XCTAssertEqual(model.activationState, .activated)
+        XCTAssertEqual(model.activationInput, "")
+        let identifiers = await activation.currentIdentifiers()
+        XCTAssertEqual(identifiers, [.directEmail("Person@Example.org")])
+    }
+
+    @MainActor
+    func testActivationPreservesTrimmedProlificIDAndRejectsInvalidInputLocally() async {
+        let activation = AppActivationStub(
+            requestOutcome: .readyToConfirm,
+            confirmationOutcome: .activated
+        )
+        let model = makeModel(activation: activation)
+        await model.initialize(lifecyclePhase: .active)
+        model.openActivation()
+        model.updateActivationInput("invalid")
+
+        XCTAssertFalse(model.activationInputIsValid)
+        await model.activate()
+        var identifiers = await activation.currentIdentifiers()
+        XCTAssertTrue(identifiers.isEmpty)
+
+        model.updateActivationInput("  AbCdEf1234567890GhIjKlMn\n")
+        XCTAssertTrue(model.activationInputIsValid)
+        await model.activate()
+        identifiers = await activation.currentIdentifiers()
+        XCTAssertEqual(identifiers, [.prolificID("AbCdEf1234567890GhIjKlMn")])
+    }
+
+    @MainActor
+    func testActivationFailuresClearIdentifierAndUsePhaseSpecificState() async {
+        let requestFailure = AppActivationStub(
+            requestOutcome: .failed,
+            confirmationOutcome: .ignored
+        )
+        let requestModel = makeModel(activation: requestFailure)
+        await requestModel.initialize(lifecyclePhase: .active)
+        requestModel.openActivation()
+        requestModel.updateActivationInput("person@example.org")
+        await requestModel.activate()
+        XCTAssertEqual(requestModel.activationState, .failed)
+        XCTAssertEqual(requestModel.activationInput, "")
+
+        let timeout = AppActivationStub(
+            requestOutcome: .readyToConfirm,
+            confirmationOutcome: .supportRequired
+        )
+        let timeoutModel = makeModel(activation: timeout)
+        await timeoutModel.initialize(lifecyclePhase: .active)
+        timeoutModel.openActivation()
+        timeoutModel.updateActivationInput("person@example.org")
+        await timeoutModel.activate()
+        XCTAssertEqual(timeoutModel.route, .activation)
+        XCTAssertEqual(timeoutModel.activationState, .supportRequired)
+        XCTAssertEqual(timeoutModel.activationInput, "")
+        XCTAssertFalse(timeoutModel.activationInputIsEnabled)
+        XCTAssertFalse(timeoutModel.activationInputIsValid)
+        timeoutModel.updateActivationInput("second@example.org")
+        XCTAssertEqual(timeoutModel.activationInput, "")
+        timeoutModel.cancelActivation()
+        timeoutModel.openActivation()
+        XCTAssertEqual(timeoutModel.activationState, .supportRequired)
+    }
+
+    @MainActor
+    func testActivationStorageFailureAndRecoveredUncertaintyFailClosed() async {
+        let storageFailure = AppActivationStub(
+            requestOutcome: .readyToConfirm,
+            confirmationOutcome: .secureStorageFailure
+        )
+        let model = makeModel(activation: storageFailure)
+        await model.initialize(lifecyclePhase: .active)
+        model.openActivation()
+        model.updateActivationInput("person@example.org")
+        await model.activate()
+        XCTAssertEqual(model.route, .secureStorageFailure)
+        XCTAssertFalse(model.isActivated)
+
+        let restored = makeModel(
+            persistence: PersistenceLoaderStub(activationRequiresSupport: true)
+        )
+        await restored.initialize(lifecyclePhase: .active)
+        XCTAssertEqual(restored.route, .secureStorageFailure)
+        restored.openActivation()
+        XCTAssertEqual(restored.route, .secureStorageFailure)
+    }
+
+    @MainActor
+    func testAlreadyActivatedAppCannotOpenActivationAgain() async {
+        let model = makeModel(persistence: PersistenceLoaderStub(isActivated: true))
+        await model.initialize(lifecyclePhase: .active)
+
+        XCTAssertTrue(model.isActivated)
+        model.openActivation()
+        XCTAssertEqual(model.route, .home)
+    }
+
+    @MainActor
     private func makeModel(
+        persistence: PersistenceLoaderStub = PersistenceLoaderStub(),
         settings: SettingsStub = SettingsStub(settings: AppSettings(
             selectedLanguage: nil,
             dismissedMessageIDs: [],
@@ -283,13 +398,15 @@ final class AppShellTests: XCTestCase {
         feed: FeedStub = FeedStub(),
         preferredLanguages: [String] = ["de-CH"],
         notifications: AppNotificationStub = AppNotificationStub(),
-        backgroundRefresh: AppBackgroundStub = AppBackgroundStub()
+        backgroundRefresh: AppBackgroundStub = AppBackgroundStub(),
+        activation: AppActivationStub = AppActivationStub()
     ) -> CueLensAppModel {
         CueLensAppModel(
             environment: AppEnvironment(
-                persistence: PersistenceLoaderStub(),
+                persistence: persistence,
                 settings: settings,
                 infoFeed: feed,
+                activation: activation,
                 notifications: notifications,
                 backgroundRefresh: backgroundRefresh
             ),
@@ -308,12 +425,47 @@ final class AppShellTests: XCTestCase {
 }
 
 private struct PersistenceLoaderStub: LocalPersistenceLoading {
+    let isActivated: Bool
+    let activationRequiresSupport: Bool
+
+    init(isActivated: Bool = false, activationRequiresSupport: Bool = false) {
+        self.isActivated = isActivated
+        self.activationRequiresSupport = activationRequiresSupport
+    }
+
     func load() async throws -> LocalPersistenceSnapshot {
         LocalPersistenceSnapshot(
             installation: .existingInstallation,
-            studyState: try StudyState.initial
+            studyState: try StudyState.initial,
+            isActivated: isActivated,
+            activationRequiresSupport: activationRequiresSupport
         )
     }
+}
+
+private actor AppActivationStub: ActivationManaging {
+    private let requestOutcome: ActivationTokenRequestOutcome
+    private let confirmationOutcome: ActivationConfirmationOutcome
+    private var identifiers: [ParticipantIdentifier] = []
+
+    init(
+        requestOutcome: ActivationTokenRequestOutcome = .failed,
+        confirmationOutcome: ActivationConfirmationOutcome = .failed
+    ) {
+        self.requestOutcome = requestOutcome
+        self.confirmationOutcome = confirmationOutcome
+    }
+
+    func requestToken(identifier: ParticipantIdentifier) async -> ActivationTokenRequestOutcome {
+        identifiers.append(identifier)
+        return requestOutcome
+    }
+
+    func confirmPendingToken() async -> ActivationConfirmationOutcome {
+        confirmationOutcome
+    }
+
+    func currentIdentifiers() -> [ParticipantIdentifier] { identifiers }
 }
 
 private actor SettingsStub: AppSettingsStoring {

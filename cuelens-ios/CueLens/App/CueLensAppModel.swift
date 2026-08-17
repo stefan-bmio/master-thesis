@@ -6,6 +6,7 @@ enum AppRoute: Equatable, Sendable {
     case infoFeed
     case notificationConsent
     case home
+    case activation
     case secureStorageFailure
 }
 
@@ -41,6 +42,7 @@ final class CueLensAppModel {
     private var notificationPromptCompleted = false
     private var notificationsEnabled = false
     private var appActivated = false
+    private var activationRequiresSupport = false
 
     private(set) var route: AppRoute = .loading
     private(set) var language: AppLanguage = .german
@@ -50,8 +52,17 @@ final class CueLensAppModel {
     private(set) var lifecyclePhase: AppLifecyclePhase = .inactive
     private(set) var notificationOptionEnabled = true
     private(set) var isCompletingNotificationConsent = false
+    private(set) var activationInput = ""
+    private(set) var activationState: ActivationState = .idle
 
     var showsPrivacyCurtain: Bool { lifecyclePhase != .active }
+    var isActivated: Bool { appActivated }
+    var activationInputIsValid: Bool {
+        !activationRequiresSupport && (try? ParticipantIdentifier.parse(activationInput)) != nil
+    }
+    var activationInputIsEnabled: Bool {
+        !activationRequiresSupport && !activationIsRunning
+    }
 
     init(
         environment: AppEnvironment,
@@ -88,7 +99,12 @@ final class CueLensAppModel {
             let snapshot = try await environment.persistence.load()
             studyState = snapshot.studyState
             appActivated = snapshot.isActivated
+            activationRequiresSupport = snapshot.activationRequiresSupport
             localStateLoaded = true
+            if snapshot.activationRequiresSupport {
+                route = .secureStorageFailure
+                return
+            }
         } catch {
             route = .secureStorageFailure
             return
@@ -127,6 +143,72 @@ final class CueLensAppModel {
             notice = .settingSaveFailed
         }
         await reconcileNotificationInfrastructure()
+    }
+
+    func openActivation() {
+        guard route == .home, !appActivated else { return }
+        activationInput = ""
+        activationState = activationRequiresSupport ? .supportRequired : .idle
+        route = .activation
+    }
+
+    func updateActivationInput(_ value: String) {
+        guard route == .activation,
+              !activationIsRunning,
+              !activationRequiresSupport else { return }
+        activationInput = value
+        if activationState == .failed || activationState == .supportRequired {
+            activationState = .idle
+        }
+    }
+
+    func cancelActivation() {
+        guard route == .activation, !activationIsRunning else { return }
+        activationInput = ""
+        activationState = .idle
+        route = .home
+    }
+
+    func activate() async {
+        guard route == .activation,
+              !appActivated,
+              !activationRequiresSupport,
+              !activationIsRunning,
+              let environment,
+              let identifier = try? ParticipantIdentifier.parse(activationInput) else { return }
+
+        activationState = .requestingToken
+        let requestOutcome = await environment.activation.requestToken(identifier: identifier)
+        switch requestOutcome {
+        case .readyToConfirm:
+            activationState = .confirmingToken
+        case .failed:
+            activationInput = ""
+            activationState = .failed
+            return
+        case .ignored:
+            activationState = .idle
+            return
+        }
+
+        let confirmationOutcome = await environment.activation.confirmPendingToken()
+        activationInput = ""
+        switch confirmationOutcome {
+        case .activated:
+            appActivated = true
+            activationState = .activated
+            route = .home
+            await reconcileNotificationInfrastructure()
+        case .failed:
+            activationState = .failed
+        case .supportRequired:
+            activationRequiresSupport = true
+            activationState = .supportRequired
+        case .secureStorageFailure:
+            route = .secureStorageFailure
+        case .ignored:
+            activationState = .failed
+        }
     }
 
     func setNotificationOptionEnabled(_ value: Bool) {
@@ -281,5 +363,9 @@ final class CueLensAppModel {
             && state.pendingCraving == nil
             && (1..<StudySchedule.totalSituationCount).contains(state.confirmedSituationCount)
             && state.nextSituationAvailableAt != nil
+    }
+
+    private var activationIsRunning: Bool {
+        activationState == .requestingToken || activationState == .confirmingToken
     }
 }

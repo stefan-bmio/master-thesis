@@ -14,6 +14,8 @@ rg -q 'kSecAttrSynchronizable' "$KEYCHAIN_DIR/KeychainClient.swift"
 rg -q '\.completeFileProtection' "$PERSISTENCE_DIR/ProtectedFileClient.swift"
 rg -q 'FileProtectionType\.complete' "$PERSISTENCE_DIR/ProtectedFileClient.swift"
 rg -q 'isExcludedFromBackup' "$PERSISTENCE_DIR/ProtectedFileClient.swift"
+rg -q 'activation-confirmation-uncertain-v1' "$PERSISTENCE_DIR/PersistencePaths.swift"
+rg -q 'writeProtectedAtomically' "$PERSISTENCE_DIR/ProtectedActivationRecoveryStore.swift"
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPIType' "$PRIVACY_MANIFEST")" = \
   'NSPrivacyAccessedAPICategoryFileTimestamp'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPITypeReasons:0' "$PRIVACY_MANIFEST")" = \

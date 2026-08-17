@@ -52,6 +52,62 @@
         }
       }
     },
+    "activation.alreadyCompleted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die App ist aktiviert." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The app has been activated." } }
+      }
+    },
+    "activation.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activation failed. Please try again later." } }
+      }
+    },
+    "activation.identifier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "E-Mail-Adresse oder Prolific-ID" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Email address or Prolific ID" } }
+      }
+    },
+    "activation.open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "App-Aktivierung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "App activation" } }
+      }
+    },
+    "activation.running" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivierung läuft" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activating" } }
+      }
+    },
+    "activation.submit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activate" } }
+      }
+    },
+    "activation.supportRequired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Aktivierung war nicht möglich. Bitte wenden Sie sich an cuelens@each-and-every.de." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activation was not possible. Please contact cuelens@each-and-every.de." } }
+      }
+    },
+    "activation.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "App-Aktivierung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "App activation" } }
+      }
+    },
     "app.title" : {
       "extractionState" : "manual",
       "localizations" : {

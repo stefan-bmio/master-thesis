@@ -1809,6 +1809,15 @@ Sichere E-Mail-/Prolific-Aktivierung mit zweistufigem Handshake.
 - Keychainfehler sperrt produktive Nutzung;
 - aktivierte App bietet keine erneute Aktivierung.
 
+**Umsetzungsentscheidungen vom 17.08.2026**
+
+- Der gesamte Handshake ist in einem Actor serialisiert. Der Token verlässt den Koordinator nicht und wird erst nach bestätigtem `204 No Content` an den Keychain-Store übergeben.
+- Vor dem zweiten Request wird ein neutraler, vollständig dateigeschützter und vom Backup ausgeschlossener Unklarheitsmarker ohne Kennung oder Token geschrieben. Bestätigungstimeout, Prozessabbruch und Keychainfehler bleiben dadurch im laufenden Prozess und nach einem Neustart fail-closed; ein bereits sicher vorhandener Token bereinigt einen verbliebenen Marker.
+- Nur `NetworkError.timedOut` aus dem Bestätigungsschritt erzeugt `supportRequired`. Ein sicher als fehlgeschlagen beantworteter Bestätigungsrequest entfernt den Marker und bleibt wiederholbar.
+- Teilnehmerkennungen bleiben ausschließlich im UI- und Requestspeicher und werden nach Erfolg oder Fehler entfernt. Dies folgt der strengeren Begrenzung der Datenflussmatrix gegenüber dem Android-Retry-Komfort.
+- Auftrag 7 ergänzt auf der vorläufigen Startseite nur Aktivierungszugang beziehungsweise abgeschlossenen Aktivierungsstatus. Demo, Feedback, Datenschutz- und Kontaktlinks bleiben Auftrag 8 vorbehalten.
+- Der Supportkontakt ist in diesem Auftrag Text; der allgemeine `mailto:`-Kontakt folgt mit Auftrag 8.
+
 **Review-Gate**
 
 Staging-Endpunkt mit E-Mail- und Prolific-Testregistrierung sowie simuliertem Bestätigungstimeout.

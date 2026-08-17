@@ -15,6 +15,7 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         XCTAssertEqual(snapshot.installation, .newInstallation)
         XCTAssertEqual(snapshot.studyState, try StudyState.initial)
         XCTAssertFalse(snapshot.isActivated)
+        XCTAssertFalse(snapshot.activationRequiresSupport)
     }
 
     func testBootstrapExposesOnlyActivationStatusWithoutExposingToken() async throws {
@@ -28,6 +29,42 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         let snapshot = try await bootstrap.load()
 
         XCTAssertTrue(snapshot.isActivated)
+        XCTAssertFalse(snapshot.activationRequiresSupport)
+    }
+
+    func testUncertainConfirmationWithoutTokenRequiresSupport() async throws {
+        let recovery = BootstrapRecoveryStub(uncertain: true)
+        let bootstrap = LocalPersistenceBootstrap(
+            installation: StubInstallationPreparer(result: .existingInstallation),
+            tokenStore: StubTokenStore(token: nil),
+            stateStore: StubStudyStateStore(state: try StudyState.initial),
+            activationRecovery: recovery
+        )
+
+        let snapshot = try await bootstrap.load()
+
+        XCTAssertFalse(snapshot.isActivated)
+        XCTAssertTrue(snapshot.activationRequiresSupport)
+        let clearCount = await recovery.currentClearCount()
+        XCTAssertEqual(clearCount, 0)
+    }
+
+    func testStoredTokenWinsAndClearsStaleConfirmationMarker() async throws {
+        let token = try UUIDv4("550e8400-e29b-41d4-a716-446655440000")
+        let recovery = BootstrapRecoveryStub(uncertain: true)
+        let bootstrap = LocalPersistenceBootstrap(
+            installation: StubInstallationPreparer(result: .existingInstallation),
+            tokenStore: StubTokenStore(token: token),
+            stateStore: StubStudyStateStore(state: try StudyState.initial),
+            activationRecovery: recovery
+        )
+
+        let snapshot = try await bootstrap.load()
+
+        XCTAssertTrue(snapshot.isActivated)
+        XCTAssertFalse(snapshot.activationRequiresSupport)
+        let clearCount = await recovery.currentClearCount()
+        XCTAssertEqual(clearCount, 1)
     }
 
     func testFreshSystemFileBootstrapCreatesInstallationAndLoadsInitialState() async throws {
@@ -164,6 +201,23 @@ private actor StubStudyStateStore: StudyStateStore {
 
     func readState() async throws -> StudyState { state }
     func writeState(_ state: StudyState) async throws {}
+}
+
+private actor BootstrapRecoveryStub: ActivationRecoveryStoring {
+    private var uncertain: Bool
+    private var clearCount = 0
+
+    init(uncertain: Bool) {
+        self.uncertain = uncertain
+    }
+
+    func isConfirmationUncertain() async throws -> Bool { uncertain }
+    func markConfirmationUncertain() async throws { uncertain = true }
+    func clearConfirmationUncertain() async throws {
+        uncertain = false
+        clearCount += 1
+    }
+    func currentClearCount() -> Int { clearCount }
 }
 
 private struct StubPersistenceLoader: LocalPersistenceLoading {
