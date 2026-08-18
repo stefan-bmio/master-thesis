@@ -13,3 +13,5 @@ AI_PoC/app/src/benchmark/assets/eval_manifest.json
 AI_PoC/app/src/benchmark/assets/evalset/
 AI_PoC/app/src/main/assets/models/*.tflite
 training/image_models/artifacts/
+
+.DS_STORE
