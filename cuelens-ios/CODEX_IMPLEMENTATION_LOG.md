@@ -331,7 +331,6 @@ Requests werden durch Akzeptanztest zu einem späteren Zeitpunkt getestet
 freigegebenes Staging-System: http://192.168.1.243/cuelens
 
 **Menschliche Freigabe**
-Ausstehend; vor Beginn von Auftrag 5 ist das Review-Gate freizugeben.
 16.8.2026
 
 ## 16.08.2026 – Auftrag 5
@@ -395,7 +394,6 @@ Fehler unkritischer Einstellungen blockieren die App nicht: ungültige Werte wer
 - Das lokale Staging-System muss PHP serverseitig ausführen, `application/json` liefern und sollte vor weitergehenden Akzeptanztests auf HTTPS umgestellt werden. Bis dahin dürfen keine schreibenden Staging-Akzeptanztests erfolgen.
 
 **Menschliche Freigabe**
-Ausstehend; vor Beginn von Auftrag 6 ist das Review-Gate freizugeben.
 16.8.2026
 
 ## 16.08.2026 – Korrektur zu Auftrag 5: lokale Staging-Transportpolicy
@@ -496,3 +494,4 @@ Auftrag 6 wurde durch den datierten Vermerk ausdrücklich freigegeben. Auftrag 7
 Die Datenflussmatrix begrenzt die Teilnehmerkennung strenger als der Android-Retry-Komfort; deshalb wird sie bei einem Fehler geleert und muss für einen Retry erneut eingegeben werden. Die geschützte Unklarheitsmarkierung konkretisiert den nicht vollständig spezifizierten Prozessabbruch beziehungsweise Keychainfehler nach möglicherweise erfolgreicher Serverbestätigung konservativ fail-closed.
 
 Das menschliche Review-Gate bleibt ausstehend. Erforderlich sind je eine freigegebene, zurücksetzbare Staging-Testregistrierung für E-Mail und Prolific sowie eine kontrollierbare Simulation eines Timeouts beim zweiten Request. Ohne diese externen Voraussetzungen darf kein schreibender Aktivierungs-E2E-Test durchgeführt werden.
+Freigabe erfolgt am 24.8.26
