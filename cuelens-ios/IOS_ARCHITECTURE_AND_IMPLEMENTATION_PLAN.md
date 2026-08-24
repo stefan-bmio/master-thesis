@@ -1850,6 +1850,17 @@ Alle nichtproduktiven Funktionen vollständig.
 - `mailto:` ohne sensible Vorbelegung;
 - Feedback bleibt nach Studienabschluss erreichbar.
 
+**Umsetzungsentscheidungen vom 24.08.2026**
+
+- Auftrag 8 bildet die nichtproduktiven Startseitenzustände vollständig ab. Featureabruf, Cooldown, Pending-Retry und funktionsfähiger Studienstart bleiben Auftrag 9 und 10 vorbehalten und werden bis dahin nicht als wirkungslose Aktionen angezeigt.
+- Ein lesbarer lokaler Studienzustand bleibt bei isoliertem Token- oder Aktivierungs-Recoveryfehler verfügbar. Aktivierung und produktive Nutzung sind fail-closed gesperrt; Demo und Feedback bleiben gemäß Zustandsmatrix erreichbar. Beschädigte Installations- oder Studienzustände bleiben dagegen fatal.
+- Nur die vier Demoassets `cue_000`, `cue_001`, `match_a_000` und `match_b_000` werden in diesem Auftrag aus den kanonischen, bytegleichen Ressourcen in die App-Buildphase aufgenommen. Die vollständige produktive Assetintegration folgt mit Auftrag 9.
+- Bild- und Labelreihenfolge werden einmal beim Eintritt in den jeweiligen Demoschritt festgelegt. Ein Sprachwechsel übersetzt nur Texte und verändert die Reihenfolge nicht.
+- Zurücknavigation verwirft den gesamten Demo- beziehungsweise Feedbackzustand ohne Persistenz. Feedbackfehler sind davon ausgenommen und halten das Formular innerhalb der geöffneten Seite für den manuellen Retry.
+- Staging verwendet für die rein lesenden Datenschutzlinks dieselben HTTPS-Ziele wie Release; alle schreibenden Staging-APIs bleiben auf den ausdrücklich freigegebenen lokalen Testserver begrenzt. Debug verwendet weiterhin ausschließlich `debug.invalid`.
+- Der englische Rechtehinweis lautet `Withdrawal, access and deletion requests:`. Der Kontakt öffnet ausschließlich `mailto:cuelens@each-and-every.de` ohne Betreff oder Body.
+- Der Abschlussplatzhalter zeigt nur den vorhandenen lokalen Abschlussstatus und erhält Feedbackzugang. Kompensationscode, Kopieraktion, Bestätigungsretry und Prolific-Sonderablauf folgen in Auftrag 10.
+
 **Review-Gate**
 
 Fachliche Sichtprüfung aller Texte und Demo-Reize in beiden Sprachen.

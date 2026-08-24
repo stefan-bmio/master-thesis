@@ -37,16 +37,22 @@ struct ContentView: View {
         case .notificationConsent:
             NotificationConsentView(appModel: appModel)
         case .home:
-            HomePlaceholderView(appModel: appModel)
+            HomeView(appModel: appModel)
         case .activation:
             ActivationView(appModel: appModel)
+        case .demo:
+            if let demo = appModel.demo {
+                DemoView(demo: demo, appModel: appModel)
+            }
+        case .feedback:
+            FeedbackView(appModel: appModel)
         case .secureStorageFailure:
             SecureStorageFailureView()
         }
     }
 }
 
-private enum CueLensPalette {
+enum CueLensPalette {
     static let background = Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
     static let primary = Color(red: 0, green: 98 / 255, blue: 105 / 255)
     static let disabledPrimary = Color(red: 82 / 255, green: 124 / 255, blue: 121 / 255)
@@ -55,35 +61,80 @@ private enum CueLensPalette {
     static let noticeBackground = Color.white.opacity(0.96)
 }
 
-private struct HomePlaceholderView: View {
+struct HomeView: View {
     let appModel: CueLensAppModel
 
     var body: some View {
-        VStack(spacing: 20) {
-            LanguageButton(appModel: appModel)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            Spacer()
-            Text("app.title")
-                .font(.largeTitle.bold())
-                .accessibilityIdentifier("app.title")
-            Text("home.placeholder")
-                .foregroundStyle(CueLensPalette.secondaryText)
-                .multilineTextAlignment(.center)
-                .accessibilityIdentifier("app.foundationStatus.ready")
-            if appModel.isActivated {
-                Text("activation.alreadyCompleted")
+        ScrollView {
+            VStack(spacing: 16) {
+                LanguageButton(appModel: appModel)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                Text("app.title")
+                    .font(.largeTitle.bold())
+                    .accessibilityIdentifier("app.title")
+                Text("home.welcome")
                     .foregroundStyle(CueLensPalette.secondaryText)
-                    .accessibilityIdentifier("activation.completed")
-            } else {
-                Button("activation.open") {
-                    appModel.openActivation()
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("app.foundationStatus.ready")
+                if appModel.isStudyCompleted {
+                    Text("home.studyCompleted")
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                        .accessibilityIdentifier("home.completion")
+                } else {
+                    if appModel.isActivated {
+                        Text("activation.alreadyCompleted")
+                            .foregroundStyle(CueLensPalette.secondaryText)
+                            .accessibilityIdentifier("activation.completed")
+                    } else {
+                        Button("activation.open") {
+                            appModel.openActivation()
+                        }
+                        .buttonStyle(CueLensPrimaryButtonStyle())
+                        .disabled(appModel.hasTokenStorageFailure)
+                        .accessibilityIdentifier("activation.open")
+                    }
+                    if appModel.hasTokenStorageFailure {
+                        Text("home.tokenStorageFailure")
+                            .foregroundStyle(.red)
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("home.tokenStorageFailure")
+                    }
+                    Button("demo.open") {
+                        Task { await appModel.openDemo() }
+                    }
+                    .buttonStyle(CueLensPrimaryButtonStyle())
+                    .accessibilityIdentifier("demo.open")
+                }
+
+                Button("feedback.title") {
+                    appModel.openFeedback()
                 }
                 .buttonStyle(CueLensPrimaryButtonStyle())
-                .accessibilityIdentifier("activation.open")
+                .accessibilityIdentifier("feedback.open")
+
+                Divider().padding(.vertical, 4)
+                Button("privacy.open") {
+                    Task { await appModel.openPrivacyInformation() }
+                }
+                .buttonStyle(.bordered)
+                .tint(CueLensPalette.primary)
+                .accessibilityIdentifier("privacy.open")
+                Text("rights.description")
+                    .font(.footnote)
+                    .foregroundStyle(CueLensPalette.secondaryText)
+                    .multilineTextAlignment(.center)
+                Button("rights.contact") {
+                    Task { await appModel.openRightsContact() }
+                }
+                .buttonStyle(.bordered)
+                .tint(CueLensPalette.primary)
+                .accessibilityIdentifier("rights.contact")
             }
-            Spacer()
+            .frame(maxWidth: 600)
+            .padding(20)
+            .frame(maxWidth: .infinity)
         }
-        .padding(20)
     }
 }
 
@@ -241,7 +292,7 @@ private struct InfoMessageView: View {
     }
 }
 
-private struct LanguageButton: View {
+struct LanguageButton: View {
     let appModel: CueLensAppModel
 
     var body: some View {
@@ -300,11 +351,12 @@ private struct NoticeView: View {
         switch notice {
         case .feedLoadFailed: "info.loadFailed"
         case .settingSaveFailed: "settings.saveFailed"
+        case .externalLinkFailed: "links.openFailed"
         }
     }
 }
 
-private struct CueLensPrimaryButtonStyle: ButtonStyle {
+struct CueLensPrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {

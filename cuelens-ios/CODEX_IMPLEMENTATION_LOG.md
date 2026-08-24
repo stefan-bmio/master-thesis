@@ -495,3 +495,35 @@ Die Datenflussmatrix begrenzt die Teilnehmerkennung strenger als der Android-Ret
 
 Das menschliche Review-Gate bleibt ausstehend. Erforderlich sind je eine freigegebene, zurücksetzbare Staging-Testregistrierung für E-Mail und Prolific sowie eine kontrollierbare Simulation eines Timeouts beim zweiten Request. Ohne diese externen Voraussetzungen darf kein schreibender Aktivierungs-E2E-Test durchgeführt werden.
 Freigabe erfolgt am 24.8.26
+
+## 24.08.2026 – Auftrag 8
+
+**Freigabe und Umfang**
+
+Auftrag 7 wurde durch den datierten Vermerk ausdrücklich freigegeben. Auftrag 8 wurde auf Branch `codex/ios-auftrag-8` umgesetzt und umfasst die zustandsabhängige nichtproduktive Startseite, informative Datenschutz- und Rechtekontakte, die vollständig lokale Beispieldemo, das Feedbackformular sowie einen neutralen Abschlussplatzhalter.
+
+**Implementierung**
+
+- Die Startseite zeigt Aktivierung, Demo, Feedback und Informationslinks abhängig von Aktivierungs-, Abschluss- und Sicherheitszustand. Produktive Studienaktionen werden vor Auftrag 9 und 10 nicht als wirkungslose Platzhalter angeboten.
+- Isolierte Tokenlese-, Aktivierungs-Recovery- oder Tokenspeicherfehler veröffentlichen einen eingeschränkten Home-Zustand: Aktivierung und produktive Nutzung bleiben fail-closed, während die nicht persistierende Demo und das getrennte Feedback erreichbar bleiben. Beschädigte Installation oder Studienpersistenz bleiben fatal.
+- Die Demo führt über Cue-Matching, Cue-Labeling, Rauchverlangensslider und Abschluss. Sie nutzt ausschließlich die bytegleichen kanonischen Dateien `cue_000.png`, `cue_001.png`, `match_a_000.png` und `match_b_000.png`. Reihenfolgen werden injizierbar randomisiert und bleiben beim Sprachwechsel stabil.
+- Der Matching-Countdown zählt fünf vollständig sichtbare Vordergrundsekunden. `.inactive` und `.background` brechen die aktuelle Warteoperation ab; bei Rückkehr wird mit dem unveränderten Restwert fortgesetzt.
+- Demoauswahlen und der Wert des ganzzahligen Sliders `0...100` bleiben ausschließlich im flüchtigen AppModel und werden beim Verlassen verworfen. Es gibt keinen Token-, Netzwerk-, Datei-, Einstellungs- oder Notificationzugriff aus dem Demoablauf.
+- `FeedbackCoordinator` serialisiert Übertragungen. Vor dem Request validiert `FeedbackDraft` mindestens ein belegtes Feld sowie 500 beziehungsweise 5.000 Unicode-Skalare. Das Payload besteht weiterhin ausschließlich aus `source`, `comment` und der tatsächlichen App-Version; Token, Teilnehmerkennung, Plattform, Gerät und Studienwert fehlen.
+- Feedbackfehler erhalten das Formular innerhalb der Seite; Erfolg verwirft die Eingaben und zeigt die Dankesmeldung. Es wurde keine persistente Warteschlange ergänzt.
+- Datenschutz-URLs werden als vollständige, buildkonfigurierte HTTPS-Allowlist ohne Credentials, Port, Query oder Fragment validiert. Der sprachabhängige Link wird über das Betriebssystem geöffnet. Der Rechtekontakt ist ausschließlich `mailto:cuelens@each-and-every.de` ohne vorbefüllten Betreff oder Body.
+- Staging verwendet für diese beiden rein lesenden Informationslinks die produktiven HTTPS-Seiten. Alle schreibenden Staging-Endpunkte bleiben unverändert auf den freigegebenen lokalen Server begrenzt.
+
+**Tests und technische Prüfung**
+
+- 152 Unit-Tests bestanden unter iOS 26.5 und zusätzlich unter iOS 17.5. Neu geprüft werden Demo-Invarianten und Zustandsübergänge, genau fünf sichtbare Countdownsekunden, Hintergrundpause, stabiler Sprachwechsel, Feedbackgrenzen, Doppelaufrufschutz, Retry, Payload-Snapshot, Link-Allowlist, reiner `mailto:`-Kontakt und eingeschränkter Home-Zustand bei Tokenfehlern.
+- 17 synthetische UI-Szenarien bestanden jeweils auf iPhone und iPad unter iOS 26.5. Sie decken Startseitenaktionen, den vollständigen deutschen und englischen Demoablauf, reale Fünf-Sekunden-Sperre, Demo-Neustart, Feedback-Erfolg und -Fehler, Abschlusszustand sowie Demo und Feedback bei Aktivierungsspeicherfehlern ab.
+- Das vollständige Quality-Gate mit Debug-, Staging- und Release-Prüfung, sämtlichen Sicherheitsgates, Release-Analyze und generischem Release-Gerätebuild bestand. Die vier App-Bundle-Assets werden zusätzlich bytegleich gegen die Android-Referenz geprüft.
+- Der zusätzliche signierte Installationsversuch auf dem verbundenen iPhone konnte nicht abgeschlossen werden, weil das gesperrte Gerät das Einhängen des Developer Disk Image abwies. Ein generischer signierter Build bleibt ohne die bewusst nicht eingecheckte lokale Development-Team-Zuordnung erwartungsgemäß ausgeschlossen; dies betrifft weder Simulator-, Analyze- noch unsignierte Gerätebuilds.
+- Automatisierte Feedbacktests verwenden ausschließlich synthetische Test-Doubles. Es wurden keine Feedbacktexte an Produktion oder Staging gesendet und keine Teilnehmer-, Token- oder Gesundheitsdaten protokolliert.
+
+**Abweichungen, Annahmen und Review-Gate**
+
+Die vollständige globale Home-Matrix umfasst produktive Zustände, deren Abläufe erst Auftrag 9 und 10 implementieren. Auftrag 8 stellt dafür die erweiterbare Zustandsdarstellung bereit, zeigt jedoch keine Aktion ohne funktionsfähiges Ziel. Der Abschlussplatzhalter nennt nur den Abschlussstatus; Codeanzeige, Kopieraktion und Abschluss-Recovery bleiben Auftrag 10 vorbehalten.
+
+Das menschliche Review-Gate bleibt ausstehend: fachliche Sichtprüfung aller deutschen und englischen Texte sowie der vier Demo-Reize auf iPhone und iPad. Ein echter Feedbackrequest ist für dieses Review nicht erforderlich.

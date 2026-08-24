@@ -16,6 +16,7 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         XCTAssertEqual(snapshot.studyState, try StudyState.initial)
         XCTAssertFalse(snapshot.isActivated)
         XCTAssertFalse(snapshot.activationRequiresSupport)
+        XCTAssertFalse(snapshot.tokenStorageFailed)
     }
 
     func testBootstrapExposesOnlyActivationStatusWithoutExposingToken() async throws {
@@ -110,6 +111,21 @@ final class LocalPersistenceBootstrapTests: XCTestCase {
         }
     }
 
+    func testTokenReadFailureKeepsNonproductiveStateAvailableAndBlocksActivation() async throws {
+        let bootstrap = LocalPersistenceBootstrap(
+            installation: StubInstallationPreparer(result: .existingInstallation),
+            tokenStore: StubTokenStore(token: nil, failRead: true),
+            stateStore: StubStudyStateStore(state: try StudyState.initial)
+        )
+
+        let snapshot = try await bootstrap.load()
+
+        XCTAssertFalse(snapshot.isActivated)
+        XCTAssertTrue(snapshot.activationRequiresSupport)
+        XCTAssertTrue(snapshot.tokenStorageFailed)
+        XCTAssertEqual(snapshot.studyState, try StudyState.initial)
+    }
+
     @MainActor
     func testAppModelPublishesStateOnlyAfterSuccessfulLoad() async throws {
         let initial = try StudyState.initial
@@ -182,15 +198,22 @@ private actor StubInstallationPreparer: InstallationPreparing {
 
 private actor StubTokenStore: AppTokenStore {
     let token: UUIDv4?
+    let failRead: Bool
 
-    init(token: UUIDv4?) {
+    init(token: UUIDv4?, failRead: Bool = false) {
         self.token = token
+        self.failRead = failRead
     }
 
-    func readToken() async throws -> UUIDv4? { token }
+    func readToken() async throws -> UUIDv4? {
+        if failRead { throw BootstrapTestError.expected }
+        return token
+    }
     func saveToken(_ token: UUIDv4) async throws {}
     func clearToken() async throws {}
 }
+
+private enum BootstrapTestError: Error { case expected }
 
 private actor StubStudyStateStore: StudyStateStore {
     let state: StudyState

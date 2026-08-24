@@ -30,6 +30,10 @@
 	<string>$(CUELENS_FEEDBACK_URL)</string>
 	<key>CUELENS_MESSAGES_URL</key>
 	<string>$(CUELENS_MESSAGES_URL)</string>
+	<key>CUELENS_PRIVACY_URL_DE</key>
+	<string>$(CUELENS_PRIVACY_URL_DE)</string>
+	<key>CUELENS_PRIVACY_URL_EN</key>
+	<string>$(CUELENS_PRIVACY_URL_EN)</string>
 	<key>CUELENS_ALLOWS_LOCAL_HTTP</key>
 	<string>$(CUELENS_ALLOWS_LOCAL_HTTP)</string>
 	<key>CUELENS_SUBMIT_URL</key>

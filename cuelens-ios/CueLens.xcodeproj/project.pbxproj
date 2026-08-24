@@ -83,6 +83,18 @@
 		100000000000000000000484 /* ProtectedActivationRecoveryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000231 /* ProtectedActivationRecoveryStore.swift */; };
 		100000000000000000000485 /* ActivationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000232 /* ActivationCoordinatorTests.swift */; };
 		100000000000000000000486 /* ProtectedActivationRecoveryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000233 /* ProtectedActivationRecoveryStoreTests.swift */; };
+		100000000000000000000487 /* DemoSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000235 /* DemoSession.swift */; };
+		100000000000000000000488 /* FeedbackCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000236 /* FeedbackCoordinator.swift */; };
+		100000000000000000000489 /* ExternalLinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000237 /* ExternalLinkCoordinator.swift */; };
+		100000000000000000000490 /* PreStudyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000238 /* PreStudyViews.swift */; };
+		100000000000000000000491 /* cue_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000239 /* cue_000.png */; };
+		100000000000000000000492 /* cue_001.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000240 /* cue_001.png */; };
+		100000000000000000000493 /* match_a_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000241 /* match_a_000.png */; };
+		100000000000000000000494 /* match_b_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000242 /* match_b_000.png */; };
+		100000000000000000000495 /* DemoSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000243 /* DemoSessionTests.swift */; };
+		100000000000000000000496 /* FeedbackCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000244 /* FeedbackCoordinatorTests.swift */; };
+		100000000000000000000497 /* ExternalLinkCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */; };
+		100000000000000000000498 /* PreStudyAppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000246 /* PreStudyAppModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +152,19 @@
 		100000000000000000000232 /* ActivationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000233 /* ProtectedActivationRecoveryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedActivationRecoveryStoreTests.swift; sourceTree = "<group>"; };
 		100000000000000000000234 /* verify_activation_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_activation_security.sh; sourceTree = "<group>"; };
+		100000000000000000000235 /* DemoSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSession.swift; sourceTree = "<group>"; };
+		100000000000000000000236 /* FeedbackCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback/FeedbackCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000237 /* ExternalLinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Links/ExternalLinkCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000238 /* PreStudyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyViews.swift; sourceTree = "<group>"; };
+		100000000000000000000239 /* cue_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/cue_000.png; sourceTree = SOURCE_ROOT; };
+		100000000000000000000240 /* cue_001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/cue_001.png; sourceTree = SOURCE_ROOT; };
+		100000000000000000000241 /* match_a_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/match_a_000.png; sourceTree = SOURCE_ROOT; };
+		100000000000000000000242 /* match_b_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/match_b_000.png; sourceTree = SOURCE_ROOT; };
+		100000000000000000000243 /* DemoSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSessionTests.swift; sourceTree = "<group>"; };
+		100000000000000000000244 /* FeedbackCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000246 /* PreStudyAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyAppModelTests.swift; sourceTree = "<group>"; };
+		100000000000000000000247 /* verify_prestudy_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_prestudy_security.sh; sourceTree = "<group>"; };
 		100000000000000000000121 /* CueLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000122 /* CueLensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000123 /* CueLensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueLensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -267,6 +292,7 @@
 				100000000000000000000174 /* CueLensAppModel.swift */,
 				100000000000000000000195 /* AppEnvironment.swift */,
 				100000000000000000000223 /* CueLensAppDelegate.swift */,
+				100000000000000000000238 /* PreStudyViews.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -278,6 +304,10 @@
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
 				100000000000000000000194 /* Info.plist */,
 				100000000000000000000199 /* StagingInfo.plist */,
+				100000000000000000000239 /* cue_000.png */,
+				100000000000000000000240 /* cue_001.png */,
+				100000000000000000000241 /* match_a_000.png */,
+				100000000000000000000242 /* match_b_000.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -324,6 +354,7 @@
 				100000000000000000000200 /* verify_staging_configuration.sh */,
 				100000000000000000000226 /* verify_notification_security.sh */,
 				100000000000000000000234 /* verify_activation_security.sh */,
+				100000000000000000000247 /* verify_prestudy_security.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -375,6 +406,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000136 /* FeedbackDraft.swift */,
+				100000000000000000000235 /* DemoSession.swift */,
 			);
 			path = PreStudy;
 			sourceTree = "<group>";
@@ -410,6 +442,7 @@
 				100000000000000000000155 /* StartGateTests.swift */,
 				100000000000000000000153 /* StudyRulesTests.swift */,
 				100000000000000000000154 /* StudyStateTests.swift */,
+				100000000000000000000243 /* DemoSessionTests.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -424,6 +457,8 @@
 				100000000000000000000025 /* Notifications */,
 				100000000000000000000196 /* AppSettingsStore.swift */,
 				100000000000000000000197 /* InfoFeedRepository.swift */,
+				100000000000000000000236 /* FeedbackCoordinator.swift */,
+				100000000000000000000237 /* ExternalLinkCoordinator.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -464,6 +499,9 @@
 				100000000000000000000170 /* PersistenceTestDoubles.swift */,
 				100000000000000000000173 /* ProtectedStudyStateStoreTests.swift */,
 				100000000000000000000198 /* AppShellTests.swift */,
+				100000000000000000000244 /* FeedbackCoordinatorTests.swift */,
+				100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */,
+				100000000000000000000246 /* PreStudyAppModelTests.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -641,6 +679,10 @@
 			files = (
 				100000000000000000000404 /* Localizable.xcstrings in Resources */,
 				100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */,
+				100000000000000000000491 /* cue_000.png in Resources */,
+				100000000000000000000492 /* cue_001.png in Resources */,
+				100000000000000000000493 /* match_a_000.png in Resources */,
+				100000000000000000000494 /* match_b_000.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,6 +758,10 @@
 				100000000000000000000480 /* CueLensAppDelegate.swift in Sources */,
 				100000000000000000000483 /* ActivationCoordinator.swift in Sources */,
 				100000000000000000000484 /* ProtectedActivationRecoveryStore.swift in Sources */,
+				100000000000000000000487 /* DemoSession.swift in Sources */,
+				100000000000000000000488 /* FeedbackCoordinator.swift in Sources */,
+				100000000000000000000489 /* ExternalLinkCoordinator.swift in Sources */,
+				100000000000000000000490 /* PreStudyViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -745,6 +791,10 @@
 				100000000000000000000482 /* BackgroundRefreshCoordinatorTests.swift in Sources */,
 				100000000000000000000485 /* ActivationCoordinatorTests.swift in Sources */,
 				100000000000000000000486 /* ProtectedActivationRecoveryStoreTests.swift in Sources */,
+				100000000000000000000495 /* DemoSessionTests.swift in Sources */,
+				100000000000000000000496 /* FeedbackCoordinatorTests.swift in Sources */,
+				100000000000000000000497 /* ExternalLinkCoordinatorTests.swift in Sources */,
+				100000000000000000000498 /* PreStudyAppModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

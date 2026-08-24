@@ -348,8 +348,10 @@ final class AppShellTests: XCTestCase {
         timeoutModel.updateActivationInput("second@example.org")
         XCTAssertEqual(timeoutModel.activationInput, "")
         timeoutModel.cancelActivation()
+        XCTAssertEqual(timeoutModel.route, .home)
         timeoutModel.openActivation()
-        XCTAssertEqual(timeoutModel.activationState, .supportRequired)
+        XCTAssertEqual(timeoutModel.route, .home)
+        XCTAssertEqual(timeoutModel.activationState, .idle)
     }
 
     @MainActor
@@ -363,16 +365,18 @@ final class AppShellTests: XCTestCase {
         model.openActivation()
         model.updateActivationInput("person@example.org")
         await model.activate()
-        XCTAssertEqual(model.route, .secureStorageFailure)
+        XCTAssertEqual(model.route, .home)
+        XCTAssertTrue(model.hasTokenStorageFailure)
         XCTAssertFalse(model.isActivated)
 
         let restored = makeModel(
             persistence: PersistenceLoaderStub(activationRequiresSupport: true)
         )
         await restored.initialize(lifecyclePhase: .active)
-        XCTAssertEqual(restored.route, .secureStorageFailure)
+        XCTAssertEqual(restored.route, .home)
+        XCTAssertTrue(restored.hasTokenStorageFailure)
         restored.openActivation()
-        XCTAssertEqual(restored.route, .secureStorageFailure)
+        XCTAssertEqual(restored.route, .home)
     }
 
     @MainActor

@@ -19,6 +19,7 @@ struct AppConfiguration: Equatable, Sendable {
     let endpoints: NetworkEndpoints
     let appVersion: String
     let transportPolicy: NetworkTransportPolicy
+    let externalLinks: ExternalLinkConfiguration
 
     static func live(bundle: Bundle = .main) throws -> AppConfiguration {
         try parse(infoDictionary: bundle.infoDictionary ?? [:])
@@ -41,7 +42,8 @@ struct AppConfiguration: Equatable, Sendable {
                 submission: try validatedURL(infoDictionary[submissionURLKey], policy: transportPolicy)
             ),
             appVersion: appVersion,
-            transportPolicy: transportPolicy
+            transportPolicy: transportPolicy,
+            externalLinks: try ExternalLinkConfiguration.parse(infoDictionary: infoDictionary)
         )
     }
 

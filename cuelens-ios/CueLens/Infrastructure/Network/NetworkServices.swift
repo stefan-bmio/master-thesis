@@ -7,8 +7,8 @@ struct NetworkServices: Sendable {
     let feedback: any FeedbackServicing
     let submission: any StudySubmissionServicing
 
-    static func live() throws -> NetworkServices {
-        let configuration = try AppConfiguration.live()
+    static func live(configuration: AppConfiguration? = nil) throws -> NetworkServices {
+        let configuration = try configuration ?? AppConfiguration.live()
         let client = URLSessionHTTPClient(
             appVersion: configuration.appVersion,
             transportPolicy: configuration.transportPolicy

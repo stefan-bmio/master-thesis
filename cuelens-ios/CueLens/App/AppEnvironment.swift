@@ -5,6 +5,10 @@ struct AppEnvironment: Sendable {
     let settings: any AppSettingsStoring
     let infoFeed: any InfoFeedRepositoryServing
     let activation: any ActivationManaging
+    let feedback: any FeedbackManaging
+    let externalLinks: any ExternalLinkManaging
+    let demoRandomizer: any DemoRandomizing
+    let demoClock: any DemoSleepClock
     let notifications: any NotificationManaging
     let backgroundRefresh: any BackgroundRefreshManaging
     let notificationRoutes: NotificationRouteInbox
@@ -15,6 +19,10 @@ struct AppEnvironment: Sendable {
         settings: any AppSettingsStoring,
         infoFeed: any InfoFeedRepositoryServing,
         activation: any ActivationManaging = DisabledActivationManager(),
+        feedback: any FeedbackManaging = DisabledFeedbackManager(),
+        externalLinks: any ExternalLinkManaging = DisabledExternalLinkManager(),
+        demoRandomizer: any DemoRandomizing = SystemDemoRandomizer(),
+        demoClock: any DemoSleepClock = ContinuousDemoSleepClock(),
         notifications: any NotificationManaging = DisabledNotificationManager(),
         backgroundRefresh: any BackgroundRefreshManaging = DisabledBackgroundRefreshManager(),
         notificationRoutes: NotificationRouteInbox = NotificationRouteInbox(),
@@ -24,6 +32,10 @@ struct AppEnvironment: Sendable {
         self.settings = settings
         self.infoFeed = infoFeed
         self.activation = activation
+        self.feedback = feedback
+        self.externalLinks = externalLinks
+        self.demoRandomizer = demoRandomizer
+        self.demoClock = demoClock
         self.notifications = notifications
         self.backgroundRefresh = backgroundRefresh
         self.notificationRoutes = notificationRoutes
@@ -37,6 +49,7 @@ struct AppEnvironment: Sendable {
         let settings = UserDefaultsAppSettingsStore(suiteName: suiteName)
         if let scenario = argumentValue(after: "--ui-test-feed", in: arguments) {
             let activationScenario = argumentValue(after: "--ui-test-activation", in: arguments)
+            let feedbackScenario = argumentValue(after: "--ui-test-feedback", in: arguments)
             let persistence: any LocalPersistenceLoading
             let activation: any ActivationManaging
             if let activationScenario {
@@ -54,13 +67,17 @@ struct AppEnvironment: Sendable {
                     settings: settings
                 ),
                 activation: activation,
+                feedback: UITestFeedbackManager(scenario: feedbackScenario),
+                externalLinks: UITestExternalLinkManager(),
+                demoRandomizer: UITestDemoRandomizer(),
                 notificationRoutes: .live
             )
         }
         #else
         let settings = UserDefaultsAppSettingsStore()
         #endif
-        let services = try NetworkServices.live()
+        let configuration = try AppConfiguration.live()
+        let services = try NetworkServices.live(configuration: configuration)
         let paths = try PersistencePaths.applicationSupport()
         let tokenStore = KeychainAppTokenStore()
         let recoveryStore = ProtectedActivationRecoveryStore(paths: paths)
@@ -90,6 +107,11 @@ struct AppEnvironment: Sendable {
                 tokenStore: tokenStore,
                 recoveryStore: recoveryStore
             ),
+            feedback: FeedbackCoordinator(
+                service: services.feedback,
+                appVersion: configuration.appVersion
+            ),
+            externalLinks: ExternalLinkCoordinator(configuration: configuration.externalLinks),
             notifications: notifications,
             backgroundRefresh: backgroundRefresh,
             notificationRoutes: .live,
@@ -147,11 +169,23 @@ private struct UITestPersistenceLoader: LocalPersistenceLoading {
     }
 
     func load() async throws -> LocalPersistenceSnapshot {
-        LocalPersistenceSnapshot(
+        let state: StudyState
+        if scenario == "completed" {
+            state = try StudyState(
+                confirmedSituationCount: 20,
+                matchingOrder: Array(0..<50),
+                completion: .prolificCompleted
+            )
+        } else {
+            state = try StudyState.initial
+        }
+        return LocalPersistenceSnapshot(
             installation: .existingInstallation,
-            studyState: try StudyState.initial,
-            isActivated: scenario == "activated",
+            studyState: state,
+            isActivated: scenario == "activated" || scenario == "completed",
             activationRequiresSupport: scenario == "recovered-support"
+                || scenario == "token-failure",
+            tokenStorageFailed: scenario == "token-failure"
         )
     }
 }
@@ -177,6 +211,35 @@ private actor UITestActivationManager: ActivationManaging {
         case "storage-failure": .secureStorageFailure
         default: .activated
         }
+    }
+}
+
+private actor UITestFeedbackManager: FeedbackManaging {
+    let scenario: String?
+
+    init(scenario: String?) {
+        self.scenario = scenario
+    }
+
+    func submit(_ draft: FeedbackDraft) async -> FeedbackSubmissionOutcome {
+        if scenario == "running" {
+            try? await Task.sleep(for: .seconds(2))
+        }
+        return scenario == "failure" ? .failed : .submitted
+    }
+}
+
+private struct UITestExternalLinkManager: ExternalLinkManaging {
+    func openPrivacy(language: AppLanguage) async -> Bool { true }
+    func openRightsContact() async -> Bool { true }
+}
+
+private actor UITestDemoRandomizer: DemoRandomizing {
+    private var nextValue = false
+
+    func nextBoolean() -> Bool {
+        defer { nextValue.toggle() }
+        return nextValue
     }
 }
 #endif

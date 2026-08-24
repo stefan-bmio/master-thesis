@@ -157,13 +157,18 @@ final class CueLensUITests: XCTestCase {
         failed.textFields["activation.identifier"].tap()
         failed.textFields["activation.identifier"].typeText("person@example.org")
         failed.buttons["activation.submit"].tap()
-        XCTAssertTrue(failed.staticTexts["app.foundationStatus.failure"].waitForExistence(timeout: 2))
+        XCTAssertTrue(failed.staticTexts["home.tokenStorageFailure"].waitForExistence(timeout: 2))
+        XCTAssertTrue(failed.buttons["demo.open"].exists)
+        XCTAssertTrue(failed.buttons["feedback.open"].exists)
         failed.terminate()
 
         let restored = makeApp(feed: "empty", activation: "recovered-support")
         restored.launch()
-        XCTAssertTrue(restored.staticTexts["app.foundationStatus.failure"].waitForExistence(timeout: 10))
-        XCTAssertFalse(restored.buttons["activation.open"].exists)
+        declineConsentIfShown(in: restored)
+        XCTAssertTrue(restored.staticTexts["home.tokenStorageFailure"].waitForExistence(timeout: 10))
+        XCTAssertFalse(restored.buttons["activation.open"].isEnabled)
+        XCTAssertTrue(restored.buttons["demo.open"].exists)
+        XCTAssertTrue(restored.buttons["feedback.open"].exists)
     }
 
     @MainActor
@@ -176,12 +181,109 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testHomeOffersDemoFeedbackPrivacyAndRightsContact() {
+        let app = makeApp(feed: "empty")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(app.buttons["demo.open"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["feedback.open"].exists)
+        XCTAssertTrue(app.buttons["privacy.open"].exists)
+        XCTAssertTrue(app.buttons["rights.contact"].exists)
+    }
+
+    @MainActor
+    func testDemoCompletesAllStepsAndRestartsAfterExit() {
+        let app = makeApp(feed: "empty")
+        app.launch()
+        declineConsentIfShown(in: app)
+        app.buttons["demo.open"].tap()
+
+        XCTAssertTrue(app.images["demo.matching.cue"].waitForExistence(timeout: 3))
+        let firstChoice = app.buttons["demo.matching.choice.0"]
+        XCTAssertFalse(firstChoice.isEnabled)
+        expectation(
+            for: NSPredicate(format: "enabled == true"),
+            evaluatedWith: firstChoice
+        )
+        waitForExpectations(timeout: 7)
+        firstChoice.tap()
+
+        XCTAssertTrue(app.images["demo.labeling.cue"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["Aschegeruch"].exists)
+        XCTAssertTrue(app.buttons["Regenschirmmoment"].exists)
+        app.buttons["language.switch"].tap()
+        XCTAssertTrue(app.buttons["Ash smell"].exists)
+        app.buttons["demo.labeling.choice.0"].tap()
+
+        XCTAssertTrue(app.staticTexts["demo.craving.value"].waitForExistence(timeout: 2))
+        XCTAssertEqual(app.staticTexts["demo.craving.value"].label, "50")
+        app.buttons["demo.craving.continue"].tap()
+        XCTAssertTrue(app.staticTexts["demo.completed.notice"].waitForExistence(timeout: 2))
+        app.buttons["demo.completed.home"].tap()
+        XCTAssertTrue(app.buttons["demo.open"].waitForExistence(timeout: 2))
+
+        app.buttons["demo.open"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["demo.matching.countdown"].waitForExistence(timeout: 2))
+        app.buttons["demo.back"].tap()
+        XCTAssertTrue(app.buttons["demo.open"].waitForExistence(timeout: 2))
+    }
+
+    @MainActor
+    func testFeedbackValidatesSubmitsAndClearsForm() {
+        let app = makeApp(feed: "empty", feedback: "success")
+        app.launch()
+        declineConsentIfShown(in: app)
+        app.buttons["feedback.open"].tap()
+
+        XCTAssertTrue(app.staticTexts["feedback.title"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["feedback.submit"].isEnabled)
+        app.textFields["feedback.source"].tap()
+        app.textFields["feedback.source"].typeText("Flyer")
+        XCTAssertTrue(app.buttons["feedback.submit"].isEnabled)
+        app.buttons["feedback.submit"].tap()
+        XCTAssertTrue(app.staticTexts["feedback.submitted"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.textFields["feedback.source"].exists)
+        app.buttons["feedback.home"].tap()
+        XCTAssertTrue(app.buttons["feedback.open"].waitForExistence(timeout: 2))
+    }
+
+    @MainActor
+    func testFeedbackFailureRetainsFormForRetry() {
+        let app = makeApp(feed: "empty", feedback: "failure")
+        app.launch()
+        declineConsentIfShown(in: app)
+        app.buttons["feedback.open"].tap()
+        let field = app.textFields["feedback.source"]
+        field.tap()
+        field.typeText("Praxis")
+        app.buttons["feedback.submit"].tap()
+
+        XCTAssertTrue(app.staticTexts["feedback.failed"].waitForExistence(timeout: 3))
+        XCTAssertEqual(field.value as? String, "Praxis")
+        XCTAssertTrue(app.buttons["feedback.submit"].isEnabled)
+    }
+
+    @MainActor
+    func testCompletedStudyHidesDemoAndKeepsFeedback() {
+        let app = makeApp(feed: "empty", activation: "completed")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(app.staticTexts["home.completion"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["demo.open"].exists)
+        XCTAssertFalse(app.buttons["activation.open"].exists)
+        XCTAssertTrue(app.buttons["feedback.open"].exists)
+    }
+
+    @MainActor
     private func makeApp(
         feed: String,
         language: String = "de",
         suite: String = "de.eachandevery.cuelens.uitest.\(UUID().uuidString)",
         interfaceStyle: String? = nil,
-        activation: String? = nil
+        activation: String? = nil,
+        feedback: String? = nil
     ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -194,6 +296,9 @@ final class CueLensUITests: XCTestCase {
         }
         if let activation {
             app.launchArguments += ["--ui-test-activation", activation]
+        }
+        if let feedback {
+            app.launchArguments += ["--ui-test-feedback", feedback]
         }
         return app
     }

@@ -110,6 +110,18 @@ Vor der Bestätigung wird ein inhaltlich neutraler Marker vollständig dateigesc
 
 Die automatisierten Aktivierungsszenarien verwenden ausschließlich synthetische Test-Doubles und erzeugen keine Backendrequests. Das Staging-Review benötigt deshalb weiterhin je eine freigegebene, zurücksetzbare E-Mail- und Prolific-Testregistrierung sowie eine kontrollierbare Simulation des Bestätigungstimeouts.
 
+## Startseite, lokale Demo und Feedback aus Auftrag 8
+
+Die zustandsabhängige Startseite bietet Aktivierung, Demo und Feedback vor Studienabschluss sowie Feedback auch nach Abschluss an. Ein isolierter Token- oder Aktivierungs-Recoveryfehler sperrt Aktivierung und produktive Nutzung fail-closed, lässt die rein lokale Demo und das getrennte Feedback jedoch erreichbar. Featurestatus, produktiver Studienstart, Pending-Retry und die vollständige Abschlussintegration folgen in Auftrag 9 und 10.
+
+Die Demo verwendet ausschließlich die vier unveränderten kanonischen Assets `cue_000`, `cue_001`, `match_a_000` und `match_b_000`. Auswahlreihenfolgen werden einmal je Schritt zufällig festgelegt. Der fünfsekündige Matching-Countdown zählt nur sichtbare Vordergrundzeit; Auswahl, Label und Rauchverlangenswert werden beim Verlassen vollständig verworfen und weder gespeichert noch übertragen.
+
+Feedback wird vor dem Request als `FeedbackDraft` auf 500 beziehungsweise 5.000 Unicode-Skalare validiert. Der serialisierte Request enthält ausschließlich die belegten Felder `source`, `comment` und die unveränderte App-Version. Fehler erhalten das flüchtige Formular für einen manuellen Retry; Erfolg verwirft es. Datenschutzlinks werden sprachabhängig aus der Build-Konfiguration ausgewählt, ausschließlich als HTTPS-Allowlist geöffnet und der Rechtekontakt verwendet ein nicht vorbefülltes `mailto:`.
+
+```sh
+./Scripts/verify_prestudy_security.sh
+```
+
 ## Datenschutz und Abgrenzung
 
 Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.

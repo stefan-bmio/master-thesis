@@ -58,6 +58,10 @@ test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_FEATURES_URL' "$INFO_PLIST")"
   'https://cuelens.each-and-every.de/features.php'
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_SUBMIT_URL' "$INFO_PLIST")" = \
   'https://cuelens.each-and-every.de/submit.php'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_PRIVACY_URL_DE' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/ds'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_PRIVACY_URL_EN' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/privacypolicy.pdf'
 
 FORBIDDEN_KEYS='NSCameraUsageDescription NSPhotoLibraryUsageDescription NSPhotoLibraryAddUsageDescription NSMicrophoneUsageDescription NSLocationWhenInUseUsageDescription NSLocationAlwaysUsageDescription NSLocationAlwaysAndWhenInUseUsageDescription NSContactsUsageDescription NSCalendarsUsageDescription NSBluetoothAlwaysUsageDescription NSBluetoothPeripheralUsageDescription NSUserTrackingUsageDescription NSLocalNetworkUsageDescription NSAppTransportSecurity'
 for key in $FORBIDDEN_KEYS; do
@@ -98,8 +102,14 @@ if grep -R -a -q '192\.168\.1\.243' "$APP_BUNDLE"; then
   echo 'Release-Artefakt enthält den lokalen Staging-Host.' >&2
   exit 1
 fi
-if grep -q 'cuelens\.each-and-every\.de' Config/Debug.xcconfig Config/Staging.xcconfig; then
-  echo 'Produktivdomain außerhalb der Release-Konfiguration gefunden.' >&2
+if grep -q 'cuelens\.each-and-every\.de' Config/Debug.xcconfig; then
+  echo 'Produktivdomain in der Debug-Konfiguration gefunden.' >&2
+  exit 1
+fi
+unexpected_staging_production=$(grep 'cuelens\.each-and-every\.de' Config/Staging.xcconfig \
+  | grep -v -E '^CUELENS_PRIVACY_URL_(DE|EN) = ' || true)
+if [ -n "$unexpected_staging_production" ]; then
+  echo 'Unerwarteter produktiver API-Endpunkt in der Staging-Konfiguration.' >&2
   exit 1
 fi
 if grep -q -E 'XCRemoteSwiftPackageReference|XCSwiftPackageProductDependency' CueLens.xcodeproj/project.pbxproj; then

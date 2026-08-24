@@ -7,6 +7,8 @@ enum AppRoute: Equatable, Sendable {
     case notificationConsent
     case home
     case activation
+    case demo
+    case feedback
     case secureStorageFailure
 }
 
@@ -19,6 +21,14 @@ enum AppLifecyclePhase: Equatable, Sendable {
 enum UserNotice: Equatable, Sendable {
     case feedLoadFailed
     case settingSaveFailed
+    case externalLinkFailed
+}
+
+enum FeedbackState: Equatable, Sendable {
+    case editing
+    case submitting
+    case submitted
+    case failed
 }
 
 struct InfoFeedPresentation: Equatable, Sendable {
@@ -43,6 +53,8 @@ final class CueLensAppModel {
     private var notificationsEnabled = false
     private var appActivated = false
     private var activationRequiresSupport = false
+    private var tokenStorageFailed = false
+    private var demoCountdownTask: Task<Void, Never>?
 
     private(set) var route: AppRoute = .loading
     private(set) var language: AppLanguage = .german
@@ -54,14 +66,24 @@ final class CueLensAppModel {
     private(set) var isCompletingNotificationConsent = false
     private(set) var activationInput = ""
     private(set) var activationState: ActivationState = .idle
+    private(set) var demo: DemoPresentation?
+    private(set) var feedbackSource = ""
+    private(set) var feedbackComment = ""
+    private(set) var feedbackState: FeedbackState = .editing
 
     var showsPrivacyCurtain: Bool { lifecyclePhase != .active }
     var isActivated: Bool { appActivated }
+    var isStudyCompleted: Bool { studyState?.completion.isCompleted == true }
+    var canOpenDemo: Bool { !isStudyCompleted }
+    var hasTokenStorageFailure: Bool { tokenStorageFailed || activationRequiresSupport }
     var activationInputIsValid: Bool {
         !activationRequiresSupport && (try? ParticipantIdentifier.parse(activationInput)) != nil
     }
     var activationInputIsEnabled: Bool {
         !activationRequiresSupport && !activationIsRunning
+    }
+    var feedbackInputIsValid: Bool {
+        (try? FeedbackDraft(source: feedbackSource, comment: feedbackComment)) != nil
     }
 
     init(
@@ -100,11 +122,8 @@ final class CueLensAppModel {
             studyState = snapshot.studyState
             appActivated = snapshot.isActivated
             activationRequiresSupport = snapshot.activationRequiresSupport
+            tokenStorageFailed = snapshot.tokenStorageFailed
             localStateLoaded = true
-            if snapshot.activationRequiresSupport {
-                route = .secureStorageFailure
-                return
-            }
         } catch {
             route = .secureStorageFailure
             return
@@ -116,6 +135,11 @@ final class CueLensAppModel {
 
     func updateLifecycle(_ phase: AppLifecyclePhase) async {
         lifecyclePhase = phase
+        if phase == .active {
+            startDemoCountdownIfNeeded()
+        } else {
+            stopDemoCountdown()
+        }
         if phase == .active, localStateLoaded {
             if let notificationRoute = await environment?.notificationRoutes.consume() {
                 switch notificationRoute {
@@ -146,7 +170,7 @@ final class CueLensAppModel {
     }
 
     func openActivation() {
-        guard route == .home, !appActivated else { return }
+        guard route == .home, !appActivated, !activationRequiresSupport else { return }
         activationInput = ""
         activationState = activationRequiresSupport ? .supportRequired : .idle
         route = .activation
@@ -205,9 +229,113 @@ final class CueLensAppModel {
             activationRequiresSupport = true
             activationState = .supportRequired
         case .secureStorageFailure:
-            route = .secureStorageFailure
+            activationRequiresSupport = true
+            tokenStorageFailed = true
+            route = .home
         case .ignored:
             activationState = .failed
+        }
+    }
+
+    func openDemo() async {
+        guard route == .home, canOpenDemo, let environment else { return }
+        let reverseMatching = await environment.demoRandomizer.nextBoolean()
+        demo = DemoPresentation(reverseMatching: reverseMatching)
+        route = .demo
+        startDemoCountdownIfNeeded()
+    }
+
+    func selectDemoMatching() async {
+        guard route == .demo,
+              demo?.matchingSelectionEnabled == true,
+              let environment else { return }
+        let reverseLabels = await environment.demoRandomizer.nextBoolean()
+        demo?.selectMatching(reverseLabels: reverseLabels)
+        stopDemoCountdown()
+    }
+
+    func selectDemoLabel() {
+        guard route == .demo else { return }
+        demo?.selectLabel()
+    }
+
+    func updateDemoCraving(_ value: Int) {
+        guard route == .demo else { return }
+        demo?.updateCraving(value)
+    }
+
+    func completeDemoCraving() {
+        guard route == .demo else { return }
+        demo?.completeCraving()
+    }
+
+    func leaveDemo() {
+        guard route == .demo else { return }
+        stopDemoCountdown()
+        demo = nil
+        route = .home
+    }
+
+    func openFeedback() {
+        guard route == .home else { return }
+        feedbackSource = ""
+        feedbackComment = ""
+        feedbackState = .editing
+        route = .feedback
+    }
+
+    func updateFeedbackSource(_ value: String) {
+        guard route == .feedback, feedbackState != .submitting else { return }
+        feedbackSource = value
+        if feedbackState == .failed { feedbackState = .editing }
+    }
+
+    func updateFeedbackComment(_ value: String) {
+        guard route == .feedback, feedbackState != .submitting else { return }
+        feedbackComment = value
+        if feedbackState == .failed { feedbackState = .editing }
+    }
+
+    func submitFeedback() async {
+        guard route == .feedback,
+              feedbackState != .submitting,
+              let environment,
+              let draft = try? FeedbackDraft(
+                source: feedbackSource,
+                comment: feedbackComment
+              ) else { return }
+        feedbackState = .submitting
+        switch await environment.feedback.submit(draft) {
+        case .submitted:
+            feedbackSource = ""
+            feedbackComment = ""
+            feedbackState = .submitted
+        case .failed:
+            feedbackState = .failed
+        case .ignored:
+            feedbackState = .editing
+        }
+    }
+
+    func leaveFeedback() {
+        guard route == .feedback, feedbackState != .submitting else { return }
+        feedbackSource = ""
+        feedbackComment = ""
+        feedbackState = .editing
+        route = .home
+    }
+
+    func openPrivacyInformation() async {
+        guard let environment else { return }
+        if !(await environment.externalLinks.openPrivacy(language: language)) {
+            notice = .externalLinkFailed
+        }
+    }
+
+    func openRightsContact() async {
+        guard let environment else { return }
+        if !(await environment.externalLinks.openRightsContact()) {
+            notice = .externalLinkFailed
         }
     }
 
@@ -356,6 +484,39 @@ final class CueLensAppModel {
             )
         )
         await environment.backgroundRefresh.reconcile(enabled: effectivelyEnabled)
+    }
+
+    private func startDemoCountdownIfNeeded() {
+        guard lifecyclePhase == .active,
+              route == .demo,
+              demo?.step == .cueMatching,
+              demo?.remainingSeconds ?? 0 > 0,
+              demoCountdownTask == nil,
+              let environment else { return }
+        demoCountdownTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                do {
+                    try await environment.demoClock.sleepForVisibleSecond()
+                } catch {
+                    return
+                }
+                guard !Task.isCancelled,
+                      self.lifecyclePhase == .active,
+                      self.route == .demo,
+                      self.demo?.step == .cueMatching else { return }
+                self.demo?.countVisibleSecond()
+                if self.demo?.remainingSeconds == 0 {
+                    self.demoCountdownTask = nil
+                    return
+                }
+            }
+        }
+    }
+
+    private func stopDemoCountdown() {
+        demoCountdownTask?.cancel()
+        demoCountdownTask = nil
     }
 
     private func reminderStateIsEligibleForFeatureCheck(_ state: StudyState) -> Bool {

@@ -5,17 +5,20 @@ struct LocalPersistenceSnapshot: Equatable, Sendable {
     let studyState: StudyState
     let isActivated: Bool
     let activationRequiresSupport: Bool
+    let tokenStorageFailed: Bool
 
     init(
         installation: InstallationPreparation,
         studyState: StudyState,
         isActivated: Bool = false,
-        activationRequiresSupport: Bool = false
+        activationRequiresSupport: Bool = false,
+        tokenStorageFailed: Bool = false
     ) {
         self.installation = installation
         self.studyState = studyState
         self.isActivated = isActivated
         self.activationRequiresSupport = activationRequiresSupport
+        self.tokenStorageFailed = tokenStorageFailed
     }
 }
 
@@ -44,8 +47,29 @@ actor LocalPersistenceBootstrap: LocalPersistenceLoading {
     func load() async throws -> LocalPersistenceSnapshot {
         let preparation = try await installation.prepareInstallation()
         let state = try await stateStore.readState()
-        let token = try await tokenStore.readToken()
-        let confirmationUncertain = try await activationRecovery.isConfirmationUncertain()
+        let token: UUIDv4?
+        do {
+            token = try await tokenStore.readToken()
+        } catch {
+            return LocalPersistenceSnapshot(
+                installation: preparation,
+                studyState: state,
+                activationRequiresSupport: true,
+                tokenStorageFailed: true
+            )
+        }
+        let confirmationUncertain: Bool
+        do {
+            confirmationUncertain = try await activationRecovery.isConfirmationUncertain()
+        } catch {
+            return LocalPersistenceSnapshot(
+                installation: preparation,
+                studyState: state,
+                isActivated: token != nil,
+                activationRequiresSupport: true,
+                tokenStorageFailed: true
+            )
+        }
 
         let stateRequiresToken = state.confirmedSituationCount > 0
             || !state.matchingOrder.isEmpty
@@ -56,14 +80,25 @@ actor LocalPersistenceBootstrap: LocalPersistenceLoading {
         }
 
         if token != nil, confirmationUncertain {
-            try await activationRecovery.clearConfirmationUncertain()
+            do {
+                try await activationRecovery.clearConfirmationUncertain()
+            } catch {
+                return LocalPersistenceSnapshot(
+                    installation: preparation,
+                    studyState: state,
+                    isActivated: true,
+                    activationRequiresSupport: true,
+                    tokenStorageFailed: true
+                )
+            }
         }
 
         return LocalPersistenceSnapshot(
             installation: preparation,
             studyState: state,
             isActivated: token != nil,
-            activationRequiresSupport: token == nil && confirmationUncertain
+            activationRequiresSupport: token == nil && confirmationUncertain,
+            tokenStorageFailed: false
         )
     }
 }

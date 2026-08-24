@@ -39,4 +39,8 @@ for key in ACTIVATION MESSAGES FEEDBACK FEATURES SUBMIT; do
     *) echo "Unerwarteter Staging-Endpunkt: $value" >&2; exit 1 ;;
   esac
 done
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_PRIVACY_URL_DE' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/ds'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_PRIVACY_URL_EN' "$INFO_PLIST")" = \
+  'https://cuelens.each-and-every.de/privacypolicy.pdf'
 echo 'Lokale Staging-Transportkonfiguration erfolgreich verifiziert.'
