@@ -1,6 +1,155 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "%@" : {
+
+    },
+    "%@/%@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@/%2$@"
+          }
+        }
+      }
+    },
+    "activation.alreadyCompleted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App ist aktiviert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app has been activated."
+          }
+        }
+      }
+    },
+    "activation.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation failed. Please try again later."
+          }
+        }
+      }
+    },
+    "activation.identifier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adresse oder Prolific-ID"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email address or Prolific ID"
+          }
+        }
+      }
+    },
+    "activation.open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Aktivierung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App activation"
+          }
+        }
+      }
+    },
+    "activation.running" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivierung läuft"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activating"
+          }
+        }
+      }
+    },
+    "activation.submit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activate"
+          }
+        }
+      }
+    },
+    "activation.supportRequired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aktivierung war nicht möglich. Bitte wenden Sie sich an cuelens@each-and-every.de."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation was not possible. Please contact cuelens@each-and-every.de."
+          }
+        }
+      }
+    },
+    "activation.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Aktivierung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App activation"
+          }
+        }
+      }
+    },
     "app.foundationStatus" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -52,62 +201,6 @@
         }
       }
     },
-    "activation.alreadyCompleted" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die App ist aktiviert." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The app has been activated." } }
-      }
-    },
-    "activation.failed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivierung fehlgeschlagen. Bitte versuchen Sie es später noch einmal." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activation failed. Please try again later." } }
-      }
-    },
-    "activation.identifier" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "E-Mail-Adresse oder Prolific-ID" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Email address or Prolific ID" } }
-      }
-    },
-    "activation.open" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "App-Aktivierung" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "App activation" } }
-      }
-    },
-    "activation.running" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivierung läuft" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activating" } }
-      }
-    },
-    "activation.submit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktivieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activate" } }
-      }
-    },
-    "activation.supportRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Aktivierung war nicht möglich. Bitte wenden Sie sich an cuelens@each-and-every.de." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activation was not possible. Please contact cuelens@each-and-every.de." } }
-      }
-    },
-    "activation.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "App-Aktivierung" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "App activation" } }
-      }
-    },
     "app.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -125,226 +218,788 @@
         }
       }
     },
+    "demo.choice.first.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erste Bildauswahl"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First image choice"
+          }
+        }
+      }
+    },
+    "demo.choice.second.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zweite Bildauswahl"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second image choice"
+          }
+        }
+      }
+    },
+    "demo.completed.notice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wurden keine Daten übertragen oder dauerhaft gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data were transmitted or stored permanently."
+          }
+        }
+      }
+    },
+    "demo.completed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel abgeschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example completed"
+          }
+        }
+      }
+    },
+    "demo.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "demo.craving.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie hoch ist in diesem Moment Ihr Rauchverlangen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How strong is your craving to smoke at this moment?"
+          }
+        }
+      }
+    },
+    "demo.craving.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel: Rauchverlangen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example: craving"
+          }
+        }
+      }
+    },
+    "demo.cue.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gezeigter Reiz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Displayed cue"
+          }
+        }
+      }
+    },
+    "demo.label.fitting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aschegeruch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ash smell"
+          }
+        }
+      }
+    },
+    "demo.label.lessFitting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenschirmmoment"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umbrella moment"
+          }
+        }
+      }
+    },
+    "demo.labeling.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wählen Sie die Bezeichnung, die am besten zum gezeigten Reiz passt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select the label that best matches the displayed cue."
+          }
+        }
+      }
+    },
+    "demo.labeling.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel: Cue-Labeling"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example: cue labeling"
+          }
+        }
+      }
+    },
+    "demo.matching.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wählen Sie das Bild, das am besten zum gezeigten Reiz passt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select the image that best matches the displayed cue."
+          }
+        }
+      }
+    },
+    "demo.matching.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel: Cue-Matching"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example: cue matching"
+          }
+        }
+      }
+    },
+    "demo.matching.wait.prefix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte warten Sie noch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please wait"
+          }
+        }
+      }
+    },
+    "demo.matching.wait.suffix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sekunden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "more seconds."
+          }
+        }
+      }
+    },
+    "demo.notice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dies ist ein Beispiel und kein Teil der Studie."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is an example and not part of the study."
+          }
+        }
+      }
+    },
+    "demo.open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispiel-Studiensituation"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example study situation"
+          }
+        }
+      }
+    },
+    "feedback.comment" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was gefällt Ihnen an der Studie, wobei gab es eventuell Probleme?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What do you like about the study, or were there any problems?"
+          }
+        }
+      }
+    },
+    "feedback.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Feedback konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback could not be sent. Please try again later."
+          }
+        }
+      }
+    },
+    "feedback.privacyNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte geben Sie keine personenbezogenen Daten, E-Mail-Adressen oder Abrechnungscodes ein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please do not enter personal data, email addresses, or compensation codes."
+          }
+        }
+      }
+    },
+    "feedback.source" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie haben Sie von der CueLens-Studie erfahren?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How did you hear about the CueLens study?"
+          }
+        }
+      }
+    },
+    "feedback.submit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Absenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submit"
+          }
+        }
+      }
+    },
+    "feedback.submitted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vielen Dank für Ihr Feedback."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for your feedback."
+          }
+        }
+      }
+    },
+    "feedback.submitting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesendet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending"
+          }
+        }
+      }
+    },
+    "feedback.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback"
+          }
+        }
+      }
+    },
     "home.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Willkommen bei CueLens" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to CueLens" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen bei CueLens"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to CueLens"
+          }
+        }
+      }
+    },
+    "home.studyCompleted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Studie abgeschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Study completed"
+          }
+        }
+      }
+    },
+    "home.tokenStorageFailure" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aktivierung ist aus Sicherheitsgründen gesperrt. Demo und Feedback bleiben verfügbar."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation is blocked for security reasons. The demo and feedback remain available."
+          }
+        }
+      }
+    },
+    "home.welcome" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen bei CueLens"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to CueLens"
+          }
+        }
       }
     },
     "info.confirm" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
       }
     },
     "info.hidePermanently" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese Nachricht nicht mehr anzeigen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Do not show this message again" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Nachricht nicht mehr anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do not show this message again"
+          }
+        }
       }
     },
     "info.loadFailed" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Informationen konnten nicht geladen werden." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Information could not be loaded." } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informationen konnten nicht geladen werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information could not be loaded."
+          }
+        }
       }
     },
     "language.switch.accessibility" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sprache auf Englisch umstellen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch language to German" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache auf Englisch umstellen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch language to German"
+          }
+        }
+      }
+    },
+    "links.openFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Link konnte nicht geöffnet werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The link could not be opened."
+          }
+        }
       }
     },
     "navigation.back" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zurück" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "navigation.home" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur Startseite"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to home"
+          }
+        }
       }
     },
     "notice.dismiss" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schließen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dismiss" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        }
       }
     },
     "notification.consent.continue" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
       }
     },
     "notification.consent.text" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über die Verfügbarkeit einer neuen Studienaufgabe informieren. Benachrichtigungen enthalten keine Angaben zu Rauchstatus oder Rauchverlangen." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "CueLens can notify you about new general information such as update notes and when a new study task becomes available. Notifications do not contain information about smoking status or tobacco cravings." } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CueLens kann Sie über neue allgemeine Informationen wie Update-Hinweise und über die Verfügbarkeit einer neuen Studienaufgabe informieren. Benachrichtigungen enthalten keine Angaben zu Rauchstatus oder Rauchverlangen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CueLens can notify you about new general information such as update notes and when a new study task becomes available. Notifications do not contain information about smoking status or tobacco cravings."
+          }
+        }
       }
     },
     "notification.consent.title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benachrichtigungen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notifications" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benachrichtigungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
       }
     },
     "notification.consent.toggle" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benachrichtigungen zulassen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Allow notifications" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benachrichtigungen zulassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow notifications"
+          }
+        }
+      }
+    },
+    "privacy.open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open privacy policy"
+          }
+        }
+      }
+    },
+    "rights.contact" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cuelens@each-and-every.de"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cuelens@each-and-every.de"
+          }
+        }
+      }
+    },
+    "rights.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widerrufs-, Auskunfts- und Löschanfragen:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdrawal, access and deletion requests:"
+          }
+        }
       }
     },
     "settings.saveFailed" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Auswahl konnte nicht gespeichert werden." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your selection could not be saved." } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Auswahl konnte nicht gespeichert werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your selection could not be saved."
+          }
+        }
       }
-    },
-    "home.welcome" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Willkommen bei CueLens" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to CueLens" } }
-    } },
-    "home.studyCompleted" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Studie abgeschlossen" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Study completed" } }
-    } },
-    "home.tokenStorageFailure" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Aktivierung ist aus Sicherheitsgründen gesperrt. Demo und Feedback bleiben verfügbar." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Activation is blocked for security reasons. The demo and feedback remain available." } }
-    } },
-    "privacy.open" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenschutzerklärung öffnen" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Open privacy policy" } }
-    } },
-    "rights.description" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Widerrufs-, Auskunfts- und Löschanfragen:" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Withdrawal, access and deletion requests:" } }
-    } },
-    "rights.contact" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "cuelens@each-and-every.de" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "cuelens@each-and-every.de" } }
-    } },
-    "links.openFailed" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Der Link konnte nicht geöffnet werden." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "The link could not be opened." } }
-    } },
-    "navigation.home" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Zur Startseite" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to home" } }
-    } },
-    "demo.open" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Beispiel-Studiensituation" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Example study situation" } }
-    } },
-    "demo.notice" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Dies ist ein Beispiel und kein Teil der Studie." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "This is an example and not part of the study." } }
-    } },
-    "demo.matching.title" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Beispiel: Cue-Matching" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Example: cue matching" } }
-    } },
-    "demo.matching.wait.prefix" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Bitte warten Sie noch" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Please wait" } }
-    } },
-    "demo.matching.wait.suffix" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Sekunden." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "more seconds." } }
-    } },
-    "demo.matching.prompt" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Wählen Sie das Bild, das am besten zum gezeigten Reiz passt." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Select the image that best matches the displayed cue." } }
-    } },
-    "demo.labeling.title" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Beispiel: Cue-Labeling" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Example: cue labeling" } }
-    } },
-    "demo.labeling.prompt" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Wählen Sie die Bezeichnung, die am besten zum gezeigten Reiz passt." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Select the label that best matches the displayed cue." } }
-    } },
-    "demo.label.fitting" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Aschegeruch" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Ash smell" } }
-    } },
-    "demo.label.lessFitting" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Regenschirmmoment" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Umbrella moment" } }
-    } },
-    "demo.craving.title" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Beispiel: Rauchverlangen" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Example: craving" } }
-    } },
-    "demo.craving.prompt" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Wie hoch ist in diesem Moment Ihr Rauchverlangen?" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "How strong is your craving to smoke at this moment?" } }
-    } },
-    "demo.continue" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } }
-    } },
-    "demo.completed.title" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Beispiel abgeschlossen" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Example completed" } }
-    } },
-    "demo.completed.notice" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Es wurden keine Daten übertragen oder dauerhaft gespeichert." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "No data were transmitted or stored permanently." } }
-    } },
-    "demo.cue.accessibility" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Gezeigter Reiz" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Displayed cue" } }
-    } },
-    "demo.choice.first.accessibility" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Erste Bildauswahl" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "First image choice" } }
-    } },
-    "demo.choice.second.accessibility" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Zweite Bildauswahl" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Second image choice" } }
-    } },
-    "feedback.title" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Feedback" } }
-    } },
-    "feedback.privacyNotice" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Bitte geben Sie keine personenbezogenen Daten, E-Mail-Adressen oder Abrechnungscodes ein." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Please do not enter personal data, email addresses, or compensation codes." } }
-    } },
-    "feedback.source" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Wie haben Sie von der CueLens-Studie erfahren?" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "How did you hear about the CueLens study?" } }
-    } },
-    "feedback.comment" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Was gefällt Ihnen an der Studie, wobei gab es eventuell Probleme?" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "What do you like about the study, or were there any problems?" } }
-    } },
-    "feedback.submit" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Absenden" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Submit" } }
-    } },
-    "feedback.submitting" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird gesendet" } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Sending" } }
-    } },
-    "feedback.submitted" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Vielen Dank für Ihr Feedback." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Thank you for your feedback." } }
-    } },
-    "feedback.failed" : { "extractionState" : "manual", "localizations" : {
-      "de" : { "stringUnit" : { "state" : "translated", "value" : "Das Feedback konnte nicht gesendet werden. Bitte versuchen Sie es später erneut." } },
-      "en" : { "stringUnit" : { "state" : "translated", "value" : "Feedback could not be sent. Please try again later." } }
-    } }
+    }
   },
   "version" : "1.0"
 }
