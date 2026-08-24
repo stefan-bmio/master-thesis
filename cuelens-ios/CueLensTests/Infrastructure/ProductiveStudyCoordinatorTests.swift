@@ -45,6 +45,30 @@ final class ProductiveStudyCoordinatorTests: XCTestCase {
         )
     }
 
+    func testSuccessfulReportCanonicalizesRealClockPrecisionBeforePersistence() async throws {
+        let pending = try StudyState(matchingOrder: order, pendingCraving: 63)
+        let store = CoordinatorStateStore(initial: pending)
+        let service = CoordinatorSubmissionService(
+            store: store,
+            selfReportOutcomes: [.response(.next(situation: try SituationNumber(1)))]
+        )
+        let now = Date(timeIntervalSince1970: 2_000.123_456)
+        let coordinator = try makeCoordinator(
+            store: store,
+            service: service,
+            now: now,
+            cooldownSeconds: 10_800
+        )
+
+        let outcome = await coordinator.recover(state: pending)
+
+        guard case let .progressed(state) = outcome else {
+            return XCTFail("Expected confirmed progress")
+        }
+        let data = try JSONEncoder().encode(state)
+        XCTAssertEqual(try JSONDecoder().decode(StudyState.self, from: data), state)
+    }
+
     func testNetworkOrProtocolFailureKeepsPendingWithoutProgress() async throws {
         let pending = try StudyState(matchingOrder: order, pendingCraving: 42)
         let store = CoordinatorStateStore(initial: pending)

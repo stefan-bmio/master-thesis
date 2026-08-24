@@ -86,11 +86,26 @@ struct StudyState: Codable, Equatable, Sendable {
 
         self.schemaVersion = schemaVersion
         self.confirmedSituationCount = confirmedSituationCount
-        self.nextSituationAvailableAt = nextSituationAvailableAt
+        self.nextSituationAvailableAt = try Self.canonicalPersistenceDate(
+            nextSituationAvailableAt
+        )
         self.lastNotifiedSituationNumber = lastNotifiedSituationNumber
         self.matchingOrder = matchingOrder
         self.pendingCraving = pendingCraving
         self.completion = completion
+    }
+
+    private static func canonicalPersistenceDate(_ date: Date?) throws -> Date? {
+        guard let date else { return nil }
+        let milliseconds = date.timeIntervalSince1970 * 1_000
+        guard milliseconds.isFinite,
+              milliseconds >= Double(Int64.min),
+              milliseconds <= Double(Int64.max) else {
+            throw DomainValidationError.invalidStudyState
+        }
+        return Date(
+            timeIntervalSince1970: Double(Int64(milliseconds.rounded())) / 1_000
+        )
     }
 
     static var initial: StudyState {

@@ -121,6 +121,25 @@ final class StudyStateTests: XCTestCase {
         XCTAssertEqual(try JSONDecoder().decode(StudyState.self, from: data), state)
     }
 
+    func testAvailabilityIsCanonicalizedToPersistedMillisecondPrecision() throws {
+        let rawAvailability = Date(timeIntervalSince1970: 1_700_000_000.123_456)
+        let expectedMilliseconds = Int64(
+            (rawAvailability.timeIntervalSince1970 * 1_000).rounded()
+        )
+        let state = try StudyState(
+            confirmedSituationCount: 1,
+            nextSituationAvailableAt: rawAvailability,
+            matchingOrder: order
+        )
+
+        XCTAssertEqual(
+            state.nextSituationAvailableAt,
+            Date(timeIntervalSince1970: Double(expectedMilliseconds) / 1_000)
+        )
+        let data = try JSONEncoder().encode(state)
+        XCTAssertEqual(try JSONDecoder().decode(StudyState.self, from: data), state)
+    }
+
     func testDecoderRejectsPersistedStateThatViolatesInvariants() throws {
         let json = """
         {

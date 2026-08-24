@@ -36,6 +36,21 @@ final class ProtectedStudyStateStoreTests: XCTestCase {
         XCTAssertTrue(stateSecurity.isValid)
     }
 
+    func testStateWithSubmillisecondAvailabilityCanBePersisted() async throws {
+        let files = InMemoryProtectedFileClient()
+        let store = ProtectedStudyStateStore(paths: paths, files: files)
+        let state = try StudyState(
+            confirmedSituationCount: 1,
+            nextSituationAvailableAt: Date(timeIntervalSince1970: 1_700_000_000.123_456),
+            matchingOrder: Array(0..<50)
+        )
+
+        try await store.writeState(state)
+        let loadedState = try await store.readState()
+
+        XCTAssertEqual(loadedState, state)
+    }
+
     func testMalformedOversizedAndStructurallyUnexpectedStatesFailClosed() async {
         let malformed = Data("not-json".utf8)
         let oversized = Data(repeating: 0, count: ProtectedStudyStateStore.maximumStateSize + 1)
