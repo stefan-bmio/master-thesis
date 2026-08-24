@@ -16,6 +16,7 @@ final class AppConfigurationTests: XCTestCase {
         XCTAssertEqual(configuration.endpoints.features.path, "/features.php")
         XCTAssertEqual(configuration.endpoints.submission.path, "/submit.php")
         XCTAssertEqual(configuration.transportPolicy, .httpsOnly)
+        XCTAssertEqual(configuration.runCooldownSeconds, 10_800)
         XCTAssertEqual(
             configuration.externalLinks.privacyGerman.absoluteString,
             "https://example.invalid/datenschutz"
@@ -38,6 +39,10 @@ final class AppConfigurationTests: XCTestCase {
             (ExternalLinkConfiguration.privacyGermanKey, "http://example.invalid/datenschutz"),
             (ExternalLinkConfiguration.privacyEnglishKey, "https://user@example.invalid/privacy"),
             (ExternalLinkConfiguration.privacyEnglishKey, "https://example.invalid/privacy?q=1"),
+            (AppConfiguration.runCooldownSecondsKey, nil),
+            (AppConfiguration.runCooldownSecondsKey, "0"),
+            (AppConfiguration.runCooldownSecondsKey, "3.5"),
+            (AppConfiguration.runCooldownSecondsKey, "infinite"),
             ("CFBundleShortVersionString", "invalid version")
         ]
 
@@ -95,6 +100,7 @@ final class AppConfigurationTests: XCTestCase {
             AppConfiguration.feedbackURLKey: "https://example.invalid/feedback.php",
             AppConfiguration.featuresURLKey: "https://example.invalid/features.php",
             AppConfiguration.submissionURLKey: "https://example.invalid/submit.php",
+            AppConfiguration.runCooldownSecondsKey: "10800",
             ExternalLinkConfiguration.privacyGermanKey: "https://example.invalid/datenschutz",
             ExternalLinkConfiguration.privacyEnglishKey: "https://example.invalid/privacy"
         ]

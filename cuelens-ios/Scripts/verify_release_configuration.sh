@@ -44,6 +44,7 @@ MINIMUM_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")
 test "$BUNDLE_ID" = 'de.eachandevery.cuelens'
 test "$MINIMUM_OS" = '17.0'
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLIST")" = 'NO'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_RUN_COOLDOWN_SECONDS' "$INFO_PLIST")" = '10800'
 test "$(/usr/libexec/PlistBuddy -c 'Print :BGTaskSchedulerPermittedIdentifiers:0' "$INFO_PLIST")" = \
   'de.eachandevery.cuelens.infofeed.refresh'
 test "$(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:0' "$INFO_PLIST")" = 'fetch'

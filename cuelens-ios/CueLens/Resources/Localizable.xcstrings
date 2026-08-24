@@ -983,6 +983,76 @@
         }
       }
     },
+    "study.craving.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wie hoch ist in diesem Moment Ihr Rauchverlangen?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "How strong is your craving to smoke at this moment?" } }
+      }
+    },
+    "study.imageOption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bildoption" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Image option" } }
+      }
+    },
+    "study.matching.wait" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Verbleibende Wartezeit" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remaining wait time" } }
+      }
+    },
+    "study.nextRun" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nächster Studiendurchgang" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next study run" } }
+      }
+    },
+    "study.nextRun.countdown %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nächster Studiendurchgang in %1$@" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next study run in %1$@" } }
+      }
+    },
+    "study.resources.unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Studieninhalte konnten nicht sicher geladen werden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The study content could not be loaded securely." } }
+      }
+    },
+    "study.submit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Absenden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Submit" } }
+      }
+    },
+    "study.submitting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird verarbeitet" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing" } }
+      }
+    },
+    "study.transfer.pending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenübertragung ausstehend" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Data transfer pending" } }
+      }
+    },
+    "study.viewport.unsuitable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bitte vergrößern Sie das Fenster oder richten Sie das Gerät hochkant aus, um fortzufahren." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Please enlarge the window or use portrait orientation to continue." } }
+      }
+    },
     "settings.saveFailed" : {
       "extractionState" : "manual",
       "localizations" : {

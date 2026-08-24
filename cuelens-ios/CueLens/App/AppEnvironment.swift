@@ -13,6 +13,8 @@ struct AppEnvironment: Sendable {
     let backgroundRefresh: any BackgroundRefreshManaging
     let notificationRoutes: NotificationRouteInbox
     let features: any FeatureConfigServicing
+    let productiveStudy: any ProductiveStudyManaging
+    let productiveStudyClock: any ProductiveStudySleepClock
 
     init(
         persistence: any LocalPersistenceLoading,
@@ -26,7 +28,9 @@ struct AppEnvironment: Sendable {
         notifications: any NotificationManaging = DisabledNotificationManager(),
         backgroundRefresh: any BackgroundRefreshManaging = DisabledBackgroundRefreshManager(),
         notificationRoutes: NotificationRouteInbox = NotificationRouteInbox(),
-        features: any FeatureConfigServicing = DisabledFeatureConfigService()
+        features: any FeatureConfigServicing = DisabledFeatureConfigService(),
+        productiveStudy: any ProductiveStudyManaging = DisabledProductiveStudyManager(),
+        productiveStudyClock: any ProductiveStudySleepClock = ContinuousProductiveStudySleepClock()
     ) {
         self.persistence = persistence
         self.settings = settings
@@ -40,6 +44,8 @@ struct AppEnvironment: Sendable {
         self.backgroundRefresh = backgroundRefresh
         self.notificationRoutes = notificationRoutes
         self.features = features
+        self.productiveStudy = productiveStudy
+        self.productiveStudyClock = productiveStudyClock
     }
 
     static func live() throws -> AppEnvironment {
@@ -50,15 +56,21 @@ struct AppEnvironment: Sendable {
         if let scenario = argumentValue(after: "--ui-test-feed", in: arguments) {
             let activationScenario = argumentValue(after: "--ui-test-activation", in: arguments)
             let feedbackScenario = argumentValue(after: "--ui-test-feedback", in: arguments)
+            let studyScenario = argumentValue(after: "--ui-test-study", in: arguments)
             let persistence: any LocalPersistenceLoading
             let activation: any ActivationManaging
-            if let activationScenario {
-                persistence = UITestPersistenceLoader(activationScenario)
-                activation = UITestActivationManager(activationScenario)
+            if activationScenario != nil || studyScenario != nil {
+                persistence = UITestPersistenceLoader(
+                    activationScenario: activationScenario,
+                    studyScenario: studyScenario
+                )
+                let resolvedActivationScenario = activationScenario ?? "activated"
+                activation = UITestActivationManager(resolvedActivationScenario)
             } else {
                 persistence = LiveLocalPersistenceBootstrap()
                 activation = DisabledActivationManager()
             }
+            let studyStateStore = UITestStudyStateStore()
             return AppEnvironment(
                 persistence: persistence,
                 settings: settings,
@@ -70,7 +82,18 @@ struct AppEnvironment: Sendable {
                 feedback: UITestFeedbackManager(scenario: feedbackScenario),
                 externalLinks: UITestExternalLinkManager(),
                 demoRandomizer: UITestDemoRandomizer(),
-                notificationRoutes: .live
+                notificationRoutes: .live,
+                features: UITestFeatureConfigService(enabled: studyScenario != nil),
+                productiveStudy: studyScenario == nil
+                    ? DisabledProductiveStudyManager()
+                    : ProductiveStudyCoordinator(
+                        contentRepository: BundleStudyContentRepository(),
+                        stateStore: studyStateStore,
+                        randomizer: UITestProductiveRandomizer(),
+                        dateProvider: UITestStudyDateProvider(),
+                        cooldownSeconds: 3
+                    ),
+                productiveStudyClock: UITestProductiveStudyClock()
             )
         }
         #else
@@ -81,10 +104,11 @@ struct AppEnvironment: Sendable {
         let paths = try PersistencePaths.applicationSupport()
         let tokenStore = KeychainAppTokenStore()
         let recoveryStore = ProtectedActivationRecoveryStore(paths: paths)
+        let stateStore = ProtectedStudyStateStore(paths: paths)
         let persistence = LocalPersistenceBootstrap(
             installation: InstallationCoordinator(paths: paths, tokenStore: tokenStore),
             tokenStore: tokenStore,
-            stateStore: ProtectedStudyStateStore(paths: paths),
+            stateStore: stateStore,
             activationRecovery: recoveryStore
         )
         let notifications = NotificationCoordinator()
@@ -98,6 +122,15 @@ struct AppEnvironment: Sendable {
             notifications: notifications
         )
         _ = backgroundRefresh.register()
+        #if RELEASE
+        let productiveStudy: any ProductiveStudyManaging = DisabledProductiveStudyManager()
+        #else
+        let productiveStudy: any ProductiveStudyManaging = ProductiveStudyCoordinator(
+            contentRepository: BundleStudyContentRepository(),
+            stateStore: stateStore,
+            cooldownSeconds: configuration.runCooldownSeconds
+        )
+        #endif
         return AppEnvironment(
             persistence: persistence,
             settings: settings,
@@ -115,7 +148,8 @@ struct AppEnvironment: Sendable {
             notifications: notifications,
             backgroundRefresh: backgroundRefresh,
             notificationRoutes: .live,
-            features: services.features
+            features: services.features,
+            productiveStudy: productiveStudy
         )
     }
 
@@ -162,19 +196,22 @@ private actor UITestInfoFeedService: InfoFeedServicing {
 }
 
 private struct UITestPersistenceLoader: LocalPersistenceLoading {
-    let scenario: String
-
-    init(_ scenario: String) {
-        self.scenario = scenario
-    }
+    let activationScenario: String?
+    let studyScenario: String?
 
     func load() async throws -> LocalPersistenceSnapshot {
         let state: StudyState
-        if scenario == "completed" {
+        if activationScenario == "completed" {
             state = try StudyState(
                 confirmedSituationCount: 20,
                 matchingOrder: Array(0..<50),
                 completion: .prolificCompleted
+            )
+        } else if studyScenario == "labeling" {
+            state = try StudyState(
+                confirmedSituationCount: 10,
+                nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
+                matchingOrder: Array(0..<50)
             )
         } else {
             state = try StudyState.initial
@@ -182,10 +219,12 @@ private struct UITestPersistenceLoader: LocalPersistenceLoading {
         return LocalPersistenceSnapshot(
             installation: .existingInstallation,
             studyState: state,
-            isActivated: scenario == "activated" || scenario == "completed",
-            activationRequiresSupport: scenario == "recovered-support"
-                || scenario == "token-failure",
-            tokenStorageFailed: scenario == "token-failure"
+            isActivated: activationScenario == "activated"
+                || activationScenario == "completed"
+                || studyScenario != nil,
+            activationRequiresSupport: activationScenario == "recovered-support"
+                || activationScenario == "token-failure",
+            tokenStorageFailed: activationScenario == "token-failure"
         )
     }
 }
@@ -240,6 +279,32 @@ private actor UITestDemoRandomizer: DemoRandomizing {
     func nextBoolean() -> Bool {
         defer { nextValue.toggle() }
         return nextValue
+    }
+}
+
+private struct UITestFeatureConfigService: FeatureConfigServicing {
+    let enabled: Bool
+    func isNextStudyRunEnabled() async -> Bool { enabled }
+}
+
+private actor UITestStudyStateStore: StudyStateStore {
+    private var state: StudyState?
+    func readState() async throws -> StudyState { try state ?? StudyState.initial }
+    func writeState(_ state: StudyState) async throws { self.state = state }
+}
+
+private struct UITestProductiveRandomizer: Randomizing {
+    func shuffled<T>(_ values: [T]) -> [T] { values }
+    func nextBoolean() -> Bool { false }
+}
+
+private struct UITestStudyDateProvider: DateProviding {
+    var now: Date { Date() }
+}
+
+private struct UITestProductiveStudyClock: ProductiveStudySleepClock {
+    func sleepForVisibleSecond() async throws {
+        try await ContinuousClock().sleep(for: .milliseconds(20))
     }
 }
 #endif

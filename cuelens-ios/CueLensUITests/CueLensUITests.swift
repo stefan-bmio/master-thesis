@@ -285,13 +285,61 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testProductiveMatchingCompletesExactlyFiveTrialsAndStartsCooldown() {
+        let app = makeApp(feed: "empty", study: "matching")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        let start = app.buttons["study.start"]
+        XCTAssertTrue(start.waitForExistence(timeout: 10))
+        start.tap()
+        for trial in 1...5 {
+            let choice = app.buttons["study.matching.choice.0"]
+            XCTAssertTrue(choice.waitForExistence(timeout: 3))
+            expectation(
+                for: NSPredicate(format: "value == %@", "\(trial)"),
+                evaluatedWith: choice
+            )
+            waitForExpectations(timeout: 2)
+            expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: choice)
+            waitForExpectations(timeout: 2)
+            choice.tap()
+        }
+        XCTAssertTrue(app.staticTexts["study.craving.value"].waitForExistence(timeout: 3))
+        XCTAssertEqual(app.staticTexts["study.craving.value"].label, "50")
+        app.buttons["study.craving.submit"].tap()
+        XCTAssertTrue(app.buttons["study.start"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["study.start"].isEnabled)
+    }
+
+    @MainActor
+    func testProductiveLabelingKeepsTrialOrderAcrossLanguageChange() {
+        let app = makeApp(feed: "empty", study: "labeling")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(app.buttons["study.start"].waitForExistence(timeout: 10))
+        app.buttons["study.start"].tap()
+        XCTAssertTrue(app.buttons["study.labeling.choice.0"].waitForExistence(timeout: 3))
+        app.buttons["language.switch"].tap()
+        for _ in 0..<5 {
+            let choice = app.buttons["study.labeling.choice.0"]
+            XCTAssertTrue(choice.waitForExistence(timeout: 3))
+            choice.tap()
+        }
+        XCTAssertTrue(app.staticTexts["study.craving.value"].waitForExistence(timeout: 3))
+        XCTAssertEqual(app.staticTexts["study.craving.value"].label, "50")
+    }
+
+    @MainActor
     private func makeApp(
         feed: String,
         language: String = "de",
         suite: String = "de.eachandevery.cuelens.uitest.\(UUID().uuidString)",
         interfaceStyle: String? = nil,
         activation: String? = nil,
-        feedback: String? = nil
+        feedback: String? = nil,
+        study: String? = nil
     ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -307,6 +355,9 @@ final class CueLensUITests: XCTestCase {
         }
         if let feedback {
             app.launchArguments += ["--ui-test-feedback", feedback]
+        }
+        if let study {
+            app.launchArguments += ["--ui-test-study", study]
         }
         return app
     }

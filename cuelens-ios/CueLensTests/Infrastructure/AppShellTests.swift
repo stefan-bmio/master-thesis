@@ -4,6 +4,21 @@ import XCTest
 @testable import CueLens
 
 final class AppShellTests: XCTestCase {
+    func testAllCanonicalStudyContentAndImagesLoadFromApplicationBundle() async throws {
+        let content = try await BundleStudyContentRepository().load()
+
+        XCTAssertEqual(content.matchingItems.count, 50)
+        XCTAssertEqual(content.labelingItems.count, 50)
+        XCTAssertEqual(content.matchingItems.first?.cueAssetName, "cue_000")
+        XCTAssertEqual(content.labelingItems.last?.cueAssetName, "cue_049")
+        for index in 0..<50 {
+            let suffix = String(format: "%03d", index)
+            for name in ["cue_\(suffix)", "match_a_\(suffix)", "match_b_\(suffix)"] {
+                XCTAssertNotNil(StudyImageResource.url(named: name), "Missing resource \(name)")
+            }
+        }
+    }
+
     func testCanonicalDemoImagesDecodeFromApplicationBundle() {
         for name in ["cue_000", "cue_001", "match_a_000", "match_b_000"] {
             let image = StudyImageResource.load(named: name)

@@ -1,15 +1,6 @@
 import SwiftUI
 import UIKit
 
-enum StudyImageResource {
-    static func load(named name: String, bundle: Bundle = .main) -> UIImage? {
-        guard let url = bundle.url(forResource: name, withExtension: "png") else {
-            return nil
-        }
-        return UIImage(contentsOfFile: url.path)
-    }
-}
-
 struct DemoView: View {
     let demo: DemoPresentation
     let appModel: CueLensAppModel

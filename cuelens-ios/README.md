@@ -112,7 +112,7 @@ Die automatisierten Aktivierungsszenarien verwenden ausschließlich synthetische
 
 ## Startseite, lokale Demo und Feedback aus Auftrag 8
 
-Die zustandsabhängige Startseite bietet Aktivierung, Demo und Feedback vor Studienabschluss sowie Feedback auch nach Abschluss an. Ein isolierter Token- oder Aktivierungs-Recoveryfehler sperrt Aktivierung und produktive Nutzung fail-closed, lässt die rein lokale Demo und das getrennte Feedback jedoch erreichbar. Featurestatus, produktiver Studienstart, Pending-Retry und die vollständige Abschlussintegration folgen in Auftrag 9 und 10.
+Die zustandsabhängige Startseite bietet Aktivierung, Demo und Feedback vor Studienabschluss sowie Feedback auch nach Abschluss an. Ein isolierter Token- oder Aktivierungs-Recoveryfehler sperrt Aktivierung und produktive Nutzung fail-closed, lässt die rein lokale Demo und das getrennte Feedback jedoch erreichbar. Pending-Retry, echte Übertragung und die vollständige Abschlussintegration folgen in Auftrag 10.
 
 Die Demo verwendet ausschließlich die vier unveränderten kanonischen Assets `cue_000`, `cue_001`, `match_a_000` und `match_b_000`. Auswahlreihenfolgen werden einmal je Schritt zufällig festgelegt. Der fünfsekündige Matching-Countdown zählt nur sichtbare Vordergrundzeit; Auswahl, Label und Rauchverlangenswert werden beim Verlassen vollständig verworfen und weder gespeichert noch übertragen.
 
@@ -121,6 +121,18 @@ Feedback wird vor dem Request als `FeedbackDraft` auf 500 beziehungsweise 5.000 
 ```sh
 ./Scripts/verify_prestudy_security.sh
 ```
+
+## Lokaler produktiver Studienablauf aus Auftrag 9
+
+Debug und Staging laden die beiden kanonischen JSON-Manifeste einmalig und validieren deren Struktur, Version, vollständige Itemmengen sowie alle 150 dekodierbaren 512-x-512-PNGs. Situationen 1 bis 10 verwenden eine einmal persistierte Permutation aller 50 Matching-Items in Blöcken zu fünf. Situationen 11 bis 20 verwenden die festgelegten aufeinanderfolgenden Labeling-Blöcke. Die Optionsposition wird je Trial neu zufällig festgelegt; die konkrete Auswahl bleibt ausschließlich flüchtig und wird weder gespeichert noch übertragen.
+
+Jeder Matching-Trial sperrt die Auswahl für vier sichtbare Vordergrundsekunden. Nach exakt fünf Trials folgt der ganzzahlige Rauchverlangensslider von 0 bis 100 mit Standardwert 50. Vor dem lokalen Fake-Service wird nur der Pending-Wert atomar im geschützten Studienzustand gespeichert. In Debug und Staging bestätigt der Fake Situationen 1 bis 19 lokal und verwendet den dreisekündigen Test-Cooldown; Situation 20 bleibt gezielt pending, damit Recovery und Abschluss erst mit Auftrag 10 erfolgen. Release bindet den produktiven Koordinator noch nicht ein und bleibt fail-closed.
+
+```sh
+./Scripts/verify_productive_study_security.sh
+```
+
+Ein Prozessabbruch vor dem Absenden persistiert weder Trialposition noch Auswahl und beginnt den unbestätigten Durchgang erneut. Die produktive Oberfläche verwendet zentriertes `scaledToFill`, vollständige Auswahlbilder, sprachstabile Zufallspositionen und den bestehenden Sichtschutz. Echte Submission, Pending-Retry und Abschlussantworten gehören ausschließlich zu Auftrag 10.
 
 ## Datenschutz und Abgrenzung
 

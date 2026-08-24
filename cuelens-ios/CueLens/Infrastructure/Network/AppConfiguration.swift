@@ -15,11 +15,13 @@ struct AppConfiguration: Equatable, Sendable {
     static let featuresURLKey = "CUELENS_FEATURES_URL"
     static let submissionURLKey = "CUELENS_SUBMIT_URL"
     static let allowsLocalHTTPKey = "CUELENS_ALLOWS_LOCAL_HTTP"
+    static let runCooldownSecondsKey = "CUELENS_RUN_COOLDOWN_SECONDS"
 
     let endpoints: NetworkEndpoints
     let appVersion: String
     let transportPolicy: NetworkTransportPolicy
     let externalLinks: ExternalLinkConfiguration
+    let runCooldownSeconds: TimeInterval
 
     static func live(bundle: Bundle = .main) throws -> AppConfiguration {
         try parse(infoDictionary: bundle.infoDictionary ?? [:])
@@ -43,7 +45,10 @@ struct AppConfiguration: Equatable, Sendable {
             ),
             appVersion: appVersion,
             transportPolicy: transportPolicy,
-            externalLinks: try ExternalLinkConfiguration.parse(infoDictionary: infoDictionary)
+            externalLinks: try ExternalLinkConfiguration.parse(infoDictionary: infoDictionary),
+            runCooldownSeconds: try validatedCooldown(
+                infoDictionary[runCooldownSecondsKey]
+            )
         )
     }
 
@@ -75,5 +80,22 @@ struct AppConfiguration: Equatable, Sendable {
             throw NetworkError.invalidConfiguration
         }
         return value
+    }
+
+    private static func validatedCooldown(_ rawValue: Any?) throws -> TimeInterval {
+        let seconds: Double?
+        switch rawValue {
+        case let value as String:
+            seconds = Double(value)
+        case let value as NSNumber:
+            seconds = value.doubleValue
+        default:
+            seconds = nil
+        }
+        guard let seconds, seconds.isFinite, seconds > 0,
+              seconds.rounded() == seconds else {
+            throw NetworkError.invalidConfiguration
+        }
+        return seconds
     }
 }

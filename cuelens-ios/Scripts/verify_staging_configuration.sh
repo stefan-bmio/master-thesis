@@ -22,6 +22,7 @@ xcodebuild -quiet -project CueLens.xcodeproj -scheme 'CueLens Staging' \
 INFO_PLIST="$DERIVED_DATA/Build/Products/Staging-iphonesimulator/CueLens.app/Info.plist"
 test -f "$INFO_PLIST"
 test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_ALLOWS_LOCAL_HTTP' "$INFO_PLIST")" = 'YES'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CUELENS_RUN_COOLDOWN_SECONDS' "$INFO_PLIST")" = '3'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSAppTransportSecurity:NSAllowsLocalNetworking' "$INFO_PLIST")" = 'true'
 test "$(/usr/libexec/PlistBuddy -c 'Print :NSLocalNetworkUsageDescription' "$INFO_PLIST")" = \
   'CueLens benötigt in dieser Testversion Zugriff auf den lokalen Testserver, um Informationen zu laden.'

@@ -9,6 +9,7 @@ enum AppRoute: Equatable, Sendable {
     case activation
     case demo
     case feedback
+    case productiveStudy
     case secureStorageFailure
 }
 
@@ -55,6 +56,7 @@ final class CueLensAppModel {
     private var activationRequiresSupport = false
     private var tokenStorageFailed = false
     private var demoCountdownTask: Task<Void, Never>?
+    private var productiveCountdownTask: Task<Void, Never>?
 
     private(set) var route: AppRoute = .loading
     private(set) var language: AppLanguage = .german
@@ -70,6 +72,12 @@ final class CueLensAppModel {
     private(set) var feedbackSource = ""
     private(set) var feedbackComment = ""
     private(set) var feedbackState: FeedbackState = .editing
+    private(set) var productiveRun: PreparedStudyRun?
+    private(set) var productiveStudyFeatureEnabled = false
+    private(set) var productiveStudyContentAvailable = false
+    private(set) var productiveStudyViewportSuitable = true
+    private(set) var productiveStudySubmitting = false
+    private(set) var productiveStudyBlockReason: StartGateBlockReason?
 
     var showsPrivacyCurtain: Bool { lifecyclePhase != .active }
     var isActivated: Bool { appActivated }
@@ -84,6 +92,23 @@ final class CueLensAppModel {
     }
     var feedbackInputIsValid: Bool {
         (try? FeedbackDraft(source: feedbackSource, comment: feedbackComment)) != nil
+    }
+    var hasPendingStudyTransfer: Bool { studyState?.pendingCraving != nil }
+    var showsNextStudyRun: Bool {
+        appActivated
+            && !hasTokenStorageFailure
+            && !isStudyCompleted
+            && productiveStudyFeatureEnabled
+            && productiveStudyContentAvailable
+            && !hasPendingStudyTransfer
+    }
+
+    func nextStudyRunIsEnabled(now: Date) -> Bool {
+        showsNextStudyRun
+            && StudyCooldown.remainingSeconds(
+                until: studyState?.nextSituationAvailableAt,
+                now: now
+            ) == 0
     }
 
     init(
@@ -129,6 +154,8 @@ final class CueLensAppModel {
             return
         }
 
+        await refreshProductiveStudyAvailability()
+
         await reconcileNotificationInfrastructure()
         await loadFeedWhenActive()
     }
@@ -137,8 +164,10 @@ final class CueLensAppModel {
         lifecyclePhase = phase
         if phase == .active {
             startDemoCountdownIfNeeded()
+            startProductiveCountdownIfNeeded()
         } else {
             stopDemoCountdown()
+            stopProductiveCountdown()
         }
         if phase == .active, localStateLoaded {
             if let notificationRoute = await environment?.notificationRoutes.consume() {
@@ -149,9 +178,13 @@ final class CueLensAppModel {
                 case .studyHome:
                     feed = nil
                     route = .home
+                    await refreshProductiveStudyAvailability()
                 }
             }
             await reconcileNotificationInfrastructure()
+            if route == .home {
+                await refreshProductiveStudyAvailability()
+            }
             if feedLoadPending {
                 await loadFeedWhenActive()
             }
@@ -222,6 +255,7 @@ final class CueLensAppModel {
             appActivated = true
             activationState = .activated
             route = .home
+            await refreshProductiveStudyAvailability()
             await reconcileNotificationInfrastructure()
         case .failed:
             activationState = .failed
@@ -274,6 +308,86 @@ final class CueLensAppModel {
         stopDemoCountdown()
         demo = nil
         route = .home
+    }
+
+    func openProductiveStudy(viewportSize: CGSize) async {
+        guard route == .home, let state = studyState, let environment else { return }
+        await refreshProductiveStudyAvailability()
+        let viewportSuitable = StudyViewportPolicy.allowsProductiveStudy(in: viewportSize)
+        productiveStudyViewportSuitable = viewportSuitable
+        let outcome = await environment.productiveStudy.prepare(
+            state: state,
+            isActivated: appActivated && !hasTokenStorageFailure,
+            featureEnabled: productiveStudyFeatureEnabled,
+            viewportSuitable: viewportSuitable,
+            now: Date()
+        )
+        switch outcome {
+        case let .ready(run):
+            studyState = run.state
+            productiveRun = run
+            productiveStudyBlockReason = nil
+            route = .productiveStudy
+            startProductiveCountdownIfNeeded()
+        case let .blocked(reason):
+            productiveStudyBlockReason = reason
+        case .persistenceFailed:
+            route = .secureStorageFailure
+        }
+    }
+
+    func updateProductiveStudyViewport(_ size: CGSize) {
+        guard route == .productiveStudy else { return }
+        productiveStudyViewportSuitable = StudyViewportPolicy.allowsProductiveStudy(in: size)
+        if productiveStudyViewportSuitable {
+            startProductiveCountdownIfNeeded()
+        } else {
+            stopProductiveCountdown()
+        }
+    }
+
+    func selectProductiveStudyChoice() {
+        guard route == .productiveStudy,
+              productiveStudyViewportSuitable,
+              productiveRun?.session.selectionEnabled == true else { return }
+        stopProductiveCountdown()
+        productiveRun?.session.selectCurrentTrial()
+        startProductiveCountdownIfNeeded()
+    }
+
+    func updateProductiveCraving(_ value: Int) {
+        guard route == .productiveStudy else { return }
+        productiveRun?.session.updateCraving(value)
+    }
+
+    func submitProductiveCraving() async {
+        guard route == .productiveStudy,
+              !productiveStudySubmitting,
+              let environment,
+              let run = productiveRun,
+              let state = studyState,
+              run.session.phase == .craving else { return }
+        productiveStudySubmitting = true
+        stopProductiveCountdown()
+        let outcome = await environment.productiveStudy.submitCraving(
+            run.session.craving,
+            session: run.session,
+            state: state
+        )
+        productiveStudySubmitting = false
+        switch outcome {
+        case let .locallyConfirmed(newState), let .pending(newState):
+            studyState = newState
+            productiveRun = nil
+            route = .home
+            await refreshProductiveStudyAvailability()
+            await reconcileNotificationInfrastructure()
+        case .persistenceFailed:
+            productiveRun = nil
+            route = .secureStorageFailure
+        case .ignored:
+            break
+        }
     }
 
     func openFeedback() {
@@ -456,6 +570,7 @@ final class CueLensAppModel {
         feed = nil
         if notificationPromptCompleted {
             route = .home
+            await refreshProductiveStudyAvailability()
         } else {
             notificationOptionEnabled = true
             route = .notificationConsent
@@ -517,6 +632,56 @@ final class CueLensAppModel {
     private func stopDemoCountdown() {
         demoCountdownTask?.cancel()
         demoCountdownTask = nil
+    }
+
+    private func refreshProductiveStudyAvailability() async {
+        guard let environment,
+              appActivated,
+              !hasTokenStorageFailure,
+              studyState?.completion == .incomplete else {
+            productiveStudyFeatureEnabled = false
+            productiveStudyContentAvailable = false
+            return
+        }
+        async let feature = environment.features.isNextStudyRunEnabled()
+        async let content = environment.productiveStudy.contentIsAvailable()
+        productiveStudyFeatureEnabled = await feature
+        productiveStudyContentAvailable = await content
+    }
+
+    private func startProductiveCountdownIfNeeded() {
+        guard lifecyclePhase == .active,
+              route == .productiveStudy,
+              productiveStudyViewportSuitable,
+              productiveRun?.session.phase == .cueMatching,
+              productiveRun?.session.remainingSeconds ?? 0 > 0,
+              productiveCountdownTask == nil,
+              let environment else { return }
+        productiveCountdownTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                do {
+                    try await environment.productiveStudyClock.sleepForVisibleSecond()
+                } catch {
+                    return
+                }
+                guard !Task.isCancelled,
+                      self.lifecyclePhase == .active,
+                      self.route == .productiveStudy,
+                      self.productiveStudyViewportSuitable,
+                      self.productiveRun?.session.phase == .cueMatching else { return }
+                self.productiveRun?.session.countVisibleSecond()
+                if self.productiveRun?.session.remainingSeconds == 0 {
+                    self.productiveCountdownTask = nil
+                    return
+                }
+            }
+        }
+    }
+
+    private func stopProductiveCountdown() {
+        productiveCountdownTask?.cancel()
+        productiveCountdownTask = nil
     }
 
     private func reminderStateIsEligibleForFeatureCheck(_ state: StudyState) -> Bool {

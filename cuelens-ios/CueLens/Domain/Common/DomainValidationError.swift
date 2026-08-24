@@ -12,4 +12,5 @@ enum DomainValidationError: Error, Equatable, Sendable {
     case invalidMatchingOrder
     case invalidStudyState
     case invalidSelfReportResponse
+    case invalidStudyContent
 }

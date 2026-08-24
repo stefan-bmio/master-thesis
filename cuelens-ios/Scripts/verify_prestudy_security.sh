@@ -37,8 +37,8 @@ for asset in cue_000 cue_001 match_a_000 match_b_000; do
   android="../cuelens/app/src/main/res/drawable/$asset.png"
   test -f "$source"
   cmp -s "$source" "$android"
-  rg -q "$asset.png in Resources" "$PROJECT"
 done
+rg -q 'Assets in Resources' "$PROJECT"
 
 for key in CUELENS_PRIVACY_URL_DE CUELENS_PRIVACY_URL_EN; do
   rg -q "<key>$key</key>" CueLens/Resources/Info.plist

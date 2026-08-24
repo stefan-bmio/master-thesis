@@ -19,6 +19,7 @@
 	<key>CUELENS_PRIVACY_URL_DE</key><string>$(CUELENS_PRIVACY_URL_DE)</string>
 	<key>CUELENS_PRIVACY_URL_EN</key><string>$(CUELENS_PRIVACY_URL_EN)</string>
 	<key>CUELENS_SUBMIT_URL</key><string>$(CUELENS_SUBMIT_URL)</string>
+	<key>CUELENS_RUN_COOLDOWN_SECONDS</key><string>$(CUELENS_RUN_COOLDOWN_SECONDS)</string>
 	<key>CUELENS_ALLOWS_LOCAL_HTTP</key><string>$(CUELENS_ALLOWS_LOCAL_HTTP)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict><key>NSAllowsLocalNetworking</key><true/></dict>

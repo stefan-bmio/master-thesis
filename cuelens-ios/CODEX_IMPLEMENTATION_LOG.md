@@ -535,3 +535,31 @@ Die vier Demo-PNGs waren bytegleich im App-Bundle vorhanden, wurden durch SwiftU
 Die Demo lädt die erlaubten PNG-Ressourcen nun explizit per Bundle-URL und übergibt das decodierte `UIImage` an SwiftUI. Ein Unit-Test prüft Dateiauflösung, Decodierung und die erwarteten Abmessungen aller vier kanonischen Demo-Bilder. Der bestehende vollständige UI-Ablauf prüft zusätzlich Mindestbreite und Mindesthöhe der gerenderten Cue- und Auswahlflächen. Ein diagnostischer iOS-17.5-Screenshot bestätigte nach der Korrektur die sichtbare Darstellung von Cue und beiden Matching-Bildern.
 
 Freigabe erfolgt am 24.8.26
+
+## 24.08.2026 – Auftrag 9
+
+**Freigabe und Umfang**
+
+Auftrag 8 wurde durch den datierten Vermerk und die erfolgreiche Sichtprüfung nach der Bildkorrektur freigegeben. Auftrag 9 wurde auf Branch `codex/ios-auftrag-9` als vollständig lokaler produktiver Durchgang umgesetzt. Entsprechend der vorab geklärten Testannahme bestätigen Debug und Staging die Situationen 1 bis 19 lokal mit drei Sekunden Cooldown; Situation 20 bleibt pending. Release bindet den Ablauf bis zur echten Übertragung aus Auftrag 10 fail-closed nicht ein.
+
+**Implementierung**
+
+- Das actor-gekapselte `BundleStudyContentRepository` lädt den kanonischen Content und das Assetmanifest höchstens einmal. Es validiert unbekannte Felder, Version und Hashalgorithmus, 50 Matching- und 50 Labeling-Items, 150 eindeutige Dateiverweise, Hashsyntax, Abmessungen sowie die tatsächliche Dekodierbarkeit aller Bilder. Ein fehlerhafter Inhalt sperrt den produktiven Start neutral.
+- Alle 150 bytegleichen PNGs und beide JSON-Manifeste sind als App-Ressourcen eingebunden. Bilder werden per expliziter Bundle-URL geladen; der aktuelle Trial hält nur die aktuell verwendeten `UIImage`-Instanzen und keinen unbeschränkten eigenen Cache.
+- Beim ersten produktiven Start wird eine vollständige Permutation `0...49` erzeugt, vor Nutzung als geschützter Studienzustand atomar persistiert und für die zehn Matching-Situationen in disjunkte Fünferblöcke geschnitten. Die zehn Labeling-Situationen verwenden die festgelegten Fünferblöcke in aufsteigender Reihenfolge.
+- Jede der beiden Optionspositionen wird pro Trial durch ein neues Zufallsbit festgelegt. Sprachwechsel verändert die festgelegte Position nicht. Die konkrete Auswahl, Trialposition und Reaktionszeit werden weder persistiert noch an einen Service übergeben.
+- Matching sperrt jede Auswahl für vier gezählte sichtbare Vordergrundsekunden. Inaktivität, Hintergrund und ungeeignete iPad-Geometrie pausieren den Countdown ohne Zeitnachholung. Nach genau fünf Trials folgt ein ganzzahliger Slider `0...100` mit Standardwert 50 und expliziter Sendeaktion.
+- Vor jedem Fake-Serviceaufruf wird der Craving-Wert atomar als Pending gespeichert. Erst danach bestätigt der lokale Service Situationen 1 bis 19, entfernt Pending, erhöht den Zähler und setzt den buildkonfigurierten Cooldown in einem weiteren atomaren Zustandswechsel. Situation 20 verbleibt absichtlich pending; echter Retry, Serverantwort und Abschluss folgen in Auftrag 10.
+- Die Vollbildoberfläche stellt den Cue zentriert mit `scaledToFill` dar, hält Cue und Optionen gleichzeitig sichtbar, zeigt Matching-Optionen vollständig mit `scaledToFit`, enthält keine suggestiven Bildbeschreibungen und hält den Sprachumschalter oben rechts erreichbar.
+
+**Tests und technische Prüfung**
+
+- 158 Unit-Tests bestanden unter iOS 26.5 und zusätzlich unter der Kompatibilitätsuntergrenze iOS 17.5. Neu geprüft werden vier sichtbare Sekunden pro Matching-Trial, exakt fünf Trials, disjunkte Matching-Slices, feste Labeling-Blöcke, Craving-Grenzen, persistierte Permutation, Pending vor Serviceaufruf, lokaler Fortschritt, Situation 20 pending, Cooldownkonfiguration und das Laden aller kanonischen Bundle-Ressourcen.
+- 19 synthetische UI-Szenarien bestanden jeweils auf iPhone und iPad unter iOS 26.5. Die neuen Abläufe prüfen einen vollständigen Fünf-Trial-Matching-Durchgang mit Sperrzeit und Cooldown sowie einen vollständigen Fünf-Trial-Labeling-Durchgang mit Sprachwechsel.
+- Das vollständige lokale Quality-Gate bestand einschließlich Debug- und Staging-Build, Release-Artefakt, sämtlicher Sicherheitsgates und erneuter kanonischer Prüfung von Byteidentität, SHA-256, 512-x-512-Abmessungen, JSON-Schemata und Querverweisen. Release-Analyze und ein unsignierter generischer Release-Gerätebuild waren ebenfalls erfolgreich.
+- Die Runtime-Integration deckte zwei zunächst nicht zugelassene, aber kanonische Manifestfelder auf (`demo` und `hash_algorithm`). Die strikte Laufzeitvalidierung wurde daraufhin an das kanonische Schema angepasst und durch Bundle- und UI-Regressionstests abgesichert.
+- Automatisierte Studienabläufe verwenden ausschließlich den lokalen Fake-Service. Es wurden keine Craving-Werte, Trialauswahlen, Teilnehmerkennungen oder Tokens an ein Backend übertragen oder protokolliert. Android, Backend und KI-PoC blieben unverändert.
+
+**Abgrenzung und Review-Gate**
+
+Der lokale Fake bildet bewusst keine echte Serversemantik nach. Pending-Retry beim App-Start, Submission-Payload, Responseparser, direkter beziehungsweise Prolific-Abschluss und der produktive dreistündige Fortschritt werden erst in Auftrag 10 aktiviert. Das Review-Gate bleibt daher die manuelle fachliche Sichtprüfung mehrerer vollständiger 20-Durchgang-Debugläufe auf iPhone und iPad; am Ende jedes Testlaufs ist der Pending-Zustand der 20. Situation erwartet.

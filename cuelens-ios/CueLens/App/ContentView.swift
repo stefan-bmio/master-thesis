@@ -46,6 +46,10 @@ struct ContentView: View {
             }
         case .feedback:
             FeedbackView(appModel: appModel)
+        case .productiveStudy:
+            if let run = appModel.productiveRun {
+                ProductiveStudyView(run: run, appModel: appModel)
+            }
         case .secureStorageFailure:
             SecureStorageFailureView()
         }
@@ -65,8 +69,9 @@ struct HomeView: View {
     let appModel: CueLensAppModel
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 16) {
                 LanguageButton(appModel: appModel)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 Text("app.title")
@@ -100,6 +105,42 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("home.tokenStorageFailure")
                     }
+                    if appModel.hasPendingStudyTransfer {
+                        Text("study.transfer.pending")
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("study.transfer.pending")
+                    } else if appModel.showsNextStudyRun {
+                        TimelineView(.periodic(from: .now, by: 1)) { context in
+                            let enabled = appModel.nextStudyRunIsEnabled(now: context.date)
+                            Button {
+                                Task { await appModel.openProductiveStudy(viewportSize: geometry.size) }
+                            } label: {
+                                if enabled {
+                                    Text("study.nextRun")
+                                } else {
+                                    Text(
+                                        "study.nextRun.countdown \(StudyCooldown.formattedRemaining(until: appModel.studyState?.nextSituationAvailableAt, now: context.date))"
+                                    )
+                                }
+                            }
+                            .buttonStyle(CueLensPrimaryButtonStyle())
+                            .disabled(!enabled)
+                            .accessibilityIdentifier("study.start")
+                        }
+                    } else if appModel.isActivated
+                                && appModel.productiveStudyFeatureEnabled
+                                && !appModel.productiveStudyContentAvailable {
+                        Text("study.resources.unavailable")
+                            .foregroundStyle(.red)
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("study.resources.unavailable")
+                    }
+                    if appModel.productiveStudyBlockReason == .unsuitableViewport {
+                        Text("study.viewport.unsuitable")
+                            .foregroundStyle(.red)
+                            .multilineTextAlignment(.center)
+                    }
                     Button("demo.open") {
                         Task { await appModel.openDemo() }
                     }
@@ -131,9 +172,10 @@ struct HomeView: View {
                 .tint(CueLensPalette.primary)
                 .accessibilityIdentifier("rights.contact")
             }
-            .frame(maxWidth: 600)
-            .padding(20)
-            .frame(maxWidth: .infinity)
+                .frame(maxWidth: 600)
+                .padding(20)
+                .frame(maxWidth: .infinity)
+            }
         }
     }
 }

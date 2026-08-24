@@ -19,6 +19,7 @@ $SCRIPT_DIR/verify_network_security.sh
 $SCRIPT_DIR/verify_notification_security.sh
 $SCRIPT_DIR/verify_activation_security.sh
 $SCRIPT_DIR/verify_prestudy_security.sh
+$SCRIPT_DIR/verify_productive_study_security.sh
 $SCRIPT_DIR/verify_staging_configuration.sh "$DERIVED_DATA"
 
 EXPECTED_XCODE='Xcode 26.6'

@@ -87,14 +87,18 @@
 		100000000000000000000488 /* Feedback/FeedbackCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000236 /* Feedback/FeedbackCoordinator.swift */; };
 		100000000000000000000489 /* Links/ExternalLinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000237 /* Links/ExternalLinkCoordinator.swift */; };
 		100000000000000000000490 /* PreStudyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000238 /* PreStudyViews.swift */; };
-		100000000000000000000491 /* Resources/Study/Assets/cue_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000239 /* Resources/Study/Assets/cue_000.png */; };
-		100000000000000000000492 /* Resources/Study/Assets/cue_001.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000240 /* Resources/Study/Assets/cue_001.png */; };
-		100000000000000000000493 /* Resources/Study/Assets/match_a_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000241 /* Resources/Study/Assets/match_a_000.png */; };
-		100000000000000000000494 /* Resources/Study/Assets/match_b_000.png in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000242 /* Resources/Study/Assets/match_b_000.png */; };
 		100000000000000000000495 /* DemoSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000243 /* DemoSessionTests.swift */; };
 		100000000000000000000496 /* FeedbackCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000244 /* FeedbackCoordinatorTests.swift */; };
 		100000000000000000000497 /* ExternalLinkCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */; };
 		100000000000000000000498 /* PreStudyAppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000246 /* PreStudyAppModelTests.swift */; };
+		100000000000000000000810 /* StudyContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000800 /* StudyContent.swift */; };
+		100000000000000000000811 /* ProductiveStudySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000801 /* ProductiveStudySession.swift */; };
+		100000000000000000000812 /* StudyContentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000802 /* StudyContentRepository.swift */; };
+		100000000000000000000813 /* ProductiveStudyCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000803 /* ProductiveStudyCoordinator.swift */; };
+		100000000000000000000814 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000804 /* Assets */; };
+		100000000000000000000815 /* study-content-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000805 /* study-content-v1.json */; };
+		100000000000000000000816 /* study-assets-manifest-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000806 /* study-assets-manifest-v1.json */; };
+		100000000000000000000817 /* ProductiveStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000807 /* ProductiveStudyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +227,14 @@
 		100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000246 /* PreStudyAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyAppModelTests.swift; sourceTree = "<group>"; };
 		100000000000000000000247 /* verify_prestudy_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_prestudy_security.sh; sourceTree = "<group>"; };
+		100000000000000000000800 /* StudyContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContent.swift; sourceTree = "<group>"; };
+		100000000000000000000801 /* ProductiveStudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudySession.swift; sourceTree = "<group>"; };
+		100000000000000000000802 /* StudyContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContentRepository.swift; sourceTree = "<group>"; };
+		100000000000000000000803 /* ProductiveStudyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000804 /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/Study/Assets; sourceTree = SOURCE_ROOT; };
+		100000000000000000000805 /* study-content-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-content-v1.json; sourceTree = SOURCE_ROOT; };
+		100000000000000000000806 /* study-assets-manifest-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-assets-manifest-v1.json; sourceTree = SOURCE_ROOT; };
+		100000000000000000000807 /* ProductiveStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +305,7 @@
 				100000000000000000000195 /* AppEnvironment.swift */,
 				100000000000000000000223 /* CueLensAppDelegate.swift */,
 				100000000000000000000238 /* PreStudyViews.swift */,
+				100000000000000000000807 /* ProductiveStudyView.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -304,10 +317,9 @@
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
 				100000000000000000000194 /* Info.plist */,
 				100000000000000000000199 /* StagingInfo.plist */,
-				100000000000000000000239 /* Resources/Study/Assets/cue_000.png */,
-				100000000000000000000240 /* Resources/Study/Assets/cue_001.png */,
-				100000000000000000000241 /* Resources/Study/Assets/match_a_000.png */,
-				100000000000000000000242 /* Resources/Study/Assets/match_b_000.png */,
+				100000000000000000000804 /* Assets */,
+				100000000000000000000805 /* study-content-v1.json */,
+				100000000000000000000806 /* study-assets-manifest-v1.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -416,7 +428,9 @@
 			children = (
 				100000000000000000000140 /* Cooldown.swift */,
 				100000000000000000000139 /* MatchingOrder.swift */,
+				100000000000000000000801 /* ProductiveStudySession.swift */,
 				100000000000000000000142 /* StartGate.swift */,
+				100000000000000000000800 /* StudyContent.swift */,
 				100000000000000000000141 /* StudyState.swift */,
 				100000000000000000000138 /* StudyValues.swift */,
 			);
@@ -455,12 +469,22 @@
 				100000000000000000000021 /* Persistence */,
 				100000000000000000000023 /* Network */,
 				100000000000000000000025 /* Notifications */,
+				100000000000000000000820 /* Study */,
 				100000000000000000000196 /* Preferences/AppSettingsStore.swift */,
 				100000000000000000000197 /* InfoFeed/InfoFeedRepository.swift */,
 				100000000000000000000236 /* Feedback/FeedbackCoordinator.swift */,
 				100000000000000000000237 /* Links/ExternalLinkCoordinator.swift */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		100000000000000000000820 /* Study */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000803 /* ProductiveStudyCoordinator.swift */,
+				100000000000000000000802 /* StudyContentRepository.swift */,
+			);
+			path = Study;
 			sourceTree = "<group>";
 		};
 		100000000000000000000020 /* Keychain */ = {
@@ -679,10 +703,9 @@
 			files = (
 				100000000000000000000404 /* Localizable.xcstrings in Resources */,
 				100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */,
-				100000000000000000000491 /* Resources/Study/Assets/cue_000.png in Resources */,
-				100000000000000000000492 /* Resources/Study/Assets/cue_001.png in Resources */,
-				100000000000000000000493 /* Resources/Study/Assets/match_a_000.png in Resources */,
-				100000000000000000000494 /* Resources/Study/Assets/match_b_000.png in Resources */,
+				100000000000000000000814 /* Assets in Resources */,
+				100000000000000000000815 /* study-content-v1.json in Resources */,
+				100000000000000000000816 /* study-assets-manifest-v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,6 +785,11 @@
 				100000000000000000000488 /* Feedback/FeedbackCoordinator.swift in Sources */,
 				100000000000000000000489 /* Links/ExternalLinkCoordinator.swift in Sources */,
 				100000000000000000000490 /* PreStudyViews.swift in Sources */,
+				100000000000000000000810 /* StudyContent.swift in Sources */,
+				100000000000000000000811 /* ProductiveStudySession.swift in Sources */,
+				100000000000000000000812 /* StudyContentRepository.swift in Sources */,
+				100000000000000000000813 /* ProductiveStudyCoordinator.swift in Sources */,
+				100000000000000000000817 /* ProductiveStudyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
