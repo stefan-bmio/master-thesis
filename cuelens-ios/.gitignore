@@ -6,4 +6,5 @@ build/
 *.xcuserstate
 xcuserdata/
 Config/LocalSigning.xcconfig
+Config/ExportOptions-AppStore.local.plist
 *.xcresult

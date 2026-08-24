@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-24T20:30:00+02:00",
+  "release_status": "blocked",
+  "source": {
+    "commit": "e66270a93a74fa435af03a8b2054f8f8738756cf",
+    "branch": "codex/ios-auftrag-11",
+    "platform_specification_sha256": "32ad56656a06154a376f612f018c2991269fb193b60d8213ca02a7fb4fabd506",
+    "architecture_plan_sha256": "fed88d6620ce26ff729ba246636f913b16583675a5e5b87ac654f0ec4b75ab5d"
+  },
+  "application": {
+    "name": "CueLens",
+    "bundle_identifier": "de.eachandevery.cuelens",
+    "marketing_version": "1.0.0",
+    "build_number": "1",
+    "minimum_ios_version": "17.0",
+    "configuration": "Release",
+    "cooldown_seconds": 10800
+  },
+  "toolchain": {
+    "xcode": "26.6",
+    "xcode_build": "17F113",
+    "swift": "6.3.3",
+    "macos": "26.5.1 (25F80)"
+  },
+  "content": {
+    "study_content_sha256": "47716f6f05aa1c7f97ba7dd66e9b29ac71c63ab3bed93b64d574e6373fdb7179",
+    "study_assets_manifest_sha256": "73782b89c8f420faddf7acf69686b0071803024e38a153d61b9b7b2c27ba25e0",
+    "cue_assets": 50,
+    "match_a_assets": 50,
+    "match_b_assets": 50
+  },
+  "verification": {
+    "unit_tests_ios_26_5": 170,
+    "unit_tests_ios_17_5": 170,
+    "ui_tests_iphone_ios_26_5": 25,
+    "ui_tests_ipad_ios_26_5": 25,
+    "quality_gate": "passed",
+    "release_analyze": "passed",
+    "unsigned_generic_device_build": "passed",
+    "signed_archive": "development-signed-only",
+    "distribution_archive": "not-created",
+    "testflight": "not-uploaded"
+  },
+  "blocking_gates": [
+    "four-eyes privacy and signed-archive review",
+    "independent ethics-review evidence",
+    "distribution signing and App Store Connect upload",
+    "TestFlight verification on multiple physical devices",
+    "fourteen-day long-term test",
+    "direct and Prolific staging end-to-end completion",
+    "formal study-owner release approval"
+  ]
+}

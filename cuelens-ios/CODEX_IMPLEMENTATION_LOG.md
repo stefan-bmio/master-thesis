@@ -638,3 +638,29 @@ Auftrag 10 wurde durch den datierten Vermerk und den vollständig durchgespielte
 **Abgrenzung und Review-Gate**
 
 Automatisch sind keine kritischen oder hohen offenen Befunde bekannt. Die spezifizierte Vier-Augen-Prüfung der Datenschutzmatrix und die manuelle Security-/Accessibility-Checkliste auf einem gültig signierten Release-Archiv bleiben das Review-Gate von Auftrag 11. Dazu gehören der Abgleich mit App Store Connect und realer Serverkonfiguration, VoiceOver in Deutsch und Englisch auf einem physischen Gerät, Gerätesperre, App-Switcher, Neuinstallation, Benachrichtigungsentzug und die Prüfung der Distribution-Signatur. Ohne lokale Distribution-Identität wurde kein signiertes Archiv erzeugt oder als geprüft ausgegeben.
+
+## 24.08.2026 – Auftrag 12 – Releasevorbereitung
+
+**Umfang und Source Candidate**
+
+Auftrag 12 wurde auf Branch `codex/ios-auftrag-12` als reproduzierbares Release- und Evidenzpaket vorbereitet. Der unveränderte, vollständig geprüfte Source Candidate ist Auftrag-11-Commit `e66270a93a74fa435af03a8b2054f8f8738756cf`, App-Version `1.0.0`, Build `1`, Release-Konfiguration mit iOS-Mindestversion 17.0 und dreistündigem Cooldown. Eine bereits im Arbeitsbaum vorhandene, nicht zu Auftrag 12 gehörende automatische Xcode-Änderung am String Catalog wurde weder überschrieben noch in den Source Candidate aufgenommen.
+
+**Release- und Studiennachweise**
+
+- Das maschinenlesbare Release-Manifest fixiert Commit, Xcode 26.6 (17F113), Swift 6.3.3, macOS-Build, Version, Buildnummer, Bundle-ID, Konfiguration, Spezifikations- und Content-Hashes sowie die realen automatisierten Testergebnisse.
+- Eine vollständige Matrix ordnet IOS-FUN-001 bis IOS-FUN-035 jeweils Produktionsimplementierung und mindestens einem automatisierten Nachweis zu. Ein separater DoD-Audit bewertet alle zehn Bereiche der Definition of Done und trennt Repositorynachweise von manuellen und externen Gates.
+- Implementierte Architektur, Datenschutzdatenflüsse, Known Issues, formale Freigabecheckliste, ein datensparsames 14-Tage-Testprotokoll, TestFlight-/App-Review-Texte sowie ein Register für Ethik- und Studiennachweise wurden dokumentiert.
+- `verify_release_documentation.sh` validiert Vollständigkeit, alle 35 Traceability-IDs, Git-Commit, Hashes, Appparameter, Testzahlen und den weiterhin blockierten Status. `verify_release_candidate.sh` verlangt einen unveränderten getrackten Arbeitsbaum, wiederholt Quality-Gate und Release Analyze und akzeptiert ausschließlich ein bestandenes Distribution-Archiv.
+- Die aktuellen Apple-Vorgaben für TestFlight-Testinformationen, App Privacy, Reviewzugang und gesundheitsbezogene Forschung wurden am 24.08.2026 gegen offizielle Apple-Dokumentation geprüft. App-Texte vermeiden Therapie-, Diagnose- und Wirksamkeitsversprechen.
+
+**Technische Prüfung**
+
+Aus dem sauberen Source Candidate wurde mit der lokal vorhandenen Apple-Development-Identität ein signiertes Release-Archiv einschließlich dSYM erzeugt. Bundle-ID, Version, Build und Mindest-iOS stimmen. Das Archivgate wies es korrekt wegen `get-task-allow=true` zurück; es ist damit kein Distribution- oder TestFlight-Artefakt. Eine Distribution-Identität war lokal nicht vorhanden. Es erfolgte kein Upload und keine Einladung von Testpersonen.
+
+Die bereits nachgewiesene Regression umfasst 170 Unit-Tests unter iOS 26.5 und iOS 17.5 sowie je 25 UI-Szenarien auf iPhone und iPad, Release Analyze, generischen Gerätebuild und das vollständige Quality-Gate. Das Gate wurde um die Release-Dokumentationsprüfung erweitert.
+
+Im abschließenden erweiterten Gate bestanden beide UI-Suiten im vorgesehenen vollständigen Wiederholungslauf. Auf dem iPhone war im ersten Lauf ausschließlich `testActivationAcceptsProlificIDAndSwitchesLanguage`, auf dem iPad ausschließlich `testActivationDistinguishesGeneralFailureAndConfirmationTimeout` mit einem unspezifischen `XCTAssertTrue` instabil; jeweils 24 von 25 Szenarien bestanden bereits im ersten Lauf. Beide kompletten Wiederholungsläufe bestanden mit 25 von 25 Szenarien. Es gab keinen reproduzierbaren Produktfehler und keine Änderung am Aktivierungscode in Auftrag 12.
+
+**Offene Release-Gates**
+
+Auftrag 12 ist vorbereitet, aber nicht formal abgeschlossen. Release-blockierend bleiben unabhängiger Ethiknachweis und Einwilligungsunterlagen, Vier-Augen-Abgleich der Datenschutzmatrix mit Server und App Store Connect, Distribution-Signatur und Upload, TestFlight auf mindestens zwei realen Geräten, synthetische direkte und Prolific-Staging-Abschlüsse, der tatsächliche 14-Tage-Langzeittest sowie die datierte formale Freigabe. Diese Punkte erfordern Zeit, externe Systeme beziehungsweise fachliche Autorität und wurden deshalb nicht simuliert oder als bestanden markiert.

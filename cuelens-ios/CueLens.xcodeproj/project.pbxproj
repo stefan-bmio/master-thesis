@@ -231,6 +231,9 @@
 		100000000000000000000247 /* verify_prestudy_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_prestudy_security.sh; sourceTree = "<group>"; };
 		100000000000000000000842 /* verify_hardening_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_hardening_security.sh; sourceTree = "<group>"; };
 		100000000000000000000843 /* verify_release_archive.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_archive.sh; sourceTree = "<group>"; };
+		100000000000000000000844 /* verify_release_documentation.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_documentation.sh; sourceTree = "<group>"; };
+		100000000000000000000845 /* verify_release_candidate.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_candidate.sh; sourceTree = "<group>"; };
+		100000000000000000000846 /* ExportOptions-AppStore.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ExportOptions-AppStore.example.plist"; sourceTree = "<group>"; };
 		100000000000000000000800 /* StudyContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContent.swift; sourceTree = "<group>"; };
 		100000000000000000000801 /* ProductiveStudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudySession.swift; sourceTree = "<group>"; };
 		100000000000000000000802 /* StudyContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContentRepository.swift; sourceTree = "<group>"; };
@@ -356,6 +359,7 @@
 				100000000000000000000110 /* Staging.xcconfig */,
 				100000000000000000000111 /* Release.xcconfig */,
 				100000000000000000000112 /* LocalSigning.xcconfig.example */,
+				100000000000000000000846 /* ExportOptions-AppStore.example.plist */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -375,6 +379,8 @@
 				100000000000000000000247 /* verify_prestudy_security.sh */,
 				100000000000000000000842 /* verify_hardening_security.sh */,
 				100000000000000000000843 /* verify_release_archive.sh */,
+				100000000000000000000844 /* verify_release_documentation.sh */,
+				100000000000000000000845 /* verify_release_candidate.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";

@@ -165,3 +165,15 @@ Das letzte Skript ist absichtlich ein Gate für ein signiertes Distributionsarch
 ## Datenschutz und Abgrenzung
 
 Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.
+
+## Releasevorbereitung aus Auftrag 12
+
+Der eindeutig geprüfte Source Candidate, Toolchain, Version, Buildnummer, Konfiguration, Spezifikations- und Content-Hashes sowie die Testergebnisse stehen im maschinenlesbaren [Release-Manifest](Documentation/RELEASE_MANIFEST.json). Die [IOS-FUN-Matrix](Documentation/IOS_FUN_TRACEABILITY_MATRIX.md) ordnet alle 35 Anforderungen Implementierung und automatisiertem Nachweis zu; der [DoD-Audit](Documentation/DEFINITION_OF_DONE_AUDIT.md) trennt bestandene technische Kriterien von externen Release-Gates.
+
+```sh
+./Scripts/verify_release_documentation.sh
+./Scripts/quality_gate.sh
+./Scripts/verify_release_candidate.sh /path/to/distribution-signed/CueLens.xcarchive
+```
+
+Der Release ist derzeit bewusst blockiert. Ein Development-signiertes Archiv wurde reproduzierbar erzeugt, ist wegen `get-task-allow=true` aber nicht distributionsfähig. Vor formaler Freigabe fehlen insbesondere Ethiknachweis, TestFlight auf mehreren realen Geräten, beide Staging-Abschlusswege, der 14-Tage-Langzeittest, App-Store-Datenschutzabgleich und ein bestandenes Distribution-Archivgate. Die ausführbaren Abläufe und Reviewtexte liegen unter `Documentation/`; kein offener Punkt wird als bestanden vorgegeben.
