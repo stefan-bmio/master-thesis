@@ -527,3 +527,9 @@ Auftrag 7 wurde durch den datierten Vermerk ausdrücklich freigegeben. Auftrag 8
 Die vollständige globale Home-Matrix umfasst produktive Zustände, deren Abläufe erst Auftrag 9 und 10 implementieren. Auftrag 8 stellt dafür die erweiterbare Zustandsdarstellung bereit, zeigt jedoch keine Aktion ohne funktionsfähiges Ziel. Der Abschlussplatzhalter nennt nur den Abschlussstatus; Codeanzeige, Kopieraktion und Abschluss-Recovery bleiben Auftrag 10 vorbehalten.
 
 Das menschliche Review-Gate bleibt ausstehend: fachliche Sichtprüfung aller deutschen und englischen Texte sowie der vier Demo-Reize auf iPhone und iPad. Ein echter Feedbackrequest ist für dieses Review nicht erforderlich.
+
+## 24.08.2026 – Korrektur der Demo-Bilddarstellung
+
+Die vier Demo-PNGs waren bytegleich im App-Bundle vorhanden, wurden durch SwiftUIs namensbasierten `Image`-Initialisierer in dieser Form der Ressourcenintegration jedoch nicht decodiert. Dadurch existierten die Bildelemente und ihre Layoutflächen, während Simulator und physisches Gerät nur leere Flächen darstellten.
+
+Die Demo lädt die erlaubten PNG-Ressourcen nun explizit per Bundle-URL und übergibt das decodierte `UIImage` an SwiftUI. Ein Unit-Test prüft Dateiauflösung, Decodierung und die erwarteten Abmessungen aller vier kanonischen Demo-Bilder. Der bestehende vollständige UI-Ablauf prüft zusätzlich Mindestbreite und Mindesthöhe der gerenderten Cue- und Auswahlflächen. Ein diagnostischer iOS-17.5-Screenshot bestätigte nach der Korrektur die sichtbare Darstellung von Cue und beiden Matching-Bildern.

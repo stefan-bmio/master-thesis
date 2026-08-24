@@ -199,8 +199,13 @@ final class CueLensUITests: XCTestCase {
         declineConsentIfShown(in: app)
         app.buttons["demo.open"].tap()
 
-        XCTAssertTrue(app.images["demo.matching.cue"].waitForExistence(timeout: 3))
+        let matchingCue = app.images["demo.matching.cue"]
+        XCTAssertTrue(matchingCue.waitForExistence(timeout: 3))
+        XCTAssertGreaterThan(matchingCue.frame.width, 100)
+        XCTAssertGreaterThan(matchingCue.frame.height, 100)
         let firstChoice = app.buttons["demo.matching.choice.0"]
+        XCTAssertGreaterThan(firstChoice.frame.width, 100)
+        XCTAssertGreaterThan(firstChoice.frame.height, 100)
         XCTAssertFalse(firstChoice.isEnabled)
         expectation(
             for: NSPredicate(format: "enabled == true"),
@@ -209,7 +214,10 @@ final class CueLensUITests: XCTestCase {
         waitForExpectations(timeout: 7)
         firstChoice.tap()
 
-        XCTAssertTrue(app.images["demo.labeling.cue"].waitForExistence(timeout: 2))
+        let labelingCue = app.images["demo.labeling.cue"]
+        XCTAssertTrue(labelingCue.waitForExistence(timeout: 2))
+        XCTAssertGreaterThan(labelingCue.frame.width, 100)
+        XCTAssertGreaterThan(labelingCue.frame.height, 100)
         XCTAssertTrue(app.buttons["Aschegeruch"].exists)
         XCTAssertTrue(app.buttons["Regenschirmmoment"].exists)
         app.buttons["language.switch"].tap()

@@ -1,8 +1,17 @@
 import Foundation
+import UIKit
 import XCTest
 @testable import CueLens
 
 final class AppShellTests: XCTestCase {
+    func testCanonicalDemoImagesDecodeFromApplicationBundle() {
+        for name in ["cue_000", "cue_001", "match_a_000", "match_b_000"] {
+            let image = StudyImageResource.load(named: name)
+            XCTAssertNotNil(image, "Demo image \(name).png must decode from the application bundle")
+            XCTAssertEqual(image?.size, CGSize(width: 512, height: 512))
+        }
+    }
+
     @MainActor
     func testSystemLanguageDefaultsToEnglishOnlyForPrimaryEnglishLanguage() async throws {
         let english = makeModel(preferredLanguages: ["en-GB", "de-CH"])

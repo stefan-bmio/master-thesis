@@ -1,4 +1,14 @@
 import SwiftUI
+import UIKit
+
+enum StudyImageResource {
+    static func load(named name: String, bundle: Bundle = .main) -> UIImage? {
+        guard let url = bundle.url(forResource: name, withExtension: "png") else {
+            return nil
+        }
+        return UIImage(contentsOfFile: url.path)
+    }
+}
 
 struct DemoView: View {
     let demo: DemoPresentation
@@ -149,11 +159,17 @@ struct DemoView: View {
         }
     }
 
+    @ViewBuilder
     private func studyImage(named name: String, label: LocalizedStringKey) -> some View {
-        Image(name)
-            .resizable()
-            .scaledToFit()
-            .accessibilityLabel(Text(label))
+        if let image = StudyImageResource.load(named: name) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .accessibilityLabel(Text(label))
+        } else {
+            Color.clear
+                .accessibilityHidden(true)
+        }
     }
 
     private var titleKey: LocalizedStringKey {
