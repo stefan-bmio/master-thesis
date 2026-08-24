@@ -563,3 +563,5 @@ Auftrag 8 wurde durch den datierten Vermerk und die erfolgreiche Sichtprüfung n
 **Abgrenzung und Review-Gate**
 
 Der lokale Fake bildet bewusst keine echte Serversemantik nach. Pending-Retry beim App-Start, Submission-Payload, Responseparser, direkter beziehungsweise Prolific-Abschluss und der produktive dreistündige Fortschritt werden erst in Auftrag 10 aktiviert. Das Review-Gate bleibt daher die manuelle fachliche Sichtprüfung mehrerer vollständiger 20-Durchgang-Debugläufe auf iPhone und iPad; am Ende jedes Testlaufs ist der Pending-Zustand der 20. Situation erwartet.
+
+Freigabe erfolgt am 24.8.26
