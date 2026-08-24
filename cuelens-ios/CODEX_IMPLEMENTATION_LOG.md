@@ -604,3 +604,37 @@ Nach einer erfolgreichen Self-Report-Antwort konnte der neu berechnete Cooldown-
 Drei Regressionstests prüfen die Domainkanonisierung, den geschützten Datei-Roundtrip und einen erfolgreichen Report mit realistischem Submillisekunden-Zeitstempel. Alle 169 Unit-Tests bestanden unter iOS 26.5 und iOS 17.5. Das vollständige Quality-Gate einschließlich Sicherheitsprüfungen, iPhone- und iPad-UI-Suiten sowie Release-Konfiguration bestand. Je ein fachfremder Aktivierungs-UI-Test war im ersten Simulatorlauf instabil und bestand im vom Gate vorgesehenen Wiederholungslauf. Es wurden keine Staging- oder Produktionsrequests ausgelöst.
 
 Freigabe erfolgt am 24.8.26
+
+## 24.08.2026 – Auftrag 11
+
+**Freigabe und Umfang**
+
+Auftrag 10 wurde durch den datierten Vermerk und den vollständig durchgespielten Studienablauf freigegeben. Auftrag 11 wurde auf Branch `codex/ios-auftrag-11` als systematische Sicherheits-, Datenschutz- und Accessibility-Härtung umgesetzt. Android, Backend, Studienparameter und Netzwerkverträge blieben unverändert.
+
+**Datenschutz und Release-Härtung**
+
+- Das Privacy Manifest deklariert konservativ E-Mail-Adresse, Benutzerkennung, Gesundheitsdaten und sonstige Nutzerinhalte. Sämtliche Kategorien sind ohne Tracking angegeben; auf eine Forschungs-Ausnahme für Gesundheitsdaten wird ohne im Repository nachgewiesenes Ethikvotum nicht zurückgegriffen. Required-Reason-Deklarationen für eigene Dateizeitstempel und App-Einstellungen bleiben erhalten.
+- Die neue App-Store-Datenflussmatrix trennt App-Daten ausdrücklich von Daten des vorgelagerten Webformulars. Sie dokumentiert Quelle, Lebenszyklus, Übertragung, Zweck, Verknüpfbarkeit und Trackingstatus sowie die separat zu prüfenden technischen Servermetadaten.
+- Ein zusätzliches Härtungsgate prüft Privacy Manifest, Trackingfreiheit, Datenkategorien, Logger-Quellen, erzwungene Swift-Operationen und verbotene Cloud-, HealthKit-, Werbe- und Tracking-APIs. Das vorhandene Release-Gate prüft zusätzlich die tatsächlich gebaute App auf ATS-Ausnahmen, unerlaubte Info.plist-Schlüssel und UI-Test-/Stagingreste.
+- `verify_release_archive.sh` prüft ein signiertes Distributionsarchiv auf Signatur, Bundle-ID, Privacy Manifest, Debugberechtigung, iCloud, App Groups, HealthKit, Network Extensions, Push sowie Debug-/Staging-Inhalte. Die verbleibenden manuellen Entitlement-, Datenschutz-, Gerätesperr- und App-Switcher-Prüfungen sind in einer eigenen Review-Checkliste festgehalten.
+- Die Simulatorauswahl bevorzugt auf der neuesten Runtime ein reguläres iPhone-Pro-Modell und das kleinste aktuelle iPad. Damit werden Xcode-Runner-Probleme des iPhone-Air-Simulators vermieden und zugleich der strengere adaptive iPad-Layoutfall geprüft.
+
+**Accessibility und Darstellung**
+
+- Die CueLens-Palette bleibt in hellem und dunklem Systemmodus identisch. Fest definierte sRGB-Werte erfüllen für Primär-, Sekundär-, Fehler- und Buttontexte mindestens das WCAG-AA-Kontrastverhältnis 4,5:1; dies wird als Unit-Test gesichert.
+- Allgemeine Seiten und Formulare sind bei großen Accessibility-Schriftgrößen scrollbar und breitenbegrenzt. Primäraktionen und Sprachumschaltung besitzen mindestens 44 × 44 Punkte; Labeling-Aktionen wechseln bei Platzmangel von horizontaler zu vertikaler Anordnung.
+- Fehler-, Support- und Erfolgsmeldungen übernehmen nach Zustandswechsel den Accessibility-Fokus. Der Privacy Curtain entfernt die verdeckte Oberfläche aus dem Accessibility-Baum.
+- Demo- und produktive Craving-Slider werden mit eindeutiger Bezeichnung und ganzzahligem Wert vorgelesen; der separate visuelle Zahlenwert ist zur Vermeidung doppelter Ansagen ausgeblendet.
+- Produktive Matching-Bilder erhalten ausschließlich die neutralen Bezeichnungen „erste“ beziehungsweise „zweite Bildoption“ und einen verständlichen Trial-Fortschritt. Es werden keine reizbezogenen oder suggestiven Beschreibungen ergänzt.
+
+**Tests und technische Prüfung**
+
+- 170 Unit-Tests bestanden unter iOS 26.5 und zusätzlich unter der Kompatibilitätsuntergrenze iOS 17.5. Die neue Kontrastprüfung ergänzt die bestehenden Netzwerk-, Persistenz-, Permission-, Recovery-, Pending- und Retry-Fehlerinjektionen.
+- Je 25 synthetische UI-Szenarien bestanden auf iPhone 17 Pro und iPad mini unter iOS 26.5. Neu geprüft werden maximale Accessibility-Schriftgröße, Erreichbarkeit der Kernformulare, Apples automatisierter Audit für Kontrast, Elementerkennung und Touchflächen sowie die neutralen Bild- und Sliderbezeichnungen.
+- Das vollständige lokale Quality-Gate bestand einschließlich Debug-, Staging- und Release-Build, sämtlichen Domain-, Persistenz-, Netzwerk-, Notification-, Aktivierungs-, Ressourcen-, Submission-, Privacy- und Härtungsgates.
+- Xcode Analyze für Release und ein unsignierter generischer Release-Gerätebuild bestanden mit Warnungen-als-Fehler. Property Lists, String Catalog, Projektdatei und Shellskripte wurden zusätzlich syntaktisch geprüft.
+- Alle Tests verwenden synthetische Daten und Test-Doubles. Es wurden keine schreibenden Staging- oder Produktionsrequests ausgelöst und keine Teilnehmerkennungen, Tokens, Gesundheitswerte oder Kompensationscodes protokolliert.
+
+**Abgrenzung und Review-Gate**
+
+Automatisch sind keine kritischen oder hohen offenen Befunde bekannt. Die spezifizierte Vier-Augen-Prüfung der Datenschutzmatrix und die manuelle Security-/Accessibility-Checkliste auf einem gültig signierten Release-Archiv bleiben das Review-Gate von Auftrag 11. Dazu gehören der Abgleich mit App Store Connect und realer Serverkonfiguration, VoiceOver in Deutsch und Englisch auf einem physischen Gerät, Gerätesperre, App-Switcher, Neuinstallation, Benachrichtigungsentzug und die Prüfung der Distribution-Signatur. Ohne lokale Distribution-Identität wurde kein signiertes Archiv erzeugt oder als geprüft ausgegeben.

@@ -99,6 +99,7 @@
 		100000000000000000000815 /* study-content-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000805 /* study-content-v1.json */; };
 		100000000000000000000816 /* study-assets-manifest-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000806 /* study-assets-manifest-v1.json */; };
 		100000000000000000000817 /* ProductiveStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000807 /* ProductiveStudyView.swift */; };
+		100000000000000000000840 /* AccessibilityHardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000841 /* AccessibilityHardeningTests.swift */; };
 		100000000000000000000832 /* ProductiveStudyCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -228,6 +229,8 @@
 		100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000246 /* PreStudyAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyAppModelTests.swift; sourceTree = "<group>"; };
 		100000000000000000000247 /* verify_prestudy_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_prestudy_security.sh; sourceTree = "<group>"; };
+		100000000000000000000842 /* verify_hardening_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_hardening_security.sh; sourceTree = "<group>"; };
+		100000000000000000000843 /* verify_release_archive.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_archive.sh; sourceTree = "<group>"; };
 		100000000000000000000800 /* StudyContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContent.swift; sourceTree = "<group>"; };
 		100000000000000000000801 /* ProductiveStudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudySession.swift; sourceTree = "<group>"; };
 		100000000000000000000802 /* StudyContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContentRepository.swift; sourceTree = "<group>"; };
@@ -237,6 +240,7 @@
 		100000000000000000000806 /* study-assets-manifest-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-assets-manifest-v1.json; sourceTree = SOURCE_ROOT; };
 		100000000000000000000807 /* ProductiveStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyView.swift; sourceTree = "<group>"; };
 		100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000841 /* AccessibilityHardeningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHardeningTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,6 +373,8 @@
 				100000000000000000000226 /* verify_notification_security.sh */,
 				100000000000000000000234 /* verify_activation_security.sh */,
 				100000000000000000000247 /* verify_prestudy_security.sh */,
+				100000000000000000000842 /* verify_hardening_security.sh */,
+				100000000000000000000843 /* verify_release_archive.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -529,6 +535,7 @@
 				100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */,
 				100000000000000000000246 /* PreStudyAppModelTests.swift */,
 				100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */,
+				100000000000000000000841 /* AccessibilityHardeningTests.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -827,6 +834,7 @@
 				100000000000000000000497 /* ExternalLinkCoordinatorTests.swift in Sources */,
 				100000000000000000000498 /* PreStudyAppModelTests.swift in Sources */,
 				100000000000000000000832 /* ProductiveStudyCoordinatorTests.swift in Sources */,
+				100000000000000000000840 /* AccessibilityHardeningTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

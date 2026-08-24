@@ -117,6 +117,7 @@ struct DemoView: View {
                 .multilineTextAlignment(.center)
             Text("\(demo.craving)")
                 .font(.largeTitle.monospacedDigit())
+                .accessibilityHidden(true)
                 .accessibilityIdentifier("demo.craving.value")
             Slider(
                 value: Binding(
@@ -127,6 +128,8 @@ struct DemoView: View {
                 step: 1
             )
             .tint(CueLensPalette.primary)
+            .accessibilityLabel(Text("demo.craving.slider.accessibility"))
+            .accessibilityValue(Text("\(demo.craving)"))
             .accessibilityIdentifier("demo.craving.slider")
             Button("demo.continue") {
                 appModel.completeDemoCraving()
@@ -179,6 +182,7 @@ struct DemoView: View {
 
 struct FeedbackView: View {
     let appModel: CueLensAppModel
+    @AccessibilityFocusState private var statusFocused: Bool
 
     private var isSubmitting: Bool { appModel.feedbackState == .submitting }
 
@@ -207,6 +211,7 @@ struct FeedbackView: View {
                         Text("feedback.submitted")
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("feedback.submitted")
+                            .accessibilityFocused($statusFocused)
                         Button("navigation.home") {
                             appModel.leaveFeedback()
                         }
@@ -221,6 +226,9 @@ struct FeedbackView: View {
             }
         }
         .padding(20)
+        .onChange(of: appModel.feedbackState) { _, state in
+            statusFocused = state == .failed || state == .submitted
+        }
     }
 
     private var feedbackForm: some View {
@@ -252,10 +260,11 @@ struct FeedbackView: View {
 
             if appModel.feedbackState == .failed {
                 Text("feedback.failed")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(CueLensPalette.error)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .accessibilityIdentifier("feedback.failed")
+                    .accessibilityFocused($statusFocused)
             }
             Button(isSubmitting ? "feedback.submitting" : "feedback.submit") {
                 Task { await appModel.submitFeedback() }
@@ -273,7 +282,7 @@ struct FeedbackView: View {
     private func characterCount(_ count: Int, maximum: Int) -> some View {
         Text("\(count)/\(maximum)")
             .font(.caption.monospacedDigit())
-            .foregroundStyle(count > maximum ? .red : CueLensPalette.secondaryText)
+            .foregroundStyle(count > maximum ? CueLensPalette.error : CueLensPalette.secondaryText)
             .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }

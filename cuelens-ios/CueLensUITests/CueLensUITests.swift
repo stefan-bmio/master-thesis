@@ -204,6 +204,7 @@ final class CueLensUITests: XCTestCase {
         XCTAssertGreaterThan(matchingCue.frame.width, 100)
         XCTAssertGreaterThan(matchingCue.frame.height, 100)
         let firstChoice = app.buttons["demo.matching.choice.0"]
+        XCTAssertEqual(firstChoice.label, "Erste Bildauswahl")
         XCTAssertGreaterThan(firstChoice.frame.width, 100)
         XCTAssertGreaterThan(firstChoice.frame.height, 100)
         XCTAssertFalse(firstChoice.isEnabled)
@@ -224,8 +225,10 @@ final class CueLensUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Ash smell"].exists)
         app.buttons["demo.labeling.choice.0"].tap()
 
-        XCTAssertTrue(app.staticTexts["demo.craving.value"].waitForExistence(timeout: 2))
-        XCTAssertEqual(app.staticTexts["demo.craving.value"].label, "50")
+        let demoCraving = app.sliders["demo.craving.slider"]
+        XCTAssertTrue(demoCraving.waitForExistence(timeout: 2))
+        XCTAssertEqual(demoCraving.label, "Craving in the example")
+        XCTAssertEqual(demoCraving.value as? String, "50")
         app.buttons["demo.craving.continue"].tap()
         XCTAssertTrue(app.staticTexts["demo.completed.notice"].waitForExistence(timeout: 2))
         app.buttons["demo.completed.home"].tap()
@@ -296,8 +299,9 @@ final class CueLensUITests: XCTestCase {
         for trial in 1...5 {
             let choice = app.buttons["study.matching.choice.0"]
             XCTAssertTrue(choice.waitForExistence(timeout: 3))
+            XCTAssertEqual(choice.label, "Erste Bildoption")
             expectation(
-                for: NSPredicate(format: "value == %@", "\(trial)"),
+                for: NSPredicate(format: "value == %@", "Durchgang \(trial) von 5"),
                 evaluatedWith: choice
             )
             waitForExpectations(timeout: 2)
@@ -305,8 +309,10 @@ final class CueLensUITests: XCTestCase {
             waitForExpectations(timeout: 2)
             choice.tap()
         }
-        XCTAssertTrue(app.staticTexts["study.craving.value"].waitForExistence(timeout: 3))
-        XCTAssertEqual(app.staticTexts["study.craving.value"].label, "50")
+        let studyCraving = app.sliders["study.craving.slider"]
+        XCTAssertTrue(studyCraving.waitForExistence(timeout: 3))
+        XCTAssertEqual(studyCraving.label, "Aktuelles Rauchverlangen")
+        XCTAssertEqual(studyCraving.value as? String, "50")
         app.buttons["study.craving.submit"].tap()
         XCTAssertTrue(app.buttons["study.start"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["study.start"].isEnabled)
@@ -327,8 +333,9 @@ final class CueLensUITests: XCTestCase {
             XCTAssertTrue(choice.waitForExistence(timeout: 3))
             choice.tap()
         }
-        XCTAssertTrue(app.staticTexts["study.craving.value"].waitForExistence(timeout: 3))
-        XCTAssertEqual(app.staticTexts["study.craving.value"].label, "50")
+        let studyCraving = app.sliders["study.craving.slider"]
+        XCTAssertTrue(studyCraving.waitForExistence(timeout: 3))
+        XCTAssertEqual(studyCraving.value as? String, "50")
     }
 
     @MainActor
@@ -398,6 +405,42 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testMaximumAccessibilityTextSizeKeepsCoreFormsReachable() {
+        let app = makeApp(feed: "empty", activation: "success", accessibilityTextSize: true)
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        let activationButton = app.buttons["activation.open"]
+        XCTAssertTrue(activationButton.waitForExistence(timeout: 10))
+        activationButton.scrollToVisible(in: app)
+        activationButton.tap()
+
+        let identifier = app.textFields["activation.identifier"]
+        XCTAssertTrue(identifier.waitForExistence(timeout: 3))
+        identifier.tap()
+        identifier.typeText("person@example.org")
+        let submit = app.buttons["activation.submit"]
+        submit.scrollToVisible(in: app)
+        XCTAssertTrue(submit.isHittable)
+        app.buttons["activation.back"].tap()
+
+        let feedbackButton = app.buttons["feedback.open"]
+        feedbackButton.scrollToVisible(in: app)
+        XCTAssertTrue(feedbackButton.isHittable)
+        feedbackButton.tap()
+        XCTAssertTrue(app.textFields["feedback.source"].waitForExistence(timeout: 3))
+    }
+
+    @MainActor
+    func testHomePassesAutomatedAccessibilityAudit() throws {
+        let app = makeApp(feed: "empty")
+        app.launch()
+        declineConsentIfShown(in: app)
+        XCTAssertTrue(app.staticTexts["app.foundationStatus.ready"].waitForExistence(timeout: 10))
+        try app.performAccessibilityAudit(for: [.contrast, .elementDetection, .hitRegion])
+    }
+
+    @MainActor
     private func makeApp(
         feed: String,
         language: String = "de",
@@ -405,7 +448,8 @@ final class CueLensUITests: XCTestCase {
         interfaceStyle: String? = nil,
         activation: String? = nil,
         feedback: String? = nil,
-        study: String? = nil
+        study: String? = nil,
+        accessibilityTextSize: Bool = false
     ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -424,6 +468,12 @@ final class CueLensUITests: XCTestCase {
         }
         if let study {
             app.launchArguments += ["--ui-test-study", study]
+        }
+        if accessibilityTextSize {
+            app.launchArguments += [
+                "-UIPreferredContentSizeCategoryName",
+                "UICTContentSizeCategoryAccessibilityExtraExtraExtraLarge"
+            ]
         }
         return app
     }
@@ -454,5 +504,11 @@ private extension XCUIElement {
             typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
         }
         typeText(text)
+    }
+
+    func scrollToVisible(in app: XCUIApplication) {
+        for _ in 0..<8 where !isHittable {
+            app.swipeUp()
+        }
     }
 }

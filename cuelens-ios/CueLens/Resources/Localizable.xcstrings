@@ -320,6 +320,23 @@
         }
       }
     },
+    "demo.craving.slider.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rauchverlangen im Beispiel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Craving in the example"
+          }
+        }
+      }
+    },
     "demo.craving.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -990,11 +1007,25 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "How strong is your craving to smoke at this moment?" } }
       }
     },
-    "study.imageOption" : {
+    "study.craving.slider.accessibility" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bildoption" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Image option" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktuelles Rauchverlangen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Current craving" } }
+      }
+    },
+    "study.imageOption.first" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erste Bildoption" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "First image option" } }
+      }
+    },
+    "study.imageOption.second" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zweite Bildoption" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Second image option" } }
       }
     },
     "study.matching.wait" : {
@@ -1044,6 +1075,13 @@
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird verarbeitet" } },
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing" } }
+      }
+    },
+    "study.trial.progress %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Durchgang %1$lld von %2$lld" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Trial %1$lld of %2$lld" } }
       }
     },
     "completion.confirmation.pending" : {

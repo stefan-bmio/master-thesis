@@ -95,6 +95,23 @@ USER_DEFAULTS_API_REASON=$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedA
 test "$USER_DEFAULTS_API_TYPE" = 'NSPrivacyAccessedAPICategoryUserDefaults'
 test "$USER_DEFAULTS_API_REASON" = 'CA92.1'
 
+EXPECTED_COLLECTED_TYPES='NSPrivacyCollectedDataTypeEmailAddress NSPrivacyCollectedDataTypeUserID NSPrivacyCollectedDataTypeHealth NSPrivacyCollectedDataTypeOtherUserContent'
+index=0
+for expected_type in $EXPECTED_COLLECTED_TYPES; do
+  prefix=":NSPrivacyCollectedDataTypes:$index"
+  test "$(/usr/libexec/PlistBuddy -c "Print $prefix:NSPrivacyCollectedDataType" "$PRIVACY_MANIFEST")" = "$expected_type"
+  test "$(/usr/libexec/PlistBuddy -c "Print $prefix:NSPrivacyCollectedDataTypeTracking" "$PRIVACY_MANIFEST")" = 'false'
+  index=$((index + 1))
+done
+if /usr/libexec/PlistBuddy -c 'Print :NSPrivacyCollectedDataTypes:4' "$PRIVACY_MANIFEST" >/dev/null 2>&1; then
+  echo 'Privacy Manifest enthält unerwartete zusätzliche Datentypen.' >&2
+  exit 1
+fi
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyCollectedDataTypes:0:NSPrivacyCollectedDataTypeLinked' "$PRIVACY_MANIFEST")" = 'true'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyCollectedDataTypes:1:NSPrivacyCollectedDataTypeLinked' "$PRIVACY_MANIFEST")" = 'true'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyCollectedDataTypes:2:NSPrivacyCollectedDataTypeLinked' "$PRIVACY_MANIFEST")" = 'true'
+test "$(/usr/libexec/PlistBuddy -c 'Print :NSPrivacyCollectedDataTypes:3:NSPrivacyCollectedDataTypeLinked' "$PRIVACY_MANIFEST")" = 'false'
+
 if grep -R -a -q -E 'debug\.invalid|staging\.invalid' "$APP_BUNDLE"; then
   echo 'Release-Artefakt enthält Debug-/Staging-Endpunkte.' >&2
   exit 1
@@ -119,6 +136,10 @@ if grep -q -E 'XCRemoteSwiftPackageReference|XCSwiftPackageProductDependency' Cu
 fi
 if find CueLens -name '*.entitlements' -print -quit | grep -q .; then
   echo 'Unerwartete Entitlement-Datei gefunden.' >&2
+  exit 1
+fi
+if grep -R -a -q -E 'Synthetische Information|Synthetic information|--ui-test-|UITestAppTokenStore' "$APP_BUNDLE"; then
+  echo 'Release-Artefakt enthält UI-Test-Seams oder synthetische Testtexte.' >&2
   exit 1
 fi
 if /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:1' "$INFO_PLIST" >/dev/null 2>&1; then

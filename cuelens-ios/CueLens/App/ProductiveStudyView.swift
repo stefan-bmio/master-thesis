@@ -70,7 +70,11 @@ struct ProductiveStudyView: View {
             ? [item.matchBAssetName, item.matchAAssetName]
             : [item.matchAAssetName, item.matchBAssetName]
         return HStack(spacing: 16) {
-            matchingButton(named: names[0], identifier: "study.matching.choice.0")
+            matchingButton(
+                named: names[0],
+                label: "study.imageOption.first",
+                identifier: "study.matching.choice.0"
+            )
             if run.session.remainingSeconds > 0 {
                 ZStack {
                     Circle().fill(CueLensPalette.noticeBackground)
@@ -87,7 +91,11 @@ struct ProductiveStudyView: View {
             } else {
                 Spacer().frame(width: 24)
             }
-            matchingButton(named: names[1], identifier: "study.matching.choice.1")
+            matchingButton(
+                named: names[1],
+                label: "study.imageOption.second",
+                identifier: "study.matching.choice.1"
+            )
         }
         .frame(height: 140)
         .padding(.horizontal, 20)
@@ -95,7 +103,11 @@ struct ProductiveStudyView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 
-    private func matchingButton(named name: String, identifier: String) -> some View {
+    private func matchingButton(
+        named name: String,
+        label: LocalizedStringKey,
+        identifier: String
+    ) -> some View {
         Button {
             appModel.selectProductiveStudyChoice()
         } label: {
@@ -111,8 +123,10 @@ struct ProductiveStudyView: View {
         .contentShape(Rectangle())
         .disabled(!run.session.selectionEnabled)
         .opacity(run.session.selectionEnabled ? 1 : 0.72)
-        .accessibilityLabel(Text("study.imageOption"))
-        .accessibilityValue(Text("\(run.session.trialIndex + 1)"))
+        .accessibilityLabel(Text(label))
+        .accessibilityValue(
+            Text("study.trial.progress \(run.session.trialIndex + 1) \(StudySchedule.trialsPerSituation)")
+        )
         .accessibilityIdentifier(identifier)
     }
 
@@ -121,9 +135,15 @@ struct ProductiveStudyView: View {
         let labels = run.session.currentChoiceIsReversed
             ? [pair.lessFitting, pair.fitting]
             : [pair.fitting, pair.lessFitting]
-        return HStack(spacing: 24) {
-            labelButton(labels[0], identifier: "study.labeling.choice.0")
-            labelButton(labels[1], identifier: "study.labeling.choice.1")
+        return ViewThatFits(in: .horizontal) {
+            HStack(spacing: 24) {
+                labelButton(labels[0], identifier: "study.labeling.choice.0")
+                labelButton(labels[1], identifier: "study.labeling.choice.1")
+            }
+            VStack(spacing: 12) {
+                labelButton(labels[0], identifier: "study.labeling.choice.0")
+                labelButton(labels[1], identifier: "study.labeling.choice.1")
+            }
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 32)
@@ -137,56 +157,63 @@ struct ProductiveStudyView: View {
     }
 
     private var cravingContent: some View {
-        VStack(spacing: 24) {
-            HStack {
-                Spacer()
-                LanguageButton(appModel: appModel)
+        ScrollView {
+            VStack(spacing: 24) {
+                HStack {
+                    Spacer()
+                    LanguageButton(appModel: appModel)
+                }
+                Text("study.craving.prompt")
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                Text("\(run.session.craving)")
+                    .font(.largeTitle.monospacedDigit())
+                    .accessibilityHidden(true)
+                    .accessibilityIdentifier("study.craving.value")
+                Slider(
+                    value: Binding(
+                        get: { Double(run.session.craving) },
+                        set: { appModel.updateProductiveCraving(Int($0.rounded())) }
+                    ),
+                    in: 0...100,
+                    step: 1
+                )
+                .tint(CueLensPalette.primary)
+                .disabled(appModel.productiveStudySubmitting)
+                .accessibilityLabel(Text("study.craving.slider.accessibility"))
+                .accessibilityValue(Text("\(run.session.craving)"))
+                .accessibilityIdentifier("study.craving.slider")
+                Button(appModel.productiveStudySubmitting ? "study.submitting" : "study.submit") {
+                    Task { await appModel.submitProductiveCraving() }
+                }
+                .buttonStyle(CueLensPrimaryButtonStyle())
+                .disabled(appModel.productiveStudySubmitting)
+                .accessibilityIdentifier("study.craving.submit")
+                if appModel.productiveStudySubmitting {
+                    ProgressView().accessibilityIdentifier("study.submitting.progress")
+                }
             }
-            Spacer()
-            Text("study.craving.prompt")
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
-            Text("\(run.session.craving)")
-                .font(.largeTitle.monospacedDigit())
-                .accessibilityIdentifier("study.craving.value")
-            Slider(
-                value: Binding(
-                    get: { Double(run.session.craving) },
-                    set: { appModel.updateProductiveCraving(Int($0.rounded())) }
-                ),
-                in: 0...100,
-                step: 1
-            )
-            .tint(CueLensPalette.primary)
-            .disabled(appModel.productiveStudySubmitting)
-            .accessibilityIdentifier("study.craving.slider")
-            Button(appModel.productiveStudySubmitting ? "study.submitting" : "study.submit") {
-                Task { await appModel.submitProductiveCraving() }
-            }
-            .buttonStyle(CueLensPrimaryButtonStyle())
-            .disabled(appModel.productiveStudySubmitting)
-            .accessibilityIdentifier("study.craving.submit")
-            if appModel.productiveStudySubmitting {
-                ProgressView().accessibilityIdentifier("study.submitting.progress")
-            }
-            Spacer()
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
         }
         .padding(24)
         .background(CueLensPalette.background)
     }
 
     private var unsuitableViewport: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Spacer()
-                LanguageButton(appModel: appModel)
+        ScrollView {
+            VStack(spacing: 20) {
+                HStack {
+                    Spacer()
+                    LanguageButton(appModel: appModel)
+                }
+                Text("study.viewport.unsuitable")
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("study.viewport.unsuitable")
             }
-            Spacer()
-            Text("study.viewport.unsuitable")
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
-                .accessibilityIdentifier("study.viewport.unsuitable")
-            Spacer()
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
         }
         .padding(24)
         .background(CueLensPalette.background)

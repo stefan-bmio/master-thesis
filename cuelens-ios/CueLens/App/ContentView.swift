@@ -8,6 +8,7 @@ struct ContentView: View {
             CueLensPalette.background
                 .ignoresSafeArea()
             routeContent
+                .accessibilityHidden(appModel.showsPrivacyCurtain)
             if appModel.showsPrivacyCurtain {
                 PrivacyCurtainView()
                     .zIndex(100)
@@ -56,17 +57,59 @@ struct ContentView: View {
     }
 }
 
+struct CueLensSRGBColor: Equatable, Sendable {
+    let red: Double
+    let green: Double
+    let blue: Double
+
+    var color: Color { Color(red: red, green: green, blue: blue) }
+
+    func contrastRatio(with other: CueLensSRGBColor) -> Double {
+        let lighter = max(relativeLuminance, other.relativeLuminance)
+        let darker = min(relativeLuminance, other.relativeLuminance)
+        return (lighter + 0.05) / (darker + 0.05)
+    }
+
+    private var relativeLuminance: Double {
+        0.2126 * Self.linearized(red)
+            + 0.7152 * Self.linearized(green)
+            + 0.0722 * Self.linearized(blue)
+    }
+
+    private static func linearized(_ component: Double) -> Double {
+        component <= 0.04045
+            ? component / 12.92
+            : pow((component + 0.055) / 1.055, 2.4)
+    }
+}
+
 enum CueLensPalette {
-    static let background = Color(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
-    static let primary = Color(red: 0, green: 98 / 255, blue: 105 / 255)
-    static let disabledPrimary = Color(red: 82 / 255, green: 124 / 255, blue: 121 / 255)
-    static let text = Color(red: 32 / 255, green: 42 / 255, blue: 41 / 255)
-    static let secondaryText = Color(red: 63 / 255, green: 74 / 255, blue: 73 / 255)
+    static let backgroundDefinition = CueLensSRGBColor(red: 215 / 255, green: 236 / 255, blue: 233 / 255)
+    static let primaryDefinition = CueLensSRGBColor(red: 0, green: 98 / 255, blue: 105 / 255)
+    static let disabledPrimaryDefinition = CueLensSRGBColor(red: 82 / 255, green: 124 / 255, blue: 121 / 255)
+    static let textDefinition = CueLensSRGBColor(red: 32 / 255, green: 42 / 255, blue: 41 / 255)
+    static let secondaryTextDefinition = CueLensSRGBColor(red: 63 / 255, green: 74 / 255, blue: 73 / 255)
+    static let errorDefinition = CueLensSRGBColor(red: 148 / 255, green: 23 / 255, blue: 31 / 255)
+    static let whiteDefinition = CueLensSRGBColor(red: 1, green: 1, blue: 1)
+
+    static let background = backgroundDefinition.color
+    static let primary = primaryDefinition.color
+    static let disabledPrimary = disabledPrimaryDefinition.color
+    static let text = textDefinition.color
+    static let secondaryText = secondaryTextDefinition.color
+    static let error = errorDefinition.color
     static let noticeBackground = Color.white.opacity(0.96)
 }
 
 struct HomeView: View {
     let appModel: CueLensAppModel
+    @AccessibilityFocusState private var focusedNotice: HomeAccessibilityFocus?
+
+    private enum HomeAccessibilityFocus: Hashable {
+        case tokenFailure
+        case invalidState
+        case transferFailure
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -121,15 +164,17 @@ struct HomeView: View {
                     }
                     if appModel.hasTokenStorageFailure {
                         Text("home.tokenStorageFailure")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(CueLensPalette.error)
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("home.tokenStorageFailure")
+                            .accessibilityFocused($focusedNotice, equals: .tokenFailure)
                     }
                     if appModel.hasInvalidStudyState {
                         Text("study.state.invalid")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(CueLensPalette.error)
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("study.state.invalid")
+                            .accessibilityFocused($focusedNotice, equals: .invalidState)
                     } else if appModel.hasPendingStudyTransfer {
                         Text("study.transfer.pending")
                             .font(.headline)
@@ -164,13 +209,13 @@ struct HomeView: View {
                                 && appModel.productiveStudyFeatureEnabled
                                 && !appModel.productiveStudyContentAvailable {
                         Text("study.resources.unavailable")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(CueLensPalette.error)
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("study.resources.unavailable")
                     }
                     if appModel.productiveStudyBlockReason == .unsuitableViewport {
                         Text("study.viewport.unsuitable")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(CueLensPalette.error)
                             .multilineTextAlignment(.center)
                     }
                     Button("demo.open") {
@@ -209,15 +254,20 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .onAppear { focusCurrentNotice() }
+        .onChange(of: appModel.studyTransferState) { _, state in
+            if state == .failed { focusedNotice = .transferFailure }
+        }
     }
 
     private var studyRetry: some View {
         VStack(spacing: 12) {
             if appModel.studyTransferState == .failed {
                 Text("study.transfer.failed")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(CueLensPalette.error)
                     .multilineTextAlignment(.center)
                     .accessibilityIdentifier("study.transfer.failed")
+                    .accessibilityFocused($focusedNotice, equals: .transferFailure)
             }
             Button(appModel.studyTransferIsRunning ? "study.submitting" : "study.transfer.retry") {
                 Task { await appModel.retryPendingStudyTransfer() }
@@ -231,10 +281,21 @@ struct HomeView: View {
             }
         }
     }
+
+    private func focusCurrentNotice() {
+        if appModel.hasTokenStorageFailure {
+            focusedNotice = .tokenFailure
+        } else if appModel.hasInvalidStudyState {
+            focusedNotice = .invalidState
+        } else if appModel.studyTransferState == .failed {
+            focusedNotice = .transferFailure
+        }
+    }
 }
 
 private struct ActivationView: View {
     let appModel: CueLensAppModel
+    @AccessibilityFocusState private var errorFocused: Bool
 
     private var isRunning: Bool {
         appModel.activationState == .requestingToken
@@ -242,7 +303,8 @@ private struct ActivationView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        ScrollView {
+            VStack(spacing: 20) {
             HStack {
                 Button {
                     appModel.cancelActivation()
@@ -254,7 +316,6 @@ private struct ActivationView: View {
                 Spacer()
                 LanguageButton(appModel: appModel)
             }
-            Spacer()
             Text("activation.title")
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
@@ -274,14 +335,16 @@ private struct ActivationView: View {
             .accessibilityIdentifier("activation.identifier")
             if appModel.activationState == .failed {
                 Text("activation.failed")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(CueLensPalette.error)
                     .multilineTextAlignment(.center)
                     .accessibilityIdentifier("activation.error")
+                    .accessibilityFocused($errorFocused)
             } else if appModel.activationState == .supportRequired {
                 Text("activation.supportRequired")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(CueLensPalette.error)
                     .multilineTextAlignment(.center)
                     .accessibilityIdentifier("activation.support")
+                    .accessibilityFocused($errorFocused)
             }
             Button(isRunning ? "activation.running" : "activation.submit") {
                 Task { await appModel.activate() }
@@ -295,9 +358,14 @@ private struct ActivationView: View {
                     .accessibilityLabel(Text("activation.running"))
                     .accessibilityIdentifier("activation.progress")
             }
-            Spacer()
+            }
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
         }
         .padding(20)
+        .onChange(of: appModel.activationState) { _, state in
+            errorFocused = state == .failed || state == .supportRequired
+        }
     }
 }
 
@@ -305,12 +373,12 @@ private struct NotificationConsentView: View {
     let appModel: CueLensAppModel
 
     var body: some View {
-        VStack(spacing: 20) {
+        ScrollView {
+            VStack(spacing: 20) {
             HStack {
                 Spacer()
                 LanguageButton(appModel: appModel)
             }
-            Spacer()
             Text("notification.consent.title")
                 .font(.title.bold())
                 .accessibilityIdentifier("notification.consent.title")
@@ -333,7 +401,9 @@ private struct NotificationConsentView: View {
             .buttonStyle(CueLensPrimaryButtonStyle())
             .disabled(appModel.isCompletingNotificationConsent)
             .accessibilityIdentifier("notification.consent.continue")
-            Spacer()
+            }
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
         }
         .padding(20)
     }
@@ -357,24 +427,26 @@ private struct InfoMessageView: View {
                 LanguageButton(appModel: appModel)
             }
             ScrollView {
+                VStack(spacing: 16) {
                 Text(messageText)
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, minHeight: 280)
                     .accessibilityIdentifier("info.message")
+                    Toggle("info.hidePermanently", isOn: Binding(
+                        get: { feed.hidePermanently },
+                        set: { appModel.setHidePermanently($0) }
+                    ))
+                    .disabled(feed.isConfirming)
+                    .accessibilityIdentifier("info.hidePermanently")
+                    Button("info.confirm") {
+                        Task { await appModel.confirmCurrentMessage() }
+                    }
+                    .buttonStyle(CueLensPrimaryButtonStyle())
+                    .disabled(feed.isConfirming)
+                    .accessibilityIdentifier("info.confirm")
+                }
             }
-            Toggle("info.hidePermanently", isOn: Binding(
-                get: { feed.hidePermanently },
-                set: { appModel.setHidePermanently($0) }
-            ))
-            .disabled(feed.isConfirming)
-            .accessibilityIdentifier("info.hidePermanently")
-            Button("info.confirm") {
-                Task { await appModel.confirmCurrentMessage() }
-            }
-            .buttonStyle(CueLensPrimaryButtonStyle())
-            .disabled(feed.isConfirming)
-            .accessibilityIdentifier("info.confirm")
         }
         .padding(20)
     }
@@ -396,6 +468,7 @@ struct LanguageButton: View {
         }
         .buttonStyle(.bordered)
         .tint(CueLensPalette.primary)
+        .frame(minWidth: 44, minHeight: 44)
         .accessibilityLabel(Text("language.switch.accessibility"))
         .accessibilityIdentifier("language.switch")
     }
@@ -403,13 +476,17 @@ struct LanguageButton: View {
 
 private struct SecureStorageFailureView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Text("app.title")
-                .font(.largeTitle.bold())
-                .accessibilityIdentifier("app.title")
-            Text("app.secureStorageFailure")
-                .multilineTextAlignment(.center)
-                .accessibilityIdentifier("app.foundationStatus.failure")
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("app.title")
+                    .font(.largeTitle.bold())
+                    .accessibilityIdentifier("app.title")
+                Text("app.secureStorageFailure")
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("app.foundationStatus.failure")
+            }
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
         }
         .padding(20)
     }
@@ -430,6 +507,7 @@ private struct PrivacyCurtainView: View {
 private struct NoticeView: View {
     let notice: UserNotice
     let dismiss: () -> Void
+    @AccessibilityFocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: 12) {
@@ -440,6 +518,9 @@ private struct NoticeView: View {
         .padding()
         .background(CueLensPalette.noticeBackground, in: RoundedRectangle(cornerRadius: 12))
         .padding()
+        .accessibilityElement(children: .contain)
+        .accessibilityFocused($isFocused)
+        .onAppear { isFocused = true }
     }
 
     private var key: LocalizedStringKey {
@@ -457,6 +538,7 @@ struct CueLensPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 44)
             .padding(.vertical, 12)
             .foregroundStyle(.white)
             .background(

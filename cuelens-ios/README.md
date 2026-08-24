@@ -146,6 +146,22 @@ Beim direkten Abschluss wird der UUID-v4-Kompensationscode zunächst als aussteh
 ./Scripts/verify_submission_security.sh
 ```
 
+## Sicherheits-, Datenschutz- und Accessibility-Härtung aus Auftrag 11
+
+Das konservative Privacy Manifest deklariert die durch die App übertragenen Kategorien E-Mail-Adresse, Benutzerkennung, Gesundheitsdaten und sonstige Nutzerinhalte ohne Tracking. Die zugehörige [App-Store-Datenflussmatrix](Documentation/APP_PRIVACY_DATA_FLOW_MATRIX.md) trennt App-Daten von Angaben des vorgelagerten Webformulars. Vor der Einreichung müssen Matrix und App-Store-Connect-Angaben im Vier-Augen-Prinzip gegen die reale Serverkonfiguration geprüft werden.
+
+Die Oberfläche verwendet in hellem und dunklem Systemmodus dieselbe kontrastgeprüfte Palette. Allgemeine Formulare sind bei maximaler Accessibility-Schriftgröße scrollbar, Statusmeldungen übernehmen den VoiceOver-Fokus und Studienbilder werden ausschließlich als neutrale erste beziehungsweise zweite Bildoption bezeichnet. Der sichtbare Sliderwert wird für VoiceOver genau einmal mit fachlicher Bezeichnung ausgegeben.
+
+```sh
+./Scripts/verify_hardening_security.sh
+./Scripts/quality_gate.sh
+xcodebuild -project CueLens.xcodeproj -scheme CueLens -configuration Release \
+  -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO analyze
+./Scripts/verify_release_archive.sh /path/to/CueLens.xcarchive
+```
+
+Das letzte Skript ist absichtlich ein Gate für ein signiertes Distributionsarchiv. Es prüft Signatur, Bundle, Privacy Manifest, unerlaubte Entitlements und Debug-/Staging-Reste; die ergänzenden manuellen Prüfungen stehen in [Security-, Datenschutz- und Accessibility-Review](Documentation/SECURITY_ACCESSIBILITY_REVIEW_CHECKLIST.md).
+
 ## Datenschutz und Abgrenzung
 
 Dieses Verzeichnis darf keine echten Teilnehmendenkennungen, App-Tokens oder Gesundheitsdaten enthalten. Domain und SwiftUI-Views enthalten keine direkten Keychain- oder Dateizugriffe; sichere lokale Zugriffe sind ausschließlich in der Infrastruktur gekapselt.
