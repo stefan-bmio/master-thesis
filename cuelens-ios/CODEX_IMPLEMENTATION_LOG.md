@@ -533,3 +533,5 @@ Das menschliche Review-Gate bleibt ausstehend: fachliche Sichtprüfung aller deu
 Die vier Demo-PNGs waren bytegleich im App-Bundle vorhanden, wurden durch SwiftUIs namensbasierten `Image`-Initialisierer in dieser Form der Ressourcenintegration jedoch nicht decodiert. Dadurch existierten die Bildelemente und ihre Layoutflächen, während Simulator und physisches Gerät nur leere Flächen darstellten.
 
 Die Demo lädt die erlaubten PNG-Ressourcen nun explizit per Bundle-URL und übergibt das decodierte `UIImage` an SwiftUI. Ein Unit-Test prüft Dateiauflösung, Decodierung und die erwarteten Abmessungen aller vier kanonischen Demo-Bilder. Der bestehende vollständige UI-Ablauf prüft zusätzlich Mindestbreite und Mindesthöhe der gerenderten Cue- und Auswahlflächen. Ein diagnostischer iOS-17.5-Screenshot bestätigte nach der Korrektur die sichtbare Darstellung von Cue und beiden Matching-Bildern.
+
+Freigabe erfolgt am 24.8.26
