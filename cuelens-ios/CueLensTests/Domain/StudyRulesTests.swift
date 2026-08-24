@@ -126,15 +126,17 @@ final class StudyRulesTests: XCTestCase {
 
     func testCoordinatorPersistsPermutationAndPendingBeforeLocalAcknowledgement() async throws {
         let store = RecordingStudyStateStore(initial: try StudyState.initial)
-        let submission = InspectingStudySubmission(store: store, acknowledges: true)
+        let submission = InspectingStudySubmission(store: store)
         let now = Date(timeIntervalSince1970: 1_000)
         let coordinator = ProductiveStudyCoordinator(
             contentRepository: StaticStudyContentRepository(),
             stateStore: store,
+            tokenStore: StaticAppTokenStore(),
+            submission: submission,
             randomizer: ReverseRandomizer(),
             dateProvider: FixedStudyDateProvider(now: now),
             cooldownSeconds: 3,
-            submission: submission
+            appVersion: "1.0.0"
         )
 
         let preparation = await coordinator.prepare(
@@ -158,8 +160,8 @@ final class StudyRulesTests: XCTestCase {
             session: run.session,
             state: run.state
         )
-        guard case let .locallyConfirmed(state) = result else {
-            return XCTFail("Expected local confirmation")
+        guard case let .progressed(state) = result else {
+            return XCTFail("Expected confirmed progress")
         }
         XCTAssertEqual(state.confirmedSituationCount, 1)
         XCTAssertEqual(state.nextSituationAvailableAt, now.addingTimeInterval(3))
@@ -171,19 +173,26 @@ final class StudyRulesTests: XCTestCase {
         XCTAssertEqual(writes.last?.confirmedSituationCount, 1)
     }
 
-    func testTwentiethSituationRemainsPendingForRecoveryInNextOrder() async throws {
+    func testFailedTwentiethSituationRemainsPendingForRecovery() async throws {
         let initial = try StudyState(
             confirmedSituationCount: 19,
             nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
             matchingOrder: Array(0..<50)
         )
         let store = RecordingStudyStateStore(initial: initial)
+        let submission = InspectingStudySubmission(
+            store: store,
+            failure: NetworkError.transportFailure
+        )
         let coordinator = ProductiveStudyCoordinator(
             contentRepository: StaticStudyContentRepository(),
             stateStore: store,
+            tokenStore: StaticAppTokenStore(),
+            submission: submission,
             randomizer: ReverseRandomizer(),
             dateProvider: FixedStudyDateProvider(now: Date()),
-            cooldownSeconds: 3
+            cooldownSeconds: 3,
+            appVersion: "1.0.0"
         )
         let preparation = await coordinator.prepare(
             state: initial,
@@ -261,20 +270,35 @@ private actor RecordingStudyStateStore: StudyStateStore {
     func writtenStates() -> [StudyState] { writes }
 }
 
-private actor InspectingStudySubmission: LocalStudySubmissionServing {
+private actor InspectingStudySubmission: StudySubmissionServicing {
     private let store: RecordingStudyStateStore
-    private let result: Bool
+    private let failure: NetworkError?
     private var observedPending = false
 
-    init(store: RecordingStudyStateStore, acknowledges: Bool) {
+    init(store: RecordingStudyStateStore, failure: NetworkError? = nil) {
         self.store = store
-        result = acknowledges
+        self.failure = failure
     }
 
-    func acknowledges(situation: SituationNumber) async -> Bool {
+    func submitSelfReport(
+        token: UUIDv4,
+        craving: Int,
+        appVersion: String,
+        expectedSituation: SituationNumber
+    ) async throws -> SelfReportResponse {
         observedPending = await store.currentState().pendingCraving != nil
-        return result
+        if let failure { throw failure }
+        return .next(situation: expectedSituation)
     }
 
+    func confirmCompensation(code: UUIDv4) async throws {}
     func observedPendingBeforeCall() -> Bool { observedPending }
+}
+
+private actor StaticAppTokenStore: AppTokenStore {
+    func readToken() async throws -> UUIDv4? {
+        try UUIDv4("550e8400-e29b-41d4-a716-446655440000")
+    }
+    func saveToken(_ token: UUIDv4) async throws {}
+    func clearToken() async throws {}
 }

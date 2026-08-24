@@ -112,7 +112,7 @@ Die automatisierten Aktivierungsszenarien verwenden ausschließlich synthetische
 
 ## Startseite, lokale Demo und Feedback aus Auftrag 8
 
-Die zustandsabhängige Startseite bietet Aktivierung, Demo und Feedback vor Studienabschluss sowie Feedback auch nach Abschluss an. Ein isolierter Token- oder Aktivierungs-Recoveryfehler sperrt Aktivierung und produktive Nutzung fail-closed, lässt die rein lokale Demo und das getrennte Feedback jedoch erreichbar. Pending-Retry, echte Übertragung und die vollständige Abschlussintegration folgen in Auftrag 10.
+Die zustandsabhängige Startseite bietet Aktivierung, Demo und Feedback vor Studienabschluss sowie Feedback auch nach Abschluss an. Ein isolierter Token- oder Aktivierungs-Recoveryfehler sperrt Aktivierung und produktive Nutzung fail-closed, lässt die rein lokale Demo und das getrennte Feedback jedoch erreichbar.
 
 Die Demo verwendet ausschließlich die vier unveränderten kanonischen Assets `cue_000`, `cue_001`, `match_a_000` und `match_b_000`. Auswahlreihenfolgen werden einmal je Schritt zufällig festgelegt. Der fünfsekündige Matching-Countdown zählt nur sichtbare Vordergrundzeit; Auswahl, Label und Rauchverlangenswert werden beim Verlassen vollständig verworfen und weder gespeichert noch übertragen.
 
@@ -126,13 +126,25 @@ Feedback wird vor dem Request als `FeedbackDraft` auf 500 beziehungsweise 5.000 
 
 Debug und Staging laden die beiden kanonischen JSON-Manifeste einmalig und validieren deren Struktur, Version, vollständige Itemmengen sowie alle 150 dekodierbaren 512-x-512-PNGs. Situationen 1 bis 10 verwenden eine einmal persistierte Permutation aller 50 Matching-Items in Blöcken zu fünf. Situationen 11 bis 20 verwenden die festgelegten aufeinanderfolgenden Labeling-Blöcke. Die Optionsposition wird je Trial neu zufällig festgelegt; die konkrete Auswahl bleibt ausschließlich flüchtig und wird weder gespeichert noch übertragen.
 
-Jeder Matching-Trial sperrt die Auswahl für vier sichtbare Vordergrundsekunden. Nach exakt fünf Trials folgt der ganzzahlige Rauchverlangensslider von 0 bis 100 mit Standardwert 50. Vor dem lokalen Fake-Service wird nur der Pending-Wert atomar im geschützten Studienzustand gespeichert. In Debug und Staging bestätigt der Fake Situationen 1 bis 19 lokal und verwendet den dreisekündigen Test-Cooldown; Situation 20 bleibt gezielt pending, damit Recovery und Abschluss erst mit Auftrag 10 erfolgen. Release bindet den produktiven Koordinator noch nicht ein und bleibt fail-closed.
+Jeder Matching-Trial sperrt die Auswahl für vier sichtbare Vordergrundsekunden. Nach exakt fünf Trials folgt der ganzzahlige Rauchverlangensslider von 0 bis 100 mit Standardwert 50. Auftrag 9 verwendete für die isolierte Ablaufprüfung zunächst einen lokalen Fake-Service; Auftrag 10 ersetzt ihn in allen regulären Buildvarianten durch den bestehenden Submission-Vertrag.
 
 ```sh
 ./Scripts/verify_productive_study_security.sh
 ```
 
-Ein Prozessabbruch vor dem Absenden persistiert weder Trialposition noch Auswahl und beginnt den unbestätigten Durchgang erneut. Die produktive Oberfläche verwendet zentriertes `scaledToFill`, vollständige Auswahlbilder, sprachstabile Zufallspositionen und den bestehenden Sichtschutz. Echte Submission, Pending-Retry und Abschlussantworten gehören ausschließlich zu Auftrag 10.
+Ein Prozessabbruch vor dem Absenden persistiert weder Trialposition noch Auswahl und beginnt den unbestätigten Durchgang erneut. Die produktive Oberfläche verwendet zentriertes `scaledToFill`, vollständige Auswahlbilder, sprachstabile Zufallspositionen und den bestehenden Sichtschutz.
+
+## Submission, Recovery und Abschluss aus Auftrag 10
+
+Vor dem ersten Submission-Request wird ausschließlich der ganzzahlige Craving-Wert atomar im geschützten Studienzustand als Pending gespeichert. Der Request liest den UUID-v4-App-Token erst aus dem Keychain und enthält genau `app_token`, `craving` und die unveränderte `app_version`; Situation, Bedingung, Auswahl, Sprache und Plattform werden nicht gesendet. Der bestehende strikte Parser prüft Erfolg, ganzzahligen erwarteten Situationindex, zugehörige Bedingung und Abschlusskombination, bevor lokaler Fortschritt verändert wird.
+
+Ein Pending-Wert blockiert neue Durchgänge, wird beim nächsten aktiven App-Start automatisch erneut gesendet und bleibt nach Netzwerk- oder Protokollfehler für einen manuellen Retry erhalten. Situationen 1 bis 19 erhalten erst nach gültiger Antwort einen atomar persistierten Fortschritt und den buildkonfigurierten Cooldown von drei Stunden in Release beziehungsweise drei Sekunden in Debug und Staging. Der Reminderabgleich erfolgt nach jeder Zustandsänderung.
+
+Beim direkten Abschluss wird der UUID-v4-Kompensationscode zunächst als ausstehende Bestätigung geschützt persistiert. Erst danach erfolgt der separate PUT, der exakt HTTP 204 ohne Body erfordert. Ein Bestätigungsfehler erhält den verborgenen Code für den Retry; erst der bestätigte Abschluss zeigt ihn an. Die Zwischenablage wird ausschließlich nach dem sichtbaren Kopier-Tap gesetzt. Der Prolific-Abschluss speichert keinen Code und zeigt stattdessen den spezifizierten Zwei-Tage-Hinweis. Feedback bleibt in beiden Abschlussmodi erreichbar.
+
+```sh
+./Scripts/verify_submission_security.sh
+```
 
 ## Datenschutz und Abgrenzung
 

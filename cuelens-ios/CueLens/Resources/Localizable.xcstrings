@@ -1025,6 +1025,13 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "The study content could not be loaded securely." } }
       }
     },
+    "study.state.invalid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Der lokale Studienstatus ist nicht eindeutig. Bitte wenden Sie sich an cuelens@each-and-every.de." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The local study status is unclear. Please contact cuelens@each-and-every.de." } }
+      }
+    },
     "study.submit" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1039,11 +1046,60 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing" } }
       }
     },
+    "completion.confirmation.pending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Abschlussbestätigung steht noch aus." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Completion confirmation is still pending." } }
+      }
+    },
+    "completion.direct.instructions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bitte bewahren Sie diesen Kompensationscode auf und übermitteln Sie ihn an cuelens@each-and-every.de." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Please keep this compensation code and send it to cuelens@each-and-every.de." } }
+      }
+    },
+    "completion.copy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Code kopieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Copy code" } }
+      }
+    },
+    "completion.copied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Code kopiert." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Code copied." } }
+      }
+    },
+    "completion.prolific" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Studie abgeschlossen. Der Abschluss bei Prolific erfolgt üblicherweise innerhalb 2 Tagen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Study completed. Completion on Prolific usually takes place within 2 days." } }
+      }
+    },
+    "study.transfer.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Datenübertragung ist fehlgeschlagen. Bitte versuchen Sie es erneut." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Data transfer failed. Please try again." } }
+      }
+    },
     "study.transfer.pending" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenübertragung ausstehend" } },
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Data transfer pending" } }
+      }
+    },
+    "study.transfer.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erneut versuchen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try again" } }
       }
     },
     "study.viewport.unsuitable" : {

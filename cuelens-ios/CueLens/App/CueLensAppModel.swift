@@ -32,6 +32,12 @@ enum FeedbackState: Equatable, Sendable {
     case failed
 }
 
+enum StudyTransferState: Equatable, Sendable {
+    case idle
+    case transferring
+    case failed
+}
+
 struct InfoFeedPresentation: Equatable, Sendable {
     let messages: [InfoMessage]
     let fetchedMessageIDs: Set<Int64>
@@ -57,6 +63,7 @@ final class CueLensAppModel {
     private var tokenStorageFailed = false
     private var demoCountdownTask: Task<Void, Never>?
     private var productiveCountdownTask: Task<Void, Never>?
+    private var initialStudyRecoveryAttempted = false
 
     private(set) var route: AppRoute = .loading
     private(set) var language: AppLanguage = .german
@@ -78,6 +85,8 @@ final class CueLensAppModel {
     private(set) var productiveStudyViewportSuitable = true
     private(set) var productiveStudySubmitting = false
     private(set) var productiveStudyBlockReason: StartGateBlockReason?
+    private(set) var studyTransferState: StudyTransferState = .idle
+    private(set) var compensationCodeWasCopied = false
 
     var showsPrivacyCurtain: Bool { lifecyclePhase != .active }
     var isActivated: Bool { appActivated }
@@ -94,6 +103,19 @@ final class CueLensAppModel {
         (try? FeedbackDraft(source: feedbackSource, comment: feedbackComment)) != nil
     }
     var hasPendingStudyTransfer: Bool { studyState?.pendingCraving != nil }
+    var hasPendingDirectConfirmation: Bool {
+        guard let studyState else { return false }
+        if case .directPendingConfirmation = studyState.completion { return true }
+        return false
+    }
+    var directCompensationCode: String? {
+        guard let studyState,
+              case let .directCompleted(code) = studyState.completion else { return nil }
+        return code.description
+    }
+    var hasProlificCompletion: Bool { studyState?.completion == .prolificCompleted }
+    var hasInvalidStudyState: Bool { studyState?.completion == .invalid }
+    var studyTransferIsRunning: Bool { studyTransferState == .transferring }
     var showsNextStudyRun: Bool {
         appActivated
             && !hasTokenStorageFailure
@@ -154,6 +176,7 @@ final class CueLensAppModel {
             return
         }
 
+        await performInitialStudyRecoveryIfNeeded()
         await refreshProductiveStudyAvailability()
 
         await reconcileNotificationInfrastructure()
@@ -170,6 +193,7 @@ final class CueLensAppModel {
             stopProductiveCountdown()
         }
         if phase == .active, localStateLoaded {
+            await performInitialStudyRecoveryIfNeeded()
             if let notificationRoute = await environment?.notificationRoutes.consume() {
                 switch notificationRoute {
                 case .informationFeed:
@@ -368,6 +392,7 @@ final class CueLensAppModel {
               let state = studyState,
               run.session.phase == .craving else { return }
         productiveStudySubmitting = true
+        studyTransferState = .transferring
         stopProductiveCountdown()
         let outcome = await environment.productiveStudy.submitCraving(
             run.session.craving,
@@ -375,19 +400,27 @@ final class CueLensAppModel {
             state: state
         )
         productiveStudySubmitting = false
-        switch outcome {
-        case let .locallyConfirmed(newState), let .pending(newState):
-            studyState = newState
-            productiveRun = nil
-            route = .home
-            await refreshProductiveStudyAvailability()
-            await reconcileNotificationInfrastructure()
-        case .persistenceFailed:
-            productiveRun = nil
-            route = .secureStorageFailure
-        case .ignored:
-            break
-        }
+        productiveRun = nil
+        route = .home
+        await applyStudyTransferOutcome(outcome)
+    }
+
+    func retryPendingStudyTransfer() async {
+        guard route == .home,
+              !studyTransferIsRunning,
+              let environment,
+              let state = studyState,
+              state.pendingCraving != nil || hasPendingDirectConfirmation else { return }
+        studyTransferState = .transferring
+        let outcome = await environment.productiveStudy.recover(state: state)
+        await applyStudyTransferOutcome(outcome)
+    }
+
+    func copyCompensationCode() async {
+        guard route == .home,
+              let code = directCompensationCode,
+              let environment else { return }
+        compensationCodeWasCopied = await environment.compensationCodeCopier.copy(code)
     }
 
     func openFeedback() {
@@ -647,6 +680,40 @@ final class CueLensAppModel {
         async let content = environment.productiveStudy.contentIsAvailable()
         productiveStudyFeatureEnabled = await feature
         productiveStudyContentAvailable = await content
+    }
+
+    private func performInitialStudyRecoveryIfNeeded() async {
+        guard !initialStudyRecoveryAttempted,
+              lifecyclePhase == .active,
+              let environment,
+              let state = studyState else { return }
+        initialStudyRecoveryAttempted = true
+        guard state.pendingCraving != nil || hasPendingDirectConfirmation else { return }
+        studyTransferState = .transferring
+        let outcome = await environment.productiveStudy.recover(state: state)
+        await applyStudyTransferOutcome(outcome)
+    }
+
+    private func applyStudyTransferOutcome(_ outcome: StudyTransferOutcome) async {
+        switch outcome {
+        case let .progressed(newState), let .completed(newState):
+            studyState = newState
+            studyTransferState = .idle
+            compensationCodeWasCopied = false
+        case let .pending(newState), let .directConfirmationPending(newState):
+            studyState = newState
+            studyTransferState = .failed
+        case .persistenceFailed:
+            studyTransferState = .failed
+            route = .secureStorageFailure
+        case .secureIdentityUnavailable:
+            studyTransferState = .failed
+            tokenStorageFailed = true
+        case .ignored:
+            studyTransferState = .idle
+        }
+        await refreshProductiveStudyAvailability()
+        await reconcileNotificationInfrastructure()
     }
 
     private func startProductiveCountdownIfNeeded() {

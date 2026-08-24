@@ -31,9 +31,8 @@ fi
 rg -F -q 'static let matchingWaitSeconds = 4' "$SESSION"
 rg -F -q 'pendingState = try replacing' "$COORDINATOR"
 rg -F -q 'try await stateStore.writeState(pendingState)' "$COORDINATOR"
-rg -F -q 'situation.value < StudySchedule.totalSituationCount' "$COORDINATOR"
-rg -F -q '#if RELEASE' CueLens/App/AppEnvironment.swift
-rg -F -q 'DisabledProductiveStudyManager' CueLens/App/AppEnvironment.swift
+rg -F -q 'submission.submitSelfReport(' "$COORDINATOR"
+rg -F -q 'tokenStore.readToken()' "$COORDINATOR"
 rg -F -q 'CUELENS_RUN_COOLDOWN_SECONDS = 3' Config/Debug.xcconfig
 rg -F -q 'CUELENS_RUN_COOLDOWN_SECONDS = 3' Config/Staging.xcconfig
 rg -F -q 'CUELENS_RUN_COOLDOWN_SECONDS = 10800' Config/Release.xcconfig

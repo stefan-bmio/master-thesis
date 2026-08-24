@@ -565,3 +565,32 @@ Auftrag 8 wurde durch den datierten Vermerk und die erfolgreiche Sichtprüfung n
 Der lokale Fake bildet bewusst keine echte Serversemantik nach. Pending-Retry beim App-Start, Submission-Payload, Responseparser, direkter beziehungsweise Prolific-Abschluss und der produktive dreistündige Fortschritt werden erst in Auftrag 10 aktiviert. Das Review-Gate bleibt daher die manuelle fachliche Sichtprüfung mehrerer vollständiger 20-Durchgang-Debugläufe auf iPhone und iPad; am Ende jedes Testlaufs ist der Pending-Zustand der 20. Situation erwartet.
 
 Freigabe erfolgt am 24.8.26
+
+## 24.08.2026 – Auftrag 10
+
+**Freigabe und Umfang**
+
+Auftrag 9 wurde durch den datierten Vermerk und die erfolgreiche Funktionsprüfung ausdrücklich freigegeben. Auftrag 10 wurde auf Branch `codex/ios-auftrag-10` umgesetzt und ersetzt den lokalen Fake-Service durch die reale, buildkonfigurierte Studienübertragung. Der Umfang umfasst den sicheren Pending-Retry, die serverbestätigte Fortschreibung, den direkten beziehungsweise Prolific-Abschluss und die zugehörige Abschlussdarstellung.
+
+**Implementierung**
+
+- `ProductiveStudyCoordinator` überträgt ausschließlich App-Token, ganzzahligen Craving-Wert und tatsächliche App-Version über den bestehenden `StudySubmissionService`. Vor dem ersten Request wird der Pending-Zustand atomar und dateigeschützt gespeichert; nach Fehler oder Prozessneustart wird exakt dieser Wert erneut übertragen.
+- Nur eine strikt geparste Antwort für den erwarteten Situationsindex und die erwartete Bedingung darf den Fortschritt erhöhen. Unpassende, unvollständige oder unerwartete Antworten bleiben fail-closed im Pending-Zustand. Ein Actor verhindert parallele Doppelübertragungen.
+- Situationen 1 bis 19 werden erst nach gültiger Serverantwort atomar bestätigt. Release setzt danach einen Cooldown von 10.800 Sekunden; Debug und Staging verwenden weiterhin drei Sekunden für kontrollierbare Tests. Reminder werden nach jedem bestätigten Zustandswechsel über die bestehende Reconcile-Schnittstelle aktualisiert.
+- Bei direkter Teilnahme wird der Kompensationscode vor dem Bestätigungsrequest geschützt als ausstehende Bestätigung persistiert. Erst die erwartete leere 204-Antwort schaltet den Abschluss und die Codeanzeige frei. Ein Abbruch oder Neustart wiederholt ausschließlich die Bestätigung und niemals den Self-Report.
+- Bei Prolific-Teilnahme wird ohne Code abgeschlossen und der spezifizierte Hinweis auf die Gutschrift innerhalb von zwei Tagen angezeigt. Beide Abschlussarten sperren weitere Studiensituationen dauerhaft.
+- Der direkte Code kann nur über eine ausdrückliche Schaltfläche kopiert werden. Die lokale Zwischenablage ist auf das Gerät begrenzt und läuft nach zehn Minuten ab; automatische oder implizite Kopiervorgänge finden nicht statt.
+- Netzwerk- und Protokollfehler zeigen einen neutralen Retry-Zustand. Ein fehlender App-Token oder nicht sicher lesbarer Studienzustand sperrt die produktive Nutzung fail-closed, ohne sensible Details anzuzeigen oder zu protokollieren.
+
+**Tests und technische Prüfung**
+
+- 166 Unit-Tests bestanden unter iOS 26.5 und zusätzlich unter der Kompatibilitätsuntergrenze iOS 17.5. Neu geprüft werden Pending-vor-Request, unveränderte Retry-Payloads, Fehlerpersistenz, falsche Serversemantik, dreistündiger Release-Cooldown, direkter Zweiphasenabschluss, Neustart zwischen Code und Bestätigung, Prolific-Abschluss, fehlender Token, Persistenzfehler und Schutz vor Doppelrequests.
+- 23 synthetische UI-Szenarien bestanden jeweils auf iPhone und iPad unter iOS 26.5. Die neuen Szenarien prüfen fehlgeschlagene Übertragung mit manuellem Retry, direkten Abschluss einschließlich expliziter Kopieraktion, Prolific-Abschluss sowie eine fehlgeschlagene Codebestätigung mit Recovery.
+- Das vollständige lokale Quality-Gate bestand einschließlich Debug-, Staging- und Release-Prüfung sowie sämtlicher Ressourcen-, Persistenz-, Netzwerk-, Notification- und Submission-Sicherheitsgates. Release-Analyze und ein unsignierter generischer Release-Gerätebuild waren ebenfalls erfolgreich.
+- Automatisierte Tests verwenden ausschließlich synthetische Tokens, Werte, Codes und Service-Doubles. Es wurden keine produktiven oder Staging-Studienrequests ausgelöst und keine App-Tokens, Craving-Werte, Kompensationscodes oder Serverdetails protokolliert. Android, Backend und KI-PoC blieben unverändert.
+
+**Annahmen und Review-Gate**
+
+Der bestehende Backendvertrag und die bereits implementierte strikte Response-Decodierung wurden unverändert verwendet; es wurden weder Plattformfelder noch ein Versionssuffix oder neue Endpunkte ergänzt. Automatische Wiederherstellung erfolgt beim ersten aktiven App-Zustand vor der Freigabe einer neuen Situation. Bei einem ausstehenden direkten Abschluss hat die reine Codebestätigung Vorrang vor allen anderen Aktionen.
+
+Das menschliche Review-Gate bleibt ausstehend. Erforderlich sind je eine freigegebene, zurücksetzbare Staging-Testregistrierung für direkten und Prolific-Abschluss sowie eine kontrollierte Netzwerkunterbrechung nach gespeichertem Self-Report und nach gespeichertem direkten Code. Dabei sind Fortschritt, Retry nach App-Neustart, serverseitige Duplikatfreiheit, dreisekündiger Staging-Cooldown und die Abschlussdarstellung zu prüfen. Ohne diese externen Voraussetzungen werden keine schreibenden E2E-Requests ausgeführt.

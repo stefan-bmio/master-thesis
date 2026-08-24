@@ -15,6 +15,7 @@ struct AppEnvironment: Sendable {
     let features: any FeatureConfigServicing
     let productiveStudy: any ProductiveStudyManaging
     let productiveStudyClock: any ProductiveStudySleepClock
+    let compensationCodeCopier: any CompensationCodeCopying
 
     init(
         persistence: any LocalPersistenceLoading,
@@ -30,7 +31,8 @@ struct AppEnvironment: Sendable {
         notificationRoutes: NotificationRouteInbox = NotificationRouteInbox(),
         features: any FeatureConfigServicing = DisabledFeatureConfigService(),
         productiveStudy: any ProductiveStudyManaging = DisabledProductiveStudyManager(),
-        productiveStudyClock: any ProductiveStudySleepClock = ContinuousProductiveStudySleepClock()
+        productiveStudyClock: any ProductiveStudySleepClock = ContinuousProductiveStudySleepClock(),
+        compensationCodeCopier: any CompensationCodeCopying = DisabledCompensationCodeCopier()
     ) {
         self.persistence = persistence
         self.settings = settings
@@ -46,6 +48,7 @@ struct AppEnvironment: Sendable {
         self.features = features
         self.productiveStudy = productiveStudy
         self.productiveStudyClock = productiveStudyClock
+        self.compensationCodeCopier = compensationCodeCopier
     }
 
     static func live() throws -> AppEnvironment {
@@ -89,11 +92,15 @@ struct AppEnvironment: Sendable {
                     : ProductiveStudyCoordinator(
                         contentRepository: BundleStudyContentRepository(),
                         stateStore: studyStateStore,
+                        tokenStore: UITestAppTokenStore(),
+                        submission: UITestStudySubmissionService(scenario: studyScenario),
                         randomizer: UITestProductiveRandomizer(),
                         dateProvider: UITestStudyDateProvider(),
-                        cooldownSeconds: 3
+                        cooldownSeconds: 3,
+                        appVersion: "1.0.0"
                     ),
-                productiveStudyClock: UITestProductiveStudyClock()
+                productiveStudyClock: UITestProductiveStudyClock(),
+                compensationCodeCopier: UITestCompensationCodeCopier()
             )
         }
         #else
@@ -122,15 +129,14 @@ struct AppEnvironment: Sendable {
             notifications: notifications
         )
         _ = backgroundRefresh.register()
-        #if RELEASE
-        let productiveStudy: any ProductiveStudyManaging = DisabledProductiveStudyManager()
-        #else
         let productiveStudy: any ProductiveStudyManaging = ProductiveStudyCoordinator(
             contentRepository: BundleStudyContentRepository(),
             stateStore: stateStore,
-            cooldownSeconds: configuration.runCooldownSeconds
+            tokenStore: tokenStore,
+            submission: services.submission,
+            cooldownSeconds: configuration.runCooldownSeconds,
+            appVersion: configuration.appVersion
         )
-        #endif
         return AppEnvironment(
             persistence: persistence,
             settings: settings,
@@ -149,7 +155,8 @@ struct AppEnvironment: Sendable {
             backgroundRefresh: backgroundRefresh,
             notificationRoutes: .live,
             features: services.features,
-            productiveStudy: productiveStudy
+            productiveStudy: productiveStudy,
+            compensationCodeCopier: SystemCompensationCodeCopier()
         )
     }
 
@@ -212,6 +219,27 @@ private struct UITestPersistenceLoader: LocalPersistenceLoading {
                 confirmedSituationCount: 10,
                 nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
                 matchingOrder: Array(0..<50)
+            )
+        } else if studyScenario == "failure" {
+            state = try StudyState(
+                matchingOrder: Array(0..<50),
+                pendingCraving: 50
+            )
+        } else if studyScenario == "direct" || studyScenario == "prolific" {
+            state = try StudyState(
+                confirmedSituationCount: 19,
+                nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
+                matchingOrder: Array(0..<50),
+                pendingCraving: 50
+            )
+        } else if studyScenario == "confirmation-failure" {
+            state = try StudyState(
+                confirmedSituationCount: 19,
+                nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
+                matchingOrder: Array(0..<50),
+                completion: .directPendingConfirmation(
+                    code: UUIDv4("123e4567-e89b-42d3-a456-426614174000")
+                )
             )
         } else {
             state = try StudyState.initial
@@ -306,6 +334,51 @@ private struct UITestProductiveStudyClock: ProductiveStudySleepClock {
     func sleepForVisibleSecond() async throws {
         try await ContinuousClock().sleep(for: .milliseconds(20))
     }
+}
+
+private actor UITestAppTokenStore: AppTokenStore {
+    private let token = try? UUIDv4("550e8400-e29b-41d4-a716-446655440000")
+    func readToken() async throws -> UUIDv4? { token }
+    func saveToken(_ token: UUIDv4) async throws {}
+    func clearToken() async throws {}
+}
+
+private actor UITestStudySubmissionService: StudySubmissionServicing {
+    let scenario: String?
+    private var selfReportAttempts = 0
+    private var confirmationAttempts = 0
+
+    init(scenario: String?) { self.scenario = scenario }
+
+    func submitSelfReport(
+        token: UUIDv4,
+        craving: Int,
+        appVersion: String,
+        expectedSituation: SituationNumber
+    ) async throws -> SelfReportResponse {
+        selfReportAttempts += 1
+        if scenario == "failure", selfReportAttempts == 1 {
+            throw NetworkError.transportFailure
+        }
+        if expectedSituation.value < StudySchedule.totalSituationCount {
+            return .next(situation: expectedSituation)
+        }
+        let code = try UUIDv4("123e4567-e89b-42d3-a456-426614174000")
+        return scenario == "prolific"
+            ? .prolificComplete
+            : .directComplete(compensationCode: code)
+    }
+
+    func confirmCompensation(code: UUIDv4) async throws {
+        confirmationAttempts += 1
+        if scenario == "confirmation-failure", confirmationAttempts == 1 {
+            throw NetworkError.transportFailure
+        }
+    }
+}
+
+private struct UITestCompensationCodeCopier: CompensationCodeCopying {
+    func copy(_ code: String) async -> Bool { true }
 }
 #endif
 

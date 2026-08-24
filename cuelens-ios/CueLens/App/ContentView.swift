@@ -86,6 +86,26 @@ struct HomeView: View {
                         .font(.title2.bold())
                         .multilineTextAlignment(.center)
                         .accessibilityIdentifier("home.completion")
+                    if let code = appModel.directCompensationCode {
+                        Text("completion.direct.instructions")
+                            .multilineTextAlignment(.center)
+                        Text(code)
+                            .font(.body.monospaced())
+                            .accessibilityIdentifier("completion.direct.code")
+                        Button("completion.copy") {
+                            Task { await appModel.copyCompensationCode() }
+                        }
+                        .buttonStyle(CueLensPrimaryButtonStyle())
+                        .accessibilityIdentifier("completion.copy")
+                        if appModel.compensationCodeWasCopied {
+                            Text("completion.copied")
+                                .accessibilityIdentifier("completion.copied")
+                        }
+                    } else if appModel.hasProlificCompletion {
+                        Text("completion.prolific")
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("completion.prolific")
+                    }
                 } else {
                     if appModel.isActivated {
                         Text("activation.alreadyCompleted")
@@ -105,11 +125,23 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("home.tokenStorageFailure")
                     }
-                    if appModel.hasPendingStudyTransfer {
+                    if appModel.hasInvalidStudyState {
+                        Text("study.state.invalid")
+                            .foregroundStyle(.red)
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("study.state.invalid")
+                    } else if appModel.hasPendingStudyTransfer {
                         Text("study.transfer.pending")
                             .font(.headline)
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier("study.transfer.pending")
+                        studyRetry
+                    } else if appModel.hasPendingDirectConfirmation {
+                        Text("completion.confirmation.pending")
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("completion.confirmation.pending")
+                        studyRetry
                     } else if appModel.showsNextStudyRun {
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             let enabled = appModel.nextStudyRunIsEnabled(now: context.date)
@@ -175,6 +207,27 @@ struct HomeView: View {
                 .frame(maxWidth: 600)
                 .padding(20)
                 .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private var studyRetry: some View {
+        VStack(spacing: 12) {
+            if appModel.studyTransferState == .failed {
+                Text("study.transfer.failed")
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("study.transfer.failed")
+            }
+            Button(appModel.studyTransferIsRunning ? "study.submitting" : "study.transfer.retry") {
+                Task { await appModel.retryPendingStudyTransfer() }
+            }
+            .buttonStyle(CueLensPrimaryButtonStyle())
+            .disabled(appModel.studyTransferIsRunning)
+            .accessibilityIdentifier("study.transfer.retry")
+            if appModel.studyTransferIsRunning {
+                ProgressView()
+                    .accessibilityIdentifier("study.transfer.progress")
             }
         }
     }

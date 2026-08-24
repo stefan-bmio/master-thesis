@@ -99,6 +99,7 @@
 		100000000000000000000815 /* study-content-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000805 /* study-content-v1.json */; };
 		100000000000000000000816 /* study-assets-manifest-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000806 /* study-assets-manifest-v1.json */; };
 		100000000000000000000817 /* ProductiveStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000807 /* ProductiveStudyView.swift */; };
+		100000000000000000000832 /* ProductiveStudyCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -235,6 +236,7 @@
 		100000000000000000000805 /* study-content-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-content-v1.json; sourceTree = SOURCE_ROOT; };
 		100000000000000000000806 /* study-assets-manifest-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-assets-manifest-v1.json; sourceTree = SOURCE_ROOT; };
 		100000000000000000000807 /* ProductiveStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyView.swift; sourceTree = "<group>"; };
+		100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -526,6 +528,7 @@
 				100000000000000000000244 /* FeedbackCoordinatorTests.swift */,
 				100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */,
 				100000000000000000000246 /* PreStudyAppModelTests.swift */,
+				100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -823,6 +826,7 @@
 				100000000000000000000496 /* FeedbackCoordinatorTests.swift in Sources */,
 				100000000000000000000497 /* ExternalLinkCoordinatorTests.swift in Sources */,
 				100000000000000000000498 /* PreStudyAppModelTests.swift in Sources */,
+				100000000000000000000832 /* ProductiveStudyCoordinatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

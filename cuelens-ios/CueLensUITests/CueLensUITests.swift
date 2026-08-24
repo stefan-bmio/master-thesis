@@ -332,6 +332,72 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testPendingTransferFailsClosedAndOffersManualRetry() {
+        let app = makeApp(feed: "empty", study: "failure")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(app.staticTexts["study.transfer.pending"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["study.transfer.failed"].exists)
+        let retry = app.buttons["study.transfer.retry"]
+        XCTAssertTrue(retry.exists)
+        XCTAssertTrue(retry.isEnabled)
+        XCTAssertFalse(app.buttons["study.start"].exists)
+        retry.tap()
+        XCTAssertTrue(app.buttons["study.start"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["study.start"].isEnabled)
+        XCTAssertFalse(app.staticTexts["study.transfer.pending"].exists)
+    }
+
+    @MainActor
+    func testDirectCompletionShowsCodeAndCopiesOnlyAfterTap() {
+        let app = makeApp(feed: "empty", study: "direct")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        let code = app.staticTexts["completion.direct.code"]
+        XCTAssertTrue(code.waitForExistence(timeout: 10))
+        XCTAssertEqual(code.label, "123e4567-e89b-42d3-a456-426614174000")
+        XCTAssertFalse(app.staticTexts["completion.copied"].exists)
+        app.buttons["completion.copy"].tap()
+        XCTAssertTrue(app.staticTexts["completion.copied"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.buttons["demo.open"].exists)
+        XCTAssertTrue(app.buttons["feedback.open"].exists)
+    }
+
+    @MainActor
+    func testProlificCompletionShowsTwoDayNoticeWithoutCode() {
+        let app = makeApp(feed: "empty", study: "prolific")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(app.staticTexts["completion.prolific"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["completion.direct.code"].exists)
+        XCTAssertFalse(app.buttons["completion.copy"].exists)
+        XCTAssertFalse(app.buttons["demo.open"].exists)
+        XCTAssertTrue(app.buttons["feedback.open"].exists)
+    }
+
+    @MainActor
+    func testFailedCodeConfirmationKeepsCodeHiddenAndOffersRetry() {
+        let app = makeApp(feed: "empty", study: "confirmation-failure")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        XCTAssertTrue(
+            app.staticTexts["completion.confirmation.pending"].waitForExistence(timeout: 10)
+        )
+        XCTAssertTrue(app.staticTexts["study.transfer.failed"].exists)
+        XCTAssertTrue(app.buttons["study.transfer.retry"].isEnabled)
+        XCTAssertFalse(app.staticTexts["completion.direct.code"].exists)
+        XCTAssertFalse(app.buttons["completion.copy"].exists)
+        XCTAssertFalse(app.buttons["study.start"].exists)
+        app.buttons["study.transfer.retry"].tap()
+        XCTAssertTrue(app.staticTexts["completion.direct.code"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["completion.copy"].exists)
+    }
+
+    @MainActor
     private func makeApp(
         feed: String,
         language: String = "de",

@@ -124,6 +124,38 @@ final class NotificationCoordinatorTests: XCTestCase {
         for context in invalidContexts {
             XCTAssertEqual(StudyReminderPolicy.decision(for: context), .cancel)
         }
+
+        let completed = StudyReminderContext(
+            notificationsEnabled: true,
+            systemAuthorizationAllowed: true,
+            appActivated: true,
+            featureEnabled: true,
+            state: try StudyState(
+                confirmedSituationCount: 20,
+                matchingOrder: Array(0..<MatchingOrder.itemCount),
+                completion: .prolificCompleted
+            ),
+            language: .german,
+            now: Date()
+        )
+        XCTAssertEqual(StudyReminderPolicy.decision(for: completed), .cancel)
+
+        let code = try UUIDv4("123e4567-e89b-42d3-a456-426614174000")
+        let directPending = StudyReminderContext(
+            notificationsEnabled: true,
+            systemAuthorizationAllowed: true,
+            appActivated: true,
+            featureEnabled: true,
+            state: try StudyState(
+                confirmedSituationCount: 19,
+                nextSituationAvailableAt: Date(timeIntervalSince1970: 0),
+                matchingOrder: Array(0..<MatchingOrder.itemCount),
+                completion: .directPendingConfirmation(code: code)
+            ),
+            language: .german,
+            now: Date()
+        )
+        XCTAssertEqual(StudyReminderPolicy.decision(for: directPending), .cancel)
     }
 
     func testInformationNotificationAndRoutesAreGeneric() async {
