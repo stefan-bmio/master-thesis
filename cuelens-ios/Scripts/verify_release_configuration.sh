@@ -3,6 +3,8 @@ set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 PROJECT_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+APP_ICON="$PROJECT_ROOT/CueLens/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+APP_ICON_CONTENTS="$PROJECT_ROOT/CueLens/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json"
 DERIVED_DATA=${1:-}
 CREATED_DERIVED_DATA=0
 
@@ -20,12 +22,21 @@ trap cleanup EXIT HUP INT TERM
 
 cd "$PROJECT_ROOT"
 
+test -f "$APP_ICON"
+test -f "$APP_ICON_CONTENTS"
+jq -e '.images == [{"filename":"AppIcon-1024.png","idiom":"universal","platform":"ios","size":"1024x1024"}]' \
+  "$APP_ICON_CONTENTS" >/dev/null
+test "$(sips -g pixelWidth "$APP_ICON" 2>/dev/null | awk '/pixelWidth:/{print $2}')" = '1024'
+test "$(sips -g pixelHeight "$APP_ICON" 2>/dev/null | awk '/pixelHeight:/{print $2}')" = '1024'
+test "$(sips -g hasAlpha "$APP_ICON" 2>/dev/null | awk '/hasAlpha:/{print $2}')" = 'no'
+
 xcodebuild -quiet \
   -project CueLens.xcodeproj \
   -scheme CueLens \
   -configuration Release \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath "$DERIVED_DATA" \
+  SWIFT_EMIT_LOC_STRINGS=NO \
   CODE_SIGNING_ALLOWED=NO \
   build
 
@@ -36,8 +47,11 @@ PRIVACY_MANIFEST="$APP_BUNDLE/PrivacyInfo.xcprivacy"
 test -d "$APP_BUNDLE"
 test -f "$INFO_PLIST"
 test -f "$PRIVACY_MANIFEST"
+test -f "$APP_BUNDLE/Assets.car"
 plutil -lint "$INFO_PLIST" >/dev/null
 plutil -lint "$PRIVACY_MANIFEST" >/dev/null
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconName' "$INFO_PLIST")" = 'AppIcon'
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconName' "$INFO_PLIST")" = 'AppIcon'
 
 BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")
 MINIMUM_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")
@@ -162,5 +176,6 @@ require_build_setting 'SWIFT_TREAT_WARNINGS_AS_ERRORS = YES'
 require_build_setting 'GCC_TREAT_WARNINGS_AS_ERRORS = YES'
 require_build_setting 'DEBUG_INFORMATION_FORMAT = dwarf-with-dsym'
 require_build_setting 'PRODUCT_BUNDLE_IDENTIFIER = de.eachandevery.cuelens'
+require_build_setting 'ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon'
 
 echo 'Release-Konfiguration erfolgreich verifiziert.'

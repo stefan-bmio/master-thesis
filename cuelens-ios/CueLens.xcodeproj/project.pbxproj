@@ -12,6 +12,7 @@
 		100000000000000000000403 /* StudyViewportPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000103 /* StudyViewportPolicy.swift */; };
 		100000000000000000000404 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000104 /* Localizable.xcstrings */; };
 		100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000105 /* PrivacyInfo.xcprivacy */; };
+		100000000000000000000901 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000900 /* Assets.xcassets */; };
 		100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000106 /* StudyViewportPolicyTests.swift */; };
 		100000000000000000000407 /* CueLensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000107 /* CueLensUITests.swift */; };
 		100000000000000000000410 /* DomainValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000130 /* DomainValidationError.swift */; };
@@ -126,6 +127,7 @@
 		100000000000000000000103 /* StudyViewportPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyViewportPolicy.swift; sourceTree = "<group>"; };
 		100000000000000000000104 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		100000000000000000000105 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		100000000000000000000900 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		100000000000000000000106 /* StudyViewportPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyViewportPolicyTests.swift; sourceTree = "<group>"; };
 		100000000000000000000107 /* CueLensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueLensUITests.swift; sourceTree = "<group>"; };
 		100000000000000000000108 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 		100000000000000000000006 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				100000000000000000000900 /* Assets.xcassets */,
 				100000000000000000000104 /* Localizable.xcstrings */,
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
 				100000000000000000000194 /* Info.plist */,
@@ -717,6 +720,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				100000000000000000000901 /* Assets.xcassets in Resources */,
 				100000000000000000000404 /* Localizable.xcstrings in Resources */,
 				100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */,
 				100000000000000000000814 /* Assets in Resources */,
