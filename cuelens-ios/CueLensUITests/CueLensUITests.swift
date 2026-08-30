@@ -288,6 +288,19 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
+    func testNextStudyRunShowsProgressInBothLanguages() {
+        let app = makeApp(feed: "empty", language: "de", study: "matching")
+        app.launch()
+        declineConsentIfShown(in: app)
+
+        let start = app.buttons["study.start"]
+        XCTAssertTrue(start.waitForExistence(timeout: 10))
+        XCTAssertEqual(start.label, "Studiendurchgang 1 von 20")
+        app.buttons["language.switch"].tap()
+        XCTAssertEqual(start.label, "Study run 1 of 20")
+    }
+
+    @MainActor
     func testProductiveMatchingCompletesExactlyFiveTrialsAndStartsCooldown() {
         let app = makeApp(feed: "empty", study: "matching")
         app.launch()
@@ -316,6 +329,7 @@ final class CueLensUITests: XCTestCase {
         app.buttons["study.craving.submit"].tap()
         XCTAssertTrue(app.buttons["study.start"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["study.start"].isEnabled)
+        XCTAssertTrue(app.buttons["study.start"].label.hasPrefix("Studiendurchgang 2 von 20 in "))
     }
 
     @MainActor

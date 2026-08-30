@@ -190,14 +190,17 @@ struct HomeView: View {
                     } else if appModel.showsNextStudyRun {
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             let enabled = appModel.nextStudyRunIsEnabled(now: context.date)
+                            let nextRunNumber = (appModel.studyState?.confirmedSituationCount ?? 0) + 1
                             Button {
                                 Task { await appModel.openProductiveStudy(viewportSize: geometry.size) }
                             } label: {
                                 if enabled {
-                                    Text("study.nextRun")
+                                    Text(
+                                        "study.nextRun \(nextRunNumber) \(StudySchedule.totalSituationCount)"
+                                    )
                                 } else {
                                     Text(
-                                        "study.nextRun.countdown \(StudyCooldown.formattedRemaining(until: appModel.studyState?.nextSituationAvailableAt, now: context.date))"
+                                        "study.nextRun.countdown \(nextRunNumber) \(StudySchedule.totalSituationCount) \(StudyCooldown.formattedRemaining(until: appModel.studyState?.nextSituationAvailableAt, now: context.date))"
                                     )
                                 }
                             }

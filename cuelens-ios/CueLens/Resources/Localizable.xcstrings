@@ -1035,18 +1035,18 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Remaining wait time" } }
       }
     },
-    "study.nextRun" : {
+    "study.nextRun %lld %lld" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nächster Studiendurchgang" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next study run" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Studiendurchgang %1$lld von %2$lld" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Study run %1$lld of %2$lld" } }
       }
     },
-    "study.nextRun.countdown %@" : {
+    "study.nextRun.countdown %lld %lld %@" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nächster Studiendurchgang in %1$@" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next study run in %1$@" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Studiendurchgang %1$lld von %2$lld in %3$@" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Study run %1$lld of %2$lld in %3$@" } }
       }
     },
     "study.resources.unavailable" : {
