@@ -75,11 +75,30 @@ final class AppShellTests: XCTestCase {
     }
 
     @MainActor
-    func testFeedFailureDoesNotBlockHome() async throws {
+    func testFeedFailureDoesNotBlockHomeAfterNotificationDecision() async throws {
         let model = makeModel(feed: FeedStub(failsLoad: true))
         await model.initialize(lifecyclePhase: .active)
         XCTAssertEqual(model.route, .home)
         XCTAssertEqual(model.notice, .feedLoadFailed)
+    }
+
+    @MainActor
+    func testFeedFailureStillShowsNotificationConsentBeforeDecision() async throws {
+        let settings = SettingsStub(settings: .empty)
+        let notifications = AppNotificationStub(requestResult: true)
+        let model = makeModel(
+            settings: settings,
+            feed: FeedStub(failsLoad: true),
+            notifications: notifications
+        )
+
+        await model.initialize(lifecyclePhase: .active)
+
+        XCTAssertEqual(model.route, .notificationConsent)
+        XCTAssertEqual(model.notice, .feedLoadFailed)
+        XCTAssertTrue(model.notificationOptionEnabled)
+        let requestCount = await notifications.currentRequestCount()
+        XCTAssertEqual(requestCount, 0)
     }
 
     @MainActor

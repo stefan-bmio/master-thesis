@@ -574,7 +574,7 @@ final class CueLensAppModel {
             }
         } catch {
             notice = .feedLoadFailed
-            route = .home
+            await showPostFeedRoute()
         }
     }
 
@@ -600,6 +600,10 @@ final class CueLensAppModel {
                 notice = .settingSaveFailed
             }
         }
+        await showPostFeedRoute()
+    }
+
+    private func showPostFeedRoute() async {
         feed = nil
         if notificationPromptCompleted {
             route = .home

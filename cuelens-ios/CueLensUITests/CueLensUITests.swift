@@ -35,11 +35,14 @@ final class CueLensUITests: XCTestCase {
     }
 
     @MainActor
-    func testFeedFailureStillShowsHomeAndNeutralNotice() {
+    func testFeedFailureStillShowsConsentAndNeutralNotice() {
         let app = makeApp(feed: "error")
         app.launch()
-        XCTAssertTrue(app.staticTexts["app.foundationStatus.ready"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["notification.consent.title"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["app.notice.message"].exists)
+        XCTAssertFalse(app.staticTexts["app.foundationStatus.ready"].exists)
+        declineConsentIfShown(in: app)
+        XCTAssertTrue(app.staticTexts["app.foundationStatus.ready"].waitForExistence(timeout: 2))
     }
 
     @MainActor
