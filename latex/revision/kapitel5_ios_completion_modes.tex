@@ -1,0 +1,99 @@
+%%
+%% Ergänzung zu Kapitel 5: iOS unterstützt direkten und Prolific-Abschluss
+%%
+
+\begin{neu}
+\section{iOS-Unterstützung für direkten und Prolific-Abschluss}
+
+Die iOS-/iPadOS-Implementierung bildet beide im Backend vorgesehenen Abschlussmodi ab, ohne daraus zwei unterschiedliche wissenschaftliche Studienpfade zu erzeugen. Bis einschließlich des zwanzigsten Selbstberichts ist der Clientablauf identisch: Der Request enthält ausschließlich \texttt{app\_token}, \texttt{craving} und \texttt{app\_version}. Weder die bei der Aktivierung verwendete E-Mail-Adresse noch eine Prolific-ID oder ein expliziter Rekrutierungskanal werden mit dem wissenschaftlichen Selbstbericht übertragen. Erst die Antwort des Backends auf Situation~20 entscheidet, welcher administrative Abschlusszustand lokal persistiert wird.
+
+Diese Trennung ist insbesondere für die Datenminimierung und die Konsistenz zwischen Android, iOS und Backend relevant. Der iOS-Client leitet den Abschlussmodus nicht aus dem zuvor eingegebenen Aktivierungs-Identifier ab und speichert hierfür keine separate Prolific-ID im Studienzustand. Damit bleibt die Kanalentscheidung serverseitig an die bereits registrierte pseudonyme App-Identität gebunden. Für die wissenschaftliche Auswertung bleibt der Abschlussmodus von der Messung des Rauchverlangens getrennt.
+
+\subsection{Strikte Unterscheidung der Abschlussantworten}
+
+Der \texttt{SelfReportResponseDecoder} unterscheidet drei Antwortklassen: regulären Fortschritt, direkten Abschluss und Prolific-Abschluss. Für alle Klassen müssen \texttt{success}, \texttt{situation\_index} und \texttt{condition\_code} exakt zum lokal erwarteten Zustand passen. Zusätzliche oder widersprüchliche Felder werden nicht toleriert.
+
+Ein direkter Abschluss wird nur akzeptiert, wenn Situation~20 bestätigt wird, \texttt{status=complete} vorliegt und die Antwort zusätzlich genau einen syntaktisch gültigen UUID-v4-Wert in \texttt{compensation\_code} enthält. Ein Feld \texttt{completion\_mode} darf in diesem Antwortformat nicht vorhanden sein. Dies erhält zugleich die Rückwärtskompatibilität zum bestehenden direkten Backendvertrag.
+
+Der Prolific-Abschluss wird dagegen nur akzeptiert, wenn Situation~20 bestätigt wird, \texttt{status=complete} vorliegt und \texttt{completion\_mode} exakt den Wert \texttt{PROLIFIC\_MANUAL} trägt. Ein \texttt{compensation\_code} ist in diesem Antwortformat unzulässig. Eine Mischform, beispielsweise Prolific-Modus zusammen mit Kompensationscode, wird als Protokollverletzung behandelt und darf keinen lokalen Studienabschluss erzeugen.
+
+Formal kann die Entscheidung des Clients für die letzte Situation als partielle Abbildung
+
+\[
+f(r)=
+\begin{cases}
+D(c), & r \in R_D \land c\text{ ist UUID-v4},\\
+P, & r \in R_P \land \texttt{completion\_mode}=\texttt{PROLIFIC\_MANUAL},\\
+\bot, & \text{sonst}
+\end{cases}
+\]
+
+beschrieben werden. Dabei bezeichnet \(R_D\) die exakt zulässige Feldmenge des direkten Abschlusses, \(R_P\) die Feldmenge des Prolific-Abschlusses und \(\bot\) einen ungültigen Protokollzustand. Der Abschlussmodus entsteht somit nicht durch eine heuristische Interpretation einzelner Felder, sondern durch eine vollständige Vertragsprüfung der Antwort.
+
+\subsection{Persistiertes Abschlusszustandsmodell}
+
+Das lokale \texttt{CompletionState}-Modell unterscheidet \texttt{incomplete}, \texttt{invalid}, \texttt{directPendingConfirmation(code)}, \texttt{directCompleted(code)} und \texttt{prolificCompleted}. Nur \texttt{directCompleted} und \texttt{prolificCompleted} erfüllen die Eigenschaft \texttt{isCompleted}. Für die beiden direkten Zustände ist der Kompensationscode Bestandteil des persistierten Zustands; ein Prolific-Abschluss darf demgegenüber keinen Code enthalten. Auch die Codable-Dekodierung prüft diese Feldmengen strikt, sodass beispielsweise ein lokal gespeicherter \texttt{prolificCompleted}-Zustand mit zusätzlichem Code nicht akzeptiert wird.
+
+Damit entstehen zwei administrative Abschlussautomaten mit gemeinsamer wissenschaftlicher Vorstufe:
+
+\[
+\texttt{pendingCraving}_{20}
+\rightarrow
+\begin{cases}
+\texttt{directPendingConfirmation}(c)
+\rightarrow
+\texttt{directCompleted}(c),\\
+\texttt{prolificCompleted}.
+\end{cases}
+\]
+
+Der zentrale Unterschied besteht darin, dass der direkte Pfad eine zusätzliche serverseitige Bestätigung des Kompensationscodes verlangt, während der Prolific-Pfad nach der gültigen Abschlussantwort unmittelbar abgeschlossen werden kann.
+
+\begin{table}[htbp]
+\centering
+\caption{iOS-seitige Behandlung der beiden Studienabschlussmodi}
+\label{tab:ios-completion-modes}
+\begin{tabular}{p{0.22\textwidth}p{0.31\textwidth}p{0.31\textwidth}}
+\textbf{Merkmal} & \textbf{Direkte Teilnahme} & \textbf{Prolific-Teilnahme} \\
+\hline
+Abschlussantwort & \texttt{status=complete} und UUID-v4-\texttt{compensation\_code} & \texttt{status=complete}, \texttt{completion\_mode=PROLIFIC\_MANUAL}, kein Code \\
+Lokaler Zwischenzustand & \texttt{directPendingConfirmation(code)} & keiner \\
+Zusätzlicher Request & Bestätigung des Codes, erwarteter HTTP-Status 204 & keiner \\
+Persistierter Endzustand & \texttt{directCompleted(code)} & \texttt{prolificCompleted} \\
+Anzeige in der App & Abschlussmeldung, Code und Kopierfunktion & Abschlussmeldung ohne CueLens-Kompensationscode \\
+Prolific-Plattformaktion & keine & keine automatische Freigabe oder Auszahlung durch den iOS-Client \\
+\end{tabular}
+\end{table}
+
+\subsection{Direkter Abschluss mit Kompensationscode}
+
+Beim direkten Abschluss wird der vom Backend erhaltene UUID-v4-Code zunächst als \texttt{directPendingConfirmation} in den geschützten Studienzustand geschrieben. Erst danach sendet der \texttt{StudySubmissionService} einen separaten PUT-Request mit dem Feld \texttt{compensation\_code}. Erwartet wird exakt HTTP~204 mit leerem Responsebody. Der Code ist somit bereits lokal rekonstruierbar, bevor eine nicht atomar mit dem Gerät gekoppelte Netzwerkoperation erfolgt.
+
+Scheitert die Bestätigung durch Netzwerk- oder Serverfehler, verbleibt der Zustand in \texttt{directPendingConfirmation}. Ein späterer Recovery-Versuch sendet dann ausschließlich die Codebestätigung erneut und nicht noch einmal den zwanzigsten wissenschaftlichen Selbstbericht. Erst nach erfolgreicher Bestätigung und erfolgreicher Persistenz wird \texttt{confirmedSituationCount=20} zusammen mit \texttt{directCompleted(code)} gespeichert. Diese Reihenfolge verhindert, dass ein bereits ausgegebener Kompensationscode durch einen lokalen Prozessabbruch verloren geht.
+
+Auf der Startseite wird der Code nur für einen tatsächlich abgeschlossenen direkten Zustand angezeigt. Die Kopierfunktion verwendet \texttt{UIPasteboard} mit \texttt{localOnly=true} und einem Ablaufzeitpunkt nach 600~Sekunden. Dadurch soll der Inhalt nicht über die universelle Zwischenablage an andere Apple-Geräte synchronisiert werden und nur zeitlich begrenzt im Pasteboard verbleiben. Diese Maßnahme reduziert die Exposition des administrativen Zahlungsnachweises, ersetzt jedoch keinen vertraulichen Speicher: Ein Nutzer kann den Code weiterhin manuell kopieren, weitergeben oder als Bildschirmaufnahme erfassen. Der autoritative persistierte Zustand bleibt daher der geschützte lokale Studienzustand und nicht die Zwischenablage.
+
+\subsection{Prolific-Abschluss ohne lokalen Kompensationscode}
+
+Beim Prolific-Pfad wird nach einer gültigen Antwort mit \texttt{completion\_mode=PROLIFIC\_MANUAL} unmittelbar \texttt{prolificCompleted} mit \texttt{confirmedSituationCount=20} persistiert. Dabei wird weder ein CueLens-Kompensationscode erzeugt noch ein Bestätigungsrequest für einen solchen Code versendet. Die iOS-App zeigt entsprechend nur eine kanalspezifische Abschlussinformation an.
+
+Die Bezeichnung \texttt{PROLIFIC\_MANUAL} ist dabei wörtlich zu verstehen: Der iOS-Client führt keine automatische Freigabe, Vergütung oder Statusänderung über eine Prolific-Schnittstelle durch. Die im Backend vorgesehene administrative Markierung des CueLens-Studienabschlusses und die weitere Bearbeitung auf der Prolific-Plattform sind vom wissenschaftlichen iOS-Submissionpfad getrennt. Aus einem lokalen \texttt{prolificCompleted}-Zustand darf daher nicht abgeleitet werden, dass die externe Plattform bereits eine Auszahlung oder finale Submission-Freigabe vorgenommen hat.
+
+Diese Architektur vermeidet insbesondere, dass Prolific-Teilnehmende zusätzlich einen CueLens-Kompensationscode als parallelen Zahlungsnachweis erhalten. Umgekehrt bleibt für direkt Rekrutierte der bestehende Codepfad erhalten. Beide Gruppen erreichen denselben wissenschaftlichen Endpunkt von 20 bestätigten Selbstberichten, unterscheiden sich jedoch in der nachgelagerten administrativen Abwicklung.
+
+\subsection{UI-Verhalten nach Studienabschluss}
+
+Das App-Modell leitet die Darstellung ausschließlich aus dem persistierten Abschlusszustand ab. Bei \texttt{directCompleted(code)} ist \texttt{directCompensationCode} gesetzt; bei \texttt{prolificCompleted} ist stattdessen \texttt{hasProlificCompletion} wahr. Die Startansicht zeigt zunächst in beiden Fällen den allgemeinen Studienabschluss. Nur im direkten Fall folgen Code, Instruktion und Kopierfunktion. Im Prolific-Fall erscheint stattdessen ein eigener Hinweis ohne Codefeld.
+
+Da beide Endzustände \texttt{isCompleted=true} liefern, werden keine weiteren produktiven Studiensituationen angeboten. Damit verhindert die UI nicht nur versehentliche Folgesubmissions, sondern spiegelt den fachlichen Zustandsautomaten wider. Der Unterschied zwischen den Rekrutierungskanälen wird erst nach abgeschlossenem wissenschaftlichem Datensatz sichtbar und beeinflusst weder Cue-Matching noch Cue-Labeling oder die Craving-Erhebung.
+
+\subsection{Verifikation und verbleibende Fehlerfenster}
+
+Automatisierte Domänentests prüfen, dass direkte und Prolific-Abschlussantworten als unterschiedliche Typen dekodiert werden. Test-Fixtures mit ungültigen UUIDs, falscher Bedingung, zusätzlichen Feldern oder widersprüchlichen Abschlusskombinationen werden verworfen. Auf Koordinatorebene wird geprüft, dass der direkte Code vor seiner Bestätigung persistiert wird, dass eine fehlgeschlagene Bestätigung nach einem Neustart ausschließlich als Bestätigungsrequest wiederholt wird und dass der Prolific-Abschluss ohne Code und ohne weiteren Cooldown in den Endzustand übergeht.
+
+Die Unterstützung beider Modi beseitigt jedoch nicht das bereits beschriebene allgemeine Ende-zu-Ende-Problem einer verlorenen Antwort nach serverseitig erfolgreichem Selbstbericht. Besonders relevant ist dies beim direkten zwanzigsten Selbstbericht: Geht die Antwort mit dem neu erzeugten Kompensationscode verloren, besitzt der Client weiterhin nur den zuvor gespeicherten \texttt{pendingCraving}-Zustand und kennt den serverseitig erzeugten Code nicht. Ohne idempotenten Requestschlüssel oder einen Backendendpunkt zum erneuten Abruf des autoritativen Abschlusszustands kann der Client dieses spezielle Fenster nicht allein auflösen. Sobald der direkte Code dagegen einmal empfangen und als \texttt{directPendingConfirmation} persistiert wurde, ist die weitere Bestätigungswiederholung lokal rekonstruierbar.
+
+Beim Prolific-Pfad ist die Recovery günstiger, sofern das Backend bei einem erneuten Request nach bereits gespeichertem zwanzigstem Selbstbericht den bestehenden Prolific-Abschluss erneut als gültige Abschlussantwort zurückliefert. Die Clientarchitektur ist für diesen Fall vorbereitet, da ein weiterhin vorhandenes \texttt{pendingCraving} erneut über denselben Submissionpfad gesendet und eine gültige \texttt{prolificComplete}-Antwort anschließend persistiert wird. Diese Asymmetrie ist kein Unterschied der wissenschaftlichen Messung, sondern eine Folge der unterschiedlichen administrativen Abschlussprotokolle.
+
+Für die Interpretation der Studie ist daher weiterhin die Zahl der serverseitig bestätigten Selbstberichte das maßgebliche Vollständigkeitskriterium. Weder das Vorhandensein eines direkten Kompensationscodes noch der lokale Prolific-Abschlussstatus sollten als eigenständiger wissenschaftlicher Endpunkt ausgewertet werden. Die iOS-Implementierung bildet beide administrativen Modi explizit ab, hält sie aber technisch und semantisch vom eigentlichen Craving-Datensatz getrennt.
+\end{neu}
