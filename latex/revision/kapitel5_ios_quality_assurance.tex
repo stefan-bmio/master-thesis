@@ -1,0 +1,88 @@
+%%
+%% Ergänzung zu Kapitel 5: Umfangreiche iOS-Qualitätssicherung
+%%
+
+\begin{neu}
+\section{Umfangreiche Qualitätssicherung der iOS-/iPadOS-Implementierung}
+
+Die Qualitätssicherung der nativen iOS-/iPadOS-Portierung wurde als mehrstufige Verifikationskette aufgebaut. Sie ergänzt die zuvor beschriebene plattformübergreifende Testarchitektur um iOS-spezifische Prüfungen von Domänenlogik, Persistenz, Netzwerkverträgen, Recovery, SwiftUI-Oberfläche, Accessibility, Buildkonfiguration und Releasehärtung. Für eine medizinisch-informatische Studien-App ist diese Schichtung besonders relevant, weil ein technisch unauffälliger Oberflächenfehler ebenso wie ein Persistenz- oder Protokollfehler die Vollständigkeit, Reihenfolge oder Vertraulichkeit wissenschaftlicher Daten beeinflussen kann.
+
+Die Verifikation lässt sich als Menge komplementärer Nachweise
+
+\[
+V = V_{\mathrm{stat}}
+\cup V_{\mathrm{unit}}
+\cup V_{\mathrm{ui}}
+\cup V_{\mathrm{access}}
+\cup V_{\mathrm{build}}
+\cup V_{\mathrm{manual}}
+\]
+
+auffassen. Die Teilmengen sind nicht gegeneinander austauschbar: Ein bestandener Unit-Test weist beispielsweise weder reale Notification-Zustellung noch die korrekte Distribution-Signatur nach; umgekehrt kann ein manueller Test auf einem einzelnen Gerät keine systematische Prüfung aller Protokollrandfälle ersetzen. Die Freigabeentscheidung wird deshalb nicht aus einer einzelnen Testzahl abgeleitet, sondern aus dem Zusammenspiel mehrerer Verifikationsarten.
+
+\subsection{Dokumentierter automatisierter Testumfang}
+
+Für den am 24.08.2026 dokumentierten Source Candidate weist das Release-Manifest 170 Unit-Tests unter iOS~26.5 und dieselben 170 Unit-Tests unter iOS~17.5 aus. Ergänzend wurden 25 UI-Szenarien auf einem iPhone-Simulator und 25 UI-Szenarien auf einem iPad-Simulator unter iOS~26.5 ausgeführt. Das lokale Quality-Gate und der Release-Analyze-Lauf sind für diesen Stand als bestanden dokumentiert. Die Deployment-Untergrenze der App liegt bei iOS/iPadOS~17.0; der zusätzliche Testlauf auf iOS~17.5 dient damit als verfügbare Laufzeitprüfung nahe der unteren unterstützten Betriebssystemgeneration, ist jedoch kein Nachweis für jede einzelne Minor-Version ab 17.0.
+
+Tabelle~\ref{tab:ios-quality-assurance-layers} ordnet die wesentlichen Ebenen ihrer Aussagekraft und ihren Grenzen zu.
+
+\begin{table}[htbp]
+\centering
+\caption{Ebenen der iOS-/iPadOS-Qualitätssicherung}
+\label{tab:ios-quality-assurance-layers}
+\begin{tabular}{p{0.18\textwidth}p{0.27\textwidth}p{0.27\textwidth}p{0.18\textwidth}}
+\textbf{Ebene} & \textbf{Technischer Schwerpunkt} & \textbf{Dokumentierter Nachweis} & \textbf{Wesentliche Grenze} \\
+\hline
+Statische Gates & Schichtgrenzen, Security-Härtung, Konfiguration, verbotene Konstrukte & mehrere ausführbare Verifikationsskripte im Repository & keine reale Laufzeit- oder Gerätezustellung \\
+Unit-/Infrastructure-Tests & Domainregeln, Parser, Stores, Netzwerkfehler, Recovery, Nebenläufigkeit & 170 Tests auf iOS~26.5 und 170 auf iOS~17.5 & keine produktive Server-/Gerätekette \\
+UI-Tests & Navigation, Formulare, Studienablauf, Retry, beide Abschlüsse & je 25 Szenarien auf iPhone und iPad & synthetische Debug-Testservices statt Live-Backend \\
+Accessibility & Dynamic Type, Kontrast, Elementerkennung, Touchbereiche & maximale Accessibility-Schriftgröße und automatisierter Audit & vollständiger VoiceOver-Rundgang manuell offen \\
+Build/Analyze & Debug, Staging, Releasekonfiguration, Compiler-/Analyze-Befunde & lokales Quality-Gate und Release Analyze bestanden & keine Distribution-Signatur nachgewiesen \\
+Reale Freigabe & Gerät, TestFlight, Notifications, E2E, Langzeitbetrieb & Protokolle und Checklisten vorhanden & zum dokumentierten Stand noch offen \\
+\end{tabular}
+\end{table}
+
+Die Testanzahlen sind dabei keine Code-Coverage-Metrik. Im Repository ist für den betrachteten Source Candidate kein prozentualer Statement-, Branch- oder Path-Coverage-Wert als Freigabekriterium dokumentiert. Die Zahlen belegen daher die Breite wiederholbarer Tests, erlauben aber keine Aussage wie \enquote{170 Tests entsprechen einer bestimmten prozentualen Codeabdeckung}. Für die Bewertung ist stattdessen entscheidend, welche fachlich kritischen Zustände und Fehlerklassen tatsächlich adressiert werden.
+
+\subsection{Unit- und Infrastructure-Tests entlang kritischer Zustandsübergänge}
+
+Die Unit- und Infrastructure-Tests prüfen nicht nur isolierte Hilfsfunktionen, sondern insbesondere fachlich kritische Zustandsautomaten. Dazu gehören die Validierung von Teilnehmeridentifikatoren, der Studienplan mit zehn Matching- und zehn Labeling-Situationen, der Craving-Wertebereich, die strikte Dekodierung der Backendantworten, die Unterscheidung von direktem und Prolific-Abschluss, die Integritätsregeln des persistierten Studienzustands sowie der Start-Gate-Entscheid.
+
+Ein eigener Schwerpunkt liegt auf Fehler- und Recovery-Injektion. Für den produktiven Studienkoordinator wird unter anderem geprüft, dass ein Pending-Craving vor dem ersten Netzwerkrequest persistiert sein muss, dass Netzwerk- oder Protokollfehler keinen lokalen Fortschritt erzeugen, dass ein unerwarteter Situationsindex nicht akzeptiert wird und dass ein fehlender sicherer App-Token fail closed behandelt wird. Für den direkten Abschluss wird getestet, dass der Kompensationscode vor dem separaten Bestätigungsrequest gespeichert wird und ein Neustart nach fehlgeschlagener Bestätigung ausschließlich diesen Request wiederholt. Der Prolific-Pfad wird separat darauf geprüft, dass kein Kompensationscode und kein weiterer Cooldown persistiert werden.
+
+Damit wird die technische Qualitätssicherung direkt auf die wissenschaftlich relevanten Invarianten ausgerichtet. Ein bestandener Test soll nicht lediglich bestätigen, dass eine Methode einen erwarteten Rückgabewert erzeugt, sondern beispielsweise, dass ein Fehler zwischen lokaler Persistenz und Serverkommunikation keinen zusätzlichen Situationsfortschritt vortäuscht. Die Actor-basierte Serialisierung wird ergänzend durch Konkurrenztests geprüft: Zwei gleichzeitig ausgelöste Recovery-Versuche dürfen nicht zwei parallele wissenschaftliche Requests erzeugen.
+
+\subsection{UI-Automation auf iPhone und iPad}
+
+Die XCUITest-Suite deckt den App-Start, Informationsfeed, Sprachumschaltung, Benachrichtigungsauswahl, Aktivierung mit E-Mail-Adresse und Prolific-ID, Fehlerzustände der Aktivierung, Demo, Feedback, produktiven Matching- und Labeling-Ablauf, Pending-Retry sowie beide Abschlussmodi ab. Für den produktiven Matching-Pfad wird beispielsweise geprüft, dass genau fünf Trials vor der Craving-Abfrage durchlaufen werden, der Slider mit 50 startet und nach erfolgreicher Submission ein gesperrter nächster Durchgang angezeigt wird. Weitere Szenarien prüfen den Prolific-Abschluss ohne Code, den direkten Abschluss mit erst nach Abschluss sichtbarer Kopierfunktion sowie eine fehlgeschlagene Codebestätigung mit anschließendem Retry.
+
+Die UI-Suite wird im Quality-Gate getrennt auf einer iPhone- und einer iPad-Simulatorinstanz ausgeführt. Damit werden unterschiedliche Viewportklassen berücksichtigt, ohne für beide Plattformen separate UI-Codebasen zu unterhalten. Der Test auf zwei Geräteklassen ist jedoch kein vollständiger Gerätekompatibilitätsnachweis; reale Displaygrößen, Speicherzustände, Energiesparmodi, Gerätesperre und Betriebssystemplanung von Hintergrundaufgaben werden durch Simulatoren nur unvollständig repräsentiert.
+
+Für die Aussagekraft der UI-Tests ist außerdem die verwendete Testarchitektur zu berücksichtigen. Im Debug-Build können definierte Launch-Argumente eine explizite UI-Testumgebung aktivieren. Diese injiziert unter anderem synthetische Persistenz-, Aktivierungs-, Feature-, Submission- und Kopierdienste sowie einen deterministischen Randomizer. Matching-Zeitintervalle werden für die UI-Automation verkürzt und Abschluss- beziehungsweise Fehlerantworten deterministisch simuliert. Dadurch lassen sich Oberflächen- und Zustandsübergänge reproduzierbar testen, ohne echte Teilnehmerdaten oder produktive Servertransaktionen zu verwenden. Genau deshalb sind diese Tests jedoch nicht mit einem Staging-Ende-zu-Ende-Test gleichzusetzen.
+
+Diese Trennung ist methodisch erwünscht: Die UI-Suite soll Fehler im Client deterministisch reproduzieren, während die reale Integrationskette aus Registrierung, Backend, App-Aktivierung, zwanzig Selbstberichten und administrativem Abschluss separat freigegeben werden muss. Ein erfolgreicher UI-Test des Prolific-Abschlusses belegt somit, dass die App eine gültige \texttt{PROLIFIC\_MANUAL}-Antwort korrekt darstellt; er belegt nicht, dass eine reale Prolific-Registrierung und die produktive administrative Bearbeitung Ende zu Ende funktionieren.
+
+\subsection{Reproduzierbares lokales Quality-Gate}
+
+Die wesentlichen automatisierbaren Prüfungen werden durch \texttt{Scripts/quality\_gate.sh} zu einem lokalen Gate zusammengeführt. Vor den Xcode-Testläufen werden unter anderem Schichtgrenzen, Persistenz-, Netzwerk-, Notification-, Aktivierungs-, Pre-Study-, produktive Studien-, Submission- und Hardening-Regeln sowie Release-Dokumentation und Staging-Konfiguration durch spezialisierte Skripte geprüft. Anschließend verifiziert das Gate die festgelegte Toolchain Xcode~26.6 mit Build~17F113, baut Debug und Staging für den iOS-Simulator, führt die Unit-Tests aus, startet die UI-Suite auf iPhone und iPad und prüft abschließend die Release-Konfiguration.
+
+Die Fixierung der Toolchain reduziert eine häufige Reproduzierbarkeitsquelle bei Swift-/Xcode-Projekten: Ein Testlauf mit einer anderen Compiler- oder SDK-Version wird nicht stillschweigend als gleichwertig behandelt. Gleichzeitig ist diese Entscheidung wartungsrelevant. Ein späteres Xcode-Update erfordert eine bewusste Anpassung und erneute Verifikation des Gates, statt die Toolchain unkontrolliert zu verändern.
+
+Zusätzlich zum Quality-Gate ist ein Release-Analyze-Lauf vorgesehen. Für den dokumentierten Source Candidate wird dieser als bestanden geführt. Die Security- und Hardening-Prüfungen kontrollieren unter anderem das Fehlen von Force-Unwraps, \texttt{try!}, erzwungenen Casts, unerlaubten Release-Endpunkten, Tracking-/Analytics-SDKs und bestimmten nicht benötigten Berechtigungen beziehungsweise Entitlements. Solche statischen Negativprüfungen sind besonders geeignet, unerwünschte Architekturabweichungen früh zu erkennen; sie ersetzen jedoch keine Laufzeitprüfung des final signierten Artefakts.
+
+\subsection{Accessibility als Qualitätsmerkmal}
+
+Barrierefreiheit wurde nicht ausschließlich als nachgelagerte manuelle Prüfung behandelt. Ein UI-Szenario startet die App mit der maximalen Accessibility-Schriftgröße und prüft, ob zentrale Formulare und Aktionen weiterhin erreichbar beziehungsweise scrollbar bleiben. Ein weiterer Test verwendet den automatisierten Accessibility-Audit von XCTest für Kontrast, Elementerkennung und Touchbereiche auf der Startansicht. Zusätzlich enthalten die UI-Szenarien fachlich neutrale Accessibility-Labels für Studienbilder und prüfen die Beschriftung des Craving-Sliders.
+
+Automatisierte Accessibility-Prüfungen erfassen jedoch nicht die vollständige Nutzung mit assistiven Technologien. Die vorhandene Review-Checkliste sieht deshalb weiterhin einen manuellen VoiceOver-Gesamtrundgang in Deutsch und Englisch, die Fokusreihenfolge nach Zustandsänderungen, Hoch- und Querformat auf iPad sowie die Bedienbarkeit bei maximaler Schriftgröße vor. Insbesondere die neutrale Beschreibung rauchbezogener Reizbilder ist hier nicht nur eine Bedienbarkeits-, sondern auch eine studienmethodische Anforderung, weil eine suggestive Accessibility-Beschriftung die intendierte Reizverarbeitung verändern könnte.
+
+\subsection{Trennung von automatisierter Verifikation und Releasefreigabe}
+
+Der dokumentierte DoD-Audit unterscheidet konsequent zwischen \enquote{BESTANDEN automatisiert}, \enquote{MANUELL OFFEN} und \enquote{EXTERN OFFEN}. Zum betrachteten Stand sind in den automatisierten Prüfungen keine offenen kritischen oder hohen Produktbefunde dokumentiert. Daraus wurde dennoch keine Releasefreigabe abgeleitet. Der Gesamtstatus bleibt \texttt{RELEASE BLOCKED}, weil mehrere Nachweise außerhalb der Simulator- und Repositorytests fehlen.
+
+Zu diesen offenen Gates gehören insbesondere reale Tests von Gerätesperre und App-Switcher-Sichtschutz, Notification-Systemverhalten, ein vollständiger VoiceOver-Rundgang, ein Distribution-signiertes Archiv, TestFlight auf mehreren realen Geräten, je ein vollständiger direkter und Prolific-Staging-Abschluss sowie der geplante 14-Tage-Langzeittest. Zusätzlich bleiben der Abgleich der Datenschutzangaben und die formalen externen Freigaben eigenständige Voraussetzungen. Ein vorhandenes Development-signiertes Archiv mit \texttt{get-task-allow=true} wird ausdrücklich nicht als Distributionsnachweis gewertet.
+
+Für den Langzeittest liegt bereits ein datensparsames Protokoll vor. Vorgesehen sind 20 Situationen mit produktivem dreistündigem Cooldown über mindestens 14 Kalendertage, App- und Geräteneustarts, Sprachwechsel, Notification-Erlaubnis und -Entzug, Hintergrundphasen, kontrollierte Netzwerkunterbrechung nach persistiertem Pending-Wert, manueller Retry sowie beide administrativen Abschlusswege auf mindestens zwei Geräten beziehungsweise Geräteläufen. Zum dokumentierten Stand ist dieses Protokoll mit \enquote{NICHT DURCHGEFÜHRT} gekennzeichnet. Die Existenz des Testplans wird daher nicht als Testergebnis ausgegeben.
+
+Diese Trennung verhindert eine Überinterpretation automatisierter Testzahlen. Die iOS-Portierung besitzt einen umfangreichen und reproduzierbaren technischen Nachweis auf Quellcode-, Simulator- und Build-Ebene. Aussagen über reale Langzeitstabilität, Distribution, tatsächliche Notification-Zustellung oder vollständige Ende-zu-Ende-Integration werden dagegen erst nach den dafür vorgesehenen manuellen beziehungsweise externen Prüfungen gerechtfertigt. Für die Masterarbeit ist damit sowohl der erreichte technische Reifegrad als auch dessen Grenze nachvollziehbar dokumentiert.
+\end{neu}
