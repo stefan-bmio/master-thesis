@@ -2,7 +2,6 @@
 %% Ergänzung zu Kapitel 4: Technische Anforderungen an Endgeräte
 %%
 
-\begin{neu}
 \section{Aktualisierte Plattformanforderungen}
 
 Die produktive CueLens-App verwendet als minimale Plattform Android 7.0 beziehungsweise API-Level 24. Sie wird gegen das aktuelle Android-SDK 36 kompiliert und auf dieses Ziel-SDK ausgerichtet. Mit dieser Untergrenze stehen die für die Implementierung benötigten Sicherheits- und Hintergrundmechanismen zur Verfügung, insbesondere Android Keystore, AES-GCM, DataStore und WorkManager. Ältere Android-Geräte können die App nicht installieren.
@@ -40,4 +39,3 @@ Die Vorverarbeitung benötigt genügend Arbeitsspeicher, um ein ausgewähltes Bi
 Die in einem frühen Proof of Concept protokollierten Angaben zu Laufzeit und Arbeitsspeicher sind vor der Übernahme in die endgültigen Anforderungen mit einem reproduzierbaren Messverfahren und korrekter Einheit zu überprüfen. Insbesondere ist eine Speicherangabe in der Größenordnung mehrerer hundert Gigabyte für ein Smartphone technisch nicht plausibel und als Dokumentations- oder Einheitenfehler zu behandeln. Für die Endfassung sind Android-Profiler-Messungen, Modellgrößen, mittlere und 95-Prozent-Laufzeiten sowie das Verhalten auf einem leistungsschwächeren Referenzgerät anzugeben.
 
 Eine spätere Integration der KI-Funktion in die Studien-App würde außerdem die APK-Größe und den Installationsaufwand erhöhen. Die Entscheidung darf daher nicht allein auf der Klassifikationsgüte beruhen. Zu berücksichtigen sind Modellgröße, Startzeit, Energie- und Speicherbedarf sowie der Datenschutzvorteil der lokalen Verarbeitung. Ebenso relevant ist der methodische Nutzen gegenüber den bereits kontrolliert gebündelten Studienreizen.
-\end{neu}
