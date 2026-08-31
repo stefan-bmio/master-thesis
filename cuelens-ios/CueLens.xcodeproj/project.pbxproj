@@ -12,7 +12,6 @@
 		100000000000000000000403 /* StudyViewportPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000103 /* StudyViewportPolicy.swift */; };
 		100000000000000000000404 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000104 /* Localizable.xcstrings */; };
 		100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000105 /* PrivacyInfo.xcprivacy */; };
-		100000000000000000000901 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000900 /* Assets.xcassets */; };
 		100000000000000000000406 /* StudyViewportPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000106 /* StudyViewportPolicyTests.swift */; };
 		100000000000000000000407 /* CueLensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000107 /* CueLensUITests.swift */; };
 		100000000000000000000410 /* DomainValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000130 /* DomainValidationError.swift */; };
@@ -96,12 +95,13 @@
 		100000000000000000000811 /* ProductiveStudySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000801 /* ProductiveStudySession.swift */; };
 		100000000000000000000812 /* StudyContentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000802 /* StudyContentRepository.swift */; };
 		100000000000000000000813 /* ProductiveStudyCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000803 /* ProductiveStudyCoordinator.swift */; };
-		100000000000000000000814 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000804 /* Assets */; };
-		100000000000000000000815 /* study-content-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000805 /* study-content-v1.json */; };
-		100000000000000000000816 /* study-assets-manifest-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000806 /* study-assets-manifest-v1.json */; };
+		100000000000000000000814 /* Resources/Study/Assets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000804 /* Resources/Study/Assets */; };
+		100000000000000000000815 /* Resources/Study/study-content-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000805 /* Resources/Study/study-content-v1.json */; };
+		100000000000000000000816 /* Resources/Study/study-assets-manifest-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000806 /* Resources/Study/study-assets-manifest-v1.json */; };
 		100000000000000000000817 /* ProductiveStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000807 /* ProductiveStudyView.swift */; };
-		100000000000000000000840 /* AccessibilityHardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000841 /* AccessibilityHardeningTests.swift */; };
 		100000000000000000000832 /* ProductiveStudyCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */; };
+		100000000000000000000840 /* AccessibilityHardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000841 /* AccessibilityHardeningTests.swift */; };
+		100000000000000000000901 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000900 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,7 +127,6 @@
 		100000000000000000000103 /* StudyViewportPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyViewportPolicy.swift; sourceTree = "<group>"; };
 		100000000000000000000104 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		100000000000000000000105 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		100000000000000000000900 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		100000000000000000000106 /* StudyViewportPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyViewportPolicyTests.swift; sourceTree = "<group>"; };
 		100000000000000000000107 /* CueLensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueLensUITests.swift; sourceTree = "<group>"; };
 		100000000000000000000108 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -222,30 +221,27 @@
 		100000000000000000000236 /* Feedback/FeedbackCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback/FeedbackCoordinator.swift; sourceTree = "<group>"; };
 		100000000000000000000237 /* Links/ExternalLinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Links/ExternalLinkCoordinator.swift; sourceTree = "<group>"; };
 		100000000000000000000238 /* PreStudyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyViews.swift; sourceTree = "<group>"; };
-		100000000000000000000239 /* Resources/Study/Assets/cue_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/cue_000.png; sourceTree = SOURCE_ROOT; };
-		100000000000000000000240 /* Resources/Study/Assets/cue_001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/cue_001.png; sourceTree = SOURCE_ROOT; };
-		100000000000000000000241 /* Resources/Study/Assets/match_a_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/match_a_000.png; sourceTree = SOURCE_ROOT; };
-		100000000000000000000242 /* Resources/Study/Assets/match_b_000.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Resources/Study/Assets/match_b_000.png; sourceTree = SOURCE_ROOT; };
 		100000000000000000000243 /* DemoSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSessionTests.swift; sourceTree = "<group>"; };
 		100000000000000000000244 /* FeedbackCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000245 /* ExternalLinkCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinkCoordinatorTests.swift; sourceTree = "<group>"; };
 		100000000000000000000246 /* PreStudyAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStudyAppModelTests.swift; sourceTree = "<group>"; };
 		100000000000000000000247 /* verify_prestudy_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_prestudy_security.sh; sourceTree = "<group>"; };
+		100000000000000000000800 /* StudyContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContent.swift; sourceTree = "<group>"; };
+		100000000000000000000801 /* ProductiveStudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudySession.swift; sourceTree = "<group>"; };
+		100000000000000000000802 /* StudyContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContentRepository.swift; sourceTree = "<group>"; };
+		100000000000000000000803 /* ProductiveStudyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinator.swift; sourceTree = "<group>"; };
+		100000000000000000000804 /* Resources/Study/Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/Study/Assets; sourceTree = SOURCE_ROOT; };
+		100000000000000000000805 /* Resources/Study/study-content-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Resources/Study/study-content-v1.json"; sourceTree = SOURCE_ROOT; };
+		100000000000000000000806 /* Resources/Study/study-assets-manifest-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Resources/Study/study-assets-manifest-v1.json"; sourceTree = SOURCE_ROOT; };
+		100000000000000000000807 /* ProductiveStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyView.swift; sourceTree = "<group>"; };
+		100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinatorTests.swift; sourceTree = "<group>"; };
+		100000000000000000000841 /* AccessibilityHardeningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHardeningTests.swift; sourceTree = "<group>"; };
 		100000000000000000000842 /* verify_hardening_security.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_hardening_security.sh; sourceTree = "<group>"; };
 		100000000000000000000843 /* verify_release_archive.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_archive.sh; sourceTree = "<group>"; };
 		100000000000000000000844 /* verify_release_documentation.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_documentation.sh; sourceTree = "<group>"; };
 		100000000000000000000845 /* verify_release_candidate.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = verify_release_candidate.sh; sourceTree = "<group>"; };
 		100000000000000000000846 /* ExportOptions-AppStore.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ExportOptions-AppStore.example.plist"; sourceTree = "<group>"; };
-		100000000000000000000800 /* StudyContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContent.swift; sourceTree = "<group>"; };
-		100000000000000000000801 /* ProductiveStudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudySession.swift; sourceTree = "<group>"; };
-		100000000000000000000802 /* StudyContentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContentRepository.swift; sourceTree = "<group>"; };
-		100000000000000000000803 /* ProductiveStudyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinator.swift; sourceTree = "<group>"; };
-		100000000000000000000804 /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/Study/Assets; sourceTree = SOURCE_ROOT; };
-		100000000000000000000805 /* study-content-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-content-v1.json; sourceTree = SOURCE_ROOT; };
-		100000000000000000000806 /* study-assets-manifest-v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/Study/study-assets-manifest-v1.json; sourceTree = SOURCE_ROOT; };
-		100000000000000000000807 /* ProductiveStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyView.swift; sourceTree = "<group>"; };
-		100000000000000000000822 /* ProductiveStudyCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductiveStudyCoordinatorTests.swift; sourceTree = "<group>"; };
-		100000000000000000000841 /* AccessibilityHardeningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHardeningTests.swift; sourceTree = "<group>"; };
+		100000000000000000000900 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,9 +325,9 @@
 				100000000000000000000105 /* PrivacyInfo.xcprivacy */,
 				100000000000000000000194 /* Info.plist */,
 				100000000000000000000199 /* StagingInfo.plist */,
-				100000000000000000000804 /* Assets */,
-				100000000000000000000805 /* study-content-v1.json */,
-				100000000000000000000806 /* study-assets-manifest-v1.json */,
+				100000000000000000000804 /* Resources/Study/Assets */,
+				100000000000000000000805 /* Resources/Study/study-content-v1.json */,
+				100000000000000000000806 /* Resources/Study/study-assets-manifest-v1.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -495,15 +491,6 @@
 			path = Infrastructure;
 			sourceTree = "<group>";
 		};
-		100000000000000000000820 /* Study */ = {
-			isa = PBXGroup;
-			children = (
-				100000000000000000000803 /* ProductiveStudyCoordinator.swift */,
-				100000000000000000000802 /* StudyContentRepository.swift */,
-			);
-			path = Study;
-			sourceTree = "<group>";
-		};
 		100000000000000000000020 /* Keychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -615,6 +602,15 @@
 			name = Activation;
 			sourceTree = "<group>";
 		};
+		100000000000000000000820 /* Study */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000803 /* ProductiveStudyCoordinator.swift */,
+				100000000000000000000802 /* StudyContentRepository.swift */,
+			);
+			path = Study;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -723,9 +719,9 @@
 				100000000000000000000901 /* Assets.xcassets in Resources */,
 				100000000000000000000404 /* Localizable.xcstrings in Resources */,
 				100000000000000000000405 /* PrivacyInfo.xcprivacy in Resources */,
-				100000000000000000000814 /* Assets in Resources */,
-				100000000000000000000815 /* study-content-v1.json in Resources */,
-				100000000000000000000816 /* study-assets-manifest-v1.json in Resources */,
+				100000000000000000000814 /* Resources/Study/Assets in Resources */,
+				100000000000000000000815 /* Resources/Study/study-content-v1.json in Resources */,
+				100000000000000000000816 /* Resources/Study/study-assets-manifest-v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -944,6 +940,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 100000000000000000000111 /* Release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NQ733BXCZL;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = CueLens/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueLens;
@@ -956,6 +955,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_MODULE_NAME = CueLens;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
