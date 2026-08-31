@@ -1,0 +1,66 @@
+%%
+%% Ergänzung zu Kapitel 5: Erweiterte automatisierte Tests Android/Backend/Web
+%%
+
+\begin{neu}
+\section{Erweiterte automatisierte Verifikation von Android, Backend und Weboberfläche}
+
+Die Erweiterungen für Prolific, die kanalabhängigen Abschlussmodi und das Recovery-Zustandsmodell erhöhen die Zahl möglicher Zustandskombinationen deutlich. Die Qualitätssicherung wurde deshalb nicht auf einzelne Happy-Path-Tests beschränkt, sondern auf mehrere Testebenen verteilt. Dabei werden reine Transformations- und Protokollregeln ohne externe Abhängigkeiten als Unit-Tests geprüft, persistente Datenübergänge gegen temporäre MariaDB-Tabellen verifiziert, Android-spezifische Persistenz- und UI-Eigenschaften als instrumentierte Tests ausgeführt und das Verhalten des Registrierungsformulars zusätzlich in einem realen Firefox-Browser über WebDriver geprüft. Diese Schichtung ist insbesondere für die medizinisch-informatische Anwendung relevant, weil Fehler nicht nur die Bedienbarkeit, sondern auch Vollständigkeit, Zuordnung und Datenschutz des wissenschaftlichen Datensatzes beeinflussen können.
+
+Tabelle~\ref{tab:automated-test-layers} fasst die wesentlichen Testebenen zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Automatisierte Testebenen der CueLens-Implementierung}
+\label{tab:automated-test-layers}
+\begin{tabular}{p{0.20\textwidth}p{0.28\textwidth}p{0.37\textwidth}}
+\textbf{Testebene} & \textbf{Technische Umgebung} & \textbf{Schwerpunkt} \\
+\hline
+Android Unit-Tests & JVM/JUnit & Identifier, Response-Parsing, Controllerzustände, Protokoll- und Entscheidungslogik \\
+Android Instrumentierung & Android-Gerät oder Emulator & SharedPreferences, Keystore, Recovery, Compose-UI und Benachrichtigungen \\
+Backend Unit-Tests & PHP/PHPUnit & Validierung, Prolific-API-Logik, Abschlussantworten, Fehler- und Datenschutzregeln \\
+Backend Integration & PHPUnit mit MariaDB & Migrationen, Transaktionen, kanalabhängige Persistenz und idempotente Abschlusslogik \\
+Web-Browser-Tests & Firefox/GeckoDriver/WebDriver & tatsächliches DOM-Verhalten, lokalisierte Validierung und kanalabhängige Formularfelder \\
+\end{tabular}
+\end{table}
+
+\subsection{Parallele Testvektoren für Teilnehmeridentifikatoren}
+
+Die Syntax des Teilnehmeridentifikators wird sowohl im PHP-Backend als auch im Android-Client getestet. Beide Suiten enthalten positive Fälle für gemischt geschriebene und rein numerische 24-stellige Prolific-IDs sowie E-Mail-Adressen. Als negative Testvektoren werden unter anderem 23 beziehungsweise 25 Zeichen, interne Leerzeichen, Satzzeichen, Unicode-Zeichen, eingebettete Zeilenumbrüche und syntaktisch unvollständige E-Mail-Adressen verwendet. Für Prolific wird zusätzlich geprüft, dass die Groß-/Kleinschreibung erhalten bleibt, während E-Mail-Adressen für den Aktivierungsvergleich normalisiert werden können. Damit wird eine wesentliche Protokollinvariante doppelt abgesichert: Eine Eingabe, die der Client akzeptiert, soll auch serverseitig demselben Registrierungskanal zugeordnet werden.
+
+Die Testvektoren liegen derzeit jedoch in zwei sprachspezifischen Testdateien und werden nicht aus einer gemeinsamen maschinenlesbaren Spezifikation generiert. Die Übereinstimmung ist damit getestet, aber nicht strukturell erzwungen. Bei zukünftigen Änderungen wäre eine gemeinsame Fixture-Datei sinnvoll, aus der Android- und Backendtests dieselben gültigen und ungültigen Beispiele beziehen. Dies würde das Risiko einer schleichenden Divergenz zwischen Kotlin- und PHP-Parser reduzieren.
+
+\subsection{Backendtests für Registrierung, Prolific und Abschluss}
+
+Die serverseitige Registrierungsvalidierung prüft explizit beide Kanäle. Für direkte Registrierungen müssen Name, IBAN und BIC weiterhin vorhanden sein; bei einer Prolific-ID dürfen diese Felder fehlen. Werden sie bei einem manipulierten Request dennoch mitgesendet, setzt die serverseitige Validierung sie auf \texttt{NULL}. Weitere Tests stellen sicher, dass Alter, täglicher Zigarettenkonsum und beide Zustimmungsfelder unabhängig vom Registrierungskanal mit denselben Grenzen geprüft werden. Konfligierende neue und ältere Identifier-Felder werden abgelehnt, während das frühere E-Mail-Feld aus Gründen der Rückwärtskompatibilität weiterhin verarbeitet werden kann.
+
+Die MariaDB-Integrationstests prüfen zusätzlich die Datenbankmigration auf das duale Registrierungsmodell. Bestehende direkte Datensätze müssen erhalten bleiben und als \texttt{DIRECT} klassifiziert werden. Neue Prolific-Registrierungen speichern dagegen weder E-Mail-Adresse, Name noch Bankverbindung und erzeugen keinen Double-Opt-In-Token. Duplikate werden kanalbezogen erkannt. Damit wird nicht nur die Validierungsfunktion, sondern auch die tatsächlich persistierte Datenform getestet.
+
+Für die Prolific-API wird ein ersetzbarer HTTP-Transport verwendet. Dadurch lassen sich API-Antworten deterministisch simulieren, ohne während des Unit-Tests externe Requests auszuführen. Getestet werden die zugelassenen Submission-Statuswerte, die Normalisierung von Statusschreibweisen, exakte und case-sensitive Teilnehmer-ID-Zuordnung, mehrseitige Pagination sowie die Unterscheidung zwischen einem vollständig durchsuchten negativen Ergebnis und einem technischen Fehler. Nicht erfolgreiche HTTP-Statuscodes, ungültiges JSON, unvollständige Antwortobjekte, ungültige Konfiguration und eine nicht fortschreitende Pagination führen erwartungsgemäß in einen Fehlerzustand. Zusätzlich wird geprüft, dass das API-Token ausschließlich im Authorization-Header und nicht in der URL übertragen wird.
+
+Die Abschlusslogik besitzt sowohl isolierte Protokolltests als auch Datenbankintegrationstests. Die Unit-Tests verifizieren, dass ein direkter Abschluss einen UUID-v4-Abrechnungscode, aber kein \texttt{completion\_mode}-Feld enthält, während ein Prolific-Abschluss ausschließlich \texttt{completion\_mode=PROLIFIC\_MANUAL} und keinen Abrechnungscode zurückgibt. Die MariaDB-Tests durchlaufen beide Pfade bis zum zwanzigsten Bericht. Für Prolific wird dabei geprüft, dass kein Eintrag in der Tabelle für Abrechnungscodes entsteht, der administrative Abschluss idempotent gesetzt wird und eine wiederholte Finalisierung keine zweite Benachrichtigung erzeugt. Ein simulierter Ausfall der administrativen Datenbank nach dem zwanzigsten wissenschaftlichen Bericht lässt sich durch einen späteren Retry beheben, ohne einen zusätzlichen Selbstbericht anzulegen.
+
+Ein zusätzlicher Testschwerpunkt betrifft datensparsame operative Benachrichtigungen. Für Registrierung und Studienabschluss werden Betreff und notwendige technische Metadaten geprüft, gleichzeitig aber explizit ausgeschlossen, dass Prolific-ID, E-Mail-Adresse, App-Token, HMAC-Werte, Craving-Werte, Name oder Bankdaten in den Benachrichtigungstext gelangen. Auch ein Fehler des E-Mail-Transports darf den eigentlichen Anwendungsablauf nicht als Ausnahme verlassen. Damit werden Datenschutzanforderungen als automatisierbare Negativanforderungen formuliert: Bestimmte Werte müssen nachweislich \emph{nicht} in einem sekundären Kommunikationskanal erscheinen.
+
+\subsection{Android-Tests für Protokoll, Persistenz und Recovery}
+
+Auf Android werden die beiden Abschlussresponseformen zunächst ohne Geräteabhängigkeit durch JVM-Tests geprüft. Ein direkter Abschluss wird nur akzeptiert, wenn der zwanzigste Situationsindex, \texttt{CUE\_LABELING} und ein gültiger UUID-v4-Code gemeinsam vorliegen. Ein Prolific-Abschluss wird nur akzeptiert, wenn der Modus exakt \texttt{PROLIFIC\_MANUAL} lautet und kein Abrechnungscode vorhanden ist. Unbekannte Modi, widersprüchliche Felder und inkonsistente Situations-/Bedingungspaare erzeugen einen Protokollfehler. Zusätzlich wird die Rekonstruktion persistierter Abschlusszustände geprüft, einschließlich der Migration älterer direkter Zustände und des fail-closed-Verhaltens bei widersprüchlichen Kombinationen.
+
+Geräte- beziehungsweise Emulator-Tests ergänzen diese Logik dort, wo Android-spezifische Persistenz relevant ist. Für den Prolific-Abschluss wird geprüft, dass Abschlussmodus und Fortschritt nach einer Neuerzeugung des Stores erhalten bleiben, kein Abrechnungscode persistiert wird und kein ausstehender Craving-Wert verbleibt. Ein gleichzeitig als abgeschlossen und ausstehend markierter Zustand wird als \texttt{Invalid} interpretiert. Die Recovery-Tests simulieren außerdem einen fehlgeschlagenen finalen Prolific-Upload, eine erfolgreiche Wiederholung, einen regulären Direktabschluss und einen Ausfall zwischen Empfang und Bestätigung des direkten Abrechnungscodes. Im letztgenannten Fall wird beim Retry ausschließlich die Codebestätigung erneut gesendet und der Selbstbericht nicht wiederholt.
+
+Diese Tests ergänzen die bereits vorhandenen instrumentierten Prüfungen für Android Keystore, Compose-Oberflächen und Benachrichtigungen. Zusammen entsteht damit eine Trennung zwischen plattformunabhängigen Protokollregeln und Eigenschaften, die tatsächlich Android-Runtime, SharedPreferences, Keystore oder UI benötigen. Das reduziert die Laufzeit der häufig ausgeführten Unit-Tests, ohne gerätespezifische Risiken vollständig zu abstrahieren.
+
+\subsection{Browserbasierte Prüfung des Registrierungsformulars}
+
+Die Registrierungswebseite wird nicht ausschließlich über serverseitige PHP-Tests geprüft. \texttt{FormValidationBrowserTest.php} startet beziehungsweise verwendet GeckoDriver, erzeugt eine Firefox-WebDriver-Sitzung und ruft die tatsächlich ausgelieferten deutschen und englischen Registrierungsseiten auf. Die Tests prüfen unter anderem die lokalisierte Beschriftung des gemeinsamen Identifier-Felds, die sichtbaren Validierungsmeldungen, den Wechsel zwischen direktem und Prolific-Modus sowie das resultierende DOM-Verhalten.
+
+Besonders relevant für die Datenminimierung ist der Test des Prolific-Modus: Nach Eingabe einer syntaktisch gültigen Prolific-ID müssen Name, IBAN und BIC geleert, deaktiviert und von der Pflichtfeldprüfung ausgenommen sein. Über \texttt{FormData} wird zusätzlich kontrolliert, dass diese deaktivierten Felder nicht Bestandteil des zu sendenden Formulars sind. Beim Wechsel zurück zu einer E-Mail-Adresse müssen dieselben Felder wieder aktiviert und als Pflichtfelder gesetzt werden. Ein gültiges Prolific-Formular mit Alter, Zigarettenkonsum und Einwilligungen muss die native Browser-Constraint-Validation bestehen; ein ungültiger Identifier muss dagegen eine lokalisierte Fehlermeldung erzeugen.
+
+Die Browsertests sind damit stärker als reine JavaScript-Unit-Tests, weil sie DOM, Browservalidierung und die ausgelieferte HTML-Struktur gemeinsam prüfen. Sie sind jedoch kein vollständiger produktiver Ende-zu-Ende-Test: Die Testklasse prüft primär das clientseitige Formularverhalten und setzt eine erreichbare Test-Webseite voraus. Die tatsächliche Registrierung mit produktiver Prolific-API, produktiver Datenbank, E-Mail-Versand und anschließendem App-Aktivierungsprozess wird dadurch nicht vollständig durchlaufen.
+
+\subsection{Aussagekraft und Ausführungsabhängigkeiten}
+
+Die Existenz eines automatisierten Tests ist von seiner erfolgreichen Ausführung zu unterscheiden. Reine Android- und PHP-Unit-Tests besitzen wenige externe Voraussetzungen und eignen sich deshalb für häufige Regressionstests. MariaDB-Integrationstests benötigen dagegen explizit konfigurierte isolierte Testdatenbanken; fehlen die entsprechenden Umgebungsvariablen, werden sie übersprungen. Die Browser-Suite benötigt eine erreichbare Testinstanz, die PHP-cURL-Erweiterung, GeckoDriver und eine lauffähige Firefox-Installation und markiert sich bei fehlenden Voraussetzungen ebenfalls als übersprungen. Android-Instrumentierungstests benötigen ein Gerät oder einen Emulator.
+
+Für eine belastbare Freigabe darf daher nicht allein der Exit-Code eines Testlaufs betrachtet werden. Zusätzlich sind Anzahl und Gründe übersprungener Tests zu kontrollieren. Insbesondere die Aussage ``alle Tests erfolgreich'' wäre methodisch unzureichend, wenn datenbank- oder geräteabhängige Suiten mangels Umgebung gar nicht ausgeführt wurden. Die automatisierte Testarchitektur erhöht damit die Reproduzierbarkeit der technischen Verifikation, ersetzt aber weder die Kontrolle der konkreten Testumgebung noch manuelle Ende-zu-Ende-Prüfungen auf realen Geräten und gegen eine Staging-Infrastruktur.
+\end{neu}
