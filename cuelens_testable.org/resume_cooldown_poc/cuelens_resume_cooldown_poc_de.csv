@@ -1,0 +1,9 @@
+type,title,content,trialText,stim1,stimFormat,stimSize,presTime,button1,button2,responseType,head,body,timer
+instructions,"Resume-/Cooldown-PoC","Dieser technische PoC prüft, ob Testable einen begonnenen Ablauf nach Browser-Schließen oder einer längeren Unterbrechung fortsetzt. Verwenden Sie für den ersten Selbstbericht den Wert 23 und für den zweiten den Wert 77.",,,,,,,,,,,
+test,,,"Markierung für Durchgang 1",cue_000,.png,60%,,"Linke Option","Rechte Option",,,,
+form,,,,,,,,,,slider,"Selbstbericht 1 – vor der Pause","Stellen Sie für diesen technischen Test bitte den Wert 23 ein.",
+instructions,"Cooldown-Test","Nach dem Klick auf Weiter beginnt eine dreiminütige Pause. Warten Sie, bis der Countdown sichtbar ist. Schließen oder sperren Sie den Browser dann entsprechend dem Testprotokoll.",,,,,,,,,,,
+learn,,,"Cooldown läuft. Bitte schließen oder sperren Sie den Browser jetzt gemäß Testprotokoll. Nach Ablauf soll Testable automatisch mit Durchgang 2 fortfahren.",matching_scene_000,.png,60%,180000,,,,,,"3m, topRight xl, orange last 30s"
+instructions,"Durchgang 2 ist erreichbar","Wenn Sie diese Seite sehen, hat Testable den Ablauf bis hinter die Pause fortgesetzt. Fahren Sie mit Durchgang 2 fort.",,,,,,,,,,,
+test,,,"Markierung für Durchgang 2",cue_001,.png,60%,,"Linke Option","Rechte Option",,,,
+form,,,,,,,,,,slider,"Selbstbericht 2 – nach der Pause","Stellen Sie für diesen technischen Test bitte den Wert 77 ein. Schließen Sie danach den Ablauf bis zum Testable-Debrief ab.",
