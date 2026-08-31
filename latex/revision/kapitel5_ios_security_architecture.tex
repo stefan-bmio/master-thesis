@@ -1,0 +1,74 @@
+%%
+%% Ergänzung zu Kapitel 5: iOS-spezifische Sicherheitsarchitektur
+%%
+
+\begin{neu}
+\section{iOS-spezifische Sicherheitsarchitektur}
+
+Die iOS-/iPadOS-Portierung übernimmt die fachlichen Sicherheitsziele der plattformunabhängigen Spezifikation, setzt sie jedoch mit den nativen Schutzmechanismen von iOS um. Das Sicherheitskonzept folgt dabei keinem einzelnen Schutzmechanismus, sondern einer mehrschichtigen Architektur aus Credential-Schutz, geschützter Dateipersistenz, restriktiver Netzwerkkommunikation, strikter Protokollvalidierung, minimierten Berechtigungen und fail-closed behandelten Zustandsfehlern. Für die Studienanwendung ist diese Schichtung relevant, weil lokal sowohl ein dauerhaftes App-Token als auch temporär ein Craving-Wert und gegebenenfalls ein Kompensationscode verarbeitet werden. Ein Fehler in einer einzelnen Schicht soll deshalb nicht automatisch zu einer Freigabe der produktiven Studie oder zu einer unkontrollierten Weiterverarbeitung führen.
+
+Tabelle~\ref{tab:ios-security-layers} fasst die wichtigsten Schutzschichten zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{iOS-spezifische Schutzschichten der CueLens-App}
+\label{tab:ios-security-layers}
+\begin{tabular}{p{0.22\textwidth}p{0.34\textwidth}p{0.31\textwidth}}
+\textbf{Schutzobjekt} & \textbf{Mechanismus} & \textbf{Fehlerverhalten} \\
+\hline
+App-Token & Keychain, nicht synchronisierbar, \texttt{WhenUnlockedThisDeviceOnly} & ungültiger oder nicht lesbarer Token sperrt Aktivierung und produktive Nutzung \\
+Studienzustand & atomare Datei mit vollständigem Dateischutz und Backup-Ausschluss & Schema-, Größen- oder Persistenzfehler werden nicht als gültiger Fortschritt akzeptiert \\
+Installation & geschützter zufälliger 32-Byte-Installationsmarker & inkonsistente Neuinstallationslage führt fail closed; verwaister Keychain-Token wird nicht übernommen \\
+Aktivierungs-Recovery & geschützter neutraler Marker für unklaren Bestätigungszustand & keine automatische erneute Aktivierung bei mehrdeutigem Abschluss \\
+Netzwerk & ephemere \texttt{URLSession}, HTTPS-Policy, Redirect-Verbot, Größen- und Zeitlimits & unerwartete Transport- oder Protokollantwort wird verworfen \\
+Bildschirm/Notifications & Privacy Curtain und inhaltsarme lokale Benachrichtigungen & sensible Zustände sollen nicht über App-Switcher oder Benachrichtigungstext offengelegt werden \\
+Build/Distribution & getrennte Konfigurationen, minimierte Entitlements und Privacy Manifest & Release-Freigabe bleibt ohne Archiv- und Realgeräteprüfung blockiert \\
+\end{tabular}
+\end{table}
+
+\subsection{Gerätegebundener Token im Keychain}
+
+Der App-Token wird auf iOS nicht zusätzlich durch eine selbst verwaltete symmetrische Verschlüsselungsschicht geschützt, sondern als Generic-Password-Eintrag im systemeigenen Keychain gespeichert. Der Descriptor verwendet den Service \texttt{de.eachandevery.cuelens}, das Konto \texttt{app-token-v1}, \texttt{kSecAttrSynchronizable=false} und die Zugriffsklasse \texttt{kSecAttrAccessibleWhenUnlockedThisDeviceOnly}. Dadurch ist der Credential-Eintrag ausdrücklich nicht für eine geräteübergreifende Synchronisation vorgesehen. Die Persistenzschicht akzeptiert ausschließlich einen syntaktisch gültigen UUID-v4-Token; ein nicht dekodierbarer Wert wird als Persistenzfehler behandelt.
+
+Das Schreiben ist konfliktorientiert ausgelegt. Existiert bereits derselbe Token, ist der Vorgang idempotent. Existiert ein anderer Token oder liefert ein konkurrierender Add-Vorgang einen bereits vorhandenen, aber abweichenden Wert, wird ein \texttt{tokenConflict} ausgelöst. Die App überschreibt damit einen vorhandenen Credential-Eintrag nicht stillschweigend. Diese Entscheidung ist besonders für den Aktivierungsprozess relevant, weil eine zweite Identität nicht unbemerkt an einen bereits aktivierten lokalen Studienzustand gebunden werden soll.
+
+Eine iOS-spezifische Besonderheit besteht darin, dass Keychain-Einträge eine Deinstallation der App technisch überleben können. CueLens koppelt den Credential-Zustand deshalb an einen separaten Installationsmarker im App-Container. Beim Start prüft ein \texttt{InstallationCoordinator}, ob ein geschützter 32-Byte-Marker vorhanden ist. Fehlt sowohl dieser Marker als auch ein lokaler Studienzustand, wird ein gegebenenfalls verbliebener Keychain-Token gelöscht und ein kryptographisch zufälliger neuer Marker erzeugt. Existiert dagegen ein Studienzustand ohne den zugehörigen Marker oder besitzt der Marker nicht die erwartete Länge, wird die Installation als inkonsistent behandelt. Damit wird ein überlebender Keychain-Eintrag nicht automatisch als gültige Fortsetzung einer neu installierten App interpretiert.
+
+\subsection{Geschützter und strikt validierter Studienzustand}
+
+Studienfortschritt, Pending-Craving und Abschlusszustand liegen nicht in \texttt{UserDefaults}, sondern in einer eigenen Datei unter \texttt{Library/Application Support/CueLens}. Verzeichnisse und Dateien werden mit \texttt{FileProtectionType.complete} angelegt; zusätzlich setzt die Implementierung \texttt{isExcludedFromBackup=true}. Schreibvorgänge verwenden die atomare Dateischreiboption zusammen mit vollständigem Dateischutz. Nach dem Setzen der Schutzattribute werden diese erneut gelesen und geprüft. Auf realen Geräten führt ein nicht gesetzter vollständiger Dateischutz zu einem Fehler; im Simulator wird diese konkrete Eigenschaft nicht als zuverlässig messbar vorausgesetzt.
+
+Der persistierte Zustand besitzt zusätzlich eine logische Integritätsprüfung. Vor dem Schreiben wird der serialisierte Zustand erneut mit demselben strikten Decoder gelesen und mit dem Ausgangszustand verglichen. Dateien größer als 64~KiB, leere Dateien, unbekannte Top-Level-Felder, fehlende Pflichtfelder, eine unbekannte Schema-Version oder nicht erlaubte Abschlussfeldkombinationen werden abgelehnt. Beispielsweise darf ein direkter Abschluss nur mit einem Codefeld gespeichert sein, während \texttt{prolific\_completed} kein Codefeld besitzen darf. Die Dateischutzklasse ersetzt damit nicht die fachliche Zustandsvalidierung; beide Ebenen werden unabhängig geprüft.
+
+Für den zweistufigen Aktivierungsprozess existiert ein weiterer kleiner geschützter Persistenzzustand. Vor dem potenziell mehrdeutigen Bestätigungsrequest kann ein neutraler Marker \texttt{cuelens-activation-confirmation-uncertain-v1} atomar geschrieben werden. Ein solcher Marker enthält weder E-Mail-Adresse noch Prolific-ID oder Token. Bleibt er nach Timeout oder Prozessabbruch erhalten, wird der Zustand beim nächsten Start als unklar erkannt, anstatt eine neue Aktivierung automatisch zu beginnen. Die Recovery-Information enthält damit nur die für die Sicherheitsentscheidung notwendige Aussage, nicht die eigentliche Identität.
+
+\subsection{Restriktive Netzwerk- und Protokollschicht}
+
+Die iOS-App verwendet einen zentralen, actor-gekapselten HTTP-Client auf Basis einer ephemeren \texttt{URLSession}. URL-Cache, Cookie-Speicher und Credential-Speicher der Session sind deaktiviert; Requests ignorieren lokale Cache-Daten. Für einzelne Requests gilt ein Timeout von 15~Sekunden, für die Ressource insgesamt 30~Sekunden. HTTP-Redirects werden durch einen eigenen Delegate verworfen. Dadurch wird ein Request mit Token oder Craving nicht automatisch an ein vom Server angegebenes alternatives Ziel weitergereicht.
+
+Vor jedem Request wird die Ziel-URL gegen eine buildabhängige Transportpolicy geprüft. Der Release-Build enthält ausschließlich HTTPS-Endpunkte und setzt \texttt{CUELENS\_ALLOWS\_LOCAL\_HTTP=NO}. Zusätzlich akzeptiert der Client keine URL mit Benutzername, Passwort, Query oder Fragment. Die produktiven Endpunkte werden damit als feste Ressourcen konfiguriert und nicht dynamisch aus Nutzereingaben zusammengesetzt. Eine eigene Trust-Umgehung oder deaktivierte Zertifikatsprüfung ist nicht Bestandteil der Implementierung.
+
+Auch erfolgreiche HTTP-Statuscodes genügen nicht für einen fachlichen Erfolg. Der Client prüft die erwarteten Statusbereiche, den Content-Type für JSON-Antworten und ein pro Response definiertes Größenlimit. Das Limit wird sowohl anhand einer bekannten \texttt{Content-Length} als auch während des byteweisen Empfangs durchgesetzt; überschreitet die Antwort das erlaubte Maximum, wird der Task abgebrochen. Für Antworten, die leer sein müssen, führt bereits ein empfangenes Byte zu einem Protokollfehler. Darauf aufbauend validieren die fachlichen Services ihre JSON-Strukturen streng. Diese Kombination reduziert das Risiko, dass unerwartete oder übergroße Antworten als gültiger Aktivierungs-, Feature- oder Studienzustand interpretiert werden.
+
+Die Netzwerkinstrumentierung folgt ebenfalls dem Prinzip der Datenminimierung. Der Logger erhält nur abstrakten Requesttyp, HTTP-Status und technische Fehlerkategorie. Request-Payloads mit Token oder Craving, Aktivierungskennungen, Feedbacktexte und Kompensationscodes sind nicht Teil dieses Logging-Vertrags. Die ephemere Session verhindert dabei nicht serverseitige Transportlogs; deren Aufbewahrung bleibt eine separate Betriebs- und Datenschutzfrage außerhalb des lokalen iOS-Clients.
+
+\subsection{Minimierung von Exposition und Berechtigungen}
+
+Bei Wechsel aus dem aktiven App-Zustand wird die sichtbare Oberfläche durch einen undurchsichtigen Privacy Curtain überdeckt. \texttt{ContentView} blendet dabei nicht nur den eigentlichen Inhalt visuell aus, sondern markiert ihn während des Curtains auch als für Accessibility verborgen. Die Umschaltung wird an die iOS-\texttt{scenePhase} gekoppelt. Dadurch soll insbesondere verhindert werden, dass ein aktuell sichtbarer Craving-Wert oder ein bestätigter Kompensationscode in der App-Switcher-Vorschau stehen bleibt. Ob dies auf dem final signierten Release-Artefakt in allen relevanten Gerätezuständen funktioniert, ist zusätzlich als manueller Prüfschritt vorgesehen.
+
+Benachrichtigungen werden als unterstützende Funktion und nicht als Transportkanal für Studiendaten behandelt. Die Sicherheitsprüfung fordert neutrale Texte ohne Rauchstatus, Craving, Token, Teilnehmerkennung oder Kompensationscode. Eine verweigerte oder später entzogene Benachrichtigungsberechtigung darf die Kernfunktionen nicht sperren. Damit wird vermieden, dass für die wissenschaftliche Durchführung eine weitergehende Systemberechtigung erzwungen werden muss.
+
+Die Release-Konfiguration sieht keine Kamera-, Foto-, Mikrofon-, Standort-, HealthKit-, CloudKit-, iCloud- oder App-Group-Funktion für die aktuelle Studienversion vor. Ebenso werden keine Tracking- oder Analytics-SDKs benötigt. Das eingecheckte Privacy Manifest setzt \texttt{NSPrivacyTracking=false} und deklariert konservativ die in der App verarbeiteten Kategorien E-Mail-Adresse, User-ID, Gesundheitsdaten und sonstige Nutzereingaben. Für verwendete Required-Reason-APIs sind die im Projekt begründeten Kategorien für Dateizeitstempel und \texttt{UserDefaults} angegeben. Die technische Deklaration ersetzt jedoch nicht den Abgleich mit App Store Connect und der tatsächlich produktiven Serverkonfiguration.
+
+\subsection{Nebenläufigkeit und Sicherheitsgrenzen}
+
+Keychain-, Persistenz-, Aktivierungs- und Netzwerkkomponenten sind als Swift-Actors beziehungsweise über serialisierte Koordinatoren umgesetzt. Kritische Zustandsänderungen werden dadurch innerhalb der jeweiligen Komponente sequenziell verarbeitet. Dies ergänzt die UI-seitige Deaktivierung laufender Aktionen und reduziert insbesondere das Risiko paralleler Aktivierungs-, Submission- oder Persistenzoperationen. Die Actor-Isolation ist dabei eine Nebenläufigkeitsgarantie innerhalb des Prozesses; sie ersetzt weder serverseitige Transaktionen noch die bereits diskutierte Ende-zu-Ende-Idempotenz des Studien-Backends.
+
+Die Sicherheitsarchitektur schützt vor allem gegen unbeabsichtigte Offenlegung, inkonsistente lokale Zustände, fehlerhafte Serverantworten und eine unnötige Synchronisation sensibler App-Daten. Sie ist nicht als Schutz gegen ein vollständig kompromittiertes Betriebssystem oder ein entsperrtes Gerät mit erfolgreichem Zugriff auf den laufenden App-Prozess zu verstehen. Insbesondere verlangt die gewählte Keychain-Klasse keine zusätzliche biometrische Freigabe bei jedem App-Zugriff. Diese Abgrenzung ist für die Alltagstauglichkeit bewusst relevant: Hintergrund- und Wiederaufnahmeabläufe sollen nach regulärer Geräteentsperrung funktionieren, ohne vor jedem Studienrequest eine zusätzliche Authentisierung auszulösen.
+
+\subsection{Automatisierte Nachweise und verbleibende manuelle Prüfungen}
+
+Die Security- und Release-Skripte prüfen unter anderem Keychain-Attribute, Dateischutz- und Backup-Konfiguration, Release-Endpunkte, Privacy Manifest, unerwartete Entitlements, verbotene Berechtigungsschlüssel, Drittanbieterabhängigkeiten sowie das Fehlen unsicherer Swift-Konstrukte wie Force-Unwraps und \texttt{try!}. Das Definition-of-Done-Audit bewertet diese automatisierbaren Sicherheitskriterien für den Source Candidate als bestanden.
+
+Nicht vollständig automatisierbar sind jedoch mehrere Eigenschaften der realen Distribution. Offen bleiben insbesondere die Prüfung eines finalen Distribution-Archivs und seiner Entitlements, das tatsächliche Verhalten von Keychain und geschützten Dateien bei Gerätesperre, die App-Switcher-Vorschau, reale Benachrichtigungen sowie Deinstallation und Neuinstallation auf physischen Geräten. Die Security-Review-Checkliste führt diese Punkte deshalb als manuelle Release-Gates. Für die Masterarbeit ist damit zwischen \emph{implementierter Sicherheitsarchitektur} und \emph{vollständig nachgewiesener Sicherheit des ausgelieferten Artefakts} zu unterscheiden. Der Quellcode und die automatisierten Prüfungen belegen die vorgesehenen Schutzmechanismen; die noch ausstehenden Realgeräte- und Distributionsprüfungen bleiben als Restrisiko beziehungsweise Freigabevoraussetzung dokumentiert.
+\end{neu}
