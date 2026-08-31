@@ -1,0 +1,92 @@
+%%
+%% Ergänzung zu Kapitel 5: iOS-Benachrichtigungen und Background Refresh
+%%
+
+\begin{neu}
+\section{iOS-Benachrichtigungen und Background Refresh}
+
+Benachrichtigungen sind in der iOS-/iPadOS-Implementierung als optionale unterstützende Infrastruktur ausgeführt und nicht als Bestandteil der eigentlichen Cue-Labeling-Intervention. Sie sollen auf neue allgemeine Informationen beziehungsweise auf die Verfügbarkeit einer weiteren Studiensituation hinweisen, verändern jedoch weder die Reihenfolge der Studienbedingungen noch den wissenschaftlichen Submission-Vertrag. Insbesondere werden über das Benachrichtigungssystem keine Rauchverlangenswerte, Reizzuordnungen oder sonstigen Forschungsdaten übertragen. Die Implementierung verwendet ausschließlich lokale iOS-Benachrichtigungen; eine Push-Registrierung oder ein externer Push-Dienst ist für diesen Zweck nicht erforderlich.
+
+\subsection{Optionale Benachrichtigungspräferenz und Systemberechtigung}
+
+Die App trennt die eigene Benachrichtigungspräferenz von der iOS-Systemberechtigung. Nach dem erstmaligen Abarbeiten des Informationsfeeds wird einmalig eine appinterne Auswahl angezeigt. Nur wenn die Option dort aktiviert bleibt, fordert CueLens anschließend die systemseitige Berechtigung an. Dabei wird ausschließlich die Berechtigungsoption \texttt{alert} angefordert; Ton- und Badge-Berechtigungen werden nicht verlangt. Eine Ablehnung verhindert weder die Aktivierung noch Demo, Feedback oder die produktive Studiendurchführung.
+
+Für die weitere Laufzeit werden zwei Zustände gemeinsam ausgewertet: die in den lokalen Einstellungen gespeicherte Präferenz \(P_{\mathrm{app}}\) und die aktuell vom System gemeldete Berechtigung \(P_{\mathrm{sys}}\). Die Benachrichtigungsinfrastruktur gilt nur dann als effektiv aktiviert, wenn
+
+\[
+E_{\mathrm{notif}} = P_{\mathrm{app}} \land P_{\mathrm{sys}}.
+\]
+
+Damit wird auch ein nachträglicher Entzug der iOS-Berechtigung berücksichtigt. Bei der Zustandsabstimmung werden dann keine neuen Studienerinnerungen geplant und ein gegebenenfalls vorgemerkter Background-Refresh-Request wird verworfen. Die gespeicherte appinterne Präferenz wird dadurch nicht mit der Studienaufklärung oder datenschutzrechtlichen Einwilligung gleichgesetzt; sie steuert ausschließlich die optionale Erinnerungsfunktion.
+
+\subsection{Lokale Erinnerungen an Studiensituationen}
+
+Studienerinnerungen werden aus dem bereits vorhandenen lokalen Studienzustand abgeleitet. Der Client benötigt dafür keinen zusätzlichen Backendendpunkt. Die \texttt{StudyReminderPolicy} plant eine Erinnerung nur, wenn Benachrichtigungen sowohl appseitig als auch systemseitig freigegeben sind, die App aktiviert ist, das serverseitig abgefragte Studienfeature freigeschaltet ist, der Studienzustand noch unvollständig ist, kein Selbstbericht auf Übertragung wartet und bereits mindestens eine, aber noch nicht alle 20 Situationen bestätigt wurden. Zusätzlich muss für die nächste Situation ein persistierter Freischaltzeitpunkt existieren.
+
+Mit \(n\) als Zahl der bestätigten Situationen lässt sich der Kern der Planungsbedingung vereinfachend als
+
+\[
+R = E_{\mathrm{notif}}
+\land A
+\land F
+\land (1 \leq n < 20)
+\land \neg P
+\land C
+\]
+
+angeben. Dabei bezeichnet \(A\) einen vorhandenen Aktivierungsstatus, \(F\) die aktivierte Studienfunktion, \(P\) einen ausstehenden Craving-Transfer und \(C\) einen vorhandenen Cooldown-Zeitpunkt. Die Zielnummer der Erinnerung ist \(n+1\). Die konkrete Auslieferung bleibt dem Betriebssystem überlassen; der Client hinterlegt den bereits im \texttt{StudyState} gespeicherten Zeitpunkt \texttt{nextSituationAvailableAt} als gewünschtes Lieferdatum.
+
+Für jede Studiensituation wird ein deterministischer Bezeichner der Form \texttt{de.eachandevery.cuelens.study-reminder.<n>} verwendet. Beim Reconcile werden Erinnerungen für nicht mehr aktuelle Situationen aus den vorgemerkten und ausgelieferten CueLens-Benachrichtigungen entfernt. Eine bereits als ausgeliefert gefundene Erinnerung mit demselben Bezeichner wird nicht erneut geplant. Ein Sprachwechsel kann dagegen einen noch ausstehenden Request unter demselben Bezeichner durch eine entsprechend lokalisierte Variante ersetzen.
+
+Der sichtbare Inhalt ist absichtlich generisch. Der Titel lautet lediglich \enquote{CueLens}; der deutschsprachige Remindertext lautet \enquote{Eine neue Aufgabe ist verfügbar.}. Weder Rauchen noch Rauchverlangen, Studienbedingung, Situationsnummer oder ein Personenbezug werden in den Benachrichtigungsinhalt aufgenommen. Für ausgeblendete Benachrichtigungsvorschauen registriert die App zusätzlich einen noch allgemeineren Platzhalter wie \enquote{Eine neue Information ist verfügbar.}. Damit reduziert die App die Wahrscheinlichkeit, dass aus einem gesperrten Bildschirm unmittelbar gesundheitsbezogene Rückschlüsse gezogen werden können.
+
+Eine Benachrichtigung startet keine Studiensituation automatisch. Der Notification-Delegate übersetzt den Bezeichner lediglich in die interne Route \texttt{studyHome}. Nach dem Aktivieren der App wird zur Startseite navigiert; dort gelten weiterhin das aktuelle Start-Gate, der Studienzustand, der Feature-Status und die Cooldown-Prüfung. Die Benachrichtigung ist somit ein Hinweis auf eine mögliche Verfügbarkeit und keine autoritative Freigabe der Intervention.
+
+\subsection{Informationshinweise und Background Refresh}
+
+Neben Studienerinnerungen unterstützt die App einen generischen Hinweis auf neue Einträge im Informationsfeed. Hierfür wird \texttt{BGAppRefreshTask} als best-effort Hintergrundmechanismus verwendet. Der \texttt{BackgroundRefreshCoordinator} registriert den Bezeichner \texttt{de.eachandevery.cuelens.infofeed.refresh}. Wenn die Benachrichtigungsfunktion effektiv aktiviert ist, wird ein nächster Refresh mit einem frühestmöglichen Start nach 24 Stunden eingereicht. Dieser Zeitpunkt ist keine Ausführungsgarantie; die tatsächliche Planung und Laufzeit des Tasks wird durch iOS bestimmt.
+
+Der Hintergrundtask führt ausschließlich einen Informationsabruf aus. Der \texttt{InfoFeedBackgroundChecker} liest zunächst die gespeicherte Benachrichtigungspräferenz und prüft erneut die aktuelle Systemberechtigung. Nur dann werden die Informationsnachrichten vom bestehenden Feed-Service abgerufen. Zur Entscheidung über einen Hinweis werden ausschließlich die numerischen Nachrichten-IDs mit den lokal bekannten und dauerhaft ausgeblendeten IDs verglichen. Neue IDs ergeben sich als
+
+\[
+I_{\mathrm{neu}}
+=
+I_{\mathrm{fetch}}
+\setminus
+\left(I_{\mathrm{bekannt}} \cup I_{\mathrm{ausgeblendet}}\right).
+\]
+
+Die abgerufenen IDs werden anschließend als bekannt markiert. Ist \(I_{\mathrm{neu}}\neq\emptyset\), wird eine lokale Informationsbenachrichtigung geplant. Ihr Text bleibt wiederum generisch, beispielsweise \enquote{Neue Information zu CueLens verfügbar}. Nachrichtentexte selbst werden für diesen Zweck nicht im lokalen Background-Status gespeichert. Ebenso verwendet dieser Hintergrundpfad weder den App-Token noch den Selbstberichtsendpunkt und kann deshalb keinen wissenschaftlichen Studienfortschritt erzeugen.
+
+Nach Beginn eines Background-Tasks wird der nächste Refresh erneut vorgemerkt. Wird die Aufgabe durch iOS wegen Zeitablaufs beendet, wird die zugehörige Swift-Concurrency-Task abgebrochen und der Task als nicht erfolgreich abgeschlossen. Fehler beim Feedabruf führen ebenfalls zu keinem wissenschaftlichen Zustandsübergang. Damit bleibt die Hintergrundfunktion gegenüber der eigentlichen Studiendurchführung entkoppelt.
+
+\begin{table}[htbp]
+\centering
+\caption{Rollen der iOS-Benachrichtigungstypen}
+\label{tab:ios-notification-types}
+\begin{tabular}{p{0.20\textwidth}p{0.25\textwidth}p{0.23\textwidth}p{0.20\textwidth}}
+\textbf{Typ} & \textbf{Auslöser} & \textbf{Inhalt und Datenbezug} & \textbf{Route nach Tap} \\
+\hline
+Studienerinnerung & lokaler bestätigter Fortschritt und Freischaltzeitpunkt & generischer Hinweis; kein Craving, kein Cue, keine Bedingung & Startseite; Start-Gate bleibt autoritativ \\
+Informationshinweis & Background-Feed enthält mindestens eine bisher unbekannte, nicht ausgeblendete ID & generischer Hinweis; Nachrichtentext wird nicht in die Notification übernommen & Informationsfeed wird beim Aktivieren erneut geladen \\
+\end{tabular}
+\end{table}
+
+\subsection{Lebenszyklus, Routing und Fehlerverhalten}
+
+Der \texttt{UNUserNotificationCenterDelegate} wird beim App-Start registriert. Trifft eine lokale Benachrichtigung ein, während die App bereits im Vordergrund aktiv ist, fordert die Implementierung keine zusätzliche Systemdarstellung an; die Delegate-Methode gibt eine leere Menge von Präsentationsoptionen zurück. Beim Antippen einer Benachrichtigung wird ausschließlich anhand des internen Bezeichners zwischen Informationsfeed und Studienstartseite unterschieden. Zusätzliche Nutzdaten aus der Benachrichtigung werden für die Navigation nicht ausgewertet.
+
+Die App stimmt die Benachrichtigungsinfrastruktur an mehreren fachlich relevanten Übergängen erneut ab, unter anderem nach der Benachrichtigungsauswahl und nach Änderungen des Studienfortschritts. Nach einer erfolgreichen oder fehlgeschlagenen Submission wird zunächst der produktive Studienzustand aktualisiert beziehungsweise beibehalten und anschließend die Erinnerungsplanung neu bewertet. Dadurch können veraltete Erinnerungen nach einem bestätigten Fortschritt entfernt und die nächste zulässige Situation vorgemerkt werden. Background Refresh bleibt davon unabhängig und wird nur entsprechend der effektiven Benachrichtigungsfreigabe aktiviert oder abbestellt.
+
+Die Architektur priorisiert dabei den Studienzustand vor der Zustellungskomfortfunktion. Scheitert ein lokaler Reminder oder wird ein Background-Task vom Betriebssystem nicht ausgeführt, darf daraus weder ein künstlicher Selbstbericht noch ein veränderter Situationszähler entstehen. Die wissenschaftlichen Endpunkte werden weiterhin ausschließlich über den in den vorherigen Abschnitten beschriebenen Submission- und Recovery-Pfad verändert.
+
+\subsection{Verifikation und verbleibende Grenzen}
+
+Für die Benachrichtigungslogik liegen automatisierte Tests auf der Ebene der Policy und der abstrahierten Notification-Center-Schnittstelle vor. Geprüft werden unter anderem die einmalige Anforderung der Systemberechtigung, deterministische Reminder-Bezeichner, die neutralen lokalisierten Texte, das Entfernen obsoleter Reminder, die Unterdrückung bei fehlender Aktivierung, fehlender Feature-Freigabe, Pending-Transfer oder abgeschlossenem Studium sowie die Navigation der beiden Benachrichtigungstypen. Für den Hintergrundchecker prüfen Tests insbesondere die Differenzbildung zwischen abgerufenen, bekannten und ausgeblendeten Nachrichten-IDs sowie das Verhalten bei deaktivierten Benachrichtigungen und Feedfehlern.
+
+Diese automatisierten Nachweise dürfen nicht mit einer Garantie realer iOS-Zustellung gleichgesetzt werden. \texttt{BGAppRefreshTask} und lokale Notifications werden vom Betriebssystem geplant und können beispielsweise aufgrund von Gerätezustand, Energieverwaltung, Nutzerkonfiguration oder fehlender Ausführungszeit ausbleiben. Der in der App angegebene 24-Stunden-Abstand ist daher lediglich ein \emph{earliest begin date} für den nächsten Hintergrundtask. Der reguläre Feedabruf beim aktiven Öffnen der App und das lokale Start-Gate bleiben für Inhalt beziehungsweise Studienfreigabe autoritativ.
+
+Auch zwei implementierungsspezifische Grenzen sind zu berücksichtigen. Erstens markiert der Background-Checker nach einem erfolgreichen Feedabruf die dabei gesehenen IDs bereits als bekannt, bevor beziehungsweise unabhängig davon, ob die anschließend best-effort geplante lokale Informationsbenachrichtigung tatsächlich beim Nutzer erscheint. Ein fehlgeschlagener oder vom System unterdrückter Hinweis wird deshalb nicht als zuverlässige Zustellwarteschlange erneut versucht. Zweitens berücksichtigt die Reminder-Policy zwar das Feld \texttt{lastNotifiedSituationNumber}; die eigentliche Benachrichtigungskomponente besitzt jedoch keinen Schreibzugriff auf den wissenschaftlichen Zustandsstore. Die primäre technische Duplikatkontrolle erfolgt damit über deterministische Notification-Bezeichner und die aktuell vom Notification Center gemeldeten Pending-/Delivered-Zustände, nicht über eine verteilte Zustellbestätigung.
+
+Aus studienmethodischer Sicht sind Benachrichtigungen deshalb als Adhärenzunterstützung und nicht als kontrollierter Bestandteil der Cue-Labeling-Manipulation einzuordnen. Sie enthalten keine Information darüber, ob als Nächstes Matching oder Labeling durchgeführt wird, und ändern den Messendpunkt nicht. Gleichwohl kann eine optionale beziehungsweise betriebssystemabhängig unterschiedlich zuverlässige Erinnerung beeinflussen, wann Teilnehmende zur App zurückkehren. Bei einer späteren Interpretation von Nutzungsdauer, Abbruchraten oder Plattformunterschieden darf die Existenz dieser unterstützenden Funktion daher nicht mit einer exakt kontrollierten Exposition gleichgesetzt werden. Die im Release-Audit noch vorgesehenen realen Gerätetests des Notification-Systemverhaltens bleiben entsprechend ein separater Freigabenachweis.
+\end{neu}
