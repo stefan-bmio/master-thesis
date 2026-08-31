@@ -1,0 +1,19 @@
+%%
+%% Ergänzung zu Kapitel 6: Studienabschluss nach Rekrutierungskanal
+%%
+
+\begin{neu}
+\section{Studienabschluss nach Rekrutierungskanal}
+
+Für die Bewertung eines vollständigen Studienverlaufs wird zwischen wissenschaftlichem und administrativem Abschluss unterschieden. Wissenschaftlich vollständig ist eine Teilnahme, wenn für dieselbe pseudonyme Teilnehmerkennung zwanzig bestätigte Selbstberichte vorliegen. Dieses Kriterium ist unabhängig davon, ob die Person direkt oder über Prolific rekrutiert wurde. Die ersten zehn Berichte gehören weiterhin zur Bedingung Cue-Matching, die Berichte elf bis zwanzig zur Bedingung Cue-Labeling. Der Rekrutierungskanal verändert damit weder die Zahl der Messzeitpunkte noch die Zuordnung der Bedingungen oder den primären Messwert.
+
+Der administrative Abschluss unterscheidet sich dagegen zwischen beiden Kanälen. Direkt rekrutierte Teilnehmende erhalten nach dem zwanzigsten erfolgreichen Selbstbericht einen individuellen UUID-v4-Abrechnungscode. Die App bestätigt diesen Code anschließend separat beim Server und zeigt ihn nach erfolgreicher Bestätigung an. Für die Auszahlung ist weiterhin zu prüfen, dass der Code vorhanden, bestätigt und noch nicht für eine Auszahlung verwendet wurde. Der Code dient damit als administratives Nachweismittel; er ist nicht Bestandteil des wissenschaftlichen Auswertungsdatensatzes.
+
+Bei über Prolific rekrutierten Personen wird kein CueLens-Abrechnungscode erzeugt. Nach dem zwanzigsten Selbstbericht wird stattdessen die zugehörige aktivierte Prolific-Registrierung administrativ als abgeschlossen markiert. Die App erhält einen expliziten Prolific-Abschlussstatus und informiert die Person darüber, dass die weitere Bearbeitung beziehungsweise Vergütung über den Prolific-Prozess erfolgt. Damit wird vermieden, zwei parallele Vergütungsnachweise für dieselbe Teilnahme zu erzeugen.
+
+Diese Trennung ist auch für die Auswertung relevant. Das Vorhandensein eines Abrechnungscodes darf nicht als notwendiges Kriterium für einen vollständigen wissenschaftlichen Datensatz verwendet werden, weil vollständige Prolific-Teilnahmen definitionsgemäß keinen solchen Code besitzen. Umgekehrt genügt eine administrative Kennzeichnung allein nicht für die wissenschaftliche Vollständigkeit. Maßgeblich für die Wirksamkeitsanalyse bleiben die zwanzig tatsächlich gespeicherten Selbstberichte derselben pseudonymen Teilnehmerkennung.
+
+Für technische Fehler beim Prolific-Abschluss ist ein Wiederholungsweg vorgesehen. Kann nach Speicherung des zwanzigsten Selbstberichts die administrative Abschlussmarkierung vorübergehend nicht geschrieben werden, bleibt der wissenschaftliche Bericht erhalten. Ein erneuter Abschlussversuch wiederholt nur die administrative Finalisierung und erzeugt keinen zusätzlichen Selbstbericht. Dadurch wird eine temporäre Störung zwischen Forschungs- und Registrierungsdatenbank nicht in einen scheinbaren einundzwanzigsten Messzeitpunkt übersetzt. Die Abschlussmarkierung und die zugehörige operative Benachrichtigung sind idempotent ausgelegt.
+
+Für die Teilnehmerdokumente und den Studienbetrieb folgt daraus, dass die Abschlusskommunikation kanalabhängig formuliert werden muss. Direkt Teilnehmende benötigen Hinweise zum Abrechnungscode und zu dessen Übermittlung; Prolific-Teilnehmende benötigen stattdessen einen Hinweis auf den dortigen administrativen Bearbeitungsweg. Inhaltlich darf daraus jedoch kein unterschiedlicher Eindruck über den wissenschaftlichen Studienabschluss entstehen: In beiden Gruppen ist die experimentelle Teilnahme nach zwanzig erfolgreich übermittelten Selbstberichten beendet.
+\end{neu}
