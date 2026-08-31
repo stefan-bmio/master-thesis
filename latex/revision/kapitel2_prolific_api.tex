@@ -1,0 +1,15 @@
+%%
+%% Ergänzung zu Kapitel 2: Externe Prolific-Teilnahmeprüfung
+%%
+
+\begin{neu}
+\section{Externe Prolific-Teilnahmeprüfung}
+
+Für Registrierungen über Prolific wird die angegebene Prolific-ID nicht allein syntaktisch geprüft. Vor dem Anlegen des CueLens-Registrierungsdatensatzes fragt das Backend zusätzlich die Prolific-Programmierschnittstelle ab und prüft, ob für die konfigurierte Prolific-Studie mindestens eine geeignete Submission mit exakt dieser Teilnehmerkennung vorliegt. Diese Prüfung betrifft ausschließlich den Rekrutierungskanal \texttt{PROLIFIC}; direkte Registrierungen per E-Mail werden dadurch nicht verändert.
+
+Die Schnittstelle bildet eine zusätzliche externe Datenverarbeitungsgrenze. Der API-Zugriff erfolgt ausschließlich serverseitig. Das zur Authentisierung verwendete Prolific-Token wird aus der Host-Konfiguration gelesen und nur im HTTP-Header \texttt{Authorization} übertragen. Es wird weder an Browser noch App ausgeliefert. Der Request enthält als fachlichen Suchparameter die konfigurierte Prolific-Studienkennung sowie Angaben zur Pagination. Name, Bankverbindung, App-Token und Rauchverlangenswerte werden nicht an Prolific übertragen.
+
+Die Prolific-Antwort enthält dagegen Submission-Datensätze der konfigurierten Studie. Die CueLens-Prüfroutine verarbeitet daraus die Felder \texttt{participant\_id} und \texttt{status}, bis die angegebene Prolific-ID gefunden oder die Ergebnismenge vollständig durchsucht wurde. Da die verwendete API-Abfrage seitenweise Submissions der Studie liefert und nicht ausschließlich den angefragten CueLens-Teilnehmenden, können während der Prüfung auch Kennungen anderer Prolific-Teilnehmender im Arbeitsspeicher des Servers verarbeitet werden. Die Prüfroutine persistiert diese API-Antworten nicht in der CueLens-Datenbank. Dieser Datenfluss muss dennoch in der Datenschutzbewertung der Rekrutierungsschnittstelle berücksichtigt werden.
+
+Ein negatives Prüfergebnis und ein technischer Fehler werden getrennt behandelt. Nur wenn die API erfolgreich vollständig durchsucht wurde und keine geeignete Submission gefunden wurde, gilt die Prolific-ID als nicht zur konfigurierten Studie gehörig. Netzwerkfehler, unerwartete HTTP-Statuscodes oder formal ungültige API-Antworten führen dagegen zu einem technischen Fehler und nicht zu einer Einstufung als unberechtigte Person. Damit wird vermieden, dass die Nichterreichbarkeit eines externen Dienstes als fachliches Ausschlusskriterium interpretiert wird. Gleichzeitig entsteht eine Verfügbarkeitsabhängigkeit: Solange die Prolific-Schnittstelle technisch nicht zuverlässig geprüft werden kann, kann eine neue Prolific-Registrierung nicht abgeschlossen werden.
+\end{neu}
