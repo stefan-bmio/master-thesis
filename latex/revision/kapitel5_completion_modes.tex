@@ -1,0 +1,39 @@
+%%
+%% Ergänzung zu Kapitel 5: Abschlussmodi
+%%
+
+\begin{neu}
+\section{Kanalabhängige Abschlussmodi}
+
+Mit der Einführung des Prolific-Rekrutierungskanals wurde der Studienabschluss von der eigentlichen wissenschaftlichen Datenerhebung entkoppelt. Die ersten 19 Selbstberichte werden für beide Registrierungskanäle identisch verarbeitet. Erst beim zwanzigsten bestätigten Selbstbericht wird anhand eines bereits bei der Aktivierung hinterlegten Abschlussmodus entschieden, welcher administrative Abschlussweg folgt. Die Implementierung kennt dafür ausschließlich die beiden Werte \texttt{COMPENSATION\_CODE} und \texttt{PROLIFIC\_MANUAL}. Der Abschlussmodus wird zusammen mit dem Hash des gültigen App-Tokens in der wissenschaftlichen Freigabeliste gespeichert und muss einem der beiden explizit unterstützten Werte entsprechen.
+
+Die Zuordnung wird aus dem Registrierungskanal abgeleitet: Eine direkte Registrierung erhält \texttt{COMPENSATION\_CODE}, eine Prolific-Registrierung \texttt{PROLIFIC\_MANUAL}. Dadurch muss der Client bei der Übertragung eines Selbstberichts weder den Rekrutierungskanal noch den gewünschten Abschlussmodus mitsenden. Der Server entscheidet anhand des bereits freigegebenen App-Tokens. Diese Architektur verhindert, dass ein manipulierter Request beispielsweise für eine Prolific-Teilnahme eigenständig einen Abrechnungscode anfordert oder einen anderen Auszahlungspfad auswählt.
+
+Tabelle~\ref{tab:completion-modes} stellt die Unterschiede der beiden Abschlusswege gegenüber.
+
+\begin{table}[htbp]
+\centering
+\caption{Kanalabhängige Abschlussmodi nach dem zwanzigsten Selbstbericht}
+\label{tab:completion-modes}
+\begin{tabular}{p{0.29\textwidth}p{0.27\textwidth}p{0.27\textwidth}}
+\textbf{Merkmal} & \textbf{COMPENSATION\_CODE} & \textbf{PROLIFIC\_MANUAL} \\
+\hline
+Rekrutierungskanal & direkte Teilnahme & Prolific \\
+Wissenschaftlicher Abschluss & 20 bestätigte Selbstberichte & 20 bestätigte Selbstberichte \\
+Abrechnungscode & UUID-v4 wird erzeugt & kein CueLens-Abrechnungscode \\
+Zusätzlicher administrativer Schritt & Codebestätigung & Abschlussmarkierung in Registrierungsdatenbank \\
+Antwort an die App & \texttt{compensation\_code} & \texttt{completion\_mode=PROLIFIC\_MANUAL} \\
+Zuordnung zur Forschungsdatenbank & unverändert pseudonymisiert & unverändert pseudonymisiert \\
+\end{tabular}
+\end{table}
+
+Beim Modus \texttt{COMPENSATION\_CODE} erzeugt der Server nach dem zwanzigsten Bericht einen zufälligen UUID-v4-Code und speichert ihn in der wissenschaftlichen Datenbank. Der Response enthält weiterhin den bereits verwendeten Schlüssel \texttt{compensation\_code}; ein zusätzliches Feld \texttt{completion\_mode} wird für diesen Pfad bewusst nicht eingeführt. Damit bleibt der vorhandene direkte Abschlussvertrag rückwärtskompatibel. Die App persistiert den empfangenen Code zunächst als ausstehend und bestätigt ihn über den separaten Bestätigungsendpunkt. Erst danach gilt der lokale Direktabschluss als vollständig bestätigt und der Code wird für die teilnehmende Person angezeigt. Die Bestätigung ist serverseitig idempotent, da ein bereits gesetzter Bestätigungszeitpunkt nicht erneut verändert wird.
+
+Der Modus \texttt{PROLIFIC\_MANUAL} erzeugt dagegen ausdrücklich keinen CueLens-Abrechnungscode. Nach Speicherung des zwanzigsten Selbstberichts markiert der Server die zugehörige aktivierte Prolific-Registrierung in der administrativen Datenbank mit einem Abschlusszeitpunkt. Die Zuordnung erfolgt nicht über die Prolific-ID in den Forschungsdaten, sondern über den aus dem App-Token abgeleiteten domänenspezifischen Registrierungs-Token-Hash. Zusätzlich kann genau einmal eine operative Abschlussbenachrichtigung vorgemerkt werden. Der Response an die App enthält den Abschlussstatus und den Wert \texttt{PROLIFIC\_MANUAL}, aber kein Feld \texttt{compensation\_code}. Die eigentliche Vergütung beziehungsweise Freigabe auf Prolific bleibt damit ein administrativer Prozess außerhalb des wissenschaftlichen Selbstberichtdatensatzes.
+
+Für Prolific wurde der Abschluss außerdem wiederholbar gestaltet. Ist der zwanzigste Selbstbericht bereits in der Forschungsdatenbank gespeichert, konnte aber die administrative Abschlussmarkierung beispielsweise wegen eines temporären Datenbankfehlers nicht geschrieben werden, führt ein erneuter Request keinen einundzwanzigsten Selbstbericht ein. Stattdessen wird ausschließlich die administrative Finalisierung erneut versucht. Die Zeitstempel für Studienabschluss und vorgemerkte Benachrichtigung werden idempotent gesetzt, sodass ein Retry weder zusätzliche Forschungsdaten noch mehrere Abschlussbenachrichtigungen erzeugt. Beim direkten Abschluss bleibt das bestehende Verhalten erhalten: Nach zwanzig Berichten wird ein weiterer wissenschaftlicher Bericht abgelehnt.
+
+Auch der Android-Client behandelt die beiden Responseformen als disjunkte Protokollzustände. Ein direkter Abschluss ist nur mit syntaktisch gültigem UUID-v4-Abrechnungscode zulässig. Ein Prolific-Abschluss ist nur gültig, wenn \texttt{completion\_mode} exakt \texttt{PROLIFIC\_MANUAL} lautet und kein Abrechnungscode enthalten ist. Widersprüchliche Kombinationen, unbekannte Modi oder ein Abschluss ohne die erwarteten Felder führen in einen Fehler- beziehungsweise Recovery-Zustand. Der lokal persistierte Abschlusszustand unterscheidet entsprechend zwischen einem noch zu bestätigenden Direktcode, einem bestätigten Direktabschluss und einem abgeschlossenen Prolific-Pfad.
+
+Die Trennung hat eine studienmethodische Konsequenz: Der wissenschaftliche Endpunkt bleibt für beide Rekrutierungskanäle identisch definiert. Ein abgeschlossener Datensatz besteht in beiden Fällen aus genau zwanzig pseudonymisierten Selbstberichten mit derselben Bedingungszuordnung. Der Abschlussmodus steuert ausschließlich die administrative Nachbearbeitung. Damit wird verhindert, dass die Vergütungslogik zu einer zusätzlichen experimentellen Bedingung oder zu einem Feld des Forschungsdatensatzes wird.
+\end{neu}
