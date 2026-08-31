@@ -1,0 +1,17 @@
+%%
+%% Ergänzung zu Kapitel 2: Duale Registrierung
+%%
+
+\begin{neu}
+\section{Registrierungskanäle und Datenminimierung}
+
+Im Verlauf der Studienvorbereitung wurde die ursprünglich ausschließlich E-Mail-basierte Registrierung um einen zweiten Zugang über Prolific ergänzt. Die beiden Wege werden serverseitig durch das Feld \path{registration_channel} explizit als \texttt{DIRECT} beziehungsweise \texttt{PROLIFIC} unterschieden. Diese Kennzeichnung ist nicht Bestandteil der wissenschaftlichen Selbstberichte, sondern verbleibt im administrativen Registrierungskontext. Die experimentelle Bedingung und die Craving-Werte werden weiterhin ausschließlich in der getrennten Studiendatenbank verarbeitet.
+
+Für direkt geworbene Teilnehmende werden weiterhin E-Mail-Adresse, Name und die zur Auszahlung benötigten Bankangaben erhoben. Die Registrierung wird erst nach dem Double-Opt-In der angegebenen E-Mail-Adresse als bestätigt markiert. Bei einer Registrierung über Prolific wird stattdessen die 24-stellige alphanumerische Prolific-ID gespeichert. Name, IBAN und BIC werden in diesem Modus weder benötigt noch serverseitig übernommen; die entsprechenden Formularfelder werden bereits im Browser deaktiviert und bei der serverseitigen Validierung unabhängig vom Clientzustand auf \texttt{NULL} gesetzt. Alter, angegebene Zahl gerauchter Zigaretten sowie die Zustimmung zu Studieninformation und Datenschutzerklärung bleiben für beide Registrierungskanäle erforderlich.
+
+Die Prolific-ID ist trotz des Verzichts auf Name, E-Mail-Adresse und Bankverbindung kein anonymes Datum. Sie ermöglicht innerhalb des Plattformkontexts die Zuordnung zu einem Prolific-Konto und wird deshalb im CueLens-System als administrativer Teilnehmeridentifikator behandelt. Die Trennung von Registrierungs- und Studiendaten verhindert, dass dieser Identifikator unmittelbar zusammen mit den gesundheitsbezogenen Craving-Selbstberichten gespeichert wird. Für die wissenschaftliche Übertragung wird nach der Aktivierung weiterhin ausschließlich das zufällig erzeugte App-Token verwendet, aus dem serverseitig die pseudonyme Studienkennung abgeleitet wird.
+
+Auch die Bestätigung der Registrierung unterscheidet sich zwischen den beiden Kanälen. Der direkte Weg verwendet den bereits beschriebenen E-Mail-Double-Opt-In. Für Prolific wird kein zusätzlicher E-Mail-Bestätigungsprozess erzeugt; eine erfolgreich angelegte Prolific-Registrierung erhält unmittelbar einen Bestätigungszeitpunkt. Die gesonderte technische Prüfung, ob die Prolific-ID tatsächlich zu einer für die CueLens-Studie zulässigen Prolific-Submission gehört, wird im Zusammenhang mit der externen Prolific-Schnittstelle beschrieben.
+
+Durch diese kanalabhängige Datenerhebung wird vermieden, personenbezogene Angaben lediglich deshalb zu duplizieren, weil sie für den direkten Rekrutierungs- und Auszahlungsweg benötigt werden. Gleichzeitig bleiben die für Einschlussprüfung, Einwilligungsnachweis und Aktivierung erforderlichen Informationen erhalten. Die Einführung von Prolific erweitert damit den administrativen Zugang zur Studie, ohne den Umfang des wissenschaftlichen Selbstberichtdatensatzes zu erhöhen.
+\end{neu}
