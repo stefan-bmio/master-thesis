@@ -1,0 +1,27 @@
+%%
+%% Ergänzung zu Kapitel 5: Prolific-API-Prüfung
+%%
+
+\begin{neu}
+\section{Externe Prolific-Schnittstelle und Validierung}
+
+Die Registrierung über Prolific erweitert die Systemarchitektur um eine externe Vertrauens- und Verfügbarkeitsgrenze. Nach erfolgreicher lokaler Formularvalidierung wird eine Prolific-ID nicht unmittelbar in der Registrierungsdatenbank gespeichert. Zuvor prüft das Backend über die Prolific-API, ob die Kennung in der konfigurierten Studie mit mindestens einer fachlich akzeptierten Submission vorkommt. Die Prüfung ist damit als serverseitiges Gate vor der eigentlichen CueLens-Registrierung angeordnet. Direkte Registrierungen per E-Mail umgehen dieses Gate und behalten ihren bisherigen Double-Opt-In-Ablauf.
+
+Die Implementierung verwendet den Endpunkt \path{https://api.prolific.com/api/v1/submissions/}. Die Studienkennung und das API-Token werden ausschließlich aus der Serverkonfiguration bezogen. Das Token wird nicht als URL-Parameter übertragen, sondern als \texttt{Authorization: Token}-Header gesetzt. Vor dem ersten Request werden beide Konfigurationswerte auf Typ, Leerwerte und Steuerzeichen geprüft; die Studienkennung muss zusätzlich dem erwarteten 24-stelligen alphanumerischen Format entsprechen. Fehlerhafte Konfigurationen führen vor jeder Netzwerkkommunikation zum Abbruch.
+
+\subsection{Prüfalgorithmus und Statusmodell}
+
+Die API-Abfrage wird mit der konfigurierten Studienkennung, einer Seitengröße von 20 Einträgen und einem fortlaufenden Seitenindex durchgeführt. Für jeden erhaltenen Submission-Datensatz müssen \texttt{participant\_id} und \texttt{status} als Zeichenketten vorliegen. Die Teilnehmerkennung wird exakt und damit einschließlich Groß-/Kleinschreibung verglichen. Der Status wird vor dem Vergleich durch Großschreibung und die Vereinheitlichung von Leerzeichen beziehungsweise Bindestrichen auf Unterstriche kanonisiert.
+
+Als geeignet gelten die Statuswerte \texttt{ACTIVE}, \texttt{AWAITING\_REVIEW}, \texttt{APPROVED}, \texttt{TIMED\_OUT} und \texttt{RETURNED}. Sobald eine Submission mit übereinstimmender Teilnehmerkennung und einem dieser Statuswerte gefunden wird, endet die Suche erfolgreich. Andere Statuswerte, darunter \texttt{REJECTED}, \texttt{SCREENED\_OUT} und \texttt{RESERVED}, führen nicht zu einer erfolgreichen Prüfung; die Suche wird jedoch auf folgenden Seiten fortgesetzt, weil zu derselben Kennung weitere Submission-Datensätze existieren können.
+
+Eine Seite mit weniger als 20 Ergebnissen markiert das reguläre Ende der Ergebnismenge. Erst wenn bis dahin keine geeignete Submission gefunden wurde, liefert die Prüffunktion das fachliche Ergebnis \texttt{false}. Vollständig gefüllte Seiten werden weiter paginiert. Zusätzlich wird für jede volle Antwortseite ein SHA-256-Hash des Response-Bodys gespeichert. Wiederholt sich derselbe Seiteninhalt, wird die Verarbeitung als fehlerhafte, nicht fortschreitende Pagination abgebrochen. Unabhängig davon begrenzt die Implementierung die Suche auf höchstens 1000 Seiten. Bei 20 Datensätzen pro Seite ergibt sich damit eine feste obere Schranke von 20\,000 geprüften Submission-Einträgen pro Registrierungsversuch. Die Laufzeitkomplexität der Datensatzprüfung ist somit linear in der Zahl der tatsächlich gelesenen Submissions, also \(O(n)\) mit \(n \leq 20\,000\); zusätzlich werden höchstens 1000 Seitenhashes für die Fortschrittskontrolle gehalten.
+
+\subsection{Transport- und Fehlergrenzen}
+
+Der HTTP-Client erzwingt HTTPS, aktiviert die Zertifikats- und Hostnamenprüfung und folgt keinen Redirects. Der Verbindungsaufbau ist auf fünf Sekunden, die Gesamtdauer eines einzelnen Requests auf 15 Sekunden begrenzt. Der Response-Body wird bereits während des Empfangs auf höchstens 1 MiB beschränkt. Damit werden sowohl unbegrenzt wartende Verbindungen als auch unerwartet große API-Antworten begrenzt. Nicht erfolgreiche HTTP-Statuscodes, Transportfehler, ungültiges JSON, unerwartete Antwortstrukturen, übergroße Seiten oder nicht fortschreitende Pagination werden einheitlich als technische \texttt{ProlificApiException} behandelt.
+
+Die aufrufende Registrierungslogik unterscheidet diese technische Ausnahme bewusst vom fachlich negativen Suchergebnis. Eine vollständig ausgeführte Suche ohne geeignete Submission führt zur Meldung, dass die Prolific-ID nicht für die Studie registriert ist. Ein API-, Netzwerk- oder Konfigurationsproblem erzeugt dagegen eine allgemeine Fehlermeldung und verhindert das Anlegen des Registrierungsdatensatzes. Diese Fail-closed-Strategie verhindert, dass bei einer nicht überprüfbaren externen Identität dennoch ein Prolific-Zugang erzeugt wird. Sie erhöht jedoch die Abhängigkeit der Rekrutierung vom externen Dienst und muss deshalb im Studienbetrieb überwacht werden.
+
+Die automatisierten Tests prüfen die akzeptierten und abgelehnten Statuswerte, mehrseitige Suchläufe, case-sensitive Teilnehmerkennungen, die ausschließliche Übertragung des API-Tokens im Authorization-Header, nicht erfolgreiche HTTP-Statuscodes einschließlich Rate-Limiting, formal ungültige Responses, fehlerhafte Konfigurationen und nicht fortschreitende Pagination. Dadurch wird nicht nur der Erfolgsfall, sondern insbesondere das Verhalten an der externen Systemgrenze reproduzierbar abgesichert.
+\end{neu}
