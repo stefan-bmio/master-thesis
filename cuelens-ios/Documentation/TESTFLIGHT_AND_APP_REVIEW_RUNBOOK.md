@@ -1,6 +1,6 @@
 # CueLens iOS – TestFlight- und App-Review-Runbook
 
-Stand: 24.08.2026. Die Schritte orientieren sich an den aktuellen offiziellen Apple-Unterlagen zu [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview), [App Privacy](https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy/) und [App Review](https://developer.apple.com/app-store/review/).
+Stand: 06.09.2026. Die Schritte orientieren sich an den aktuellen offiziellen Apple-Unterlagen zu [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview), [App Privacy](https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy/) und [App Review](https://developer.apple.com/app-store/review/).
 
 ## 1. Freigabevoraussetzungen
 
@@ -80,6 +80,8 @@ Research app investigating cue labeling for smoking craving in everyday life.
 
 - Zugriff ist auf vorab registrierte Studienteilnehmende beschränkt.
 - Eine gültige synthetische Reviewkennung wird ausschließlich im geschützten App-Review-Informationsfeld bereitgestellt, niemals im Repository.
+- Die serverseitig markierte Reviewregistrierung kann nach Löschen und Neuinstallation der App erneut aktiviert werden. Dabei wird stets ein neuer App-Token ausgegeben; reguläre Registrierungen bleiben einmalig aktivierbar.
+- Sämtliche mit Review-Token erzeugten Selbstberichte und Kompensationscodes sind serverseitig als Testdaten markiert und aus wissenschaftlichen Exporten, Auswertungen und Vergütungslisten auszuschließen.
 - Die vorausgehende Forschungsinformation und Einwilligung erfolgen im externen Registrierungsprozess.
 - Die App erfasst keine Kamera-, Foto-, Standort-, Mikrofon-, HealthKit- oder Trackingdaten.
 - Übertragen werden je nach Zugang E-Mail-Adresse oder Prolific-ID zur Aktivierung, ein pseudonymer App-Token, zwanzig Craving-Selbstberichte und optional getrenntes Freitextfeedback.

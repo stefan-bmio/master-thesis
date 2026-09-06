@@ -577,6 +577,8 @@ Serververhalten:
 - Der Server gibt `app_token` an die App zurueck. Der kurzlebige Aktivierungsverifikator wird nach der Bestaetigung geloescht; danach bleibt nur der domaenenseparierte `registration_token_hash` in `register` gespeichert.
 - In `register` wird `app_token_issued_at` gesetzt, damit dieselbe Registrierung nicht erneut aktiviert werden kann.
 
+Eine eng begrenzte Betriebsabweichung gilt ausschliesslich fuer genau eine serverseitig markierte, bestaetigte direkte App-Review-Registrierung: Sie darf den unveraenderten Zwei-Schritt-Handshake nach einer Neuinstallation erneut ausfuehren. Jeder Durchlauf erzeugt einen neuen Token; zuvor bestaetigte Review-Token bleiben gueltig. Aus diesen Token entstehende Allowlist-Eintraege, Selbstberichte und Kompensationscodes werden mit `is_test = true` markiert und muessen aus wissenschaftlichen Exporten, statistischen Auswertungen sowie Verguetungslisten ausgeschlossen werden. Die Kennung selbst wird weder im Client noch im Repository hinterlegt.
+
 ### 8.6 Selbstbericht-Uebertragung
 
 Die App sendet pro wissenschaftlicher Studiensituation einen `PUT`-Request an `submit.php`:

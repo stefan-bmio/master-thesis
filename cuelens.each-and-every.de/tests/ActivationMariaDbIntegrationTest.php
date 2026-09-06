@@ -58,6 +58,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             'CREATE TEMPORARY TABLE register (
                 registration_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 registration_channel VARCHAR(16) NOT NULL DEFAULT \'DIRECT\',
+                is_app_review_account BOOLEAN NOT NULL DEFAULT FALSE,
                 email VARCHAR(255) NULL UNIQUE,
                 prolific_id CHAR(24) CHARACTER SET ascii COLLATE ascii_bin NULL UNIQUE,
                 doi TINYINT(1) NOT NULL DEFAULT 0,
@@ -75,7 +76,8 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             'CREATE TEMPORARY TABLE valid_app_token_hashes (
                 hash CHAR(64) NOT NULL PRIMARY KEY,
                 completion_mode VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin
-                    NOT NULL DEFAULT \'COMPENSATION_CODE\'
+                    NOT NULL DEFAULT \'COMPENSATION_CODE\',
+                is_test BOOLEAN NOT NULL DEFAULT FALSE
             ) ENGINE=InnoDB'
         );
         $this->pdo->prepare(
@@ -166,6 +168,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             [
                 'hash' => valid_app_token_hash(self::PSEUDONYM_SECRET, $token),
                 'completion_mode' => COMPLETION_MODE_PROLIFIC_MANUAL,
+                'is_test' => 0,
             ],
             $allowlistRow
         );
@@ -197,6 +200,57 @@ final class ActivationMariaDbIntegrationTest extends TestCase
 
         $this->confirm(self::SECOND_TOKEN);
         self::assertNotNull($this->registration()['app_token_issued_at']);
+    }
+
+    public function testMarkedReviewAccountCanActivateRepeatedlyAndBothTokensAreTestData(): void
+    {
+        $this->pdo->exec(
+            "UPDATE register SET is_app_review_account = 1 WHERE registration_channel = 'DIRECT'"
+        );
+
+        $first = request_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            self::SECRET,
+            static fn (): string => self::FIRST_TOKEN
+        );
+        $this->confirm($first);
+        $second = request_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            self::SECRET,
+            static fn (): string => self::SECOND_TOKEN
+        );
+        $this->confirm($second);
+
+        self::assertNotSame($first, $second);
+        $rows = $this->cravingPdo->query(
+            'SELECT hash, completion_mode, is_test FROM valid_app_token_hashes ORDER BY hash'
+        )->fetchAll(PDO::FETCH_ASSOC);
+        self::assertCount(2, $rows);
+        foreach ($rows as $row) {
+            self::assertSame(COMPLETION_MODE_COMPENSATION_CODE, $row['completion_mode']);
+            self::assertSame(1, (int) $row['is_test']);
+        }
+    }
+
+    public function testOrdinaryAccountCannotRequestAnotherTokenAfterConfirmation(): void
+    {
+        $first = request_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            self::SECRET,
+            static fn (): string => self::FIRST_TOKEN
+        );
+        $this->confirm($first);
+
+        $this->expectException(ActivationRejectedException::class);
+        request_activation_token(
+            $this->pdo,
+            self::EMAIL,
+            self::SECRET,
+            static fn (): string => self::SECOND_TOKEN
+        );
     }
 
     public function testExpiredConfirmationIsRejected(): void
@@ -310,6 +364,48 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertStringNotContainsString('completion_mode', $schema[1]);
     }
 
+    public function testAdministrativeReviewMigrationAllowsExactlyOneDirectReviewAccount(): void
+    {
+        $this->pdo->exec('DROP TEMPORARY TABLE register');
+        $this->pdo->exec(
+            'CREATE TEMPORARY TABLE register (
+                registration_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                registration_channel VARCHAR(16) NOT NULL
+            ) ENGINE=InnoDB'
+        );
+        $this->pdo->exec(
+            "INSERT INTO register (registration_channel) VALUES ('DIRECT'), ('DIRECT'), ('PROLIFIC')"
+        );
+        $this->applyMigration(
+            $this->pdo,
+            dirname(__DIR__) . '/sql/migrations/003_app_review_account_up.sql'
+        );
+        self::assertSame(0, (int) $this->pdo->query(
+            'SELECT SUM(is_app_review_account) FROM register'
+        )->fetchColumn());
+        $this->pdo->exec('UPDATE register SET is_app_review_account = 1 WHERE registration_id = 1');
+
+        foreach ([
+            'UPDATE register SET is_app_review_account = 1 WHERE registration_id = 2',
+            'UPDATE register SET is_app_review_account = 1 WHERE registration_id = 3',
+        ] as $invalidUpdate) {
+            try {
+                $this->pdo->exec($invalidUpdate);
+                self::fail('The review-account constraints must reject this update.');
+            } catch (PDOException) {
+                self::assertTrue(true);
+            }
+        }
+
+        $this->applyMigration(
+            $this->pdo,
+            dirname(__DIR__) . '/sql/migrations/003_app_review_account_down.sql'
+        );
+        $schema = $this->pdo->query('SHOW CREATE TABLE register')->fetch(PDO::FETCH_NUM);
+        self::assertIsArray($schema);
+        self::assertStringNotContainsString('is_app_review_account', $schema[1]);
+    }
+
     /** @return array<string, mixed> */
     private function registration(string $identifier = self::EMAIL): array
     {
@@ -322,7 +418,8 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                     activation_valid_through,
                     app_token_issued_at,
                     registration_token_hash,
-                    dataprot
+                    dataprot,
+                    is_app_review_account
                FROM register
               WHERE registration_channel = :registration_channel
                 AND ' . $column . ' = :identifier'

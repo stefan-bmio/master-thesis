@@ -49,7 +49,8 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         $this->researchPdo->exec(
             'CREATE TEMPORARY TABLE valid_app_token_hashes (
                 hash CHAR(64) NOT NULL PRIMARY KEY,
-                completion_mode VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL
+                completion_mode VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+                is_test BOOLEAN NOT NULL DEFAULT FALSE
             ) ENGINE=InnoDB'
         );
         $this->researchPdo->exec(
@@ -57,12 +58,14 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
                 participant_id CHAR(64) NOT NULL,
                 condition_code ENUM(\'CUE_MATCHING\', \'CUE_LABELING\') NOT NULL,
                 craving TINYINT NOT NULL,
+                is_test BOOLEAN NOT NULL DEFAULT FALSE,
                 CHECK (craving BETWEEN 0 AND 100)
             ) ENGINE=InnoDB'
         );
         $this->researchPdo->exec(
             'CREATE TEMPORARY TABLE compensation_code (
                 compensation_code CHAR(36) NOT NULL PRIMARY KEY,
+                is_test BOOLEAN NOT NULL DEFAULT FALSE,
                 confirmed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB'
         );
@@ -176,6 +179,33 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         self::assertSame(20, $this->reportCount(self::DIRECT_TOKEN));
     }
 
+    public function testReviewReportsAndCompensationAreMarkedAsTestData(): void
+    {
+        $mark = $this->researchPdo->prepare(
+            'UPDATE valid_app_token_hashes SET is_test = 1 WHERE hash = :hash'
+        );
+        $mark->execute([
+            ':hash' => valid_app_token_hash(self::SECRET, self::DIRECT_TOKEN),
+        ]);
+
+        for ($index = 1; $index <= 20; $index++) {
+            $this->submit(
+                self::DIRECT_TOKEN,
+                static fn (): string => self::COMPENSATION_CODE
+            );
+        }
+
+        self::assertSame(20, (int) $this->researchPdo->query(
+            'SELECT COUNT(*) FROM self_reports WHERE is_test = 1'
+        )->fetchColumn());
+        self::assertSame(0, (int) $this->researchPdo->query(
+            'SELECT COUNT(*) FROM self_reports WHERE is_test = 0'
+        )->fetchColumn());
+        self::assertSame(1, (int) $this->researchPdo->query(
+            'SELECT is_test FROM compensation_code'
+        )->fetchColumn());
+    }
+
     public function testProlificCompletionIsDataMinimizedAndIdempotent(): void
     {
         $administrativeConnections = 0;
@@ -253,7 +283,7 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         $researchSchema = $this->researchPdo->query(
             'SHOW COLUMNS FROM self_reports'
         )->fetchAll(PDO::FETCH_COLUMN);
-        self::assertSame(['participant_id', 'condition_code', 'craving'], $researchSchema);
+        self::assertSame(['participant_id', 'condition_code', 'craving', 'is_test'], $researchSchema);
         $serializedResearchRows = json_encode(
             $this->researchPdo->query('SELECT * FROM self_reports')->fetchAll(),
             JSON_THROW_ON_ERROR
@@ -318,6 +348,64 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         }
     }
 
+    public function testResearchTestMarkerMigrationBackfillsAndRollsBack(): void
+    {
+        $this->researchPdo->exec('DROP TEMPORARY TABLE compensation_code');
+        $this->researchPdo->exec('DROP TEMPORARY TABLE self_reports');
+        $this->researchPdo->exec('DROP TEMPORARY TABLE valid_app_token_hashes');
+        $this->researchPdo->exec(
+            'CREATE TEMPORARY TABLE valid_app_token_hashes (
+                hash CHAR(64) NOT NULL PRIMARY KEY,
+                completion_mode VARCHAR(32) NOT NULL
+            ) ENGINE=InnoDB'
+        );
+        $this->researchPdo->exec(
+            'CREATE TEMPORARY TABLE self_reports (
+                participant_id CHAR(64) NOT NULL,
+                condition_code VARCHAR(32) NOT NULL,
+                craving TINYINT NOT NULL
+            ) ENGINE=InnoDB'
+        );
+        $this->researchPdo->exec(
+            'CREATE TEMPORARY TABLE compensation_code (
+                compensation_code CHAR(36) NOT NULL PRIMARY KEY,
+                confirmed_at TIMESTAMP NULL
+            ) ENGINE=InnoDB'
+        );
+        $this->researchPdo->exec(
+            "INSERT INTO valid_app_token_hashes (hash, completion_mode) VALUES ('" .
+            str_repeat('a', 64) . "', 'COMPENSATION_CODE')"
+        );
+        $this->researchPdo->exec(
+            "INSERT INTO self_reports (participant_id, condition_code, craving) VALUES ('" .
+            str_repeat('b', 64) . "', 'CUE_MATCHING', 50)"
+        );
+        $this->researchPdo->exec(
+            "INSERT INTO compensation_code (compensation_code) VALUES ('" .
+            self::COMPENSATION_CODE . "')"
+        );
+
+        $this->applyMigration(
+            $this->researchPdo,
+            dirname(__DIR__) . '/sql/migrations/004_test_data_markers_up.sql'
+        );
+        foreach (['valid_app_token_hashes', 'self_reports', 'compensation_code'] as $table) {
+            self::assertSame(0, (int) $this->researchPdo->query(
+                'SELECT is_test FROM ' . $table
+            )->fetchColumn());
+        }
+
+        $this->applyMigration(
+            $this->researchPdo,
+            dirname(__DIR__) . '/sql/migrations/004_test_data_markers_down.sql'
+        );
+        foreach (['valid_app_token_hashes', 'self_reports', 'compensation_code'] as $table) {
+            $schema = $this->researchPdo->query('SHOW CREATE TABLE ' . $table)->fetch(PDO::FETCH_NUM);
+            self::assertIsArray($schema);
+            self::assertStringNotContainsString('is_test', $schema[1]);
+        }
+    }
+
     /**
      * @param null|callable(): string $codeGenerator
      * @param null|callable(): PDO $administrativePdoFactory
@@ -369,5 +457,16 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]
         );
+    }
+
+    private function applyMigration(PDO $pdo, string $path): void
+    {
+        $sql = file_get_contents($path);
+        self::assertNotFalse($sql, 'Migration file must be readable.');
+        $sql = preg_replace('/^--.*$/m', '', $sql);
+        self::assertIsString($sql);
+        foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
+            $pdo->exec($statement);
+        }
     }
 }

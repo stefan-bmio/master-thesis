@@ -171,13 +171,13 @@ function request_activation_token(
     $pdo->beginTransaction();
     try {
         $registration = $pdo->prepare(
-            'SELECT registration_id, registration_channel
+            'SELECT registration_id, registration_channel, is_app_review_account
                FROM register
               WHERE registration_channel = :registration_channel
                 AND ' . $identifierColumn . ' = :identifier
                 AND registration_confirmed_at IS NOT NULL
                 AND studyinfo = 1
-                AND app_token_issued_at IS NULL
+                AND (app_token_issued_at IS NULL OR is_app_review_account = 1)
               FOR UPDATE'
         );
         $registration->execute([
@@ -195,7 +195,7 @@ function request_activation_token(
                     activation_valid_through = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL ' .
                     ACTIVATION_VALIDITY_MINUTES . ' MINUTE)
               WHERE registration_id = :registration_id
-                AND app_token_issued_at IS NULL'
+                AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
         );
         $update->execute([
             ':app_token_hash' => $appTokenHash,
@@ -241,6 +241,7 @@ function confirm_activation_token(
     $registration = $registrationPdo->prepare(
         'SELECT registration_id,
                 registration_channel,
+                is_app_review_account,
                 app_token_hash,
                 activation_valid_through > CURRENT_TIMESTAMP AS activation_is_valid
            FROM register
@@ -248,7 +249,7 @@ function confirm_activation_token(
             AND ' . $identifierColumn . ' = :identifier
             AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
-            AND app_token_issued_at IS NULL'
+            AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
     );
     $registration->execute([
         ':registration_channel' => $participantIdentifier->channel(),
@@ -275,7 +276,7 @@ function confirm_activation_token(
             AND activation_valid_through > CURRENT_TIMESTAMP
             AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
-            AND app_token_issued_at IS NULL'
+            AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
     );
     $update->execute([
         ':registration_token_hash' => $registrationTokenHash,
@@ -287,13 +288,14 @@ function confirm_activation_token(
     }
 
     $allowlist = $cravingPdo->prepare(
-        'INSERT INTO valid_app_token_hashes (hash, completion_mode)
-         VALUES (:hash, :completion_mode)'
+        'INSERT INTO valid_app_token_hashes (hash, completion_mode, is_test)
+         VALUES (:hash, :completion_mode, :is_test)'
     );
     $allowlist->execute([
         ':hash' => $validTokenHash,
         ':completion_mode' => completion_mode_for_registration_channel(
             (string) $row['registration_channel']
         ),
+        ':is_test' => (int) ($row['is_app_review_account'] ?? 0),
     ]);
 }

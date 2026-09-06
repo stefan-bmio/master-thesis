@@ -8,9 +8,9 @@
 | Produkt | CueLens |
 | Referenzimplementierung | Android-App mit `applicationId = de.eachandevery.cuelens` |
 | Empfohlener Repository-Pfad | `cuelens-ios/PLATFORM_INDEPENDENT_SPECIFICATION.md` |
-| Dokumentversion | 1.1 |
+| Dokumentversion | 1.2 |
 | Status | Verbindliche Ausgangsbasis für die native iOS-Portierung; Android-Referenz bleibt unverändert |
-| Stand | 16. August 2026 |
+| Stand | 6. September 2026 |
 | Abgeleitet aus | `main`, Commit `9ef5f38ee341a0f59a1b2844773c8cadc8a807c2` |
 | Geltungsbereich | Aktuelle CueLens-Studien-App und bestehendes PHP-Hintergrundsystem |
 | Nicht enthalten | KI-PoC unter `AI_PoC`, Kamera, eigene Bilder, On-Device-Klassifikation und spätere KI-Major-Version |
@@ -424,6 +424,10 @@ Anforderungen:
 5. Die Aktivierung ist auf Serverseite fünf Minuten gültig.
 6. Bereits aktivierte Apps DÜRFEN keine erneute Aktivierung anbieten.
 7. Ein Fehler des sicheren Credential-Stores MUSS fail-closed behandelt werden; produktive Nutzung und erneute Aktivierung bleiben gesperrt.
+
+Für die technische Prüfung durch Apple DARF serverseitig genau eine bestätigte direkte Testregistrierung als App-Review-Konto markiert werden. Nur diese Registrierung darf nach einer erfolgreichen Aktivierung erneut einen neuen Token anfordern und bestätigen; alle zuvor bestätigten Review-Token bleiben gültig. Der reguläre Zwei-Schritt-Handshake, die Fünf-Minuten-Gültigkeit und sämtliche übrigen Zulässigkeitsprüfungen bleiben unverändert. Die Ausnahme darf weder im Client noch anhand einer dort hinterlegten Kennung implementiert werden.
+
+Allowlist-Einträge, Selbstberichte und Kompensationscodes, die aus einem solchen Review-Token entstehen, MÜSSEN serverseitig als Testdaten gekennzeichnet werden. Wissenschaftliche Exporte und statistische Auswertungen sowie Vergütungs- und Kompensationscode-Arbeitslisten MÜSSEN diese Datensätze explizit ausschließen. Die Reviewkennung selbst DARF nicht in Forschungsdaten, App-Konfiguration, Quellcode oder Protokollen gespeichert werden.
 8. Normale Fehler erzeugen eine neutrale Meldung „Bitte versuchen Sie es später noch einmal“.
 9. Ein Timeout während der zweiten Bestätigung erzeugt einen Supporthinweis, weil der serverseitige Erfolg unklar sein kann.
 10. Der Supportkontakt lautet `cuelens@each-and-every.de`.
@@ -1145,7 +1149,7 @@ Eine Implementierung erfüllt diese Spezifikation nur, wenn mindestens alle folg
 30. App-Daten werden nicht in Cloud-Backups synchronisiert.
 31. Kamera-, Foto-, Mikrofon-, Standort- und Trackingberechtigungen fehlen.
 32. Die Plattform wird nicht als Studienvariable übertragen, gespeichert oder ausgewertet.
-33. Die iOS-Einführung verändert weder Backend-Selbstberichtschema noch Auswertungsplan.
+33. Die iOS-Einführung verändert weder den wissenschaftlichen Selbstbericht-Payload noch den Auswertungsplan; technisch markierte Reviewdaten werden vor Export, Auswertung und Vergütung ausgeschlossen.
 34. Die 50 Cue- und 100 Matching-Bilder entsprechen inhaltlich der Android-Referenz.
 35. Die 50 Labelzuordnungen entsprechen Anhang A.
 
@@ -1275,3 +1279,4 @@ Die Reihenfolge der beiden angezeigten Labels darf pro Darbietung randomisiert w
 | 1.0 | 10.08.2026 | Erste plattformunabhängige Spezifikation auf Basis der produktiven Android-App; KI-PoC ausgeschlossen; Webeinwilligung für iOS, E-Mail-basierter Widerruf/Löschung, keine Plattformvariable und unveränderte Auswertung festgelegt. |
 | 1.0.1 | 15.08.2026 | Repository-Pfad an das eigenständige Geschwisterverzeichnis `cuelens-ios/` angepasst; keine fachliche Änderung. |
 | 1.1 | 16.08.2026 | Hochformatanforderung für die unter iPadOS 26 adaptive Fensterdarstellung präzisiert: allgemeine UI adaptiv, produktive Reizdarstellung nur bei geeigneter hochformatiger Szenengeometrie. |
+| 1.2 | 06.09.2026 | Serverseitig begrenzte, wiederholbare App-Review-Aktivierung und verpflichtende technische Trennung der dabei erzeugten Testdaten ergänzt. |

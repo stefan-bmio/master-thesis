@@ -109,14 +109,19 @@ function submit_study_report(
     $researchPdo->beginTransaction();
     try {
         $allowlist = $researchPdo->prepare(
-            'SELECT completion_mode
+            'SELECT completion_mode, is_test
                FROM valid_app_token_hashes
               WHERE hash = :hash'
         );
         $allowlist->execute([':hash' => $validTokenHash]);
-        $completionMode = $allowlist->fetchColumn();
-        if (!is_string($completionMode)) {
+        $allowlistRow = $allowlist->fetch(PDO::FETCH_ASSOC);
+        if (!is_array($allowlistRow) || !is_string($allowlistRow['completion_mode'] ?? null)) {
             throw new StudySubmissionRejectedException('Bad request.');
+        }
+        $completionMode = $allowlistRow['completion_mode'];
+        $isTest = (int) ($allowlistRow['is_test'] ?? -1);
+        if ($isTest !== 0 && $isTest !== 1) {
+            throw new RuntimeException('Invalid test-data marker.');
         }
         if (!is_supported_completion_mode($completionMode)) {
             throw new RuntimeException('Unsupported completion mode.');
@@ -149,12 +154,13 @@ function submit_study_report(
         $situationIndex = $submittedCount + 1;
         $conditionCode = condition_code_for_index($situationIndex);
         $report = $researchPdo->prepare(
-            'INSERT INTO self_reports (participant_id, condition_code, craving)
-             VALUES (:participant_id, :condition_code, :craving)'
+            'INSERT INTO self_reports (participant_id, condition_code, craving, is_test)
+             VALUES (:participant_id, :condition_code, :craving, :is_test)'
         );
         $report->bindValue(':participant_id', $participantId, PDO::PARAM_STR);
         $report->bindValue(':condition_code', $conditionCode, PDO::PARAM_STR);
         $report->bindValue(':craving', $craving, PDO::PARAM_INT);
+        $report->bindValue(':is_test', $isTest, PDO::PARAM_INT);
         $report->execute();
 
         if ($situationIndex !== TOTAL_SUBMISSION_COUNT) {
@@ -169,10 +175,13 @@ function submit_study_report(
             }
             $compensationCode = strtolower($compensationCode);
             $code = $researchPdo->prepare(
-                'INSERT INTO compensation_code (compensation_code)
-                 VALUES (:compensation_code)'
+                'INSERT INTO compensation_code (compensation_code, is_test)
+                 VALUES (:compensation_code, :is_test)'
             );
-            $code->execute([':compensation_code' => $compensationCode]);
+            $code->execute([
+                ':compensation_code' => $compensationCode,
+                ':is_test' => $isTest,
+            ]);
             $researchPdo->commit();
             return completed_study_response($completionMode, $compensationCode);
         }
