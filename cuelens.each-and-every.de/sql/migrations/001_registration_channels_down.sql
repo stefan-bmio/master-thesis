@@ -7,8 +7,8 @@
 SET time_zone = '+00:00';
 
 ALTER TABLE register
-    DROP CHECK chk_register_identifier_separation,
-    DROP CHECK chk_register_registration_channel,
+    DROP CONSTRAINT chk_register_identifier_separation,
+    DROP CONSTRAINT chk_register_registration_channel,
     DROP INDEX ix_register_prolific_payment_worklist,
     DROP INDEX uq_register_prolific_id,
     DROP INDEX uq_register_email,

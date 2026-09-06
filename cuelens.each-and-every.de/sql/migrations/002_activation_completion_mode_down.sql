@@ -6,5 +6,5 @@
 SET time_zone = '+00:00';
 
 ALTER TABLE valid_app_token_hashes
-    DROP CHECK chk_valid_app_token_completion_mode,
+    DROP CONSTRAINT chk_valid_app_token_completion_mode,
     DROP COLUMN completion_mode;
