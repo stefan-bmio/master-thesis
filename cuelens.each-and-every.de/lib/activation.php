@@ -171,13 +171,13 @@ function request_activation_token(
     $pdo->beginTransaction();
     try {
         $registration = $pdo->prepare(
-            'SELECT registration_id, registration_channel, is_app_review_account
+            'SELECT registration_id, registration_channel, app_review_account
                FROM register
               WHERE registration_channel = :registration_channel
                 AND ' . $identifierColumn . ' = :identifier
                 AND registration_confirmed_at IS NOT NULL
                 AND studyinfo = 1
-                AND (app_token_issued_at IS NULL OR is_app_review_account = 1)
+                AND (app_token_issued_at IS NULL OR app_review_account = 1)
               FOR UPDATE'
         );
         $registration->execute([
@@ -195,7 +195,7 @@ function request_activation_token(
                     activation_valid_through = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL ' .
                     ACTIVATION_VALIDITY_MINUTES . ' MINUTE)
               WHERE registration_id = :registration_id
-                AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
+                AND (app_token_issued_at IS NULL OR app_review_account = 1)'
         );
         $update->execute([
             ':app_token_hash' => $appTokenHash,
@@ -222,7 +222,7 @@ function confirm_activation_token(
     string $appToken,
     string $activationSecret,
     string $pseudonymSecret
-): void {
+): bool {
     $participantIdentifier = activation_identifier($identifier);
     $normalizedIdentifier = $participantIdentifier->activationValue();
     $identifierColumn = activation_registration_identifier_column($participantIdentifier);
@@ -241,7 +241,7 @@ function confirm_activation_token(
     $registration = $registrationPdo->prepare(
         'SELECT registration_id,
                 registration_channel,
-                is_app_review_account,
+                app_review_account,
                 app_token_hash,
                 activation_valid_through > CURRENT_TIMESTAMP AS activation_is_valid
            FROM register
@@ -249,7 +249,7 @@ function confirm_activation_token(
             AND ' . $identifierColumn . ' = :identifier
             AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
-            AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
+            AND (app_token_issued_at IS NULL OR app_review_account = 1)'
     );
     $registration->execute([
         ':registration_channel' => $participantIdentifier->channel(),
@@ -276,7 +276,7 @@ function confirm_activation_token(
             AND activation_valid_through > CURRENT_TIMESTAMP
             AND registration_confirmed_at IS NOT NULL
             AND studyinfo = 1
-            AND (app_token_issued_at IS NULL OR is_app_review_account = 1)'
+            AND (app_token_issued_at IS NULL OR app_review_account = 1)'
     );
     $update->execute([
         ':registration_token_hash' => $registrationTokenHash,
@@ -296,6 +296,8 @@ function confirm_activation_token(
         ':completion_mode' => completion_mode_for_registration_channel(
             (string) $row['registration_channel']
         ),
-        ':is_test' => (int) ($row['is_app_review_account'] ?? 0),
+        ':is_test' => (int) ($row['app_review_account'] ?? 0),
     ]);
+
+    return (int) ($row['app_review_account'] ?? 0) === 1;
 }

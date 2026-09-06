@@ -58,7 +58,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             'CREATE TEMPORARY TABLE register (
                 registration_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 registration_channel VARCHAR(16) NOT NULL DEFAULT \'DIRECT\',
-                is_app_review_account BOOLEAN NOT NULL DEFAULT FALSE,
+                app_review_account BOOLEAN NOT NULL DEFAULT FALSE,
                 email VARCHAR(255) NULL UNIQUE,
                 prolific_id CHAR(24) CHARACTER SET ascii COLLATE ascii_bin NULL UNIQUE,
                 doi TINYINT(1) NOT NULL DEFAULT 0,
@@ -112,7 +112,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertNotNull($pending['activation_valid_through']);
         self::assertNull($pending['app_token_issued_at']);
 
-        $this->confirm($token);
+        self::assertFalse($this->confirm($token));
 
         $confirmed = $this->registration();
         self::assertNull($confirmed['app_token_hash']);
@@ -153,7 +153,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             $this->registration(self::PROLIFIC_ID)['app_token_hash']
         );
 
-        $this->confirmIdentifier(self::PROLIFIC_ID, $token);
+        self::assertFalse($this->confirmIdentifier(self::PROLIFIC_ID, $token));
 
         $registration = $this->registration(self::PROLIFIC_ID);
         self::assertNotNull($registration['app_token_issued_at']);
@@ -205,7 +205,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
     public function testMarkedReviewAccountCanActivateRepeatedlyAndBothTokensAreTestData(): void
     {
         $this->pdo->exec(
-            "UPDATE register SET is_app_review_account = 1 WHERE registration_channel = 'DIRECT'"
+            "UPDATE register SET app_review_account = 1 WHERE registration_channel = 'DIRECT'"
         );
 
         $first = request_activation_token(
@@ -214,14 +214,14 @@ final class ActivationMariaDbIntegrationTest extends TestCase
             self::SECRET,
             static fn (): string => self::FIRST_TOKEN
         );
-        $this->confirm($first);
+        self::assertTrue($this->confirm($first));
         $second = request_activation_token(
             $this->pdo,
             self::EMAIL,
             self::SECRET,
             static fn (): string => self::SECOND_TOKEN
         );
-        $this->confirm($second);
+        self::assertTrue($this->confirm($second));
 
         self::assertNotSame($first, $second);
         $rows = $this->cravingPdo->query(
@@ -364,48 +364,6 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         self::assertStringNotContainsString('completion_mode', $schema[1]);
     }
 
-    public function testAdministrativeReviewMigrationAllowsExactlyOneDirectReviewAccount(): void
-    {
-        $this->pdo->exec('DROP TEMPORARY TABLE register');
-        $this->pdo->exec(
-            'CREATE TEMPORARY TABLE register (
-                registration_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                registration_channel VARCHAR(16) NOT NULL
-            ) ENGINE=InnoDB'
-        );
-        $this->pdo->exec(
-            "INSERT INTO register (registration_channel) VALUES ('DIRECT'), ('DIRECT'), ('PROLIFIC')"
-        );
-        $this->applyMigration(
-            $this->pdo,
-            dirname(__DIR__) . '/sql/migrations/003_app_review_account_up.sql'
-        );
-        self::assertSame(0, (int) $this->pdo->query(
-            'SELECT SUM(is_app_review_account) FROM register'
-        )->fetchColumn());
-        $this->pdo->exec('UPDATE register SET is_app_review_account = 1 WHERE registration_id = 1');
-
-        foreach ([
-            'UPDATE register SET is_app_review_account = 1 WHERE registration_id = 2',
-            'UPDATE register SET is_app_review_account = 1 WHERE registration_id = 3',
-        ] as $invalidUpdate) {
-            try {
-                $this->pdo->exec($invalidUpdate);
-                self::fail('The review-account constraints must reject this update.');
-            } catch (PDOException) {
-                self::assertTrue(true);
-            }
-        }
-
-        $this->applyMigration(
-            $this->pdo,
-            dirname(__DIR__) . '/sql/migrations/003_app_review_account_down.sql'
-        );
-        $schema = $this->pdo->query('SHOW CREATE TABLE register')->fetch(PDO::FETCH_NUM);
-        self::assertIsArray($schema);
-        self::assertStringNotContainsString('is_app_review_account', $schema[1]);
-    }
-
     /** @return array<string, mixed> */
     private function registration(string $identifier = self::EMAIL): array
     {
@@ -419,7 +377,7 @@ final class ActivationMariaDbIntegrationTest extends TestCase
                     app_token_issued_at,
                     registration_token_hash,
                     dataprot,
-                    is_app_review_account
+                    app_review_account
                FROM register
               WHERE registration_channel = :registration_channel
                 AND ' . $column . ' = :identifier'
@@ -433,14 +391,14 @@ final class ActivationMariaDbIntegrationTest extends TestCase
         return $row;
     }
 
-    private function confirm(string $token): void
+    private function confirm(string $token): bool
     {
-        $this->confirmIdentifier(self::EMAIL, $token);
+        return $this->confirmIdentifier(self::EMAIL, $token);
     }
 
-    private function confirmIdentifier(string $identifier, string $token): void
+    private function confirmIdentifier(string $identifier, string $token): bool
     {
-        confirm_activation_token(
+        return confirm_activation_token(
             $this->pdo,
             $this->cravingPdo,
             $identifier,

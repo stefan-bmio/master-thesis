@@ -146,6 +146,10 @@ function handle_self_report(
             static fn (): bool => send_operational_notification(
                 OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED,
                 'submission_endpoint'
+            ),
+            static fn (): bool => send_operational_notification(
+                OPERATIONAL_EVENT_APP_REVIEW_STUDY_COMPLETED,
+                'submission_endpoint'
             )
         );
         json_response(200, $response);

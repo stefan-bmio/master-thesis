@@ -92,6 +92,7 @@ function ongoing_study_response(int $situationIndex): array
  * @param null|callable(): PDO $administrativePdoFactory
  * @param null|callable(): string $compensationCodeGenerator
  * @param null|callable(): mixed $prolificCompletionNotifier
+ * @param null|callable(): mixed $appReviewCompletionNotifier
  * @return array<string, mixed>
  */
 function submit_study_report(
@@ -101,7 +102,8 @@ function submit_study_report(
     string $pseudonymSecret,
     ?callable $administrativePdoFactory = null,
     ?callable $compensationCodeGenerator = null,
-    ?callable $prolificCompletionNotifier = null
+    ?callable $prolificCompletionNotifier = null,
+    ?callable $appReviewCompletionNotifier = null
 ): array {
     $validTokenHash = valid_app_token_hash($pseudonymSecret, $appToken);
     $participantId = participant_id_for_app_token($pseudonymSecret, $appToken);
@@ -183,6 +185,9 @@ function submit_study_report(
                 ':is_test' => $isTest,
             ]);
             $researchPdo->commit();
+            if ($isTest === 1 && $appReviewCompletionNotifier !== null) {
+                $appReviewCompletionNotifier();
+            }
             return completed_study_response($completionMode, $compensationCode);
         }
 

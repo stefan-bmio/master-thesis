@@ -82,6 +82,7 @@ Research app investigating cue labeling for smoking craving in everyday life.
 - Eine gültige synthetische Reviewkennung wird ausschließlich im geschützten App-Review-Informationsfeld bereitgestellt, niemals im Repository.
 - Die serverseitig markierte Reviewregistrierung kann nach Löschen und Neuinstallation der App erneut aktiviert werden. Dabei wird stets ein neuer App-Token ausgegeben; reguläre Registrierungen bleiben einmalig aktivierbar.
 - Sämtliche mit Review-Token erzeugten Selbstberichte und Kompensationscodes sind serverseitig als Testdaten markiert und aus wissenschaftlichen Exporten, Auswertungen und Vergütungslisten auszuschließen.
+- Ereignismails zur erfolgreichen Review-Aktivierung und zum direkten Review-Abschluss sind mit `[TESTKONTO]` im Betreff und `Testkonto: ja` im Text gekennzeichnet; die Reviewkennung selbst wird nicht mitgesendet.
 - Die vorausgehende Forschungsinformation und Einwilligung erfolgen im externen Registrierungsprozess.
 - Die App erfasst keine Kamera-, Foto-, Standort-, Mikrofon-, HealthKit- oder Trackingdaten.
 - Übertragen werden je nach Zugang E-Mail-Adresse oder Prolific-ID zur Aktivierung, ein pseudonymer App-Token, zwanzig Craving-Selbstberichte und optional getrenntes Freitextfeedback.

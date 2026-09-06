@@ -5,19 +5,19 @@ PHP-Deployment ausgeführt. `001` und `003` betreffen die administrative
 Registrierungsdatenbank, `002` und `004` die Forschungsdatenbank. Vor jeder
 Produktionsmigration ist ein Backup erforderlich.
 
-Nach `003_app_review_account_up.sql` wird genau eine bestätigte direkte
-Testregistrierung markiert. Die Kennung wird nur zur Laufzeit übergeben und
-nicht in Repository, Logs oder Shell-Skripten abgelegt:
+Nach `003_app_review_account_up.sql` wird die zuvor regulär registrierte und
+bestätigte Reviewregistrierung manuell in der administrativen Datenbank
+markiert:
 
-```sh
-CUELENS_APP_REVIEW_EMAIL='<geschützt bereitgestellte Reviewkennung>' \
-  php scripts/mark-app-review-account.php
+```sql
+UPDATE register
+   SET app_review_account = TRUE
+ WHERE email = '<geschützt bereitgestellte Reviewkennung>';
 ```
 
-Die Operation ist idempotent und verweigert die Änderung, wenn die Kennung
-nicht genau eine geeignete Registrierung bezeichnet oder bereits ein anderes
-Reviewkonto markiert ist. Das Datenbankschema erzwingt zusätzlich höchstens ein
-markiertes Konto und beschränkt es auf den direkten Registrierungskanal.
+Die konkrete Kennung darf nicht im Repository, in Konfigurationsdateien oder
+in Protokollen abgelegt werden. Auswahl und Kontrolle des betroffenen
+Datensatzes erfolgen im manuellen administrativen Ablauf.
 
 `004_test_data_markers_up.sql` kennzeichnet die Allowlist, Selbstberichte und
 Kompensationscodes aus Reviewaktivierungen mit `is_test = TRUE`. Alle

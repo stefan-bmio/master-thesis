@@ -12,6 +12,8 @@ const OPERATIONAL_EVENT_FEEDBACK_LIMIT_REACHED = 'feedback_limit_reached';
 const OPERATIONAL_EVENT_REGISTRATION_CREATED = 'registration_created';
 const OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED = 'prolific_registration_created';
 const OPERATIONAL_EVENT_ACTIVATION_COMPLETED = 'activation_completed';
+const OPERATIONAL_EVENT_APP_REVIEW_ACTIVATION_COMPLETED = 'app_review_activation_completed';
+const OPERATIONAL_EVENT_APP_REVIEW_STUDY_COMPLETED = 'app_review_study_completed';
 const OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED = 'prolific_study_completed';
 const OPERATIONAL_EVENT_CLIENT_ERROR = 'client_error';
 const OPERATIONAL_EVENT_SERVER_ERROR = 'server_error';
@@ -46,6 +48,14 @@ function build_operational_notification(
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED => [
             'subject' => '[CueLens] App-Aktivierung abgeschlossen',
             'notice' => 'Eine App-Aktivierung wurde erfolgreich abgeschlossen.',
+        ],
+        OPERATIONAL_EVENT_APP_REVIEW_ACTIVATION_COMPLETED => [
+            'subject' => '[CueLens][TESTKONTO] App-Aktivierung abgeschlossen',
+            'notice' => 'Eine App-Aktivierung des Testkontos wurde erfolgreich abgeschlossen.',
+        ],
+        OPERATIONAL_EVENT_APP_REVIEW_STUDY_COMPLETED => [
+            'subject' => '[CueLens][TESTKONTO] Teilnahme abgeschlossen',
+            'notice' => 'Die Teilnahme des Testkontos wurde erfolgreich abgeschlossen.',
         ],
         OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED => [
             'subject' => '[CueLens] Prolific-Teilnahme abgeschlossen',
@@ -86,6 +96,12 @@ function build_operational_notification(
     ];
     if ($safeCategory !== null) {
         $lines[] = 'Fehlerkategorie: ' . $safeCategory;
+    }
+    if (
+        $eventType === OPERATIONAL_EVENT_APP_REVIEW_ACTIVATION_COMPLETED ||
+        $eventType === OPERATIONAL_EVENT_APP_REVIEW_STUDY_COMPLETED
+    ) {
+        $lines[] = 'Testkonto: ja';
     }
     $lines[] = 'Hinweis: ' . $templates[$eventType]['notice'];
 

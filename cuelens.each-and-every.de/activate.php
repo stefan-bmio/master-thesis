@@ -161,7 +161,7 @@ try {
     }
 
     $cravingPdo = pdo_from_config(is_array($cravingDbConfig) ? $cravingDbConfig : []);
-    confirm_activation_token(
+    $isAppReviewAccount = confirm_activation_token(
         $pdo,
         $cravingPdo,
         $identifier,
@@ -170,7 +170,9 @@ try {
         $hostConfig['secret']['pseudonym']
     );
     send_operational_notification(
-        OPERATIONAL_EVENT_ACTIVATION_COMPLETED,
+        $isAppReviewAccount
+            ? OPERATIONAL_EVENT_APP_REVIEW_ACTIVATION_COMPLETED
+            : OPERATIONAL_EVENT_ACTIVATION_COMPLETED,
         'activation_endpoint'
     );
     no_content();

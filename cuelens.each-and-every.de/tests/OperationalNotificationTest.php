@@ -7,6 +7,31 @@ require_once dirname(__DIR__) . '/lib/error-log.php';
 
 final class OperationalNotificationTest extends TestCase
 {
+    public function testBuildsDataMinimizedAppReviewNotifications(): void
+    {
+        foreach ([
+            OPERATIONAL_EVENT_APP_REVIEW_ACTIVATION_COMPLETED =>
+                '[CueLens][TESTKONTO] App-Aktivierung abgeschlossen',
+            OPERATIONAL_EVENT_APP_REVIEW_STUDY_COMPLETED =>
+                '[CueLens][TESTKONTO] Teilnahme abgeschlossen',
+        ] as $event => $subject) {
+            $notification = build_operational_notification(
+                $event,
+                'test_component',
+                null,
+                '123e4567-e89b-42d3-a456-426614174000',
+                new DateTimeImmutable('2026-09-06T18:45:00Z')
+            );
+
+            self::assertSame($subject, $notification['subject']);
+            self::assertStringContainsString('Testkonto: ja', $notification['body']);
+            self::assertStringContainsString('Ereignis: ' . $event, $notification['body']);
+            self::assertStringNotContainsString('participant@example.org', $notification['body']);
+            self::assertStringNotContainsString('@', $notification['body']);
+            self::assertStringNotContainsString('app_token', $notification['body']);
+        }
+    }
+
     public function testBuildsDataMinimizedProlificCompletionNotification(): void
     {
         $notification = build_operational_notification(

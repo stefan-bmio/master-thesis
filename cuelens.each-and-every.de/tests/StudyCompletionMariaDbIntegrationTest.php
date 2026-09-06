@@ -113,6 +113,7 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
     {
         $administrativeConnections = 0;
         $notifications = 0;
+        $appReviewNotifications = 0;
         for ($index = 1; $index <= 19; $index++) {
             self::assertSame(
                 [
@@ -129,6 +130,9 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
                     },
                     function () use (&$notifications): void {
                         $notifications++;
+                    },
+                    function () use (&$appReviewNotifications): void {
+                        $appReviewNotifications++;
                     }
                 )
             );
@@ -143,6 +147,9 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
             },
             function () use (&$notifications): void {
                 $notifications++;
+            },
+            function () use (&$appReviewNotifications): void {
+                $appReviewNotifications++;
             }
         );
         self::assertSame(
@@ -158,6 +165,7 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         );
         self::assertSame(0, $administrativeConnections);
         self::assertSame(0, $notifications);
+        self::assertSame(0, $appReviewNotifications);
 
         confirm_compensation_code($this->researchPdo, self::COMPENSATION_CODE);
         $confirmedAt = $this->researchPdo->query(
@@ -181,6 +189,7 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
 
     public function testReviewReportsAndCompensationAreMarkedAsTestData(): void
     {
+        $completionNotifications = 0;
         $mark = $this->researchPdo->prepare(
             'UPDATE valid_app_token_hashes SET is_test = 1 WHERE hash = :hash'
         );
@@ -191,7 +200,12 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         for ($index = 1; $index <= 20; $index++) {
             $this->submit(
                 self::DIRECT_TOKEN,
-                static fn (): string => self::COMPENSATION_CODE
+                static fn (): string => self::COMPENSATION_CODE,
+                null,
+                null,
+                function () use (&$completionNotifications): void {
+                    $completionNotifications++;
+                }
             );
         }
 
@@ -204,6 +218,7 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
         self::assertSame(1, (int) $this->researchPdo->query(
             'SELECT is_test FROM compensation_code'
         )->fetchColumn());
+        self::assertSame(1, $completionNotifications);
     }
 
     public function testProlificCompletionIsDataMinimizedAndIdempotent(): void
@@ -409,14 +424,16 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
     /**
      * @param null|callable(): string $codeGenerator
      * @param null|callable(): PDO $administrativePdoFactory
-     * @param null|callable(): void $notifier
+     * @param null|callable(): void $prolificNotifier
+     * @param null|callable(): void $appReviewNotifier
      * @return array<string, mixed>
      */
     private function submit(
         string $token,
         ?callable $codeGenerator = null,
         ?callable $administrativePdoFactory = null,
-        ?callable $notifier = null
+        ?callable $prolificNotifier = null,
+        ?callable $appReviewNotifier = null
     ): array {
         return submit_study_report(
             $this->researchPdo,
@@ -425,7 +442,8 @@ final class StudyCompletionMariaDbIntegrationTest extends TestCase
             self::SECRET,
             $administrativePdoFactory,
             $codeGenerator,
-            $notifier
+            $prolificNotifier,
+            $appReviewNotifier
         );
     }
 
