@@ -125,6 +125,14 @@ table.international a {
 	width: 100%;
 }
 
+table.international td.explanation {
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+}
+
+table.international td.explanation.highlight {
+    font-weight: bold;
+}
+
 img {
 	height: auto;
 	max-width: 100%;
