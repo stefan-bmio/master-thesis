@@ -1,0 +1,15 @@
+%%
+%% Ergänzung zu Kapitel 6: Teilnahmeprüfung über Prolific
+%%
+
+\begin{neu}
+\section{Teilnahmeprüfung über Prolific}
+
+Für den Rekrutierungskanal Prolific wird vor der CueLens-Registrierung serverseitig geprüft, ob die angegebene Prolific-ID in der konfigurierten Prolific-Studie mit einer geeigneten Submission vorkommt. Die Prüfung ergänzt die allgemeinen Einschlusskriterien, ersetzt diese jedoch nicht. Alter, täglicher Zigarettenkonsum sowie Zustimmung zu Studieninformation und Datenschutz werden weiterhin im CueLens-Registrierungsformular geprüft. Ebenso ist die Prolific-Prüfung keine Aussage darüber, ob eine Person die CueLens-Studie vollständig durchgeführt hat; sie dient ausschließlich dazu, den externen Rekrutierungsweg technisch einer Submission der vorgesehenen Prolific-Studie zuzuordnen.
+
+Die Implementierung akzeptiert die Prolific-Statuswerte \texttt{ACTIVE}, \texttt{AWAITING\_REVIEW}, \texttt{APPROVED}, \texttt{TIMED\_OUT} und \texttt{RETURNED}. Damit ist der Nachweis bewusst weiter gefasst als eine reine Prüfung auf bereits genehmigte oder vollständig abgeschlossene Prolific-Teilnahmen. Statuswerte wie \texttt{REJECTED}, \texttt{SCREENED\_OUT} und \texttt{RESERVED} reichen dagegen nicht aus. Für die spätere Stichprobenbeschreibung darf aus einem erfolgreichen API-Check daher nicht abgeleitet werden, dass eine Teilnahme auf Prolific erfolgreich abgeschlossen oder vergütet wurde. Maßgeblich für den wissenschaftlichen Studienabschluss bleiben die zwanzig bestätigten CueLens-Selbstberichte.
+
+Aus studienorganisatorischer Sicht werden fachlich negative und technisch nicht entscheidbare Fälle getrennt behandelt. Wird die Prolific-API vollständig und fehlerfrei durchsucht, ohne eine geeignete Submission zu finden, wird die Registrierung mit einer entsprechenden Hinweismeldung abgelehnt. Ist die API dagegen nicht erreichbar, liefert einen Fehlerstatus oder eine formal ungültige Antwort, wird keine Aussage über die Teilnahmeberechtigung getroffen; die Registrierung wird mit einer allgemeinen technischen Fehlermeldung beendet und kann später erneut versucht werden. Ein temporärer Ausfall der externen Plattform führt damit nicht zu einem fachlichen Ausschluss, kann aber die Rekrutierung zeitweise unterbrechen.
+
+Diese Abhängigkeit ist für die Bewertung des Rekrutierungsprozesses relevant. Wenn Prolific-Registrierungen während technischer Störungen seltener erfolgreich abgeschlossen werden als direkte Registrierungen, kann dies die Zusammensetzung der tatsächlich aktivierten Stichprobe beeinflussen. Für die Studienauswertung sollten deshalb Rekrutierungskanal, erfolgreiche Registrierungen, Aktivierungen und vollständige Studienabschlüsse auf aggregierter Ebene getrennt berichtet werden, ohne den Rekrutierungskanal in den pseudonymisierten Craving-Datensatz einzuführen. So bleibt die wissenschaftliche Datensparsamkeit erhalten, während technische Verluste im Rekrutierungspfad dennoch nachvollziehbar bleiben.
+\end{neu}

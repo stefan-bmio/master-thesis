@@ -16,6 +16,8 @@
 \contentsline {section}{\numberline {2.7}Datensparsame Benachrichtigungen}{20}{section.2.7}%
 \contentsline {section}{\numberline {2.8}Lokale Verarbeitung}{21}{section.2.8}%
 \contentsline {section}{\numberline {2.9}App-Verteilung}{21}{section.2.9}%
+\contentsline {section}{\numberline {2.10}Registrierungskanäle und Datenminimierung}{21}{section.2.10}%
+\contentsline {section}{\numberline {2.11}Externe Prolific-Teilnahmeprüfung}{22}{section.2.11}%
 \contentsline {chapter}{\numberline {3}Evaluation geeigneter KI-Modelle}{23}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Technische Grundlagen der KI-gestützten Reizerkennung}{23}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Ziel der Modellevaluation}{25}{section.3.2}%
@@ -35,6 +37,7 @@
 \contentsline {section}{\numberline {4.5}Lokaler Speicher und Gerätesicherheit}{34}{section.4.5}%
 \contentsline {section}{\numberline {4.6}Hintergrundarbeit und Energiesparmechanismen}{35}{section.4.6}%
 \contentsline {section}{\numberline {4.7}Anforderungen des KI-Prototyps}{35}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Native iOS- und iPadOS-Plattformunterstützung}{35}{section.4.8}%
 \contentsline {chapter}{\numberline {5}Appentwicklung}{37}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Sicherheit}{37}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Craving-Übertragung, Pseudonymisierung und Sicherheitskonzept}{38}{section.5.2}%
@@ -54,30 +57,90 @@
 \contentsline {section}{\numberline {5.16}Fehlerprotokollierung und Monitoring}{46}{section.5.16}%
 \contentsline {section}{\numberline {5.17}Deployment und Verteilung}{47}{section.5.17}%
 \contentsline {section}{\numberline {5.18}Erweiterte Qualitätssicherung}{47}{section.5.18}%
-\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{49}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{49}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Studiendesign}{49}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{50}{section.6.3}%
-\contentsline {section}{\numberline {6.4}Maßnahmen zur Verbesserung von Rekrutierung und Retention}{50}{section.6.4}%
-\contentsline {section}{\numberline {6.5}Ablauf der Teilnahme}{51}{section.6.5}%
-\contentsline {section}{\numberline {6.6}Datenflüsse im Studienbetrieb}{52}{section.6.6}%
-\contentsline {section}{\numberline {6.7}Studienbetrieb, Monitoring und Support}{52}{section.6.7}%
-\contentsline {section}{\numberline {6.8}Qualitätssicherung und Auswertungsvorbereitung}{52}{section.6.8}%
-\contentsline {section}{\numberline {6.9}Technischer Teilnahmeablauf}{52}{section.6.9}%
-\contentsline {section}{\numberline {6.10}Freigabe der Studienphase}{53}{section.6.10}%
-\contentsline {section}{\numberline {6.11}Studienabschluss und Abrechnungscode}{53}{section.6.11}%
-\contentsline {section}{\numberline {6.12}Installations- und Supportkonzept}{53}{section.6.12}%
-\contentsline {section}{\numberline {6.13}Monitoring während der Datenerhebung}{53}{section.6.13}%
-\contentsline {section}{\numberline {6.14}Folgerungen für die Teilnehmerdokumente}{54}{section.6.14}%
-\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{55}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{63}{chapter.8}%
-\contentsline {chapter}{\numberline {A}Studiendokumente}{71}{appendix.A}%
-\contentsline {section}{\numberline {A.1}E-Mail an Empfänger des Flyers}{71}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}Empfänger in Deutschland}{71}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Empfänger in der Schweiz}{71}{subsection.A.1.2}%
-\contentsline {chapter}{\numberline {B}Adressen}{73}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Suchthilfeverzeichnis der DHS}{73}{section.B.1}%
-\contentsline {section}{\numberline {B.2}infodrog Suchtindex}{87}{section.B.2}%
-\contentsline {chapter}{\numberline {C}Flyer}{94}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Studieninformation}{97}{appendix.D}%
-\contentsline {chapter}{\numberline {E}Datenschutzerklärung}{100}{appendix.E}%
+\contentsline {section}{\numberline {5.19}Duale Registrierung und Teilnehmeridentifikatoren}{47}{section.5.19}%
+\contentsline {section}{\numberline {5.20}Externe Prolific-Schnittstelle und Validierung}{48}{section.5.20}%
+\contentsline {subsection}{\numberline {5.20.1}Prüfalgorithmus und Statusmodell}{49}{subsection.5.20.1}%
+\contentsline {subsection}{\numberline {5.20.2}Transport- und Fehlergrenzen}{49}{subsection.5.20.2}%
+\contentsline {section}{\numberline {5.21}Kanalabhängige Abschlussmodi}{49}{section.5.21}%
+\contentsline {section}{\numberline {5.22}Android-Zustandsmodell für Studienabschluss und Recovery}{51}{section.5.22}%
+\contentsline {subsection}{\numberline {5.22.1}Recovery aus ausstehenden Netzwerkzuständen}{52}{subsection.5.22.1}%
+\contentsline {subsection}{\numberline {5.22.2}Fail-closed-Verhalten in Navigation und Startlogik}{52}{subsection.5.22.2}%
+\contentsline {subsection}{\numberline {5.22.3}Persistenzgarantien und verbleibende Fehlerfenster}{52}{subsection.5.22.3}%
+\contentsline {section}{\numberline {5.23}Erweiterte automatisierte Verifikation von Android, Backend und Weboberfläche}{53}{section.5.23}%
+\contentsline {subsection}{\numberline {5.23.1}Parallele Testvektoren für Teilnehmeridentifikatoren}{53}{subsection.5.23.1}%
+\contentsline {subsection}{\numberline {5.23.2}Backendtests für Registrierung, Prolific und Abschluss}{54}{subsection.5.23.2}%
+\contentsline {subsection}{\numberline {5.23.3}Android-Tests für Protokoll, Persistenz und Recovery}{55}{subsection.5.23.3}%
+\contentsline {subsection}{\numberline {5.23.4}Browserbasierte Prüfung des Registrierungsformulars}{55}{subsection.5.23.4}%
+\contentsline {subsection}{\numberline {5.23.5}Aussagekraft und Ausführungsabhängigkeiten}{56}{subsection.5.23.5}%
+\contentsline {section}{\numberline {5.24}Native iOS-/iPadOS-Implementierung}{56}{section.5.24}%
+\contentsline {section}{\numberline {5.25}Plattformunabhängige Spezifikation als gemeinsame fachliche Referenz}{57}{section.5.25}%
+\contentsline {subsection}{\numberline {5.25.1}Gemeinsame Invarianten und zulässige Plattformabweichungen}{58}{subsection.5.25.1}%
+\contentsline {subsection}{\numberline {5.25.2}Spezifikation von Daten- und Fehlergrenzen}{59}{subsection.5.25.2}%
+\contentsline {subsection}{\numberline {5.25.3}Abnahmekriterien und Rückverfolgbarkeit}{59}{subsection.5.25.3}%
+\contentsline {section}{\numberline {5.26}iOS-spezifische Sicherheitsarchitektur}{59}{section.5.26}%
+\contentsline {subsection}{\numberline {5.26.1}Gerätegebundener Token im Keychain}{60}{subsection.5.26.1}%
+\contentsline {subsection}{\numberline {5.26.2}Geschützter und strikt validierter Studienzustand}{61}{subsection.5.26.2}%
+\contentsline {subsection}{\numberline {5.26.3}Restriktive Netzwerk- und Protokollschicht}{61}{subsection.5.26.3}%
+\contentsline {subsection}{\numberline {5.26.4}Minimierung von Exposition und Berechtigungen}{61}{subsection.5.26.4}%
+\contentsline {subsection}{\numberline {5.26.5}Nebenläufigkeit und Sicherheitsgrenzen}{62}{subsection.5.26.5}%
+\contentsline {subsection}{\numberline {5.26.6}Automatisierte Nachweise und verbleibende manuelle Prüfungen}{62}{subsection.5.26.6}%
+\contentsline {section}{\numberline {5.27}iOS-Netzwerk-, Persistenz- und Recovery-Architektur}{62}{section.5.27}%
+\contentsline {subsection}{\numberline {5.27.1}Rekonstruktion des lokalen Zustands beim App-Start}{63}{subsection.5.27.1}%
+\contentsline {subsection}{\numberline {5.27.2}Gemeinsame Netzwerkbasis und typisierte Serviceverträge}{63}{subsection.5.27.2}%
+\contentsline {subsection}{\numberline {5.27.3}Write-ahead-Persistenz des wissenschaftlichen Selbstberichts}{64}{subsection.5.27.3}%
+\contentsline {subsection}{\numberline {5.27.4}Recovery nach Netzwerk- und Prozessfehlern}{64}{subsection.5.27.4}%
+\contentsline {subsection}{\numberline {5.27.5}Recovery des Aktivierungshandshakes}{65}{subsection.5.27.5}%
+\contentsline {subsection}{\numberline {5.27.6}Grenzen der Retry-Architektur}{65}{subsection.5.27.6}%
+\contentsline {subsection}{\numberline {5.27.7}Verifikation der Recovery-Eigenschaften}{66}{subsection.5.27.7}%
+\contentsline {section}{\numberline {5.28}iOS-Benachrichtigungen und Background Refresh}{66}{section.5.28}%
+\contentsline {subsection}{\numberline {5.28.1}Optionale Benachrichtigungspräferenz und Systemberechtigung}{66}{subsection.5.28.1}%
+\contentsline {subsection}{\numberline {5.28.2}Lokale Erinnerungen an Studiensituationen}{66}{subsection.5.28.2}%
+\contentsline {subsection}{\numberline {5.28.3}Informationshinweise und Background Refresh}{67}{subsection.5.28.3}%
+\contentsline {subsection}{\numberline {5.28.4}Lebenszyklus, Routing und Fehlerverhalten}{68}{subsection.5.28.4}%
+\contentsline {subsection}{\numberline {5.28.5}Verifikation und verbleibende Grenzen}{68}{subsection.5.28.5}%
+\contentsline {section}{\numberline {5.29}iOS-Unterstützung für direkten und Prolific-Abschluss}{69}{section.5.29}%
+\contentsline {subsection}{\numberline {5.29.1}Strikte Unterscheidung der Abschlussantworten}{69}{subsection.5.29.1}%
+\contentsline {subsection}{\numberline {5.29.2}Persistiertes Abschlusszustandsmodell}{70}{subsection.5.29.2}%
+\contentsline {subsection}{\numberline {5.29.3}Direkter Abschluss mit Kompensationscode}{70}{subsection.5.29.3}%
+\contentsline {subsection}{\numberline {5.29.4}Prolific-Abschluss ohne lokalen Kompensationscode}{71}{subsection.5.29.4}%
+\contentsline {subsection}{\numberline {5.29.5}UI-Verhalten nach Studienabschluss}{71}{subsection.5.29.5}%
+\contentsline {subsection}{\numberline {5.29.6}Verifikation und verbleibende Fehlerfenster}{71}{subsection.5.29.6}%
+\contentsline {section}{\numberline {5.30}Umfangreiche Qualitätssicherung der iOS-/iPadOS-Implementierung}{72}{section.5.30}%
+\contentsline {subsection}{\numberline {5.30.1}Dokumentierter automatisierter Testumfang}{72}{subsection.5.30.1}%
+\contentsline {subsection}{\numberline {5.30.2}Unit- und Infrastructure-Tests entlang kritischer Zustandsübergänge}{72}{subsection.5.30.2}%
+\contentsline {subsection}{\numberline {5.30.3}UI-Automation auf iPhone und iPad}{74}{subsection.5.30.3}%
+\contentsline {subsection}{\numberline {5.30.4}Reproduzierbares lokales Quality-Gate}{74}{subsection.5.30.4}%
+\contentsline {subsection}{\numberline {5.30.5}Accessibility als Qualitätsmerkmal}{75}{subsection.5.30.5}%
+\contentsline {subsection}{\numberline {5.30.6}Trennung von automatisierter Verifikation und Releasefreigabe}{75}{subsection.5.30.6}%
+\contentsline {chapter}{\numberline {6}Planung und Durchführung der App-Studie}{77}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Zielsetzung und Studienlogik}{77}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Studiendesign}{77}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Einschluss, Rekrutierung und Teilnahmeprüfung}{78}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Maßnahmen zur Verbesserung von Rekrutierung und Retention}{78}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Ablauf der Teilnahme}{79}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Datenflüsse im Studienbetrieb}{80}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Studienbetrieb, Monitoring und Support}{80}{section.6.7}%
+\contentsline {section}{\numberline {6.8}Qualitätssicherung und Auswertungsvorbereitung}{80}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Technischer Teilnahmeablauf}{80}{section.6.9}%
+\contentsline {section}{\numberline {6.10}Freigabe der Studienphase}{81}{section.6.10}%
+\contentsline {section}{\numberline {6.11}Studienabschluss und Abrechnungscode}{81}{section.6.11}%
+\contentsline {section}{\numberline {6.12}Installations- und Supportkonzept}{81}{section.6.12}%
+\contentsline {section}{\numberline {6.13}Monitoring während der Datenerhebung}{81}{section.6.13}%
+\contentsline {section}{\numberline {6.14}Folgerungen für die Teilnehmerdokumente}{82}{section.6.14}%
+\contentsline {section}{\numberline {6.15}Registrierungskanäle im Studienbetrieb}{82}{section.6.15}%
+\contentsline {section}{\numberline {6.16}Teilnahmeprüfung über Prolific}{82}{section.6.16}%
+\contentsline {section}{\numberline {6.17}Studienabschluss nach Rekrutierungskanal}{83}{section.6.17}%
+\contentsline {section}{\numberline {6.18}Plattformübertragung der Studienintervention auf iOS und iPadOS}{84}{section.6.18}%
+\contentsline {section}{\numberline {6.19}Methodische Rolle der plattformunabhängigen Spezifikation}{85}{section.6.19}%
+\contentsline {chapter}{\numberline {7}Auswertung der Berichte}{87}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Fazit und Ausblick}{95}{chapter.8}%
+\contentsline {chapter}{\numberline {A}Studiendokumente}{103}{appendix.A}%
+\contentsline {section}{\numberline {A.1}E-Mail an Empfänger des Flyers}{103}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Empfänger in Deutschland}{103}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Empfänger in der Schweiz}{103}{subsection.A.1.2}%
+\contentsline {chapter}{\numberline {B}Adressen}{105}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Suchthilfeverzeichnis der DHS}{105}{section.B.1}%
+\contentsline {section}{\numberline {B.2}infodrog Suchtindex}{119}{section.B.2}%
+\contentsline {chapter}{\numberline {C}Flyer}{126}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Studieninformation}{129}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Datenschutzerklärung}{132}{appendix.E}%

@@ -2,7 +2,6 @@
 %% Ergänzung zu Kapitel 3: Evaluation geeigneter KI-Modelle
 %%
 
-\begin{neu}
 \section{Ziel der Modellevaluation}
 Die KI-gestützte Reizerkennung wird in einem eigenständigen Android-Prototyp untersucht. Das Modell soll ein Bild genau einer von sechs fachlich definierten Klassen zuordnen: \texttt{ashtray}, \texttt{cigarette}, \texttt{cigarette pack}, \texttt{people smoking}, \texttt{smoke} oder \texttt{negative}. Für die praktische Verwendung ist außerdem eine Negativklasse erforderlich. Dies ermöglicht eine getrennte Bewertung von falsch positiven und falsch negativen Auslösungen.
 
@@ -62,4 +61,3 @@ Für die Modellentscheidung reicht eine hohe Gesamtgenauigkeit nicht aus. Die Ne
 Die Modellgröße, die Laufzeit und der Arbeitsspeicherbedarf sind ebenso relevant wie die Klassifikationsgüte. Der Benchmark erfasst derzeit die Zeit für zentrale Vorverarbeitung und Inferenz nach dem Decodieren des Bitmaps. Er misst weder den vollständigen Energieverbrauch noch zuverlässig den maximalen Prozessspeicher. Diese Größen müssen auf mehreren repräsentativen Geräten mit einem definierten Messverfahren ergänzt werden. Einzelne frühe Prototypmessungen dürfen nicht ohne überprüfte Einheit und reproduzierbaren Versuchsaufbau als Geräteanforderung übernommen werden.
 
 Zum Zeitpunkt dieses Entwurfs beschreibt das Repository eine reproduzierbare Trainings-, Export- und Benchmarkpipeline, enthält aber keine versionierten abschließenden Ergebnisberichte der trainierten Modellartefakte. Eine fachliche Auswahl eines Produktionsmodells kann daher erst nach Ausführung der Pipeline, Prüfung des quellgruppenbasierten Splits und Dokumentation der Messwerte erfolgen. Bis dahin bleibt die KI-Funktion ein gesonderter technischer Prototyp und wird nicht als Bestandteil der Wirksamkeitsstudie vorausgesetzt.
-\end{neu}

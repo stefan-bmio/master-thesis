@@ -1,0 +1,37 @@
+%%
+%% Ergänzung zu Kapitel 5: Duale Registrierung
+%%
+
+\begin{neu}
+\section{Duale Registrierung und Teilnehmeridentifikatoren}
+
+Die Erweiterung der Rekrutierung um Prolific erforderte eine Verallgemeinerung des ursprünglich E-Mail-basierten Registrierungs- und Aktivierungsmodells. Statt die E-Mail-Adresse als implizit einzigen Identifikator zu behandeln, verwendet die Implementierung nun den Werttyp \texttt{ParticipantIdentifier}. Dieser ordnet eine Eingabe deterministisch genau einem Registrierungskanal zu. Eine Zeichenfolge aus exakt 24 ASCII-Buchstaben oder Ziffern wird als Prolific-ID und damit als \texttt{PROLIFIC} klassifiziert. Andere Eingaben werden nur dann als \texttt{DIRECT} akzeptiert, wenn sie eine syntaktisch gültige E-Mail-Adresse darstellen; alle übrigen Eingaben werden verworfen. Für E-Mail-Adressen wird beim Aktivierungsvergleich zusätzlich eine Kleinschreibung vorgenommen, während die Prolific-ID nach dem Trimmen unverändert erhalten bleibt.
+
+Diese Klassifikation wird sowohl auf der Webseite als auch im Backend durchgeführt. Im Browser steuert sie zunächst nur die Benutzeroberfläche: Wird eine Prolific-ID erkannt, werden die Felder für Name, IBAN und BIC geleert, deaktiviert und von der Pflichtfeldprüfung ausgenommen. Die serverseitige Validierung wiederholt die Entscheidung unabhängig davon und setzt diese drei Werte für den Prolific-Kanal explizit auf \texttt{NULL}. Manipulierte Formularattribute oder direkt konstruierte HTTP-Requests können die kanalabhängigen Datenregeln deshalb nicht umgehen. Alter, Zigarettenkonsum und beide Einwilligungsfelder werden in beiden Modi mit denselben Grenzen geprüft.
+
+Die Registrierungsdatenbank bildet die beiden Fälle explizit ab. Tabelle~\ref{tab:dual-registration-fields} fasst die für CueLens relevanten Unterschiede zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Kanalabhängige Registrierungsdaten und Bestätigung}
+\label{tab:dual-registration-fields}
+\begin{tabular}{p{0.28\textwidth}p{0.28\textwidth}p{0.28\textwidth}}
+\textbf{Merkmal} & \textbf{DIRECT} & \textbf{PROLIFIC} \\
+\hline
+Primärer Identifikator & E-Mail-Adresse & 24-stellige Prolific-ID \\
+Name & erforderlich & nicht gespeichert \\
+IBAN/BIC & erforderlich & nicht gespeichert \\
+Alter und Zigaretten/Tag & erforderlich & erforderlich \\
+Studieninformation und Datenschutz & Zustimmung erforderlich & Zustimmung erforderlich \\
+Registrierungsbestätigung & E-Mail-Double-Opt-In & kein zusätzlicher E-Mail-Double-Opt-In \\
+\end{tabular}
+\end{table}
+
+Beim direkten Kanal erzeugt der Server weiterhin einen kryptographisch zufälligen 256-Bit-Double-Opt-In-Token, speichert ausschließlich dessen SHA-256-Hash und setzt den Bestätigungszeitpunkt erst nach erfolgreichem Aufruf des Bestätigungslinks. Im Prolific-Kanal werden kein E-Mail-Double-Opt-In-Token und keine E-Mail-Zustellung erzeugt. Der Datensatz wird nach erfolgreicher Registrierung unmittelbar als bestätigt markiert. Die zusätzliche Prüfung der Prolific-Studienzugehörigkeit ist davon logisch getrennt und wird in einem eigenen Abschnitt zur Prolific-Schnittstelle behandelt.
+
+Auch die App-Aktivierung wurde auf den gemeinsamen Identifikatortyp umgestellt. Der Aktivierungsendpunkt akzeptiert das neue Feld \texttt{identifier}; zur Rückwärtskompatibilität kann weiterhin das ältere Feld \texttt{email} verarbeitet werden. Werden beide Felder gleichzeitig übermittelt, müssen sie auf denselben Kanal und denselben normalisierten Identifikator zeigen, andernfalls wird der Request abgelehnt. Für die Datenbankabfrage wird abhängig vom Kanal entweder die Spalte \path{email} oder \path{prolific_id} verwendet. Der anschließende zweistufige App-Token-Handshake bleibt fachlich unverändert: Ein Token wird zunächst nur temporär angeboten und erst nach erfolgreicher Bestätigung als ausgegeben markiert und lokal gespeichert.
+
+Die Aktivierung trennt auch kryptographisch zwischen beiden Identifikatorarten. Für direkte Registrierungen fließt die normalisierte E-Mail-Adresse in den bestehenden Aktivierungs-HMAC ein; für Prolific wird ein eigener HMAC-Kontext verwendet. Damit kann derselbe technische Aktivierungsmechanismus beide Rekrutierungskanäle bedienen, ohne deren Identitäten im temporären Aktivierungszustand gleichzusetzen. Nach erfolgreicher Aktivierung verlieren E-Mail-Adresse beziehungsweise Prolific-ID für die Übermittlung der wissenschaftlichen Selbstberichte ihre Funktion. \texttt{submit.php} erhält weiterhin nur App-Token, Craving-Wert und App-Version; weder Registrierungskanal noch E-Mail-Adresse oder Prolific-ID werden dem wissenschaftlichen Bericht hinzugefügt.
+
+Diese Architektur hält die Rekrutierungslogik von der experimentellen Datenerhebung getrennt. Der zweite Zugangskanal verändert weder die Reihenfolge der 20 Studiensituationen noch die Ableitung von Cue-Matching und Cue-Labeling oder den primären Messwert. Aus technischer Sicht wird damit ein polymorpher administrativer Identifikator eingeführt, während der nachgelagerte Studienvertrag stabil bleibt. Dies reduziert Änderungsbedarf im wissenschaftlichen Backend und verhindert zugleich, dass die Rekrutierungsplattform unnötig zu einer zusätzlichen Variable des gesundheitsbezogenen Selbstberichtdatensatzes wird.
+\end{neu}

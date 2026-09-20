@@ -1,0 +1,15 @@
+%%
+%% Ergänzung zu Kapitel 6: methodische Rolle der plattformunabhängigen Spezifikation
+%%
+
+\begin{neu}
+\section{Methodische Rolle der plattformunabhängigen Spezifikation}
+
+Für die Studienmethodik dient die plattformunabhängige Spezifikation vor allem dazu, experimentell relevante Merkmale von technisch zulässigen Plattformunterschieden zu trennen. Als invariant werden unter anderem Bedingungsreihenfolge, Anzahl der Situationen und Trials, verwendete Reize und Labels, Craving-Skala, Mindestabstand, wissenschaftliches Submission-Schema sowie die Nicht-Erhebung von Trialentscheidungen und Plattformtyp festgelegt. Unterschiede bei UI-Framework, sicherem Speicher, Hintergrundmechanismen oder konkreter Zufallsfolge gelten demgegenüber als technische Implementierungsdetails, solange sie diese Invarianten nicht verändern.
+
+Diese Spezifikationskonformität ist nicht mit einem empirischen Nachweis statistischer Äquivalenz zwischen Android und iOS gleichzusetzen. Die Dokumentation zeigt, dass beide Clients nach denselben fachlichen Regeln konstruiert werden und dieselbe wissenschaftliche Datenstruktur erzeugen sollen. Sie beweist jedoch nicht, dass plattformspezifische Darstellungs-, Bedien- oder Geräteeffekte auf das subjektive Rauchverlangen ausgeschlossen sind. Eine solche Aussage würde eine eigene empirische Plattformvergleichsstudie oder zumindest eine dafür geplante Sensitivitätsanalyse voraussetzen.
+
+Ebenso verändert die nachträgliche Formalisierung nicht rückwirkend das ursprüngliche Studienprotokoll. Da die Spezifikation teilweise aus der bestehenden Android-Implementierung abgeleitet wurde, ist sie als Entwicklungs- und Konformitätsdokument zu behandeln. Für die Auswertung bleiben die tatsächlich eingesetzten App-Versionen, der reale Rekrutierungszeitraum und die tatsächlich eingeschlossenen Teilnehmenden maßgeblich. Die Spezifikation kann daher technische Vergleichbarkeit begründen, aber keine Plattformnutzung behaupten, die während der Datenerhebung nicht stattgefunden hat.
+
+Der methodische Vorteil liegt damit in der kontrollierten Begrenzung der Portierung: Eine neue native Plattform darf den Zugang zur Studie erweitern, ohne dadurch stillschweigend eine neue Intervention, einen zusätzlichen Endpunkt oder eine geänderte Auswertungslogik einzuführen. Abweichungen, die eine der festgelegten wissenschaftlichen Invarianten berühren, müssten dagegen als Studienänderung bewertet und entsprechend methodisch sowie gegebenenfalls ethisch neu geprüft werden.
+\end{neu}

@@ -1,0 +1,67 @@
+%%
+%% Ergänzung zu Kapitel 5: Plattformunabhängige Spezifikation
+%%
+
+\begin{neu}
+\section{Plattformunabhängige Spezifikation als gemeinsame fachliche Referenz}
+
+Mit der Erweiterung um eine zweite native Clientplattform entstand die Notwendigkeit, fachliche Anforderungen von plattformspezifischen Implementierungsdetails zu trennen. Zu diesem Zweck wurde eine plattformunabhängige Spezifikation der CueLens-Studien-App erstellt. Sie beschreibt die gemeinsame Sollfunktion von Android und iOS für Studienablauf, Datenflüsse, Protokolle, Persistenz, Fehlerbehandlung, Datenschutz und Sicherheit, ohne eine konkrete Programmiersprache, UI-Technologie oder Betriebssystem-API vorzuschreiben. Die vorhandene Android-App dient dabei als Referenzimplementierung; die iOS-App wird gegen dieselben fachlichen Invarianten entwickelt und geprüft.
+
+Die Spezifikation ist methodisch nicht als vollständig prospektiv festgelegtes Lastenheft zu interpretieren. Sie wurde aus dem bereits vorhandenen Android-System abgeleitet und stellt damit teilweise eine retrospektive Formalisierung implementierter Regeln dar. Ihr Nutzen liegt vor allem darin, zuvor implizit in Kotlin-, PHP- und UI-Code verteilte Anforderungen explizit zu machen und für die zweite Plattform überprüfbar zu formulieren. Für die Dokumentation der Entwicklungsreihenfolge ist deshalb zwischen der ursprünglichen Implementierung und der späteren Formalisierung ihrer fachlichen Invarianten zu unterscheiden.
+
+Die Anforderungen verwenden normative Begriffe wie \emph{MUSS}, \emph{DARF NICHT}, \emph{SOLL} und \emph{KANN}. Zusätzlich unterscheidet die Spezifikation zwischen gemeinsamem Referenzverhalten und ausdrücklich zulässigen Plattformabweichungen. Dadurch wird nicht gefordert, Android und iOS technisch identisch zu implementieren. Gefordert wird vielmehr, dass die wissenschaftlich und sicherheitstechnisch relevanten Eigenschaften trotz unterschiedlicher Plattformmechanismen erhalten bleiben.
+
+Diese Trennung kann formal als Projektion auf den studienrelevanten Zustand beschrieben werden. Sei \(S_p\) der vollständige Laufzeitzustand einer Plattform \(p\in\{\mathrm{Android},\mathrm{iOS}\}\) und \(\pi(S_p)\) die Projektion auf fachlich relevante Größen wie bestätigten Situationsindex, Bedingungsfolge, ausstehenden Craving-Wert, Abschlussmodus und übertragene Payload. Für die Menge gemeinsamer Invarianten \(I\) gilt als Konformitätsbedingung
+
+\[
+\forall p\in\{\mathrm{Android},\mathrm{iOS}\}:\quad I\bigl(\pi(S_p)\bigr)=\mathrm{wahr}.
+\]
+
+Plattformspezifische Zustände, beispielsweise Keychain-Attribute, Android-Keystore-Parameter, SwiftUI-Navigation oder Compose-interne Darstellung, liegen außerhalb dieser Projektion, solange sie die gemeinsamen Invarianten nicht verändern. Plattformäquivalenz bedeutet damit fachliche Konformität und nicht Quellcode-, Layout- oder Zufallsfolgenidentität.
+
+\subsection{Gemeinsame Invarianten und zulässige Plattformabweichungen}
+
+Zu den verbindlichen studienmethodischen Invarianten gehören insbesondere 20 produktive Situationen, davon zunächst zehn Cue-Matching- und anschließend zehn Cue-Labeling-Situationen, fünf Trials je Situation, genau ein Craving-Selbstbericht je Situation, die ganzzahlige Skala von 0 bis 100 mit Standardwert 50 sowie der dreistündige Mindestabstand nach bestätigten Situationen 1 bis 19. Matching- und Labeling-Auswahlen werden nicht als Forschungsdaten gespeichert oder übertragen. Ebenso bleibt der Selbstberichtvertrag auf \texttt{app\_token}, \texttt{craving} und \texttt{app\_version} beschränkt; Situation, Bedingung und Plattform werden nicht durch den Client als fachliche Felder übertragen.
+
+Die Spezifikation definiert zugleich Bereiche, in denen unterschiedliche native Mechanismen ausdrücklich zulässig sind. Tabelle~\ref{tab:platform-spec-invariants} stellt diese Trennung exemplarisch dar.
+
+\begin{table}[htbp]
+\centering
+\caption{Trennung gemeinsamer Invarianten und plattformspezifischer Umsetzung}
+\label{tab:platform-spec-invariants}
+\begin{tabular}{p{0.27\textwidth}p{0.31\textwidth}p{0.29\textwidth}}
+\textbf{Bereich} & \textbf{Gemeinsame fachliche Invariante} & \textbf{Zulässige native Umsetzung} \\
+\hline
+UI-Technologie & identischer Studienablauf und dieselben Reize & Jetpack Compose beziehungsweise SwiftUI \\
+Sicherer Tokenspeicher & kein Klartexttoken, keine Cloud-Synchronisation, fail closed & Android Keystore beziehungsweise iOS Keychain \\
+Randomisierung & vollständige Matching-Permutation und zufällige Optionsposition & plattformeigener Zufallszahlengenerator; konkrete Folge darf abweichen \\
+Hintergrundmechanismen & Hintergrundausführung nicht autoritativ für Forschungsdaten & WorkManager beziehungsweise iOS Background Refresh \\
+Erinnerungen & nur zulässiger Studienzustand, neutrale Inhalte & Android Notification beziehungsweise iOS Local Notification \\
+Navigation & kein Überspringen bestätigungspflichtiger Zustände & Android-Back-Verhalten beziehungsweise native iOS-Navigation \\
+Datenschutzstatus & produktive Nutzung nur bei dokumentierter Einwilligung & bestehender zusätzlicher Android-Dialog beziehungsweise vorgelagerte Webeinwilligung für iOS \\
+Layoutdetails & Reizfolge, Wartezeiten und Skala bleiben erhalten & native Abstände, Schriftmetriken und Controls \\
+\end{tabular}
+\end{table}
+
+Nicht zulässig sind dagegen Änderungen, die die wissenschaftliche Vergleichbarkeit oder Datensparsamkeit verändern würden. Dazu zählen insbesondere eine zusätzliche Plattformvariable im Forschungsdatensatz, eine andere Bedingungsreihenfolge, zusätzliche experimentelle Messwerte, die Übertragung von Trialentscheidungen, Cloud-Synchronisation des Studienzustands oder eine plattformspezifische Erweiterung des Submission-Schemas. Auch eine unterschiedliche konkrete Zufallsfolge ist nur deshalb zulässig, weil die Spezifikation als Invariante nicht die konkrete Permutation, sondern deren mathematische Eigenschaft festlegt: Bei 50 Matching-Items muss die gespeicherte Reihenfolge eine Permutation sein, in der jeder Index genau einmal vorkommt.
+
+\subsection{Spezifikation von Daten- und Fehlergrenzen}
+
+Die gemeinsame Referenz beschreibt neben sichtbaren Funktionen auch die fachlichen Daten- und Vertrauensgrenzen. Administrative Registrierung, Feedback und pseudonymisierte Selbstberichte bleiben getrennt. E-Mail-Adresse und Prolific-ID dürfen nicht in \texttt{self\_reports} gelangen; das App-Token wird dort nicht im Klartext gespeichert; Feedback darf nicht automatisch mit einer Studienidentität verknüpft werden. Unvermeidbare Transportmetadaten des Hostings sind ausdrücklich keine Forschungsvariablen und dürfen nicht in die Wirksamkeitsauswertung übernommen werden.
+
+Für Fehlersituationen wird zwischen fail-safe und fail-closed unterschieden. Ein nicht erreichbarer Informationsfeed darf den App-Start nicht blockieren, weil dieser Datenfluss für die wissenschaftliche Durchführung nicht kritisch ist. Ein fehlerhafter Feature-Abruf, ein inkonsistenter Studienzustand, ein nicht lesbarer sicherer Token oder eine unerwartete Submission-Antwort sperren dagegen die produktive Studie. Damit wird die Fehlerstrategie nicht pauschal an technische Ausnahmen gekoppelt, sondern an die mögliche Auswirkung auf Studienintegrität und sensible Daten.
+
+Auch Recovery wird plattformunabhängig beschrieben. Vor dem ersten Submission-Versuch muss der Craving-Wert persistent als ausstehend markiert sein. Solange dieser Zustand besteht, darf kein weiterer Durchgang begonnen werden. Fortschritt wird erst nach semantisch gültiger Serverantwort erhöht. Der direkte Abschluss muss einen erhaltenen Kompensationscode vor dessen Bestätigungsrequest dauerhaft sichern; beim Prolific-Abschluss darf kein solcher Code entstehen. Diese Regeln definieren das gewünschte Verhalten unabhängig davon, ob Android hierfür \texttt{SharedPreferences} und iOS einen dateigeschützten Store verwendet.
+
+\subsection{Abnahmekriterien und Rückverfolgbarkeit}
+
+Die Spezifikation endet mit 35 konkreten Abnahmekriterien. Sie reichen von Sprachumschaltung, Aktivierung und Demo über Studiensequenz, Craving-Skala und Pending-Recovery bis zu HTTPS, Berechtigungsminimierung, identischen Reizressourcen und dem Verbot einer Plattformvariable. Diese Kriterien machen die fachliche Referenz testbar und verhindern, dass der Begriff ``plattformgleich'' lediglich qualitativ verwendet wird.
+
+Für die iOS-Implementierung ergänzt eine Traceability-Matrix diese Spezifikation. Sie ordnet 35 mit \texttt{IOS-FUN-001} bis \texttt{IOS-FUN-035} bezeichnete Funktionsanforderungen jeweils konkreten Implementierungsstellen und mindestens einem automatisierten Nachweis zu. Beispielsweise werden der sichere Keychain-Speicher, das Start-Gate, die Matching-Regeln, Pending-Persistenz, beide Abschlussmodi und das minimale Submission-Payload jeweils mit zugehörigen Unit-, UI- oder Verifikationsskripten verknüpft. Dadurch entsteht eine nachvollziehbare Kette
+
+\[
+\text{fachliche Anforderung}\rightarrow\text{Implementierung}\rightarrow\text{automatisierter Nachweis}.
+\]
+
+Diese Rückverfolgbarkeit erhöht die Reproduzierbarkeit der Portierung, ist jedoch nicht mit einer formalen Produktfreigabe gleichzusetzen. Automatisierte Konformität kann insbesondere reale TestFlight-Distribution, Gerätesperrverhalten, Staging-Ende-zu-Ende-Abläufe oder externe Datenschutz- und Ethikfreigaben nicht ersetzen. Die Spezifikation dient daher als gemeinsame fachliche Referenz und Prüfgrundlage; die tatsächliche Freigabe bleibt ein zusätzlicher technischer und organisatorischer Prozess.
+\end{neu}

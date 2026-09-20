@@ -2,7 +2,6 @@
 %% Ergänzung zu Kapitel 5: Appentwicklung
 %%
 
-\begin{neu}
 \section{Systemarchitektur}
 
 Die Implementierung besteht aus vier getrennten Bereichen: der Android-App, der Registrierungs- und Informationswebseite, einem PHP-Backend sowie zwei fachlich getrennten Datenbanken. Die Android-App übernimmt Bedienoberfläche, lokalen Studienzustand, Aktivierung, Datenschutzbestätigung, Benachrichtigungen und Übertragung der Selbstberichte. Die Webanwendung dient der Registrierung, dem Double-Opt-In, der Bereitstellung von Dokumenten und der APK-Installation. Das PHP-Backend stellt jeweils kleine zweckgebundene Endpunkte bereit. Registrierungs- und Feedbackdaten werden von den pseudonymisierten wissenschaftlichen Berichten getrennt gespeichert.
@@ -108,5 +107,3 @@ Die Webseite enthält eine sprachneutrale Auswahlseite sowie deutsche und englis
 Die Backendtests decken Methodenprüfung, JSON-Validierung, Feldgrenzen und Fehlerfälle ab, bevor eine Datenbankverbindung erforderlich ist. Für Aktivierung, Feedback, Datenschutz und Freigabelogik existieren zusätzliche MariaDB-Integrationstests, die temporäre Tabellen verwenden. Sie prüfen unter anderem den zweistufigen Aktivierungsablauf, das Überschreiben alter ausstehender Tokens, abgelaufene Bestätigungen, die Trennung der Hashkontexte, den Feedbackgrenzwert und die idempotente Datenschutzannahme. Fehlen die notwendigen Testdatenbankvariablen, werden die Integrationstests übersprungen und dürfen nicht fälschlich als ausgeführt bewertet werden.
 
 Android-Unit-Tests prüfen Controllerzustände, HTTP-Protokolle, Infofeedfilterung, Feature-Fehlerverhalten und Erinnerungsentscheidungen. Tests auf einem Android-Gerät beziehungsweise Emulator prüfen unter anderem die Keystore-Verschlüsselung, wechselnde Initialisierungsvektoren, manipulierte Chiffrate, fehlende Schlüssel, Entfernung alter Klartextwerte, Compose-Oberflächen und Notification Channels. Die Erinnerungslogik testet explizit die Situationen eins, neunzehn und zwanzig, frühe Worker-Ausführung, veraltete Aufgaben, doppelte Benachrichtigungen, ausstehende Übertragungen und fehlende Aktivierung.
-
-\end{neu}

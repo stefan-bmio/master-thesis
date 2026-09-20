@@ -1,0 +1,124 @@
+%%
+%% Ergänzung zu Kapitel 5: iOS-Netzwerk-, Persistenz- und Recovery-Architektur
+%%
+
+\begin{neu}
+\section{iOS-Netzwerk-, Persistenz- und Recovery-Architektur}
+
+Die zuvor beschriebene iOS-Sicherheitsarchitektur legt fest, \emph{wie} einzelne Daten und Kommunikationskanäle geschützt werden. Für die Robustheit des Studienablaufs ist zusätzlich entscheidend, \emph{in welcher Reihenfolge} Persistenz, Netzwerkkommunikation und Zustandsübergänge ausgeführt werden. Die iOS-Implementierung verwendet hierzu einen lokal rekonstruierbaren Zustandsautomaten. Kritische Informationen werden vor einem nicht atomar mit dem Endgerät koppelbaren Netzwerkrequest in einen dauerhaften Zustand überführt; ein wissenschaftlicher Fortschritt wird dagegen erst nach einer syntaktisch und semantisch gültigen Serverantwort gespeichert. Diese Architektur stellt keine verteilte Transaktion zwischen Endgerät und Backend dar, reduziert aber die Zahl von Fehlerfällen, in denen ein Prozessabbruch oder temporärer Netzfehler zu einem lokal nicht mehr erklärbaren Studienzustand führt.
+
+Die wesentliche Abhängigkeitskette für einen wissenschaftlichen Selbstbericht lautet vereinfacht
+
+\[
+\text{AppModel}
+\rightarrow
+\text{ProductiveStudyCoordinator}
+\rightarrow
+\left\{\text{StudyStateStore},\text{Keychain}\right\}
+\rightarrow
+\text{StudySubmissionService}
+\rightarrow
+\text{HTTPClient}
+\rightarrow
+\text{Backend}.
+\]
+
+Dabei besitzt jede Schicht eine eng begrenzte Verantwortung. Das App-Modell bildet UI- und Lebenszykluszustände ab. Der \texttt{ProductiveStudyCoordinator} serialisiert fachlich kritische Übergänge. Der geschützte Zustandsstore persistiert nur rekonstruierbare Studienzustände, während der App-Token separat im Keychain verbleibt. Der \texttt{StudySubmissionService} bildet den bestehenden Backendvertrag auf typisierte Swift-Aufrufe ab. Sämtliche produktiven Services verwenden schließlich denselben zentral konfigurierten HTTP-Client. Dadurch werden Netzwerkpolicy, Fehlerkategorien und Response-Grenzen nicht separat in einzelnen Views implementiert.
+
+\subsection{Rekonstruktion des lokalen Zustands beim App-Start}
+
+Der Start der App beginnt nicht unmittelbar mit einer Netzwerkabfrage, sondern mit der Rekonstruktion des lokalen Zustands. Der \texttt{LocalPersistenceBootstrap} prüft zunächst die Installation, liest anschließend den geschützten Studienzustand, danach den App-Token und schließlich den Aktivierungs-Recovery-Zustand. Aus diesen getrennten Speichern wird ein gemeinsamer Snapshot aus Studienzustand, Aktivierungsstatus und gegebenenfalls Support- beziehungsweise Speicherfehlerzustand erzeugt.
+
+Dabei wird eine querspeichernde Konsistenzbedingung geprüft: Sobald ein Studienzustand bereits bestätigte Situationen, eine Matching-Reihenfolge, einen ausstehenden Craving-Wert oder einen Abschlusszustand enthält, muss ein gültiger App-Token vorhanden sein. Ein wissenschaftlich relevanter Fortschritt ohne zugehörige sichere Identität wird nicht als normaler Zustand fortgesetzt, sondern als Integritätsfehler behandelt. Umgekehrt bedeutet das bloße Vorhandensein eines Tokens nicht, dass beliebiger lokaler Studienfortschritt akzeptiert wird; der Zustandsstore prüft weiterhin Schema und fachliche Invarianten unabhängig davon.
+
+Auch die einmalig erzeugte Matching-Reihenfolge ist Teil dieser Recovery-Architektur. Vor dem ersten produktiven Matching-Durchgang wird eine Permutation aller 50 Itemindizes erzeugt und dauerhaft gespeichert. Erst danach wird die flüchtige Trial-Session aufgebaut. Ein Prozessabbruch kann deshalb die konkrete Optionsposition oder einen noch nicht bestätigten Trial wiederholen, verändert aber nicht nachträglich die bereits gezogene Zuordnung der 50 Matching-Items zu den zehn Situationen. Persistiert wird somit die für die Reproduzierbarkeit des Studienplans erforderliche Zufallsstruktur, nicht jedoch jede einzelne Interaktion.
+
+\subsection{Gemeinsame Netzwerkbasis und typisierte Serviceverträge}
+
+Die Netzwerkarchitektur besteht aus einem zentralen \texttt{URLSessionHTTPClient} und darauf aufbauenden typisierten Services für Aktivierung, Informationsfeed, Feature-Konfiguration, Feedback und Studiensubmission. Die Live-Konfiguration erzeugt nur einen HTTP-Client und injiziert diesen in alle Services. Endpunkte, App-Version, Transportpolicy und Cooldown werden zentral aus der Build-Konfiguration validiert. Damit werden plattformspezifische Transportdetails von den fachlichen Request- und Responseverträgen getrennt.
+
+Für die Studienübertragung erwartet der \texttt{StudySubmissionService} beim Selbstbericht exakt HTTP~200 und eine JSON-Antwort von höchstens 16~KiB. Das Requestobjekt enthält ausschließlich \texttt{app\_token}, \texttt{craving} und \texttt{app\_version}. Die separate Kompensationscodebestätigung erwartet exakt HTTP~204 und einen leeren Body; bereits ein unerwarteter Responseinhalt wird als Protokollfehler behandelt. Der gemeinsame HTTP-Client klassifiziert Transportfehler unter anderem als Offline-, Timeout-, TLS-, HTTP-, Content-Type-, Größen- oder Protokollfehler und gibt diese Kategorien an die übergeordnete Logik zurück.
+
+Entscheidend ist, dass ein technisch erfolgreicher HTTP-Request nicht automatisch einen fachlichen Zustandsübergang auslöst. Der Decoder des Selbstberichts akzeptiert nur Antwortobjekte mit exakt der erwarteten Feldkombination. \texttt{situation\_index} muss dem lokal erwarteten nächsten Index entsprechen und \texttt{condition\_code} muss zu diesem Index passen. Laufende Antworten dürfen keine Abschlussfelder enthalten; der direkte Abschluss verlangt einen gültigen UUID-v4-Code, der Prolific-Abschluss dagegen exakt \texttt{completion\_mode=PROLIFIC\_MANUAL} und keinen Kompensationscode. Der lokale Fortschritt ist damit an eine semantische Bestätigung des erwarteten Zustands gebunden und nicht lediglich an einen 2xx-Status.
+
+\subsection{Write-ahead-Persistenz des wissenschaftlichen Selbstberichts}
+
+Der kritischste Übergang beginnt nach der Rauchverlangensabfrage. Bevor der erste Netzwerkrequest ausgelöst wird, erzeugt der Koordinator einen neuen \texttt{StudyState} mit dem eingegebenen Craving-Wert als \texttt{pendingCraving} und schreibt diesen atomar in den geschützten Zustandsstore. Scheitert bereits dieser Schreibvorgang, wird kein Submission-Request gestartet. Als lokale Invariante gilt damit
+
+\[
+\operatorname{sendSelfReport}(c)
+\;\Rightarrow\;
+\operatorname{persistedPending}(c).
+\]
+
+Erst aus diesem persistierten Zustand wird der App-Token aus dem Keychain gelesen und der Request erzeugt. Bei Netzwerk-, HTTP- oder Protokollfehler bleibt der Pending-Zustand unverändert erhalten. Ein weiterer produktiver Durchgang ist währenddessen durch das Start-Gate gesperrt. Auf diese Weise kann ein Craving-Wert nach Prozessbeendigung oder App-Neustart wiedergefunden werden, ohne die zuvor flüchtigen Trialentscheidungen rekonstruieren zu müssen.
+
+Für Situationen 1 bis 19 gilt die komplementäre Fortschrittsinvariante
+
+\[
+\operatorname{advance}(n\rightarrow n+1)
+\;\Rightarrow\;
+\operatorname{validResponse}(n+1).
+\]
+
+Erst nach einer zum erwarteten Index passenden Serverantwort wird ein neuer Zustand ohne \texttt{pendingCraving}, mit erhöhtem \texttt{confirmedSituationCount} und neuem Freischaltzeitpunkt gespeichert. Der Release-Cooldown wird dabei aus der lokalen Gerätezeit und der konfigurierten Dauer gebildet. Der Client betrachtet somit nicht das Absenden, sondern die validierte Antwort als Grenze für den lokalen wissenschaftlichen Fortschritt.
+
+Tabelle~\ref{tab:ios-recovery-transitions} fasst die wichtigsten persistierten Übergänge zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Persistenz- und Recovery-Übergänge der iOS-Studienübertragung}
+\label{tab:ios-recovery-transitions}
+\begin{tabular}{p{0.23\textwidth}p{0.25\textwidth}p{0.20\textwidth}p{0.20\textwidth}}
+\textbf{Ausgangslage} & \textbf{Vor Netzwerk persistiert} & \textbf{Ergebnis} & \textbf{Lokaler Folgezustand} \\
+\hline
+Craving erfasst & \texttt{pendingCraving} & gültige Antwort 1--19 & Zähler erhöht, Pending gelöscht, Cooldown gesetzt \\
+Pending vorhanden & unveränderter Pending-Zustand & Netzwerk-/Protokollfehler & Pending bleibt für Retry erhalten \\
+Situation 20, direkt & UUID-v4-Code als \texttt{directPendingConfirmation} & Codebestätigung 204 & \texttt{directCompleted}, Zähler 20 \\
+Direkte Bestätigung ausstehend & gespeicherter Code & Bestätigungsfehler & nur Bestätigung bleibt retryfähig \\
+Situation 20, Prolific & Pending vor Submission & gültiger Prolific-Abschluss & \texttt{prolificCompleted}, Zähler 20, kein Code \\
+\end{tabular}
+\end{table}
+
+\subsection{Recovery nach Netzwerk- und Prozessfehlern}
+
+Der Recovery-Pfad wird aus dem persistierten Zustand abgeleitet und erzeugt keine separate parallele Fortschrittslogik. Befindet sich der Zustand in \texttt{incomplete} mit einem \texttt{pendingCraving}, wird derselbe gespeicherte Wert erneut übermittelt. Befindet sich der Zustand in \texttt{directPendingConfirmation}, wird dagegen ausschließlich die Kompensationscodebestätigung wiederholt. Bereits abgeschlossene Zustände werden nicht erneut als Selbstbericht gesendet; ein explizit ungültiger Zustand wird nicht automatisch repariert.
+
+Nach dem Laden des lokalen Zustands versucht das App-Modell im aktiven Vordergrund einmalig pro laufender App-Instanz eine automatische Recovery, sofern entweder ein Pending-Craving oder eine ausstehende direkte Bestätigung vorliegt. Scheitert dieser Versuch, bleibt der entsprechende persistierte Zustand erhalten und die Startseite bietet einen manuellen Retry an. Ein Persistenzfehler wechselt dagegen in den gesonderten Zustand \texttt{secureStorageFailure}; ein nicht lesbarer beziehungsweise fehlender Token bei erforderlicher Studienidentität markiert die sichere Identität als nicht verfügbar. Damit wird zwischen einem wiederholbaren Kommunikationsfehler und einem lokalen Integritätsproblem unterschieden.
+
+Der direkte Abschluss besitzt bewusst einen zweistufigen lokalen Übergang. Nach der gültigen Antwort auf Situation 20 wird der erhaltene Code zunächst dauerhaft als \texttt{directPendingConfirmation} gespeichert. In diesem Zustand bleibt \texttt{confirmedSituationCount} lokal bei 19 und \texttt{pendingCraving} ist bereits entfernt. Erst nach erfolgreicher separater Codebestätigung und erfolgreichem Schreiben des Abschlusszustands wird der Zähler auf 20 gesetzt und \texttt{directCompleted} persistiert. Schlägt die Bestätigung oder das abschließende lokale Schreiben fehl, bleibt der Code erhalten und der Retry sendet nicht erneut den zwanzigsten Selbstbericht. Der Prolific-Pfad benötigt diese zusätzliche Clientbestätigung nicht und kann nach gültiger Abschlussantwort direkt \texttt{prolificCompleted} mit Zähler 20 persistieren.
+
+\subsection{Recovery des Aktivierungshandshakes}
+
+Ein ähnliches Persist-before-uncertain-operation-Prinzip wird beim Aktivierungshandshake verwendet. Nach dem ersten erfolgreichen Request bleiben Identifier und erhaltenes App-Token zunächst nur im Arbeitsspeicher. Unmittelbar vor dem zweiten, bestätigenden Request wird jedoch ein neutraler Aktivierungs-Recovery-Marker dauerhaft geschrieben. Erst danach wird die Bestätigung an das Backend gesendet.
+
+Ein Timeout dieses zweiten Requests ist semantisch anders als ein eindeutig fehlgeschlagener Request: Das Endgerät kann nicht sicher wissen, ob der Server die Bestätigung verarbeitet hat. Bei einem Timeout bleibt der Marker deshalb bestehen und die Aktivierung wird für automatische Wiederholungen gesperrt; die App verweist auf einen Supportweg. Bei einem anderen eindeutig behandelten Netzwerkfehler wird der Marker wieder entfernt und ein späterer neuer Versuch bleibt möglich. Nach erfolgreicher Serverbestätigung wird der Token in den Keychain geschrieben. Bleibt anschließend wegen eines lokalen Speicherfehlers ein Recovery-Marker ohne nutzbaren Token zurück, erkennt der Bootstrap diesen Zustand beim nächsten Start ebenfalls als supportpflichtig. Existieren dagegen sowohl ein gültiger Token als auch der Marker, hat der sichere Token Vorrang und der verbliebene Marker wird bereinigt.
+
+Diese Logik verhindert insbesondere, dass ein unklarer Aktivierungsabschluss durch eine unkontrollierte zweite Identitätsvergabe überdeckt wird. Der Recovery-Marker speichert dafür nur die Aussage, dass eine Bestätigung unklar sein kann; die eingegebene E-Mail-Adresse beziehungsweise Prolific-ID wird nicht als Recovery-Datum persistiert.
+
+\subsection{Grenzen der Retry-Architektur}
+
+Die Persist-before-send-Strategie gewährleistet eine crash-feste lokale Wiederholbarkeit, aber keine Ende-zu-Ende-\emph{Exactly-once}-Semantik. Das bestehende Backendprotokoll besitzt keinen clientseitigen Request-Identifier, mit dem ein bereits serverseitig gespeicherter Selbstbericht nach verlorener Antwort eindeutig als derselbe Request erkannt werden könnte. Wird eine Servertransaktion erfolgreich abgeschlossen, die Antwort erreicht das Endgerät jedoch nicht, verbleibt lokal weiterhin der Pending-Zustand. Ein Retry ist dann aus Sicht der App korrekt, kann aber nicht allein clientseitig dedupliziert werden. Die Implementierung behandelt diese Unklarheit fail closed, löst sie jedoch nicht grundsätzlich.
+
+Formal liegt zwischen lokalem Zustand \(L\) und serverseitigem Zustand \(R\) deshalb kein atomarer Commit vor. Die Architektur garantiert die Reihenfolge
+
+\[
+L_{\mathrm{pending}}
+\rightarrow
+\operatorname{request}(R)
+\rightarrow
+\operatorname{validatedResponse}
+\rightarrow
+L_{\mathrm{confirmed}},
+\]
+
+aber ein Kommunikationsabbruch zwischen dem serverseitigen Commit und dem Empfang der Antwort kann nicht beweisen, ob \(R\) bereits fortgeschritten ist. Eine vollständig deduplizierbare Übertragung würde eine Protokollerweiterung, beispielsweise um einen stabilen Idempotenzschlüssel pro Situation, erfordern. Diese Erweiterung wurde für die iOS-Portierung bewusst nicht eingeführt, da der bestehende Backendvertrag unverändert bleiben sollte.
+
+Eine zweite systemische Grenze betrifft den Cooldown. Der nächste Freischaltzeitpunkt wird lokal aus der Gerätezeit gebildet. Eine rückwärts verstellte Uhr verlängert faktisch die Sperre; eine manipulationssichere serverseitige Zeitbasis steht im vorhandenen Vertrag nicht zur Verfügung. Diese Einschränkung betrifft die zeitliche Steuerung, nicht die Zuordnung der bereits bestätigten Selbstberichte.
+
+\subsection{Verifikation der Recovery-Eigenschaften}
+
+Die Traceability-Matrix ordnet die zentralen Eigenschaften dieser Architektur konkreten automatisierten Nachweisen zu. Geprüft wird unter anderem, dass ein fehlgeschlagener Pending-Schreibvorgang den ersten Netzwerkrequest verhindert, ein Retry denselben gespeicherten Craving-Wert verwendet, ungültige Submission-Antworten abgelehnt werden, eine fehlgeschlagene direkte Codebestätigung einen App-Neustart übersteht und beim Retry ausschließlich die Bestätigung wiederholt wird sowie der Prolific-Abschluss keinen Code persistiert. Das Definition-of-Done-Audit bewertet die automatisierten Stabilitätsprüfungen einschließlich Pending-before-network, Prozess-Recovery und Startblockierung bei inkonsistentem Zustand als bestanden.
+
+Die automatisierten Nachweise ersetzen jedoch nicht den vorgesehenen Langzeittest und reale Ende-zu-Ende-Prüfungen. Insbesondere ein mehrtägiger Ablauf mit wiederholten App-Neustarts, realen Netzwerkunterbrechungen und beiden Abschlusswegen bleibt für die Freigabe separat zu prüfen. Für die Masterarbeit ist die Architektur daher als implementierter und automatisiert überprüfter Mechanismus zur lokalen Konsistenzerhaltung zu bewerten, nicht als Nachweis einer verteilten Exactly-once-Transaktion oder einer bereits vollständig validierten Produktionsumgebung.
+\end{neu}

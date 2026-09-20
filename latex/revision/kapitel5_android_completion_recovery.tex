@@ -1,0 +1,66 @@
+%%
+%% Ergänzung zu Kapitel 5: Android Completion-/Recovery-Zustandsmodell
+%%
+
+\begin{neu}
+\section{Android-Zustandsmodell für Studienabschluss und Recovery}
+
+Mit den beiden Abschlussmodi genügt ein einzelnes boolesches Merkmal wie \texttt{study\_completed} nicht mehr, um den lokalen Studienzustand eindeutig zu beschreiben. Der Android-Client modelliert den Abschluss deshalb als expliziten Zustandsautomaten. Aus den persistenten Werten \texttt{study\_completed}, \texttt{compensation\_code} und \texttt{completion\_mode} wird beim Lesen genau einer der Zustände \texttt{Incomplete}, \texttt{DirectPendingConfirmation}, \texttt{DirectCompleted}, \texttt{ProlificCompleted} oder \texttt{Invalid} rekonstruiert. Der Zustandsautomat trennt damit einen wissenschaftlich noch nicht abgeschlossenen Verlauf von einem bereits serverseitig abgeschlossenen, aber lokal noch zu bestätigenden Direktabschluss sowie von widersprüchlichen Persistenzzuständen.
+
+Tabelle~\ref{tab:android-completion-state} fasst die Semantik der Zustände zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Lokale Android-Zustände für Studienabschluss und Recovery}
+\label{tab:android-completion-state}
+\begin{tabular}{p{0.26\textwidth}p{0.30\textwidth}p{0.31\textwidth}}
+\textbf{Zustand} & \textbf{Bedeutung} & \textbf{Folgeverhalten} \\
+\hline
+\texttt{Incomplete} & Studie noch nicht vollständig abgeschlossen & regulärer Studienfortschritt möglich, sofern kein ausstehender Request und keine Sperrzeit besteht \\
+\texttt{DirectPendingConfirmation} & Abrechnungscode empfangen und lokal gespeichert, Bestätigung noch offen & ausschließlich Bestätigung des vorhandenen Codes erneut senden; keinen Selbstbericht wiederholen \\
+\texttt{DirectCompleted} & direkter Abschluss einschließlich Codebestätigung abgeschlossen & weitere Studiensituationen gesperrt, Code kann angezeigt werden \\
+\texttt{ProlificCompleted} & Prolific-Abschluss vom Server bestätigt & weitere Studiensituationen gesperrt; kein Abrechnungscode vorhanden \\
+\texttt{Invalid} & persistierte Angaben sind widersprüchlich oder nicht interpretierbar & fail closed; keine neue Studiensituation, Recovery beziehungsweise Support erforderlich \\
+\end{tabular}
+\end{table}
+
+Die Dekodierung ist bewusst streng. Ein leerer oder syntaktisch ungültiger Abrechnungscode wird nicht akzeptiert. Der Modus \texttt{COMPENSATION\_CODE} ist ohne gültigen UUID-v4-Code unzulässig. Für \texttt{PROLIFIC\_MANUAL} darf dagegen kein Abrechnungscode vorhanden sein und der Abschlussmarker muss gesetzt sein. Auch unbekannte Abschlussmodi führen zu \texttt{Invalid}. Zusätzlich wird ein bereits als abgeschlossen interpretierter Zustand verworfen, wenn gleichzeitig noch ein ausstehender Craving-Wert gespeichert ist. Damit wird ein widersprüchlicher lokaler Zustand nicht als erfolgreicher Studienabschluss interpretiert.
+
+Für ältere Installationen existiert eine kleine Migrationslogik. Wurde ein gültiger Abrechnungscode zusammen mit einem Abschlussmarker gespeichert, aber noch kein expliziter Abschlussmodus, wird dieser Zustand als direkter Abschluss interpretiert und \texttt{COMPENSATION\_CODE} nachträglich persistiert. Auf diese Weise bleibt der zuvor verwendete Direktabschluss lesbar, ohne die neuen Prolific-Zustände durch heuristische Annahmen zu erzeugen.
+
+Der Abschlusszustand wird gemeinsam mit dem übrigen Studienfortschritt ausgewertet. Ein neuer Durchlauf ist nur zulässig, wenn alle folgenden Bedingungen erfüllt sind:
+
+\[
+\operatorname{canStart}(t) = \neg completed \;\land\; n < 20 \;\land\; \neg pending \;\land\; t \geq t_{next}.
+\]
+
+Dabei bezeichnet \(n\) die Zahl lokal bestätigter Studiensituationen, \(pending\) einen ausstehenden Netzwerk- oder Recovery-Zustand und \(t_{next}\) den frühesten Freigabezeitpunkt der nächsten Situation. \texttt{pending} wird nicht nur durch einen gespeicherten Craving-Wert gesetzt, sondern auch durch Abschlusszustände, die eine Recovery erfordern. Dadurch kann ein technisch ungeklärter Abschluss nicht durch den Start einer weiteren Studiensituation überschrieben werden.
+
+\subsection{Recovery aus ausstehenden Netzwerkzuständen}
+
+Vor einer neuen Übertragung liest die Funktion \texttt{recoverPendingNetworkWork} zunächst den rekonstruierten Abschlusszustand. Liegt \texttt{DirectPendingConfirmation} vor, wird ausschließlich der bereits bekannte Abrechnungscode erneut bestätigt. Nach erfolgreicher Bestätigung wird derselbe Code zusammen mit \texttt{study\_completed=true} und \(n=20\) synchron gespeichert. Ein erneutes Senden des zwanzigsten Selbstberichts findet in diesem Zustand nicht statt. \texttt{DirectCompleted} und \texttt{ProlificCompleted} führen dagegen zu einem No-op, während \texttt{Invalid} als Protokollfehler abgebrochen wird.
+
+Nur im Zustand \texttt{Incomplete} wird geprüft, ob ein Craving-Wert als ausstehender Selbstbericht vorhanden ist. Fehlt ein solcher Wert, ist keine Netzwerkarbeit notwendig. Andernfalls wird aus dem lokalen Zähler der erwartete nächste Index \(n+1\) abgeleitet und genau der gespeicherte Craving-Wert erneut an den Server gesendet. Für eine reguläre Antwort wird kontrolliert, dass der vom Server gemeldete Situationsindex mit dieser lokalen Erwartung übereinstimmt. Erst anschließend erhöht der Client den bestätigten Zähler, setzt die nächste Sperrzeit und entfernt den ausstehenden Craving-Wert.
+
+Für den direkten Abschluss wird eine zusätzliche Persistenzbarriere eingeführt. Sobald der Response des zwanzigsten Berichts einen gültigen Abrechnungscode enthält, speichert die App zunächst den Zustand \texttt{DirectPendingConfirmation} mit einem synchronen \texttt{SharedPreferences.commit()}. Erst danach wird die Codebestätigung an den Server gesendet. Fällt die Verbindung zwischen diesen beiden Schritten aus, bleibt der Code lokal erhalten und der Recovery-Pfad kann ausschließlich die Bestätigung wiederholen. Nach erfolgreicher Bestätigung wird der Zustand in einem weiteren synchronen Commit auf \texttt{DirectCompleted} gesetzt. Der Übergang schützt damit insbesondere das Zeitfenster zwischen Empfang des Codes und dessen serverseitiger Bestätigung.
+
+Der Prolific-Abschluss benötigt keinen zweiten Client-Request. Bei einem gültigen \texttt{PROLIFIC\_MANUAL}-Response werden Abschlussmodus, Abschlussmarker und \(n=20\) gemeinsam gespeichert; ein eventuell vorhandener Abrechnungscode sowie der ausstehende Craving-Wert werden entfernt. Die serverseitige Prolific-Finalisierung ist zusätzlich so ausgelegt, dass ein erneuter Abschlussrequest nach bereits gespeichertem zwanzigstem Bericht keinen einundzwanzigsten Bericht erzeugt, sondern die administrative Finalisierung erneut versucht. Dieser Pfad ist damit gegenüber einer unterbrochenen administrativen Prolific-Abschlussverarbeitung robuster als der ursprüngliche direkte Abschlussweg.
+
+\subsection{Fail-closed-Verhalten in Navigation und Startlogik}
+
+Auch außerhalb der Studienansicht behandelt der zentrale Controller nicht lesbare Fortschrittsdaten konservativ. Schlägt das Lesen des \texttt{StudyProgressStore} fehl, wird intern ein Zustand mit ausstehender Übertragung und \texttt{CompletionState.Invalid} verwendet. Ebenso interpretiert die Hilfsfunktion zur Erkennung ausstehender Netzwerkarbeit einen Lesefehler standardmäßig als \texttt{true}. Die produktive Route wird dadurch nicht freigegeben, solange der lokale Zustand nicht konsistent gelesen oder wiederhergestellt werden kann.
+
+Auf der Startseite werden ausstehende Übertragungen und Recovery-Zustände getrennt von der normalen Sperrzeit dargestellt. Solange \texttt{studyTransferPending} beziehungsweise ein lokales \texttt{hasPendingSubmission} vorliegt, wird der Start einer neuen Situation deaktiviert und stattdessen eine Wiederholungsaktion angeboten. Vor dieser Wiederholung wird zusätzlich der Datenschutzstatus geprüft. Die Recovery-Logik bleibt damit Teil desselben Zugangsgates wie Aktivierung, Feature-Freigabe und Datenschutzstatus und kann nicht durch eine alternative Navigation umgangen werden.
+
+\subsection{Persistenzgarantien und verbleibende Fehlerfenster}
+
+Die Abschlussübergänge verwenden synchrone \texttt{commit()}-Operationen, sodass ein fehlgeschlagener Schreibvorgang als Fehler behandelt wird und nicht stillschweigend als erfolgreicher Zustandswechsel gilt. Für den normalen Abschluss einer einzelnen Studiensituation wird ebenfalls erst nach einer bestätigten Serverantwort der lokale Zähler erhöht. Diese Reihenfolge verhindert, dass die App einen Bericht lokal als bestätigt markiert, obwohl die Übertragung eindeutig fehlgeschlagen ist.
+
+Eine vollständige Exactly-once-Semantik für Selbstberichte wird dadurch jedoch nicht erreicht. Der Craving-Wert wird vor dem Request lokal als ausstehend markiert und bei einem Netzwerkfehler erneut gesendet. Hat der Server einen Zwischenbericht bereits gespeichert, geht aber die Antwort auf dem Rückweg verloren, kennt der Client diesen Commit nicht. Ein Retry kann dann vom Server anhand der bereits vorhandenen Zeilen als nächste Situation interpretiert werden. Ohne serverseitigen Idempotenzschlüssel ist daher bei einem solchen unklaren Fehlerfenster eine doppelte beziehungsweise verschobene Zuordnung nicht vollständig ausgeschlossen.
+
+Für den direkten zwanzigsten Bericht besteht ein ähnliches, noch spezifischeres Restproblem: Geht die Serverantwort nach erfolgreicher Speicherung des zwanzigsten Berichts und Erzeugung des Abrechnungscodes vollständig verloren, hat die App den Code noch nicht erhalten und kann folglich nicht in \texttt{DirectPendingConfirmation} wechseln. Ein erneuter Direktrequest wird serverseitig als bereits abgeschlossene Studie abgelehnt, sodass der Client den zuvor erzeugten Code nicht rekonstruieren kann. Dagegen ist ein Verbindungsabbruch \emph{nach} Empfang und lokaler Speicherung des Codes beherrscht, weil dann ausschließlich die idempotente Codebestätigung wiederholt wird. Für eine spätere Härtung wäre deshalb ein idempotenter Submission-Schlüssel pro Situation oder ein serverseitig abrufbarer Abschlussstatus sinnvoll. Damit könnten sowohl Zwischenberichte als auch der finale Direktabschluss eindeutig einem bereits verarbeiteten Request zugeordnet werden.
+
+Eine weitere, kleinere Persistenzgrenze besteht beim initialen Speichern eines ausstehenden Craving-Werts: Dieser wird mit der asynchronen Android-Methode \texttt{apply()} gesetzt und anschließend die Netzwerksynchronisation gestartet. Der Wert ist unmittelbar im Prozess sichtbar, die dauerhafte Speicherung auf dem Dateisystem erfolgt jedoch asynchron. Ein abruptes Prozess- oder Geräteende in diesem engen Zeitfenster bietet daher eine schwächere Persistenzgarantie als die synchron mit \texttt{commit()} gespeicherten Abschlusszustände. Für die Pilotstudie ist dies als technisches Restrisiko zu dokumentieren; eine vollständig transaktionale lokale Queue oder eine kleine lokale Datenbank könnte diesen Zustand in einer späteren Version robuster abbilden.
+
+Das Zustandsmodell verbessert damit vor allem die kontrollierte Wiederaufnahme eindeutig erkannter Fehlerzustände und verhindert widersprüchliche lokale Fortschrittsübergänge. Es ersetzt jedoch keine Ende-zu-Ende-Idempotenz zwischen App und Server. Diese Unterscheidung ist für die Interpretation der technischen Robustheit wesentlich: Recovery bedeutet hier, dass bekannte ausstehende Zustände reproduzierbar weiterverarbeitet werden können, nicht dass jeder denkbare Verbindungsabbruch ohne Mehrdeutigkeit aufgelöst wird.
+\end{neu}
