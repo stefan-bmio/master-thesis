@@ -1,0 +1,6 @@
+﻿item,cue,de_label_a,de_label_b,en_label_a,en_label_b,poc_button_order,final_required_order,response_storage_final
+1,cue_000.png,Rauchschleier,Abendlicht,smoke haze,evening light,A|B,randomized per presentation,none
+2,cue_001.png,Aschegeruch,Regenschirmmoment,smell of ash,umbrella moment,B|A,randomized per presentation,none
+3,cue_002.png,Kaffee dazu,Handy in der Hand,coffee with it,phone in hand,A|B,randomized per presentation,none
+4,cue_003.png,nachglimmen,Tischrunde,smoldering,around the table,B|A,randomized per presentation,none
+5,cue_004.png,ausdrücken,Nachtluft,stubbing it out,night air,A|B,randomized per presentation,none

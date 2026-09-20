@@ -1,0 +1,20 @@
+﻿type,title,content,stim1,stimFormat,stimSize,presTime,button1,button2,responseType,head,body
+instructions,Technical CueLens PoC,This flow is only for technical validation on Testable. The included images are placeholders and must not be used as study stimuli.,,,,,,,,,
+trial,,,matching_scene_000,.png,max 420 760,4000,,,,,
+trial,,,matching_scene_000,.png,max 420 760,,Left image,Right image,,,
+trial,,,matching_scene_001,.png,max 420 760,4000,,,,,
+trial,,,matching_scene_001,.png,max 420 760,,Left image,Right image,,,
+trial,,,matching_scene_002,.png,max 420 760,4000,,,,,
+trial,,,matching_scene_002,.png,max 420 760,,Left image,Right image,,,
+trial,,,matching_scene_003,.png,max 420 760,4000,,,,,
+trial,,,matching_scene_003,.png,max 420 760,,Left image,Right image,,,
+trial,,,matching_scene_004,.png,max 420 760,4000,,,,,
+trial,,,matching_scene_004,.png,max 420 760,,Left image,Right image,,,
+form,,,,,,,,,slider,How strong is your craving to smoke at this moment?,"Technical PoC: verify that range 0–100, integer steps, and initial value 50 are configured."
+instructions,PoC: Cue Labeling,In production there is a minimum interval of three hours between runs. This PoC intentionally skips that interval.,,,,,,,,,
+trial,,,cue_000,.png,max 420 600,,smoke haze,evening light,,,
+trial,,,cue_001,.png,max 420 600,,umbrella moment,smell of ash,,,
+trial,,,cue_002,.png,max 420 600,,coffee with it,phone in hand,,,
+trial,,,cue_003,.png,max 420 600,,around the table,smoldering,,,
+trial,,,cue_004,.png,max 420 600,,stubbing it out,night air,,,
+form,,,,,,,,,slider,How strong is your craving to smoke at this moment?,Technical PoC: second self-report. The Testable debrief must then be reached so the results count as completed.

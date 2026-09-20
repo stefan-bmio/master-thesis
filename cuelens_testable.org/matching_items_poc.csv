@@ -1,0 +1,6 @@
+﻿item,cue,match_a,match_b,poc_composite,poc_display_order,final_required_order,response_storage_final
+1,cue_000.png,match_a_000.png,match_b_000.png,matching_scene_000.png,A|B,randomized per presentation,none
+2,cue_001.png,match_a_001.png,match_b_001.png,matching_scene_001.png,B|A,randomized per presentation,none
+3,cue_002.png,match_a_002.png,match_b_002.png,matching_scene_002.png,A|B,randomized per presentation,none
+4,cue_003.png,match_a_003.png,match_b_003.png,matching_scene_003.png,B|A,randomized per presentation,none
+5,cue_004.png,match_a_004.png,match_b_004.png,matching_scene_004.png,A|B,randomized per presentation,none
