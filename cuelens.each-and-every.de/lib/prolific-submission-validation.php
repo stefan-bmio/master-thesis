@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/participant-identifier.php';
 
-const PROLIFIC_SUBMISSIONS_ENDPOINT = 'https://api.prolific.com/api/v1/submissions/';
-const PROLIFIC_SUBMISSIONS_PAGE_SIZE = 20;
-const PROLIFIC_SUBMISSIONS_MAX_PAGES = 1000;
+const PROLIFIC_STUDIES_ENDPOINT = 'https://api.prolific.com/api/v1/studies/';
 const PROLIFIC_RESPONSE_MAX_BYTES = 1048576;
 const PROLIFIC_ELIGIBLE_SUBMISSION_STATUSES = [
     'ACTIVE',
@@ -40,17 +38,20 @@ final class ProlificHttpResponse
 
 /**
  * Checks whether the participant has at least one eligible submission in the
- * configured study. A false result means that all pages were read successfully
+ * configured study. A false result means that all submissions were read successfully
  * but no eligible submission was found. Technical failures always throw.
  *
  * @param array<string, mixed> $hostConfig
  * @param null|callable(string, list<string>): ProlificHttpResponse $httpGet
+ * @param list<string> $matchedStatuses Statuses of submissions matching this participant only.
  */
 function prolific_participant_has_eligible_submission(
     array $hostConfig,
     string $participantId,
-    ?callable $httpGet = null
+    ?callable $httpGet = null,
+    array &$matchedStatuses = []
 ): bool {
+    $matchedStatuses = [];
     try {
         $identifier = ParticipantIdentifier::parse($participantId);
     } catch (InvalidArgumentException) {
@@ -71,72 +72,54 @@ function prolific_participant_has_eligible_submission(
         'Accept: application/json',
         'Authorization: Token ' . $token,
     ];
-    $seenFullPages = [];
+    $url = PROLIFIC_STUDIES_ENDPOINT . $studyId . '/submissions/';
 
-    for ($page = 1; $page <= PROLIFIC_SUBMISSIONS_MAX_PAGES; $page++) {
-        $url = PROLIFIC_SUBMISSIONS_ENDPOINT . '?' . http_build_query([
-            'study' => $studyId,
-            'page_size' => PROLIFIC_SUBMISSIONS_PAGE_SIZE,
-            'page' => $page,
-        ], '', '&', PHP_QUERY_RFC3986);
+    try {
+        $response = $transport($url, $headers);
+    } catch (ProlificApiException $error) {
+        throw $error;
+    } catch (Throwable) {
+        throw new ProlificApiException('Prolific API transport failed.');
+    }
+    if (!$response instanceof ProlificHttpResponse) {
+        throw new ProlificApiException('Invalid Prolific API transport response.');
+    }
+    if ($response->statusCode() !== 200) {
+        throw new ProlificApiException(
+            'Prolific API request failed with HTTP status ' . $response->statusCode() . '.'
+        );
+    }
 
-        try {
-            $response = $transport($url, $headers);
-        } catch (ProlificApiException $error) {
-            throw $error;
-        } catch (Throwable) {
-            throw new ProlificApiException('Prolific API transport failed.');
-        }
-        if (!$response instanceof ProlificHttpResponse) {
-            throw new ProlificApiException('Invalid Prolific API transport response.');
-        }
-        if ($response->statusCode() !== 200) {
-            throw new ProlificApiException(
-                'Prolific API request failed with HTTP status ' . $response->statusCode() . '.'
-            );
+    try {
+        $payload = json_decode($response->body(), true, 32, JSON_THROW_ON_ERROR);
+    } catch (JsonException) {
+        throw new ProlificApiException('Invalid Prolific API JSON response.');
+    }
+    if (!is_array($payload) || !isset($payload['results']) ||
+        !is_array($payload['results']) || !array_is_list($payload['results'])) {
+        throw new ProlificApiException('Invalid Prolific API response structure.');
+    }
+
+    foreach ($payload['results'] as $submission) {
+        if (!is_array($submission) ||
+            !isset($submission['participant_id'], $submission['status']) ||
+            !is_string($submission['participant_id']) ||
+            !is_string($submission['status'])) {
+            throw new ProlificApiException('Invalid Prolific submission response.');
         }
 
-        try {
-            $payload = json_decode($response->body(), true, 32, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            throw new ProlificApiException('Invalid Prolific API JSON response.');
-        }
-        if (!is_array($payload) || !isset($payload['results']) ||
-            !is_array($payload['results']) || !array_is_list($payload['results'])) {
-            throw new ProlificApiException('Invalid Prolific API response structure.');
-        }
-
-        foreach ($payload['results'] as $submission) {
-            if (!is_array($submission) ||
-                !isset($submission['participant_id'], $submission['status']) ||
-                !is_string($submission['participant_id']) ||
-                !is_string($submission['status'])) {
-                throw new ProlificApiException('Invalid Prolific submission response.');
+        $canonicalStatus = prolific_canonical_submission_status($submission['status']);
+        if (hash_equals($identifier->prolificId() ?? '', $submission['participant_id'])) {
+            if (!in_array($submission['status'], $matchedStatuses, true)) {
+                $matchedStatuses[] = $submission['status'];
             }
-
-            $canonicalStatus = prolific_canonical_submission_status($submission['status']);
-            if (hash_equals($identifier->prolificId() ?? '', $submission['participant_id']) &&
-                in_array($canonicalStatus, PROLIFIC_ELIGIBLE_SUBMISSION_STATUSES, true)) {
+            if (in_array($canonicalStatus, PROLIFIC_ELIGIBLE_SUBMISSION_STATUSES, true)) {
                 return true;
             }
         }
-
-        $resultCount = count($payload['results']);
-        if ($resultCount < PROLIFIC_SUBMISSIONS_PAGE_SIZE) {
-            return false;
-        }
-        if ($resultCount > PROLIFIC_SUBMISSIONS_PAGE_SIZE) {
-            throw new ProlificApiException('Invalid Prolific API page size.');
-        }
-
-        $pageSignature = hash('sha256', $response->body());
-        if (isset($seenFullPages[$pageSignature])) {
-            throw new ProlificApiException('Prolific API pagination did not advance.');
-        }
-        $seenFullPages[$pageSignature] = true;
     }
 
-    throw new ProlificApiException('Prolific API pagination limit exceeded.');
+    return false;
 }
 
 /** @param array<string, mixed> $config */
@@ -161,7 +144,7 @@ function prolific_canonical_submission_status(string $status): string
 /** @param list<string> $headers */
 function prolific_https_get(string $url, array $headers): ProlificHttpResponse
 {
-    if (!str_starts_with($url, PROLIFIC_SUBMISSIONS_ENDPOINT . '?')) {
+    if (preg_match('~^https://api\.prolific\.com/api/v1/studies/[A-Za-z0-9]{24}/submissions/$~D', $url) !== 1) {
         throw new ProlificApiException('Invalid Prolific API request URL.');
     }
     if (!function_exists('curl_init')) {

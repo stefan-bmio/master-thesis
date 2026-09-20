@@ -1,8 +1,8 @@
 <?php
 // Datei wird direkt auf dem Server bearbeitet, um Passwort zu schützen.
 return [
-    'host' => 'localhost',
+    'host' => '192.168.1.243',
     'dbname' => 'deine_datenbank',
-    'user' => 'dein_benutzer',
-    'pass' => 'dein_passwort',
+    'user' => 'cuelens_test',
+    'pass' => 'tset_sneleuc',
 ];

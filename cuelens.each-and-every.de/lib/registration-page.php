@@ -15,6 +15,8 @@ if (!isset($registrationPage) || !is_array($registrationPage)) {
 }
 $prolificSubmissionValidator = $prolificSubmissionValidator
     ?? 'prolific_participant_has_eligible_submission';
+$prolificRegistrationDenialReporter = $prolificRegistrationDenialReporter
+    ?? 'report_prolific_registration_denied';
 if (!is_callable($prolificSubmissionValidator)) {
     throw new RuntimeException('Invalid Prolific submission validator.');
 }
@@ -44,8 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($prolificId === null) {
                         throw new LogicException('Missing Prolific participant ID.');
                     }
-                    if (!$prolificSubmissionValidator($hostConfig, $prolificId)) {
+                    $matchedStatuses = [];
+                    if (!$prolificSubmissionValidator($hostConfig, $prolificId, null, $matchedStatuses)) {
                         $message = $registrationPage['prolific_not_registered'];
+                        $prolificRegistrationDenialReporter(
+                            is_array($dbConfig) ? $dbConfig : [],
+                            $matchedStatuses
+                        );
                     }
                 }
 

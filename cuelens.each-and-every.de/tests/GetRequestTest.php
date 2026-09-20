@@ -86,7 +86,8 @@ final class GetRequestTest extends TestCase
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function testIneligibleProlificRegistrationShowsExactErrorBeforeDatabaseAccess(): void
+    #[DataProvider('formPageProvider')]
+    public function testIneligibleProlificRegistrationShowsExactErrorBeforeDatabaseAccess(string $page): void
     {
         $csrfToken = str_repeat('a', 64);
         session_id('prolific-validation-test');
@@ -106,21 +107,31 @@ final class GetRequestTest extends TestCase
         ];
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $checkedParticipantId = null;
+        $reportedStatuses = null;
+        $prolificRegistrationDenialReporter = static function (array $config, array $statuses) use (&$reportedStatuses): void {
+            $reportedStatuses = $statuses;
+        };
         $prolificSubmissionValidator = static function (
             array $hostConfig,
-            string $participantId
+            string $participantId,
+            ?callable $transport,
+            array &$statuses
         ) use (&$checkedParticipantId): bool {
             $checkedParticipantId = $participantId;
+            $statuses = ['REJECTED'];
             return false;
         };
 
         ob_start();
-        require __DIR__ . '/../index-de.php';
+        require __DIR__ . '/../' . $page;
         $output = ob_get_clean();
 
         self::assertSame('AbCdEf1234567890GhIjKlMn', $checkedParticipantId);
+        self::assertSame(['REJECTED'], $reportedStatuses);
         self::assertStringContainsString(
-            'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.',
+            $page === 'index-de.php'
+                ? 'Diese Prolific-ID ist nicht für die CueLens-Studie registriert.'
+                : 'This Prolific ID is not registered for the CueLens study.',
             $output
         );
     }

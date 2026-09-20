@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/lib/local-test-environment.php';
 
-$configurationDirectory = getenv('CUELENS_DEPLOY_CONFIG_DIR') ?: '/var/www/html/cuelens/config';
+$configurationDirectory = getenv('CUELENS_DEPLOY_CONFIG_DIR') ?: './config/';
 try {
     $signupConfig = require $configurationDirectory . '/cuelens-signup.php';
     $cravingConfig = require $configurationDirectory . '/cuelens-craving.php';

@@ -11,6 +11,7 @@ const OPERATIONAL_EVENT_FEEDBACK_RECEIVED = 'feedback_received';
 const OPERATIONAL_EVENT_FEEDBACK_LIMIT_REACHED = 'feedback_limit_reached';
 const OPERATIONAL_EVENT_REGISTRATION_CREATED = 'registration_created';
 const OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED = 'prolific_registration_created';
+const OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_DENIED = 'prolific_registration_denied';
 const OPERATIONAL_EVENT_ACTIVATION_COMPLETED = 'activation_completed';
 const OPERATIONAL_EVENT_PROLIFIC_STUDY_COMPLETED = 'prolific_study_completed';
 const OPERATIONAL_EVENT_CLIENT_ERROR = 'client_error';
@@ -42,6 +43,10 @@ function build_operational_notification(
         OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_CREATED => [
             'subject' => '[CueLens] Neue Prolific-Registrierung',
             'notice' => 'Eine Prolific-Registrierung wurde ohne direkte Identifikationsdaten erstellt.',
+        ],
+        OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_DENIED => [
+            'subject' => '[CueLens] Prolific-Registrierung nicht zugelassen',
+            'notice' => 'Die Registrierung wurde abgebrochen, weil keine zugelassene Prolific-Teilnahme in der konfigurierten Studie gefunden wurde.',
         ],
         OPERATIONAL_EVENT_ACTIVATION_COMPLETED => [
             'subject' => '[CueLens] App-Aktivierung abgeschlossen',

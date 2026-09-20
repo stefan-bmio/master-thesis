@@ -3,6 +3,54 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/operational-notification.php';
 
+/**
+ * Records each denied registration before queuing its notification. This is an
+ * event record, not proof of SMTP delivery. The optional writer is a test seam.
+ *
+ * @param array<string, mixed> $dbConfig
+ * @param list<string> $matchedStatuses
+ * @param null|callable(string, string): void $writer
+ */
+function report_prolific_registration_denied(
+    array $dbConfig,
+    array $matchedStatuses,
+    ?callable $writer = null
+): void {
+    $requestId = operational_request_id();
+    try {
+        $cause = json_encode([
+            'event' => OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_DENIED,
+            'component' => 'registration_form',
+            'request_id' => $requestId,
+            'reason' => $matchedStatuses === [] ? 'participant_not_found' : 'submission_status_not_allowed',
+            'submission_statuses' => $matchedStatuses,
+        ], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
+        $message = 'Prolific registration denied: no eligible submission.';
+        if ($writer !== null) {
+            $writer($message, $cause);
+        } else {
+            $pdo = new PDO(
+                "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4",
+                $dbConfig['user'],
+                $dbConfig['pass'],
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => false]
+            );
+            $pdo->prepare(
+                'INSERT INTO error_log (created_at, error_message, cause)
+                 VALUES (CURRENT_TIMESTAMP, :error_message, :cause)'
+            )->execute([':error_message' => $message, ':cause' => $cause]);
+        }
+    } catch (Throwable $error) {
+        error_log('Could not log Prolific registration denial: ' . operational_error_category($error) .
+            '; request_id=' . $requestId);
+    }
+    send_operational_notification(
+        OPERATIONAL_EVENT_PROLIFIC_REGISTRATION_DENIED,
+        'registration_form',
+        'no_eligible_submission'
+    );
+}
+
 function log_error(
     PDO $pdo,
     string $errorMessage,

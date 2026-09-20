@@ -11,6 +11,23 @@ final class ProlificSubmissionValidationTest extends TestCase
     private const PARTICIPANT_ID = 'AbCdEf1234567890GhIjKlMn';
     private const STUDY_ID = '0123456789abcdef01234567';
 
+    public function testReportsOnlyMatchingSubmissionStatusesAndResetsBetweenCalls(): void
+    {
+        $statuses = ['stale'];
+        $transport = static fn (): ProlificHttpResponse => self::response([
+            self::submission('000000000000000000000000', 'APPROVED'),
+            self::submission(self::PARTICIPANT_ID, 'REJECTED'),
+            self::submission(self::PARTICIPANT_ID, 'SCREENED OUT'),
+            self::submission(self::PARTICIPANT_ID, 'REJECTED'),
+        ]);
+        self::assertFalse(prolific_participant_has_eligible_submission($this->config(), self::PARTICIPANT_ID, $transport, $statuses));
+        self::assertSame(['REJECTED', 'SCREENED OUT'], $statuses);
+        self::assertFalse(prolific_participant_has_eligible_submission(
+            $this->config(), self::PARTICIPANT_ID, static fn () => self::response([]), $statuses
+        ));
+        self::assertSame([], $statuses);
+    }
+
     #[DataProvider('eligibleStatusProvider')]
     public function testAcceptsConfiguredEligibleStatusesAndApiSeparators(string $status): void
     {
@@ -31,6 +48,8 @@ final class ProlificSubmissionValidationTest extends TestCase
         yield 'active' => ['ACTIVE'];
         yield 'awaiting review with underscore' => ['AWAITING_REVIEW'];
         yield 'awaiting review with API space' => ['AWAITING REVIEW'];
+        yield 'awaiting review as displayed' => ['Awaiting Review'];
+        yield 'awaiting review with whitespace' => ['  awaiting review  '];
         yield 'approved' => ['APPROVED'];
         yield 'timed out with underscore' => ['TIMED_OUT'];
         yield 'timed out with API hyphen' => ['TIMED-OUT'];
@@ -59,21 +78,18 @@ final class ProlificSubmissionValidationTest extends TestCase
         yield 'reserved' => ['RESERVED'];
     }
 
-    public function testReadsEveryPageAndKeepsLookingAfterAnIneligibleMatch(): void
+    public function testFindsAwaitingReviewAfterTwentyEntriesAndAnIneligibleMatch(): void
     {
-        $requestedPages = [];
-        $firstPage = [self::submission(self::PARTICIPANT_ID, 'REJECTED')];
-        for ($index = 1; $index < PROLIFIC_SUBMISSIONS_PAGE_SIZE; $index++) {
-            $firstPage[] = self::submission(str_pad((string) $index, 24, 'x'), 'APPROVED');
+        $requests = 0;
+        $results = [self::submission(self::PARTICIPANT_ID, 'REJECTED')];
+        for ($index = 1; $index < 40; $index++) {
+            $results[] = self::submission(str_pad((string) $index, 24, 'x'), 'APPROVED');
         }
+        $results[] = self::submission(self::PARTICIPANT_ID, 'Awaiting Review');
 
-        $transport = static function (string $url, array $headers) use (&$requestedPages, $firstPage): ProlificHttpResponse {
-            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
-            $requestedPages[] = (int) ($query['page'] ?? 0);
-            if (($query['page'] ?? null) === '1') {
-                return self::response($firstPage);
-            }
-            return self::response([self::submission(self::PARTICIPANT_ID, 'ACTIVE')]);
+        $transport = static function () use (&$requests, $results): ProlificHttpResponse {
+            $requests++;
+            return self::response($results);
         };
 
         self::assertTrue(prolific_participant_has_eligible_submission(
@@ -81,7 +97,7 @@ final class ProlificSubmissionValidationTest extends TestCase
             self::PARTICIPANT_ID,
             $transport
         ));
-        self::assertSame([1, 2], $requestedPages);
+        self::assertSame(1, $requests);
     }
 
     public function testReturnsFalseOnlyAfterACompleteSuccessfulSearch(): void
@@ -126,13 +142,10 @@ final class ProlificSubmissionValidationTest extends TestCase
             $transport
         ));
 
-        self::assertStringStartsWith(PROLIFIC_SUBMISSIONS_ENDPOINT . '?', $seenUrl);
+        self::assertSame('https://api.prolific.com/api/v1/studies/' . self::STUDY_ID . '/submissions/', $seenUrl);
         self::assertStringNotContainsString('test-api-token', $seenUrl);
         self::assertContains('Authorization: Token test-api-token', $seenHeaders);
-        parse_str((string) parse_url($seenUrl, PHP_URL_QUERY), $query);
-        self::assertSame(self::STUDY_ID, $query['study'] ?? null);
-        self::assertSame((string) PROLIFIC_SUBMISSIONS_PAGE_SIZE, $query['page_size'] ?? null);
-        self::assertSame('1', $query['page'] ?? null);
+        self::assertNull(parse_url($seenUrl, PHP_URL_QUERY));
     }
 
     #[DataProvider('httpFailureProvider')]
@@ -229,20 +242,48 @@ final class ProlificSubmissionValidationTest extends TestCase
         self::assertFalse($transportCalled);
     }
 
-    public function testStopsIfPaginationDoesNotAdvance(): void
+    #[DataProvider('submissionCountProvider')]
+    public function testMissingParticipantNeedsNoRequestBeyondTheResults(int $count): void
     {
-        $fullPage = [];
-        for ($index = 0; $index < PROLIFIC_SUBMISSIONS_PAGE_SIZE; $index++) {
-            $fullPage[] = self::submission(str_pad((string) $index, 24, 'x'), 'APPROVED');
+        $results = [];
+        for ($index = 0; $index < $count; $index++) {
+            $results[] = self::submission(str_pad((string) $index, 24, 'x'), 'APPROVED');
         }
-        $transport = static fn (): ProlificHttpResponse => self::response($fullPage);
+        $requests = 0;
+        $transport = static function () use (&$requests, $results): ProlificHttpResponse {
+            $requests++;
+            return self::response($results);
+        };
 
-        $this->expectException(ProlificApiException::class);
-        prolific_participant_has_eligible_submission(
+        self::assertFalse(prolific_participant_has_eligible_submission(
             $this->config(),
             self::PARTICIPANT_ID,
             $transport
-        );
+        ));
+        self::assertSame(1, $requests);
+    }
+
+    public static function submissionCountProvider(): iterable
+    {
+        foreach ([0, 20, 40, 41] as $count) {
+            yield (string) $count => [$count];
+        }
+    }
+
+    public function testTransportRejectsOtherHostsPathsAndQueriesBeforeSendingCredentials(): void
+    {
+        foreach ([
+            'https://api.prolific.com.evil.example/api/v1/studies/' . self::STUDY_ID . '/submissions/',
+            'https://api.prolific.com/api/v1/submissions/?study=' . self::STUDY_ID,
+            'https://api.prolific.com/api/v1/studies/' . self::STUDY_ID . '/submissions/?page=2',
+        ] as $url) {
+            try {
+                prolific_https_get($url, ['Authorization: Token test-token']);
+                self::fail('Unexpected URL accepted.');
+            } catch (ProlificApiException $error) {
+                self::assertSame('Invalid Prolific API request URL.', $error->getMessage());
+            }
+        }
     }
 
     /** @return array{prolific_token: string, prolific_study_id: string} */
