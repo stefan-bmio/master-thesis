@@ -1,0 +1,18 @@
+% Standalone preview of the added section; compile from latex/.
+\documentclass[11pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,graphicx,booktabs,listings}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\pdfminorversion=7
+\lstset{literate={ö}{{\"o}}1 {ä}{{\"a}}1 {ü}{{\"u}}1
+ {Ö}{{\"O}}1 {Ä}{{\"A}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1}
+\begin{document}
+\setcounter{chapter}{6}
+\chapter{Auswertung der Berichte}
+\input{revision/kapitel7_testable_auswertung.tex}
+\end{document}

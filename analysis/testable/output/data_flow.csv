@@ -1,0 +1,15 @@
+"metric","value"
+"files",68
+"identified",67
+"primary",66
+"primary_reports",1320
+"unidentified",1
+"identified_incomplete",1
+"below300_sessions",5
+"below300_intervals",49
+"intervals_total",1254
+"constant_sessions",1
+"age_over65",1
+"negative_differences",32
+"zero_differences",2
+"positive_differences",32
