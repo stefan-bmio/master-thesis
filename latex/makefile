@@ -1,8 +1,7 @@
 ##
 ## macrodefinitions 
 ##
-LATEX        = pdflatex
-BIBTEX       = bibtex
+LATEXMK      = latexmk
 SRC          = main
 REMOVE       = *.tex~ *.aux *.glo *.gls *.cb *.dvi *.log *.toc *.lof *.bbl *.blg *.ilg *.cb? *.idx *.out
 
@@ -10,10 +9,7 @@ REMOVE       = *.tex~ *.aux *.glo *.gls *.cb *.dvi *.log *.toc *.lof *.bbl *.blg
 ## rules
 ##
 all : 
-	$(LATEX)  $(SRC)
-	$(BIBTEX) $(SRC)
-	$(LATEX)  $(SRC) 
-	$(LATEX)  $(SRC)
+	$(LATEXMK) -pdf $(SRC).tex
 
 clean :
 	rm -fv $(REMOVE)

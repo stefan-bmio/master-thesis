@@ -1,3 +1,5 @@
+% !TeX root = ../main.tex
+
 %%
 %% Berliner Hochschule für Technik --  Abschlussarbeit
 %%
@@ -43,7 +45,7 @@ Das Testkonzept leitet sich aus den sicherheits- und studienrelevanten Fehlerfä
 
 Die Studiensequenz muss 20 Situationen mit je fünf Aufgaben umfassen, die ersten zehn in der Matching- und die folgenden zehn in der Labeling-Bedingung. Die Slidergrenzen 0 und 100, die Staging- und Production-Endpunkte, die Wiederaufnahme ausstehender Übertragungen beim App-Start, die Anzeige und Bestätigung des Abrechnungscodes sowie die Sperrzeit nach bestätigter Übertragung sind separat zu prüfen. Eine Änderung gilt erst dann als abgeschlossen, wenn Staging- und Production-Build erzeugt werden können, neue Datenfelder in Code, Backend-Vertrag und Dokumentation beschrieben sind, lokale Speicherungen nach Zweck, Lebensdauer und Schutzbedarf dokumentiert sind und Fehlerfälle zu eindeutigen UI-Zuständen führen.
 
-Das Anmeldeformular \texttt{index-de.php} beziehungsweise \texttt{index-en.php} erhebt E-Mail-Adresse, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Browsermeldungen durch passendere Hinweise, etwa zur Altersgrenze von 30 bis 65 Jahren und zur Mindestmenge von 10 Zigaretten pro Tag. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die E-Mail-Adresse mit \texttt{FILTER\_VALIDATE\_EMAIL} und die numerischen Eingaben mit \texttt{FILTER\_VALIDATE\_INT} validiert. Anschließend werden die Alters- und Konsumgrenzen und die Einwilligungen in Studieninformation und Datenschutzerklärung erneut geprüft. Dadurch werden HTTP-Anfragen außerhalb eines Browsers oder mit manipulierten Formularattributen erkannt.
+Das Anmeldeformular \texttt{index-de.php} beziehungsweise \texttt{index-en.php} erhebt E-Mail-Adres\-se, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Browsermeldungen durch passendere Hinweise, etwa zur Altersgrenze von 30 bis 65 Jahren und zur Mindestmenge von 10 Zigaretten pro Tag. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die E-Mail-Adresse mit \texttt{FILTER\_VALIDATE\_EMAIL} und die numerischen Eingaben mit \texttt{FILTER\_VALIDATE\_INT} validiert. Anschließend werden die Alters- und Konsumgrenzen und die Einwilligungen in Studieninformation und Datenschutzerklärung erneut geprüft. Dadurch werden HTTP-Anfragen außerhalb eines Browsers oder mit manipulierten Formularattributen erkannt.
 
 Die Werte \texttt{studyinfo} und \texttt{dataprot} für die Einwilligungen in Studieninformation und Datenschutzerklärung werden ebenfalls beim Insert in die Tabelle \texttt{register} persistiert. Damit ist technisch nachvollziehbar, dass die Anmeldung nur nach aktiver Bestätigung beider Dokumente verarbeitet wurde.
 
@@ -59,13 +61,13 @@ Die automatische Android-Sicherung ist für die App deaktiviert. Damit werden lo
 Für die Web-Anwendung wurde eine PHPUnit-basierte Testumgebung ergänzt. Die Entwicklungsabhängigkeiten umfassen PHPUnit und eine WebDriver-Bibliothek. Eine Testsuite prüft, ob die deutschen und englischen Registrierungsformulare per GET ohne Datenbankverbindung geladen werden können, keinen Serverfehler erzeugen und ein Formular enthalten. Ein browserbasierter Test startet bei erreichbarer lokaler Testumgebung einen WebDriver, setzt eine typische mobile Fenstergröße und prüft die deutsche Pflichtfeldmeldung für eine fehlende E-Mail-Adresse sowohl im nativen Validierungszustand des Feldes als auch im sichtbaren Validierungselement der Seite. Die Testkonfiguration ist außerdem so angelegt, dass sie in einer lokalen Umgebung mit abweichender Host-Konfiguration ausgeführt werden kann.
 
 \section{Backup}
-Die Studiendatenbanken für Teilnahmedaten und pseudonymisierte Selbstberichte sind bei United Domains auf Servern in Deutschland gehostet. Der Zugriff auf die MySQL-Instanzen ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenprogramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
+Die Studiendatenbanken für Teilnahmedaten und pseudonymisierte Selbstberichte sind bei United Domains auf Servern in Deutschland gehostet. Der Zugriff auf die MySQL-Instanzen ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenpro\-gramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
 
 Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Studie wird damit wöchentlich ein manuelles Backup durchgeführt. Die SQL-Skripte, die dabei für jede Datenbanktabelle entstehen, werden mit AES-256 verschlüsselt als ZIP-Datei bei Infomaniak abgelegt. Die folgende Tabelle zeigt den Backup-Zeitplan:
 
 \vspace{2em}
   \label{tab:Backup-Zeitplan}
-\begin{tabularx}{\textwidth} {
+\begin{tabularx}{.9\textwidth} {
  >{\centering\arraybackslash}p{3cm}
  >{\raggedright\arraybackslash}X
 }
@@ -144,3 +146,743 @@ Compose BOM & 2026.02.01 \\
 \bottomrule
 \end{tabularx}
 \captionof{table}{Verwendete Bibliotheken und Plugins}
+
+\section{Systemarchitektur}
+
+Die Implementierung besteht aus vier getrennten Bereichen: der Android-App, der Registrierungs- und Informationswebseite, einem PHP-Backend sowie zwei fachlich getrennten Datenbanken. Die Android-App übernimmt Bedienoberfläche, lokalen Studienzustand, Aktivierung, Datenschutzbestätigung, Benachrichtigungen und Übertragung der Selbstberichte. Die Webanwendung dient der Registrierung, dem Double-Opt-In, der Bereitstellung von Dokumenten und der APK-Installation. Das PHP-Backend stellt jeweils kleine zweckgebundene Endpunkte bereit. Registrierungs- und Feedbackdaten werden von den pseudonymisierten wissenschaftlichen Berichten getrennt gespeichert.
+
+Diese Aufteilung folgt dem Prinzip der begrenzten Verantwortlichkeit. Ein Endpunkt erhält nur die Felder, die er für seinen Zweck benötigt. Der Nachrichtenendpunkt kennt keine Registrierung. Das Feedbackformular benötigt weder E-Mail-Adresse noch App-Token. Der Selbstberichtsendpunkt erhält keine Zahlungsdaten und keine von der App gesendete Versuchsbedingung. Die Aktivierung greift auf Registrierung und Freigabeliste zu, speichert aber das ausgegebene Token nicht im Klartext.
+
+Die Produktions- und Staging-Konfiguration werden über Android Product Flavors getrennt. Staging erhält eine eigene Application-ID-Endung, lokale HTTP-Endpunkte und eine verkürzte Sperrzeit von drei Sekunden. Production verwendet die offizielle HTTPS-Domain, verbietet Klartextverkehr und setzt die reguläre Sperrzeit auf drei Stunden. Die Trennung erlaubt schnelle technische Tests, ohne Testwerte oder unverschlüsselte Endpunkte in die produktive Konfiguration übernehmen zu müssen.
+
+\section{Zustandsmodell}
+
+Beim Start lädt die App zunächst die gespeicherte Sprache und ruft den Infofeed ab. Noch nicht dauerhaft ausgeblendete Nachrichten werden vor der Startseite als eigene Vollbildseiten angezeigt. Danach folgt bei der ersten Nutzung die Entscheidung über Benachrichtigungen. Erst wenn dieser Startablauf abgeschlossen ist, wird die eigentliche Studien-Navigation sichtbar.
+
+Die Navigation unterscheidet die Startseite, E-Mail-Aktivierung, erneute Datenschutzbestätigung, Demo-Bildzuordnung, Demo-Wortzuordnung, Demo-Craving-Abfrage, Demo-Abschluss, Feedback und produktive Studie. Die Routen werden nicht nur durch sichtbare Buttons, sondern durch einen zentralen Controller und explizite Zustände begrenzt. Dadurch lässt sich beispielsweise verhindern, dass die produktive Studie ohne Token, bei ausstehender Übertragung oder ohne erforderliche Datenschutzbestätigung geöffnet wird.
+
+Für Aktivierung, Datenschutz und Feedback existieren getrennte Zustandsmodelle mit Lade-, Erfolgs- und Fehlerzuständen. Netzwerkoperationen werden außerhalb des UI-Threads ausgeführt. Die Compose-Oberfläche erhält nur den jeweils darzustellenden Zustand und löst klar abgegrenzte Controlleraktionen aus. Diese Struktur reduziert doppelte Zustandsübergänge und erleichtert Unit-Tests, weil Netzwerk-, Speicher- und Zeitabhängigkeiten als Schnittstellen ersetzt werden können.
+
+Die Demo bleibt von der produktiven Freigabe getrennt. Sie verwendet dieselbe Grundidee der Bild- und Wortaufgaben, überträgt aber keinen wissenschaftlichen Craving-Wert. Dadurch können Interessierte die Bedienung kennenlernen, ohne einen produktiven Bericht zu erzeugen oder den Studienfortschritt zu verändern.
+
+\section{Zweistufige Aktivierung}
+
+Die Aktivierung verwendet zwei aufeinanderfolgende \texttt{PUT}-Requests an \texttt{activate.php}. Im ersten Request sendet die App ausschließlich die E-Mail-Adresse. Der Server normalisiert sie durch Trimmen und Kleinschreibung und prüft, ob die Registrierung per Double-Opt-In bestätigt, die Studieninformation akzeptiert und noch kein Token ausgegeben wurde. Die aktuelle Aktivierung setzt nicht voraus, dass der Datenschutzstatus bereits eins ist. Damit kann eine App auch dann ein Token erhalten, wenn eine aktualisierte Datenschutzerklärung anschließend innerhalb der App erneut bestätigt werden muss.
+
+Bei zulässiger Registrierung erzeugt der Server ein UUID-v4-App-Token. Er speichert nicht das Token, sondern einen HMAC, der an Aktivierungsgeheimnis, normalisierte E-Mail-Adresse und Token gebunden ist. Zusätzlich wird ein Gültigkeitszeitpunkt von fünf Minuten gesetzt. Ein erneuter erster Request überschreibt einen noch ausstehenden Aktivierungshash. Ein älteres Token kann danach nicht mehr erfolgreich bestätigt werden.
+
+Der zweite Request enthält E-Mail-Adresse und App-Token. Der Server berechnet den erwarteten Aktivierungshash erneut, vergleicht ihn mit \texttt{hash\_equals} und prüft die Frist. Erst dann werden der temporäre Hash und die Frist gelöscht, \texttt{app\_token\_issued\_at} gesetzt und ein dauerhafter \path{registration_token_hash} gespeichert. Gleichzeitig wird in der Studiendatenbank ein davon verschiedener Freigabehash in \path{valid_app_token_hashes} eingetragen. Die App erwartet für diesen Schritt HTTP 204 und speichert das Token erst danach lokal.
+
+Der zweite Request verhindert, dass ein Token als ausgegeben gilt, obwohl der erste Response die App nicht erreicht hat. Ein Timeout bei der Bestätigung bleibt dennoch mehrdeutig: Der Server kann den Schritt bereits verarbeitet haben, während die App keine Antwort erhalten hat. In diesem Fall zeigt die App einen Supporthinweis. Eine automatische Wiederholung ist nicht ohne Weiteres möglich, weil der Server denselben Aktivierungsvorgang nach erfolgreicher Bestätigung nicht erneut annehmen soll.
+
+\section{Domänentrennung der Token-Identitäten}
+
+Aus dem App-Token werden drei HMAC-SHA-256-Werte mit unterschiedlichen Kontexten gebildet. Der Aktivierungshash ist zusätzlich an die E-Mail-Adresse gebunden und nur für das kurze Aktivierungsfenster bestimmt. Der Registrierungs-Token-Hash verwendet den Kontext \texttt{registration-token:v1} und ermöglicht spätere Statusabfragen in der Registrierungsdatenbank. Der Freigabehash verwendet \texttt{valid-token:v1} und autorisiert wissenschaftliche Übertragungen. Die pseudonyme Teilnehmerkennung verwendet \texttt{pseudonym:v1} und gruppiert die Selbstberichte.
+
+Die Domänentrennung ist notwendig, weil ein identischer einfacher Hash in mehreren Tabellen eine unmittelbare Verknüpfung ermöglichen würde. Durch die unterschiedlichen Kontexte sind die Ausgaben trotz desselben Tokens und Geheimnisses verschieden. Ohne Kenntnis des serverseitigen Geheimnisses kann ein exportierter Registrierungs-Hash nicht direkt einer Teilnehmerkennung in der Berichtstabelle zugeordnet werden.
+
+Das Verfahren verlagert einen Teil des Schutzes auf das Geheimnis in der Host-Konfiguration. Dieses Geheimnis darf nicht im Repository, in Webantworten oder in ungeschützten Backups enthalten sein. Ein Verlust würde zwar nicht die ursprünglichen UUIDs offenlegen, aber die domänengetrennten Werte reproduzierbar und damit Datenbestände verknüpfbar machen.
+
+\section{Sichere lokale Token-Speicherung}
+Beim ersten Speichern des App-Tokens erzeugt die App einen 256-Bit-AES-Schlüssel im Android Keystore. Das Token wird mit AES/GCM/NoPadding verschlüsselt. Eine zufällige Initialisierungsvariable und das Chiffrat werden Base64-codiert in einem eigenen privaten Preferences-Bereich abgelegt. Als zusätzliche authentifizierte Daten wird der feste Kontext \path{cuelens:app-token:v1} verwendet.
+
+GCM stellt Vertraulichkeit und Integrität gemeinsam bereit. Wird das Chiffrat verändert, der Initialisierungsvektor ausgetauscht oder der zugehörige Keystore-Schlüssel gelöscht, schlägt die Entschlüsselung fehl. Die App behandelt diesen Zustand als Speicherfehler und verwendet weder leere noch teilweise rekonstruierte Werte. Der Schlüssel verlangt keine erneute Geräteauthentifizierung bei jedem Zugriff, damit Hintergrund- und Startabläufe funktionieren. Der Schutz beruht daher auf der regulären Gerätesicherheit und dem privaten App-Kontext.
+
+Der übrige Studienzustand bleibt in \path{SharedPreferences}. Dazu gehören bestätigte Situation, nächste Freigabezeit, stabile Matching-Reihenfolge, zuletzt benachrichtigte Situation, ausstehender Craving-Wert, Abrechnungscode und Abschlussstatus. Die automatische Android-Sicherung ist deaktiviert.
+
+\section{Datenschutzstatus in App und Backend}
+Der Endpunkt \texttt{dataprot.php} akzeptiert ausschließlich \texttt{POST} zur Statusabfrage und \texttt{PUT} zur Zustimmung. Beide Requests müssen ein syntaktisch gültiges UUID-v4-App-Token enthalten. Der Server berechnet daraus den Registrierungs-Token-Hash und sucht den zugehörigen Datensatz, ohne E-Mail-Adresse oder Token zu speichern. Unbekannte Tokens führen zu HTTP 401, formal ungültige Payloads zu HTTP 400.
+
+Eine Zustimmung setzt \texttt{dataprot} auf eins und schreibt \path{dataprot_accepted_at} nur dann, wenn noch kein Zeitpunkt vorhanden ist. Wiederholte Bestätigungen sind damit idempotent. Die App speichert nach erfolgreicher Serverantwort einen lokalen DataStore-Wert. Fehlen Token, Statusantwort oder lokaler Speicherzugriff, bleibt die produktive Route gesperrt.
+
+Der lokale Erfolgsmarker reduziert Netzwerkzugriffe, ist aber nicht versioniert. Nach einer serverseitigen Rücknahme oder einer erneuten Änderung der Datenschutzerklärung muss sichergestellt werden, dass die App nicht allein wegen des alten lokalen Werts fortfährt. Eine zukünftige Fassung sollte deshalb eine Dokumentversion speichern und den Status regelmäßig oder mindestens vor dem nächsten produktiven Selbstbericht serverseitig verifizieren.
+
+\section{Serverseitige Feature-Freigabe}
+
+Der Endpunkt \texttt{features.php} liefert den booleschen Wert \path{next_study_run_enabled}. Die App behandelt Netzwerkfehler, unerwartete Statuscodes und ungültiges JSON als \texttt{false}. Der Button zur produktiven Studiensituation wird nur angezeigt, wenn ein Token vorhanden, die Studie nicht abgeschlossen, keine Übertragung ausstehend und das Feature aktiviert ist.
+
+Die UI-Prüfung ist nicht die einzige Zugriffskontrolle. \texttt{submit.php} liest denselben Toggle direkt aus der Studiendatenbank und behandelt den Endpunkt bei deaktivierter Funktion als nicht verfügbar. Dadurch kann ein manuell konstruierter Request die serverseitige Freigabe nicht umgehen. Das Feature-Toggle ermöglicht einen kontrollierten Übergang von der Pre-Study-Phase zur produktiven Datenerhebung und eine schnelle globale Abschaltung bei technischen oder organisatorischen Problemen.
+
+Der Toggle ist global und ersetzt keine individuelle Sperre. Ein Widerruf oder Ausschluss einer einzelnen Person muss über die zugehörige Tokenfreigabe oder eine zusätzliche serverseitige Statusprüfung umgesetzt werden. Diese Unterscheidung ist für den Studienbetrieb wesentlich.
+
+\section{Infofeed und mehrsprachige Nachrichten}
+
+Der Nachrichtenendpunkt liefert alle Datensätze aus \texttt{messages} sortiert nach Erstellungszeitpunkt und ID. Jede Nachricht besitzt einen deutschen und einen englischen Text. Die App wählt die aktuell eingestellte Sprache und speichert IDs dauerhaft ausgeblendeter Nachrichten.
+
+Zusätzlich speichert die App IDs bereits bekannter Nachrichten für die Benachrichtigungslogik. Eine periodische WorkManager-Aufgabe ruft den vollständigen Feed ab, filtert bekannte und dauerhaft ausgeblendete IDs und erzeugt höchstens eine allgemeine Benachrichtigung, wenn neue Inhalte vorhanden sind. Danach markiert sie alle erhaltenen IDs lokal als bekannt. Netzwerkfehler und Serverfehler ab 500 führen zu einem Retry. Dauerhafte Protokoll- oder Clientfehler werden nicht endlos wiederholt.
+
+Die periodische Prüfung läuft ungefähr einmal täglich und ist nicht zeitkritisch. Der Infofeed beim App-Start bleibt der maßgebliche Abrufweg. Die Benachrichtigung enthält nur einen neutralen Hinweis und öffnet die App über einen expliziten Intent erneut beim Infofeed.
+
+\section{Anonymes Feedback und Kapazitätsgrenze}
+Das Feedbackformular kann ohne App-Aktivierung verwendet werden. Es überträgt ein optionales Feld zum Akquisekanal, einen optionalen Kommentar und die App-Version. Mindestens eines der beiden Freitextfelder muss befüllt sein. Der Server begrenzt den Akquisekanal auf 500, den Kommentar auf 5000 und die Versionsangabe auf 64 Zeichen. Feedback wird in einer getrennten Tabelle der Registrierungsdatenbank gespeichert und nicht mit Token oder Selbstberichten verknüpft.
+
+Ein weicher Grenzwert von 200 gespeicherten Einträgen schützt den begrenzten Pilotbetrieb vor unbegrenztem Wachstum. Ist die Grenze erreicht, wird ein formal gültiger Request verworfen und eine operative Benachrichtigung ausgelöst. Der Client erhält auch in diesem Fall HTTP 204. Diese neutrale Antwort verhindert eine genaue externe Beobachtung des Tabellenstands, bedeutet aber zugleich, dass Nutzende keine Rückmeldung über die Nichtaufnahme ihres Feedbacks erhalten. Für den Studienbetrieb muss die Grenze deshalb überwacht und rechtzeitig angepasst oder das Formular deaktiviert werden.
+
+Operative E-Mails enthalten den Feedbacktext nicht. Sie weisen lediglich darauf hin, dass neuer Inhalt in der geschützten Tabelle liegt beziehungsweise die Grenze erreicht wurde. Damit wird vermieden, dass möglicherweise sensible oder unbeabsichtigt identifizierende Freitexte über den Mailkanal dupliziert werden.
+
+\section{Selbstbericht, Fortschritt und Wiederholungslogik}
+
+Vor einem wissenschaftlichen Selbstbericht prüft \texttt{submit.php} den globalen Feature-Toggle und den Freigabehash des App-Tokens. Aus dem Token wird die HMAC-basierte Teilnehmerkennung berechnet. Innerhalb einer Datenbanktransaktion zählt der Server vorhandene Berichte dieser Kennung, bestimmt den nächsten Index und leitet daraus die Bedingung ab. Die Situationen eins bis zehn werden als \path{CUE_MATCHING}, die Situationen elf bis zwanzig als \path{CUE_LABELING} gespeichert. Ein einundzwanzigster Bericht wird abgelehnt.
+
+Die App speichert den Craving-Wert vor dem Request als ausstehend. Erst nach erfolgreicher Serverantwort wird der lokale Zähler erhöht und die nächste Freigabezeit gesetzt. Bei Netzwerkfehlern bleibt der Wert erhalten. Die Startseite zeigt dann einen Retry-Zustand. Ein erneuter Versuch verwendet denselben Übertragungspfad wie die Studienansicht. Solange eine Übertragung aussteht, kann keine neue Studiensituation begonnen werden.
+
+Nach der zwanzigsten Situation erzeugt der Server einen UUID-v4-Abrechnungscode und gibt ihn zurück. Die App speichert den Code lokal und bestätigt ihn mit einem separaten \texttt{PUT}. Schlägt die Bestätigung fehl, wird nur dieser Schritt wiederholt. Nach lokal bestätigtem Abschluss zeigt die Startseite den Code und eine Kopierfunktion.
+
+\section{Studienerinnerungen}
+Nach einer erfolgreich bestätigten Situation kann die App eine einmalige Erinnerung für die nächste Situation planen. Die Entscheidungsfunktion berücksichtigt Benachrichtigungszustimmung, Systemberechtigung, vorhandenes App-Token, Studienabschluss, ausstehende Übertragung, erwartete Situationsnummer, bereits angezeigte Erinnerung und gespeicherte Freigabezeit. Eine Erinnerung wird erstmals nach Situation eins für Situation zwei und letztmals nach Situation neunzehn für Situation zwanzig angelegt.
+
+Jede Situationsnummer erhält einen eindeutigen WorkManager-Namen. Veraltete Aufgaben werden entfernt. Läuft ein Worker vor dem Freigabezeitpunkt, zeigt er keine Benachrichtigung, sondern plant sich für die Restzeit neu. Nach Anzeige wird die Situationsnummer lokal vermerkt, damit ein App-Neustart nicht dieselbe Erinnerung erneut erzeugt.
+
+Die Benachrichtigung verwendet eine private Inhaltsansicht und eine noch allgemeinere öffentliche Version für den Sperrbildschirm. Beim Antippen öffnet sie die Startseite. Dort werden Feature-Toggle, Datenschutzstatus, Fortschritt und Sperrzeit erneut geprüft. Die Benachrichtigung selbst umgeht keine fachliche oder technische Zugangskontrolle.
+
+Infofeed und Studienerinnerungen verwenden derzeit eine gemeinsame grundlegende Zustimmung. Das reduziert die Zahl der Dialoge, erlaubt aber keine getrennte Auswahl beider Nachrichtentypen. Für eine spätere Fassung wäre eine differenzierte Einstellung benutzerfreundlicher, insbesondere wenn allgemeine Informationen gewünscht, Studienerinnerungen aber abgelehnt werden.
+
+\section{Fehlerprotokollierung und Monitoring}
+
+Jeder Backend-Request erhält eine zufällige Request-ID, die als HTTP-Header zurückgegeben und für technische Meldungen verwendet wird. Serverfehler werden nach Möglichkeit in der Tabelle \texttt{error\_log} gespeichert. Die operative E-Mail enthält nur Ereignistyp, UTC-Zeitpunkt, Komponente, Request-ID und eine grobe Fehlerkategorie. Registrierungsadresse, App-Token, Craving-Wert, Feedbacktext, IP-Adresse und User-Agent werden nicht in die Benachrichtigung aufgenommen.
+
+Auch HTTP-Clientfehler zwischen 400 und 499 können datensparsam protokolliert werden. Gespeichert werden Statuscode, Komponente und Request-ID, nicht der Request-Payload. Dadurch lassen sich gehäufte Protokoll- oder Versionsprobleme erkennen, ohne ungültige Nutzdaten zu archivieren. Die geschützte Fehlerdatenbank kann bei Serverausnahmen weiterhin technische Exception-Texte enthalten.
+
+\section{Deployment und Verteilung}
+Der produktive Build verwendet die Application-ID \path{de.eachandevery.cuelens}, die Staging-App zusätzlich die Endung \texttt{.staging}. Endpunkte, Datenschutzerklärungs-URLs und Sperrzeiten werden im Build festgelegt. Die finale APK wird zusammen mit Metadaten als Releaseartefakt bereitgestellt und auf der Studienwebseite als \texttt{cuelens.apk} ausgeliefert.
+
+Die Webseite enthält eine sprachneutrale Auswahlseite sowie deutsche und englische Installationsanleitungen mit Screenshots. Nach erfolgreichem Double-Opt-In verweist die Bestätigungsseite direkt auf die Installationsanleitung.
+
+\section{Erweiterte Qualitätssicherung}
+Die Backendtests decken Methodenprüfung, JSON-Validierung, Feldgrenzen und Fehlerfälle ab, bevor eine Datenbankverbindung erforderlich ist. Für Aktivierung, Feedback, Datenschutz und Freigabelogik existieren zusätzliche MariaDB-Integrationstests, die temporäre Tabellen verwenden. Sie prüfen unter anderem den zweistufigen Aktivierungsablauf, das Überschreiben alter ausstehender Tokens, abgelaufene Bestätigungen, die Trennung der Hashkontexte, den Feedbackgrenzwert und die idempotente Datenschutzannahme. Fehlen die notwendigen Testdatenbankvariablen, werden die Integrationstests übersprungen und dürfen nicht fälschlich als ausgeführt bewertet werden.
+
+Android-Unit-Tests prüfen Controllerzustände, HTTP-Protokolle, Infofeedfilterung, Feature-Fehlerverhalten und Erinnerungsentscheidungen. Tests auf einem Android-Gerät beziehungsweise Emulator prüfen unter anderem die Keystore-Verschlüsselung, wechselnde Initialisierungsvektoren, manipulierte Chiffrate, fehlende Schlüssel, Entfernung alter Klartextwerte, Compose-Oberflächen und Notification Channels. Die Erinnerungslogik testet explizit die Situationen eins, neunzehn und zwanzig, frühe Worker-Ausführung, veraltete Aufgaben, doppelte Benachrichtigungen, ausstehende Übertragungen und fehlende Aktivierung.
+
+\section{Duale Registrierung und Teilnehmeridentifikatoren}
+
+Die Erweiterung der Rekrutierung um Prolific erforderte eine Verallgemeinerung des ursprünglich E-Mail-basierten Registrierungs- und Aktivierungsmodells. Statt die E-Mail-Adresse als implizit einzigen Identifikator zu behandeln, verwendet die Implementierung nun den Werttyp \texttt{ParticipantIdentifier}. Dieser ordnet eine Eingabe deterministisch genau einem Registrierungskanal zu. Eine Zeichenfolge aus exakt 24 ASCII-Buchstaben oder Ziffern wird als Prolific-ID und damit als \texttt{PROLIFIC} klassifiziert. Andere Eingaben werden nur dann als \texttt{DIRECT} akzeptiert, wenn sie eine syntaktisch gültige E-Mail-Adresse darstellen; alle übrigen Eingaben werden verworfen. Für E-Mail-Adressen wird beim Aktivierungsvergleich zusätzlich eine Kleinschreibung vorgenommen, während die Prolific-ID nach dem Trimmen unverändert erhalten bleibt.
+
+Diese Klassifikation wird sowohl auf der Webseite als auch im Backend durchgeführt. Im Browser steuert sie zunächst nur die Benutzeroberfläche: Wird eine Prolific-ID erkannt, werden die Felder für Name, IBAN und BIC geleert, deaktiviert und von der Pflichtfeldprüfung ausgenommen. Die serverseitige Validierung wiederholt die Entscheidung unabhängig davon und setzt diese drei Werte für den Prolific-Kanal explizit auf \texttt{NULL}. Manipulierte Formularattribute oder direkt konstruierte HTTP-Requests können die kanalabhängigen Datenregeln deshalb nicht umgehen. Alter, Zigarettenkonsum und beide Einwilligungsfelder werden in beiden Modi mit denselben Grenzen geprüft.
+
+Die Registrierungsdatenbank bildet die beiden Fälle explizit ab. Tabelle~\ref{tab:dual-registration-fields} fasst die für CueLens relevanten Unterschiede zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Kanalabhängige Registrierungsdaten und Bestätigung}
+\label{tab:dual-registration-fields}
+\begin{tabular}{p{0.28\textwidth}p{0.28\textwidth}p{0.28\textwidth}}
+\textbf{Merkmal} & \textbf{DIRECT} & \textbf{PROLIFIC} \\
+\hline
+Primärer Identifikator & E-Mail-Adresse & 24-stellige Prolific-ID \\
+Name & erforderlich & nicht gespeichert \\
+IBAN/BIC & erforderlich & nicht gespeichert \\
+Alter und Zigaretten/Tag & erforderlich & erforderlich \\
+Studieninformation und Datenschutz & Zustimmung erforderlich & Zustimmung erforderlich \\
+Registrierungsbestätigung & E-Mail-Double-Opt-In & kein zusätzlicher E-Mail-Double-Opt-In \\
+\end{tabular}
+\end{table}
+
+Beim direkten Kanal erzeugt der Server weiterhin einen kryptographisch zufälligen 256-Bit-Double-Opt-In-Token, speichert ausschließlich dessen SHA-256-Hash und setzt den Bestätigungszeitpunkt erst nach erfolgreichem Aufruf des Bestätigungslinks. Im Prolific-Kanal werden kein E-Mail-Double-Opt-In-Token und keine E-Mail-Zustellung erzeugt. Der Datensatz wird nach erfolgreicher Registrierung unmittelbar als bestätigt markiert. Die zusätzliche Prüfung der Prolific-Studienzugehörigkeit ist davon logisch getrennt und wird in einem eigenen Abschnitt zur Prolific-Schnittstelle behandelt.
+
+Auch die App-Aktivierung wurde auf den gemeinsamen Identifikatortyp umgestellt. Der Aktivierungsendpunkt akzeptiert das neue Feld \texttt{identifier}; zur Rückwärtskompatibilität kann weiterhin das ältere Feld \texttt{email} verarbeitet werden. Werden beide Felder gleichzeitig übermittelt, müssen sie auf denselben Kanal und denselben normalisierten Identifikator zeigen, andernfalls wird der Request abgelehnt. Für die Datenbankabfrage wird abhängig vom Kanal entweder die Spalte \path{email} oder \path{prolific_id} verwendet. Der anschließende zweistufige App-Token-Handshake bleibt fachlich unverändert: Ein Token wird zunächst nur temporär angeboten und erst nach erfolgreicher Bestätigung als ausgegeben markiert und lokal gespeichert.
+
+Die Aktivierung trennt auch kryptographisch zwischen beiden Identifikatorarten. Für direkte Registrierungen fließt die normalisierte E-Mail-Adresse in den bestehenden Aktivierungs-HMAC ein; für Prolific wird ein eigener HMAC-Kontext verwendet. Damit kann derselbe technische Aktivierungsmechanismus beide Rekrutierungskanäle bedienen, ohne deren Identitäten im temporären Aktivierungszustand gleichzusetzen. Nach erfolgreicher Aktivierung verlieren E-Mail-Adresse beziehungsweise Prolific-ID für die Übermittlung der wissenschaftlichen Selbstberichte ihre Funktion. \texttt{submit.php} erhält weiterhin nur App-Token, Craving-Wert und App-Version; weder Registrierungskanal noch E-Mail-Adresse oder Prolific-ID werden dem wissenschaftlichen Bericht hinzugefügt.
+
+Diese Architektur hält die Rekrutierungslogik von der experimentellen Datenerhebung getrennt. Der zweite Zugangskanal verändert weder die Reihenfolge der 20 Studiensituationen noch die Ableitung von Cue-Matching und Cue-Labeling oder den primären Messwert. Aus technischer Sicht wird damit ein polymorpher administrativer Identifikator eingeführt, während der nachgelagerte Studienvertrag stabil bleibt. Dies reduziert Änderungsbedarf im wissenschaftlichen Backend und verhindert zugleich, dass die Rekrutierungsplattform unnötig zu einer zusätzlichen Variable des gesundheitsbezogenen Selbstberichtdatensatzes wird.
+
+
+\section{Externe Prolific-Schnittstelle und Validierung}
+
+Die Registrierung über Prolific erweitert die Systemarchitektur um eine externe Vertrauens- und Verfügbarkeitsgrenze. Nach erfolgreicher lokaler Formularvalidierung wird eine Prolific-ID nicht unmittelbar in der Registrierungsdatenbank gespeichert. Zuvor prüft das Backend über die Prolific-API, ob die Kennung in der konfigurierten Studie mit mindestens einer fachlich akzeptierten Submission vorkommt. Die Prüfung ist damit als serverseitiges Gate vor der eigentlichen CueLens-Registrierung angeordnet. Direkte Registrierungen per E-Mail umgehen dieses Gate und behalten ihren bisherigen Double-Opt-In-Ablauf.
+
+Die Implementierung verwendet den Endpunkt \path{https://api.prolific.com/api/v1/submissions/}. Die Studienkennung und das API-Token werden ausschließlich aus der Serverkonfiguration bezogen. Das Token wird nicht als URL-Parameter übertragen, sondern als \texttt{Authorization: Token}-Header gesetzt. Vor dem ersten Request werden beide Konfigurationswerte auf Typ, Leerwerte und Steuerzeichen geprüft; die Studienkennung muss zusätzlich dem erwarteten 24-stelligen alphanumerischen Format entsprechen. Fehlerhafte Konfigurationen führen vor jeder Netzwerkkommunikation zum Abbruch.
+
+\subsection{Prüfalgorithmus und Statusmodell}
+
+Die API-Abfrage wird mit der konfigurierten Studienkennung, einer Seitengröße von 20 Einträgen und einem fortlaufenden Seitenindex durchgeführt. Für jeden erhaltenen Submission-Datensatz müssen \texttt{participant\_id} und \texttt{status} als Zeichenketten vorliegen. Die Teilnehmerkennung wird exakt und damit einschließlich Groß-/Kleinschreibung verglichen. Der Status wird vor dem Vergleich durch Großschreibung und die Vereinheitlichung von Leerzeichen beziehungsweise Bindestrichen auf Unterstriche kanonisiert.
+
+Als geeignet gelten die Statuswerte \texttt{ACTIVE}, \texttt{AWAITING\_REVIEW}, \texttt{APPROVED}, \texttt{TIMED\_OUT} und \texttt{RETURNED}. Sobald eine Submission mit übereinstimmender Teilnehmerkennung und einem dieser Statuswerte gefunden wird, endet die Suche erfolgreich. Andere Statuswerte, darunter \texttt{REJECTED}, \texttt{SCREENED\_OUT} und \texttt{RESERVED}, führen nicht zu einer erfolgreichen Prüfung; die Suche wird jedoch auf folgenden Seiten fortgesetzt, weil zu derselben Kennung weitere Submission-Datensätze existieren können.
+
+Eine Seite mit weniger als 20 Ergebnissen markiert das reguläre Ende der Ergebnismenge. Erst wenn bis dahin keine geeignete Submission gefunden wurde, liefert die Prüffunktion das fachliche Ergebnis \texttt{false}. Vollständig gefüllte Seiten werden weiter paginiert. Zusätzlich wird für jede volle Antwortseite ein SHA-256-Hash des Response-Bodys gespeichert. Wiederholt sich derselbe Seiteninhalt, wird die Verarbeitung als fehlerhafte, nicht fortschreitende Pagination abgebrochen. Unabhängig davon begrenzt die Implementierung die Suche auf höchstens 1000 Seiten. Bei 20 Datensätzen pro Seite ergibt sich damit eine feste obere Schranke von 20\,000 geprüften Submission-Einträgen pro Registrierungsversuch. Die Laufzeitkomplexität der Datensatzprüfung ist somit linear in der Zahl der tatsächlich gelesenen Submissions, also \(O(n)\) mit \(n \leq 20\,000\); zusätzlich werden höchstens 1000 Seitenhashes für die Fortschrittskontrolle gehalten.
+
+\subsection{Transport- und Fehlergrenzen}
+
+Der HTTP-Client erzwingt HTTPS, aktiviert die Zertifikats- und Hostnamenprüfung und folgt keinen Redirects. Der Verbindungsaufbau ist auf fünf Sekunden, die Gesamtdauer eines einzelnen Requests auf 15 Sekunden begrenzt. Der Response-Body wird bereits während des Empfangs auf höchstens 1 MiB beschränkt. Damit werden sowohl unbegrenzt wartende Verbindungen als auch unerwartet große API-Antworten begrenzt. Nicht erfolgreiche HTTP-Statuscodes, Transportfehler, ungültiges JSON, unerwartete Antwortstrukturen, übergroße Seiten oder nicht fortschreitende Pagination werden einheitlich als technische \texttt{ProlificApiException} behandelt.
+
+Die aufrufende Registrierungslogik unterscheidet diese technische Ausnahme bewusst vom fachlich negativen Suchergebnis. Eine vollständig ausgeführte Suche ohne geeignete Submission führt zur Meldung, dass die Prolific-ID nicht für die Studie registriert ist. Ein API-, Netzwerk- oder Konfigurationsproblem erzeugt dagegen eine allgemeine Fehlermeldung und verhindert das Anlegen des Registrierungsdatensatzes. Diese Fail-closed-Strategie verhindert, dass bei einer nicht überprüfbaren externen Identität dennoch ein Prolific-Zugang erzeugt wird. Sie erhöht jedoch die Abhängigkeit der Rekrutierung vom externen Dienst und muss deshalb im Studienbetrieb überwacht werden.
+
+Die automatisierten Tests prüfen die akzeptierten und abgelehnten Statuswerte, mehrseitige Suchläufe, case-sensitive Teilnehmerkennungen, die ausschließliche Übertragung des API-Tokens im Authorization-Header, nicht erfolgreiche HTTP-Statuscodes einschließlich Rate-Limiting, formal ungültige Responses, fehlerhafte Konfigurationen und nicht fortschreitende Pagination. Dadurch wird nicht nur der Erfolgsfall, sondern insbesondere das Verhalten an der externen Systemgrenze reproduzierbar abgesichert.
+
+
+\section{Kanalabhängige Abschlussmodi}
+
+Mit der Einführung des Prolific-Rekrutierungskanals wurde der Studienabschluss von der eigentlichen wissenschaftlichen Datenerhebung entkoppelt. Die ersten 19 Selbstberichte werden für beide Registrierungskanäle identisch verarbeitet. Erst beim zwanzigsten bestätigten Selbstbericht wird anhand eines bereits bei der Aktivierung hinterlegten Abschlussmodus entschieden, welcher administrative Abschlussweg folgt. Die Implementierung kennt dafür ausschließlich die beiden Werte \texttt{COMPENSATION\_CODE} und \texttt{PROLIFIC\_MANUAL}. Der Abschlussmodus wird zusammen mit dem Hash des gültigen App-Tokens in der wissenschaftlichen Freigabeliste gespeichert und muss einem der beiden explizit unterstützten Werte entsprechen.
+
+Die Zuordnung wird aus dem Registrierungskanal abgeleitet: Eine direkte Registrierung erhält \texttt{COMPENSATION\_CODE}, eine Prolific-Registrierung \texttt{PROLIFIC\_MANUAL}. Dadurch muss der Client bei der Übertragung eines Selbstberichts weder den Rekrutierungskanal noch den gewünschten Abschlussmodus mitsenden. Der Server entscheidet anhand des bereits freigegebenen App-Tokens. Diese Architektur verhindert, dass ein manipulierter Request beispielsweise für eine Prolific-Teilnahme eigenständig einen Abrechnungscode anfordert oder einen anderen Auszahlungspfad auswählt.
+
+Tabelle~\ref{tab:completion-modes} stellt die Unterschiede der beiden Abschlusswege gegenüber.
+
+\begin{table}[htbp]
+\centering
+\caption{Kanalabhängige Abschlussmodi nach dem zwanzigsten Selbstbericht}
+\label{tab:completion-modes}
+\begin{tabular}{p{0.29\textwidth}p{0.27\textwidth}p{0.27\textwidth}}
+\textbf{Merkmal} & \textbf{COMPENSATION\_CODE} & \textbf{PROLIFIC\_MANUAL} \\
+\hline
+Rekrutierungskanal & direkte Teilnahme & Prolific \\
+Wissenschaftlicher Abschluss & 20 bestätigte Selbstberichte & 20 bestätigte Selbstberichte \\
+Abrechnungscode & UUID-v4 wird erzeugt & kein CueLens-Abrechnungscode \\
+Zusätzlicher administrativer Schritt & Codebestätigung & Abschlussmarkierung in Registrierungsdatenbank \\
+Antwort an die App & \texttt{compensation\_code} & \texttt{completion\_mode=PROLIFIC\_MANUAL} \\
+Zuordnung zur Forschungsdatenbank & unverändert pseudonymisiert & unverändert pseudonymisiert \\
+\end{tabular}
+\end{table}
+
+Beim Modus \texttt{COMPENSATION\_CODE} erzeugt der Server nach dem zwanzigsten Bericht einen zufälligen UUID-v4-Code und speichert ihn in der wissenschaftlichen Datenbank. Der Response enthält weiterhin den bereits verwendeten Schlüssel \texttt{compensation\_code}; ein zusätzliches Feld \texttt{completion\_mode} wird für diesen Pfad bewusst nicht eingeführt. Damit bleibt der vorhandene direkte Abschlussvertrag rückwärtskompatibel. Die App persistiert den empfangenen Code zunächst als ausstehend und bestätigt ihn über den separaten Bestätigungsendpunkt. Erst danach gilt der lokale Direktabschluss als vollständig bestätigt und der Code wird für die teilnehmende Person angezeigt. Die Bestätigung ist serverseitig idempotent, da ein bereits gesetzter Bestätigungszeitpunkt nicht erneut verändert wird.
+
+Der Modus \texttt{PROLIFIC\_MANUAL} erzeugt dagegen ausdrücklich keinen CueLens-Abrechnungscode. Nach Speicherung des zwanzigsten Selbstberichts markiert der Server die zugehörige aktivierte Prolific-Registrierung in der administrativen Datenbank mit einem Abschlusszeitpunkt. Die Zuordnung erfolgt nicht über die Prolific-ID in den Forschungsdaten, sondern über den aus dem App-Token abgeleiteten domänenspezifischen Registrierungs-Token-Hash. Zusätzlich kann genau einmal eine operative Abschlussbenachrichtigung vorgemerkt werden. Der Response an die App enthält den Abschlussstatus und den Wert \texttt{PROLIFIC\_MANUAL}, aber kein Feld \texttt{compensation\_code}. Die eigentliche Vergütung beziehungsweise Freigabe auf Prolific bleibt damit ein administrativer Prozess außerhalb des wissenschaftlichen Selbstberichtdatensatzes.
+
+Für Prolific wurde der Abschluss außerdem wiederholbar gestaltet. Ist der zwanzigste Selbstbericht bereits in der Forschungsdatenbank gespeichert, konnte aber die administrative Abschlussmarkierung beispielsweise wegen eines temporären Datenbankfehlers nicht geschrieben werden, führt ein erneuter Request keinen einundzwanzigsten Selbstbericht ein. Stattdessen wird ausschließlich die administrative Finalisierung erneut versucht. Die Zeitstempel für Studienabschluss und vorgemerkte Benachrichtigung werden idempotent gesetzt, sodass ein Retry weder zusätzliche Forschungsdaten noch mehrere Abschlussbenachrichtigungen erzeugt. Beim direkten Abschluss bleibt das bestehende Verhalten erhalten: Nach zwanzig Berichten wird ein weiterer wissenschaftlicher Bericht abgelehnt.
+
+Auch der Android-Client behandelt die beiden Responseformen als disjunkte Protokollzustände. Ein direkter Abschluss ist nur mit syntaktisch gültigem UUID-v4-Abrechnungscode zulässig. Ein Prolific-Abschluss ist nur gültig, wenn \texttt{completion\_mode} exakt \texttt{PROLIFIC\_MANUAL} lautet und kein Abrechnungscode enthalten ist. Widersprüchliche Kombinationen, unbekannte Modi oder ein Abschluss ohne die erwarteten Felder führen in einen Fehler- beziehungsweise Recovery-Zustand. Der lokal persistierte Abschlusszustand unterscheidet entsprechend zwischen einem noch zu bestätigenden Direktcode, einem bestätigten Direktabschluss und einem abgeschlossenen Prolific-Pfad.
+
+Die Trennung hat eine studienmethodische Konsequenz: Der wissenschaftliche Endpunkt bleibt für beide Rekrutierungskanäle identisch definiert. Ein abgeschlossener Datensatz besteht in beiden Fällen aus genau zwanzig pseudonymisierten Selbstberichten mit derselben Bedingungszuordnung. Der Abschlussmodus steuert ausschließlich die administrative Nachbearbeitung. Damit wird verhindert, dass die Vergütungslogik zu einer zusätzlichen experimentellen Bedingung oder zu einem Feld des Forschungsdatensatzes wird.
+
+\section{Android-Zustandsmodell für Studienabschluss und Recovery}
+
+Mit den beiden Abschlussmodi genügt ein einzelnes boolesches Merkmal wie \texttt{study\_completed} nicht mehr, um den lokalen Studienzustand eindeutig zu beschreiben. Der Android-Client modelliert den Abschluss deshalb als expliziten Zustandsautomaten. Aus den persistenten Werten \texttt{study\_completed}, \texttt{compensation\_code} und \texttt{completion\_mode} wird beim Lesen genau einer der Zustände \texttt{Incomplete}, \texttt{DirectPendingConfirmation}, \texttt{DirectCompleted}, \texttt{ProlificCompleted} oder \texttt{Invalid} rekonstruiert. Der Zustandsautomat trennt damit einen wissenschaftlich noch nicht abgeschlossenen Verlauf von einem bereits serverseitig abgeschlossenen, aber lokal noch zu bestätigenden Direktabschluss sowie von widersprüchlichen Persistenzzuständen.
+
+Tabelle~\ref{tab:android-completion-state} fasst die Semantik der Zustände zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Lokale Android-Zustände für Studienabschluss und Recovery}
+\label{tab:android-completion-state}
+\begin{tabular}{p{0.26\textwidth}p{0.30\textwidth}p{0.31\textwidth}}
+\textbf{Zustand} & \textbf{Bedeutung} & \textbf{Folgeverhalten} \\
+\hline
+\texttt{Incomplete} & Studie noch nicht vollständig abgeschlossen & regulärer Studienfortschritt möglich, sofern kein ausstehender Request und keine Sperrzeit besteht \\
+\texttt{DirectPendingConfirmation} & Abrechnungscode empfangen und lokal gespeichert, Bestätigung noch offen & ausschließlich Bestätigung des vorhandenen Codes erneut senden; keinen Selbstbericht wiederholen \\
+\texttt{DirectCompleted} & direkter Abschluss einschließlich Codebestätigung abgeschlossen & weitere Studiensituationen gesperrt, Code kann angezeigt werden \\
+\texttt{ProlificCompleted} & Prolific-Abschluss vom Server bestätigt & weitere Studiensituationen gesperrt; kein Abrechnungscode vorhanden \\
+\texttt{Invalid} & persistierte Angaben sind widersprüchlich oder nicht interpretierbar & fail closed; keine neue Studiensituation, Recovery beziehungsweise Support erforderlich \\
+\end{tabular}
+\end{table}
+
+Die Dekodierung ist bewusst streng. Ein leerer oder syntaktisch ungültiger Abrechnungscode wird nicht akzeptiert. Der Modus \texttt{COMPENSATION\_CODE} ist ohne gültigen UUID-v4-Code unzulässig. Für \texttt{PROLIFIC\_MANUAL} darf dagegen kein Abrechnungscode vorhanden sein und der Abschlussmarker muss gesetzt sein. Auch unbekannte Abschlussmodi führen zu \texttt{Invalid}. Zusätzlich wird ein bereits als abgeschlossen interpretierter Zustand verworfen, wenn gleichzeitig noch ein ausstehender Craving-Wert gespeichert ist. Damit wird ein widersprüchlicher lokaler Zustand nicht als erfolgreicher Studienabschluss interpretiert.
+
+Für ältere Installationen existiert eine kleine Migrationslogik. Wurde ein gültiger Abrechnungscode zusammen mit einem Abschlussmarker gespeichert, aber noch kein expliziter Abschlussmodus, wird dieser Zustand als direkter Abschluss interpretiert und \texttt{COMPENSATION\_CODE} nachträglich persistiert. Auf diese Weise bleibt der zuvor verwendete Direktabschluss lesbar, ohne die neuen Prolific-Zustände durch heuristische Annahmen zu erzeugen.
+
+Der Abschlusszustand wird gemeinsam mit dem übrigen Studienfortschritt ausgewertet. Ein neuer Durchlauf ist nur zulässig, wenn alle folgenden Bedingungen erfüllt sind:
+
+\[
+\operatorname{canStart}(t) = \neg completed \;\land\; n < 20 \;\land\; \neg pending \;\land\; t \geq t_{next}.
+\]
+
+Dabei bezeichnet \(n\) die Zahl lokal bestätigter Studiensituationen, \(pending\) einen ausstehenden Netzwerk- oder Recovery-Zustand und \(t_{next}\) den frühesten Freigabezeitpunkt der nächsten Situation. \texttt{pending} wird nicht nur durch einen gespeicherten Craving-Wert gesetzt, sondern auch durch Abschlusszustände, die eine Recovery erfordern. Dadurch kann ein technisch ungeklärter Abschluss nicht durch den Start einer weiteren Studiensituation überschrieben werden.
+
+\subsection{Recovery aus ausstehenden Netzwerkzuständen}
+
+Vor einer neuen Übertragung liest die Funktion \texttt{recoverPendingNetworkWork} zunächst den rekonstruierten Abschlusszustand. Liegt \texttt{DirectPendingConfirmation} vor, wird ausschließlich der bereits bekannte Abrechnungscode erneut bestätigt. Nach erfolgreicher Bestätigung wird derselbe Code zusammen mit \texttt{study\_completed=true} und \(n=20\) synchron gespeichert. Ein erneutes Senden des zwanzigsten Selbstberichts findet in diesem Zustand nicht statt. \texttt{DirectCompleted} und \texttt{ProlificCompleted} führen dagegen zu einem No-op, während \texttt{Invalid} als Protokollfehler abgebrochen wird.
+
+Nur im Zustand \texttt{Incomplete} wird geprüft, ob ein Craving-Wert als ausstehender Selbstbericht vorhanden ist. Fehlt ein solcher Wert, ist keine Netzwerkarbeit notwendig. Andernfalls wird aus dem lokalen Zähler der erwartete nächste Index \(n+1\) abgeleitet und genau der gespeicherte Craving-Wert erneut an den Server gesendet. Für eine reguläre Antwort wird kontrolliert, dass der vom Server gemeldete Situationsindex mit dieser lokalen Erwartung übereinstimmt. Erst anschließend erhöht der Client den bestätigten Zähler, setzt die nächste Sperrzeit und entfernt den ausstehenden Craving-Wert.
+
+Für den direkten Abschluss wird eine zusätzliche Persistenzbarriere eingeführt. Sobald der Response des zwanzigsten Berichts einen gültigen Abrechnungscode enthält, speichert die App zunächst den Zustand \texttt{DirectPendingConfirmation} mit einem synchronen \texttt{SharedPreferences.commit()}. Erst danach wird die Codebestätigung an den Server gesendet. Fällt die Verbindung zwischen diesen beiden Schritten aus, bleibt der Code lokal erhalten und der Recovery-Pfad kann ausschließlich die Bestätigung wiederholen. Nach erfolgreicher Bestätigung wird der Zustand in einem weiteren synchronen Commit auf \texttt{DirectCompleted} gesetzt. Der Übergang schützt damit insbesondere das Zeitfenster zwischen Empfang des Codes und dessen serverseitiger Bestätigung.
+
+Der Prolific-Abschluss benötigt keinen zweiten Client-Request. Bei einem gültigen \texttt{PROLIFIC\_MANUAL}-Response werden Abschlussmodus, Abschlussmarker und \(n=20\) gemeinsam gespeichert; ein eventuell vorhandener Abrechnungscode sowie der ausstehende Craving-Wert werden entfernt. Die serverseitige Prolific-Finalisierung ist zusätzlich so ausgelegt, dass ein erneuter Abschlussrequest nach bereits gespeichertem zwanzigstem Bericht keinen einundzwanzigsten Bericht erzeugt, sondern die administrative Finalisierung erneut versucht. Dieser Pfad ist damit gegenüber einer unterbrochenen administrativen Prolific-Abschlussverarbeitung robuster als der ursprüngliche direkte Abschlussweg.
+
+\subsection{Fail-closed-Verhalten in Navigation und Startlogik}
+
+Auch außerhalb der Studienansicht behandelt der zentrale Controller nicht lesbare Fortschrittsdaten konservativ. Schlägt das Lesen des \texttt{StudyProgressStore} fehl, wird intern ein Zustand mit ausstehender Übertragung und \texttt{CompletionState.Invalid} verwendet. Ebenso interpretiert die Hilfsfunktion zur Erkennung ausstehender Netzwerkarbeit einen Lesefehler standardmäßig als \texttt{true}. Die produktive Route wird dadurch nicht freigegeben, solange der lokale Zustand nicht konsistent gelesen oder wiederhergestellt werden kann.
+
+Auf der Startseite werden ausstehende Übertragungen und Recovery-Zustände getrennt von der normalen Sperrzeit dargestellt. Solange \texttt{studyTransferPending} beziehungsweise ein lokales \texttt{hasPendingSubmission} vorliegt, wird der Start einer neuen Situation deaktiviert und stattdessen eine Wiederholungsaktion angeboten. Vor dieser Wiederholung wird zusätzlich der Datenschutzstatus geprüft. Die Recovery-Logik bleibt damit Teil desselben Zugangsgates wie Aktivierung, Feature-Freigabe und Datenschutzstatus und kann nicht durch eine alternative Navigation umgangen werden.
+
+\subsection{Persistenzgarantien und verbleibende Fehlerfenster}
+
+Die Abschlussübergänge verwenden synchrone \texttt{commit()}-Operationen, sodass ein fehlgeschlagener Schreibvorgang als Fehler behandelt wird und nicht stillschweigend als erfolgreicher Zustandswechsel gilt. Für den normalen Abschluss einer einzelnen Studiensituation wird ebenfalls erst nach einer bestätigten Serverantwort der lokale Zähler erhöht. Diese Reihenfolge verhindert, dass die App einen Bericht lokal als bestätigt markiert, obwohl die Übertragung eindeutig fehlgeschlagen ist.
+
+Eine vollständige Exactly-once-Semantik für Selbstberichte wird dadurch jedoch nicht erreicht. Der Craving-Wert wird vor dem Request lokal als ausstehend markiert und bei einem Netzwerkfehler erneut gesendet. Hat der Server einen Zwischenbericht bereits gespeichert, geht aber die Antwort auf dem Rückweg verloren, kennt der Client diesen Commit nicht. Ein Retry kann dann vom Server anhand der bereits vorhandenen Zeilen als nächste Situation interpretiert werden. Ohne serverseitigen Idempotenzschlüssel ist daher bei einem solchen unklaren Fehlerfenster eine doppelte beziehungsweise verschobene Zuordnung nicht vollständig ausgeschlossen.
+
+Für den direkten zwanzigsten Bericht besteht ein ähnliches, noch spezifischeres Restproblem: Geht die Serverantwort nach erfolgreicher Speicherung des zwanzigsten Berichts und Erzeugung des Abrechnungscodes vollständig verloren, hat die App den Code noch nicht erhalten und kann folglich nicht in \texttt{DirectPendingConfirmation} wechseln. Ein erneuter Direktrequest wird serverseitig als bereits abgeschlossene Studie abgelehnt, sodass der Client den zuvor erzeugten Code nicht rekonstruieren kann. Dagegen ist ein Verbindungsabbruch \emph{nach} Empfang und lokaler Speicherung des Codes beherrscht, weil dann ausschließlich die idempotente Codebestätigung wiederholt wird. Für eine spätere Härtung wäre deshalb ein idempotenter Submission-Schlüssel pro Situation oder ein serverseitig abrufbarer Abschlussstatus sinnvoll. Damit könnten sowohl Zwischenberichte als auch der finale Direktabschluss eindeutig einem bereits verarbeiteten Request zugeordnet werden.
+
+Eine weitere, kleinere Persistenzgrenze besteht beim initialen Speichern eines ausstehenden Craving-Werts: Dieser wird mit der asynchronen Android-Methode \texttt{apply()} gesetzt und anschließend die Netzwerksynchronisation gestartet. Der Wert ist unmittelbar im Prozess sichtbar, die dauerhafte Speicherung auf dem Dateisystem erfolgt jedoch asynchron. Ein abruptes Prozess- oder Geräteende in diesem engen Zeitfenster bietet daher eine schwächere Persistenzgarantie als die synchron mit \texttt{commit()} gespeicherten Abschlusszustände. Für die Pilotstudie ist dies als technisches Restrisiko zu dokumentieren; eine vollständig transaktionale lokale Queue oder eine kleine lokale Datenbank könnte diesen Zustand in einer späteren Version robuster abbilden.
+
+Das Zustandsmodell verbessert damit vor allem die kontrollierte Wiederaufnahme eindeutig erkannter Fehlerzustände und verhindert widersprüchliche lokale Fortschrittsübergänge. Es ersetzt jedoch keine Ende-zu-Ende-Idempotenz zwischen App und Server. Diese Unterscheidung ist für die Interpretation der technischen Robustheit wesentlich: Recovery bedeutet hier, dass bekannte ausstehende Zustände reproduzierbar weiterverarbeitet werden können, nicht dass jeder denkbare Verbindungsabbruch ohne Mehrdeutigkeit aufgelöst wird.
+
+
+\section{Erweiterte automatisierte Verifikation von Android, Backend und Weboberfläche}
+
+Die Erweiterungen für Prolific, die kanalabhängigen Abschlussmodi und das Recovery-Zustandsmodell erhöhen die Zahl möglicher Zustandskombinationen deutlich. Die Qualitätssicherung wurde deshalb nicht auf einzelne Happy-Path-Tests beschränkt, sondern auf mehrere Testebenen verteilt. Dabei werden reine Transformations- und Protokollregeln ohne externe Abhängigkeiten als Unit-Tests geprüft, persistente Datenübergänge gegen temporäre MariaDB-Tabellen verifiziert, Android-spezifische Persistenz- und UI-Eigenschaften als instrumentierte Tests ausgeführt und das Verhalten des Registrierungsformulars zusätzlich in einem realen Firefox-Browser über WebDriver geprüft. Diese Schichtung ist insbesondere für die medizinisch-informatische Anwendung relevant, weil Fehler nicht nur die Bedienbarkeit, sondern auch Vollständigkeit, Zuordnung und Datenschutz des wissenschaftlichen Datensatzes beeinflussen können.
+
+Tabelle~\ref{tab:automated-test-layers} fasst die wesentlichen Testebenen zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{Automatisierte Testebenen der CueLens-Implementierung}
+\label{tab:automated-test-layers}
+\begin{tabular}{p{0.20\textwidth}p{0.28\textwidth}p{0.37\textwidth}}
+\textbf{Testebene} & \textbf{Technische Umgebung} & \textbf{Schwerpunkt} \\
+\hline
+Android Unit-Tests & JVM/JUnit & Identifier, Response-Parsing, Controllerzustände, Protokoll- und Entscheidungslogik \\
+Android Instrumentierung & Android-Gerät oder Emulator & SharedPreferences, Keystore, Recovery, Compose-UI und Benachrichtigungen \\
+Backend Unit-Tests & PHP/PHPUnit & Validierung, Prolific-API-Logik, Abschlussantworten, Fehler- und Datenschutzregeln \\
+Backend Integration & PHPUnit mit MariaDB & Migrationen, Transaktionen, kanalabhängige Persistenz und idempotente Abschlusslogik \\
+Web-Browser-Tests & Firefox/GeckoDriver/WebDriver & tatsächliches DOM-Verhalten, lokalisierte Validierung und kanalabhängige Formularfelder \\
+\end{tabular}
+\end{table}
+
+\subsection{Parallele Testvektoren für Teilnehmeridentifikatoren}
+
+Die Syntax des Teilnehmeridentifikators wird sowohl im PHP-Backend als auch im Android-Client getestet. Beide Suiten enthalten positive Fälle für gemischt geschriebene und rein numerische 24-stellige Prolific-IDs sowie E-Mail-Adressen. Als negative Testvektoren werden unter anderem 23 beziehungsweise 25 Zeichen, interne Leerzeichen, Satzzeichen, Unicode-Zeichen, eingebettete Zeilenumbrüche und syntaktisch unvollständige E-Mail-Adressen verwendet. Für Prolific wird zusätzlich geprüft, dass die Groß-/Kleinschreibung erhalten bleibt, während E-Mail-Adressen für den Aktivierungsvergleich normalisiert werden können. Damit wird eine wesentliche Protokollinvariante doppelt abgesichert: Eine Eingabe, die der Client akzeptiert, soll auch serverseitig demselben Registrierungskanal zugeordnet werden.
+
+Die Testvektoren liegen derzeit jedoch in zwei sprachspezifischen Testdateien und werden nicht aus einer gemeinsamen maschinenlesbaren Spezifikation generiert. Die Übereinstimmung ist damit getestet, aber nicht strukturell erzwungen. Bei zukünftigen Änderungen wäre eine gemeinsame Fixture-Datei sinnvoll, aus der Android- und Backendtests dieselben gültigen und ungültigen Beispiele beziehen. Dies würde das Risiko einer schleichenden Divergenz zwischen Kotlin- und PHP-Parser reduzieren.
+
+\subsection{Backendtests für Registrierung, Prolific und Abschluss}
+
+Die serverseitige Registrierungsvalidierung prüft explizit beide Kanäle. Für direkte Registrierungen müssen Name, IBAN und BIC weiterhin vorhanden sein; bei einer Prolific-ID dürfen diese Felder fehlen. Werden sie bei einem manipulierten Request dennoch mitgesendet, setzt die serverseitige Validierung sie auf \texttt{NULL}. Weitere Tests stellen sicher, dass Alter, täglicher Zigarettenkonsum und beide Zustimmungsfelder unabhängig vom Registrierungskanal mit denselben Grenzen geprüft werden. Konfligierende neue und ältere Identifier-Felder werden abgelehnt, während das frühere E-Mail-Feld aus Gründen der Rückwärtskompatibilität weiterhin verarbeitet werden kann.
+
+Die MariaDB-Integrationstests prüfen zusätzlich die Datenbankmigration auf das duale Registrierungsmodell. Bestehende direkte Datensätze müssen erhalten bleiben und als \texttt{DIRECT} klassifiziert werden. Neue Prolific-Registrierungen speichern dagegen weder E-Mail-Adresse, Name noch Bankverbindung und erzeugen keinen Double-Opt-In-Token. Duplikate werden kanalbezogen erkannt. Damit wird nicht nur die Validierungsfunktion, sondern auch die tatsächlich persistierte Datenform getestet.
+
+Für die Prolific-API wird ein ersetzbarer HTTP-Transport verwendet. Dadurch lassen sich API-Antworten deterministisch simulieren, ohne während des Unit-Tests externe Requests auszuführen. Getestet werden die zugelassenen Submission-Statuswerte, die Normalisierung von Statusschreibweisen, exakte und case-sensitive Teilnehmer-ID-Zuordnung, mehrseitige Pagination sowie die Unterscheidung zwischen einem vollständig durchsuchten negativen Ergebnis und einem technischen Fehler. Nicht erfolgreiche HTTP-Statuscodes, ungültiges JSON, unvollständige Antwortobjekte, ungültige Konfiguration und eine nicht fortschreitende Pagination führen erwartungsgemäß in einen Fehlerzustand. Zusätzlich wird geprüft, dass das API-Token ausschließlich im Authorization-Header und nicht in der URL übertragen wird.
+
+Die Abschlusslogik besitzt sowohl isolierte Protokolltests als auch Datenbankintegrationstests. Die Unit-Tests verifizieren, dass ein direkter Abschluss einen UUID-v4-Abrechnungscode, aber kein \texttt{completion\_mode}-Feld enthält, während ein Prolific-Abschluss ausschließlich \texttt{completion\_mode=PROLIFIC\_MANUAL} und keinen Abrechnungscode zurückgibt. Die MariaDB-Tests durchlaufen beide Pfade bis zum zwanzigsten Bericht. Für Prolific wird dabei geprüft, dass kein Eintrag in der Tabelle für Abrechnungscodes entsteht, der administrative Abschluss idempotent gesetzt wird und eine wiederholte Finalisierung keine zweite Benachrichtigung erzeugt. Ein simulierter Ausfall der administrativen Datenbank nach dem zwanzigsten wissenschaftlichen Bericht lässt sich durch einen späteren Retry beheben, ohne einen zusätzlichen Selbstbericht anzulegen.
+
+Ein zusätzlicher Testschwerpunkt betrifft datensparsame operative Benachrichtigungen. Für Registrierung und Studienabschluss werden Betreff und notwendige technische Metadaten geprüft, gleichzeitig aber explizit ausgeschlossen, dass Prolific-ID, E-Mail-Adresse, App-Token, HMAC-Werte, Craving-Werte, Name oder Bankdaten in den Benachrichtigungstext gelangen. Auch ein Fehler des E-Mail-Transports darf den eigentlichen Anwendungsablauf nicht als Ausnahme verlassen. Damit werden Datenschutzanforderungen als automatisierbare Negativanforderungen formuliert: Bestimmte Werte müssen nachweislich \emph{nicht} in einem sekundären Kommunikationskanal erscheinen.
+
+\subsection{Android-Tests für Protokoll, Persistenz und Recovery}
+
+Auf Android werden die beiden Abschlussresponseformen zunächst ohne Geräteabhängigkeit durch JVM-Tests geprüft. Ein direkter Abschluss wird nur akzeptiert, wenn der zwanzigste Situationsindex, \texttt{CUE\_LABELING} und ein gültiger UUID-v4-Code gemeinsam vorliegen. Ein Prolific-Abschluss wird nur akzeptiert, wenn der Modus exakt \texttt{PROLIFIC\_MANUAL} lautet und kein Abrechnungscode vorhanden ist. Unbekannte Modi, widersprüchliche Felder und inkonsistente Situations-/Bedingungspaare erzeugen einen Protokollfehler. Zusätzlich wird die Rekonstruktion persistierter Abschlusszustände geprüft, einschließlich der Migration älterer direkter Zustände und des fail-closed-Verhaltens bei widersprüchlichen Kombinationen.
+
+Geräte- beziehungsweise Emulator-Tests ergänzen diese Logik dort, wo Android-spezifische Persistenz relevant ist. Für den Prolific-Abschluss wird geprüft, dass Abschlussmodus und Fortschritt nach einer Neuerzeugung des Stores erhalten bleiben, kein Abrechnungscode persistiert wird und kein ausstehender Craving-Wert verbleibt. Ein gleichzeitig als abgeschlossen und ausstehend markierter Zustand wird als \texttt{Invalid} interpretiert. Die Recovery-Tests simulieren außerdem einen fehlgeschlagenen finalen Prolific-Upload, eine erfolgreiche Wiederholung, einen regulären Direktabschluss und einen Ausfall zwischen Empfang und Bestätigung des direkten Abrechnungscodes. Im letztgenannten Fall wird beim Retry ausschließlich die Codebestätigung erneut gesendet und der Selbstbericht nicht wiederholt.
+
+Diese Tests ergänzen die bereits vorhandenen instrumentierten Prüfungen für Android Keystore, Compose-Oberflächen und Benachrichtigungen. Zusammen entsteht damit eine Trennung zwischen plattformunabhängigen Protokollregeln und Eigenschaften, die tatsächlich Android-Runtime, SharedPreferences, Keystore oder UI benötigen. Das reduziert die Laufzeit der häufig ausgeführten Unit-Tests, ohne gerätespezifische Risiken vollständig zu abstrahieren.
+
+\subsection{Browserbasierte Prüfung des Registrierungsformulars}
+
+Die Registrierungswebseite wird nicht ausschließlich über serverseitige PHP-Tests geprüft. \texttt{FormValidationBrowserTest.php} startet beziehungsweise verwendet GeckoDriver, erzeugt eine Firefox-WebDriver-Sitzung und ruft die tatsächlich ausgelieferten deutschen und englischen Registrierungsseiten auf. Die Tests prüfen unter anderem die lokalisierte Beschriftung des gemeinsamen Identifier-Felds, die sichtbaren Validierungsmeldungen, den Wechsel zwischen direktem und Prolific-Modus sowie das resultierende DOM-Verhalten.
+
+Besonders relevant für die Datenminimierung ist der Test des Prolific-Modus: Nach Eingabe einer syntaktisch gültigen Prolific-ID müssen Name, IBAN und BIC geleert, deaktiviert und von der Pflichtfeldprüfung ausgenommen sein. Über \texttt{FormData} wird zusätzlich kontrolliert, dass diese deaktivierten Felder nicht Bestandteil des zu sendenden Formulars sind. Beim Wechsel zurück zu einer E-Mail-Adresse müssen dieselben Felder wieder aktiviert und als Pflichtfelder gesetzt werden. Ein gültiges Prolific-Formular mit Alter, Zigarettenkonsum und Einwilligungen muss die native Browser-Constraint-Validation bestehen; ein ungültiger Identifier muss dagegen eine lokalisierte Fehlermeldung erzeugen.
+
+Die Browsertests sind damit stärker als reine JavaScript-Unit-Tests, weil sie DOM, Browservalidierung und die ausgelieferte HTML-Struktur gemeinsam prüfen. Sie sind jedoch kein vollständiger produktiver Ende-zu-Ende-Test: Die Testklasse prüft primär das clientseitige Formularverhalten und setzt eine erreichbare Test-Webseite voraus. Die tatsächliche Registrierung mit produktiver Prolific-API, produktiver Datenbank, E-Mail-Versand und anschließendem App-Aktivierungsprozess wird dadurch nicht vollständig durchlaufen.
+
+\subsection{Aussagekraft und Ausführungsabhängigkeiten}
+
+Die Existenz eines automatisierten Tests ist von seiner erfolgreichen Ausführung zu unterscheiden. Reine Android- und PHP-Unit-Tests besitzen wenige externe Voraussetzungen und eignen sich deshalb für häufige Regressionstests. MariaDB-Integrationstests benötigen dagegen explizit konfigurierte isolierte Testdatenbanken; fehlen die entsprechenden Umgebungsvariablen, werden sie übersprungen. Die Browser-Suite benötigt eine erreichbare Testinstanz, die PHP-cURL-Erweiterung, GeckoDriver und eine lauffähige Firefox-Installation und markiert sich bei fehlenden Voraussetzungen ebenfalls als übersprungen. Android-Instrumentierungstests benötigen ein Gerät oder einen Emulator.
+
+Für eine belastbare Freigabe darf daher nicht allein der Exit-Code eines Testlaufs betrachtet werden. Zusätzlich sind Anzahl und Gründe übersprungener Tests zu kontrollieren. Insbesondere die Aussage ``alle Tests erfolgreich'' wäre methodisch unzureichend, wenn datenbank- oder geräteabhängige Suiten mangels Umgebung gar nicht ausgeführt wurden. Die automatisierte Testarchitektur erhöht damit die Reproduzierbarkeit der technischen Verifikation, ersetzt aber weder die Kontrolle der konkreten Testumgebung noch manuelle Ende-zu-Ende-Prüfungen auf realen Geräten und gegen eine Staging-Infrastruktur.
+
+\section{Native iOS-/iPadOS-Implementierung}
+
+Die Apple-Portierung wurde als eigenständige native Anwendung umgesetzt. Die oberste Darstellungsschicht besteht aus SwiftUI-Views, deren Zustände durch ein zentrales App-Modell bereitgestellt werden. Fachliche Regeln liegen in einem logisch abgegrenzten Pure-Swift-Domainbereich. Kritische Abläufe wie Aktivierung, Persistenz und Netzwerkkoordination werden über serialisierte Koordinatoren gekapselt. Dadurch greifen Views nicht direkt auf Keychain, Dateien oder Netzwerkservices zu. Die wesentliche Abhängigkeitsrichtung lässt sich vereinfacht als
+
+\[
+\text{SwiftUI} \rightarrow \text{AppModel} \rightarrow \text{Domain/Coordinator} \rightarrow \text{Infrastructure}
+\]
+
+beschreiben. Diese Struktur bildet dieselbe fachliche Trennung wie die Android-Anwendung ab, nutzt jedoch die nativen Apple-Frameworks.
+
+Der Funktionsumfang umfasst den vollständigen für die Studie vorgesehenen App-Ablauf: deutsch- und englischsprachige Oberfläche, Informationsfeed, lokale Ausblendung gelesener Informationen, Benachrichtigungsentscheidung, optionale lokale Erinnerungen, Aktivierung über E-Mail-Adresse oder Prolific-ID, lokale Demo, Feedback, serverseitige Feature-Freigabe, produktive Matching- und Labeling-Durchläufe, Craving-Selbstbericht, Wiederholungslogik für ausstehende Übertragungen sowie die beiden Abschlusswege \texttt{COMPENSATION\_CODE} und \texttt{PROLIFIC\_MANUAL}. Die Implementierung verwendet dabei die bestehenden Backendverträge und führt für iOS keine eigene wissenschaftliche API ein.
+
+Die Aktivierung folgt demselben zweistufigen Protokoll wie unter Android. Eine syntaktisch gültige E-Mail-Adresse oder eine 24-stellige alphanumerische Prolific-ID wird an den bestehenden Aktivierungsendpunkt übergeben. Das vom ersten Request erhaltene UUID-v4-App-Token bleibt zunächst flüchtig. Erst wenn der zweite Request mit Identifier und Token erfolgreich mit HTTP~204 bestätigt wurde, wird das Token dauerhaft gespeichert. Ein mehrdeutiger Abbruch während dieser Bestätigung wird nicht automatisch als erfolgreiche Aktivierung interpretiert. Damit bleibt die serverseitig definierte Aktivierungssemantik plattformübergreifend erhalten.
+
+Der produktive Studienablauf wird aus den kanonischen Manifesten erzeugt. Für Matching werden alle 50 vorgesehenen Items genau einmal einer zufälligen Reihenfolge zugeordnet und anschließend in zehn Durchläufe zu je fünf Trials zerlegt. Für Labeling werden die festgelegten Blöcke verwendet. Die konkrete Auswahlposition wird pro Trial zufällig angeordnet. Nach fünf Trials folgt die Rauchverlangensabfrage. Ein Prozessabbruch vor dem Absenden eines Selbstberichts persistiert weder Trialposition noch konkrete Auswahl; der noch nicht bestätigte Durchlauf beginnt nach Wiederaufnahme erneut. Damit werden nur Zustände dauerhaft gespeichert, die für Studienfortschritt und technische Recovery notwendig sind.
+
+Vor einem Submission-Request persistiert die App ausschließlich den ganzzahligen Craving-Wert als ausstehend. Der anschließende Request enthält das App-Token, den Craving-Wert und die unveränderte App-Version. Situation, Versuchsbedingung, konkrete Auswahl, Sprache und Plattform werden nicht vom Client übertragen. Die Zuordnung zu Matching oder Labeling bleibt somit wie bei Android serverseitig vom bereits gespeicherten Fortschritt abhängig. Erst nach einer syntaktisch und semantisch gültigen Serverantwort wird der lokale Fortschritt atomar aktualisiert. Ein ausstehender Wert sperrt bis zur erfolgreichen Wiederholung den Beginn einer weiteren Studiensituation.
+
+Auch die Abschlusslogik entspricht den bereits beschriebenen beiden Backendmodi. Beim direkten Abschluss wird der empfangene UUID-v4-Abrechnungscode zunächst als noch zu bestätigender Zustand gespeichert. Anschließend erfolgt der separate Bestätigungsrequest; bei dessen Fehlschlag bleibt der Code für einen späteren Retry erhalten und wird der teilnehmenden Person noch nicht als vollständig bestätigter Abschluss präsentiert. Der Prolific-Pfad speichert keinen CueLens-Abrechnungscode, sondern übernimmt den vom Backend gelieferten Abschlussmodus \texttt{PROLIFIC\_MANUAL}. Damit bleibt die administrative Unterscheidung der Rekrutierungskanäle erhalten, ohne die wissenschaftliche Datenstruktur plattformspezifisch zu verändern.
+
+Die Apple-Anwendung trennt außerdem unkritische UI-Einstellungen von studienrelevanter Persistenz. Spracheinstellungen und positive IDs bereits bekannter beziehungsweise dauerhaft ausgeblendeter Feednachrichten liegen in \texttt{UserDefaults}. App-Token, Aktivierungs-Recovery und Studienzustand werden dagegen in hierfür vorgesehenen geschützten Speichern abgelegt. Nachrichteninhalte, Trialentscheidungen und Reaktionszeiten werden nicht dauerhaft gespeichert. Diese Trennung reduziert die Menge persistent gehaltener Daten und verhindert, dass fachlich sensitive Zustände allein über ungeschützte Komfortspeicher verwaltet werden.
+
+Für Hintergrundfunktionen wurde bewusst keine Abhängigkeit der Kernstudie von iOS-Scheduling angenommen. Lokale Benachrichtigungen enthalten keine sensiblen Nutzdaten, keinen Ton und keinen Badge. Studienerinnerungen werden aus dem aktuellen fachlichen Zustand abgeleitet und bei nicht mehr zulässigem Zustand entfernt. Die Hintergrundaktualisierung des Informationsfeeds ist lediglich best effort; schlägt sie aus oder wird sie vom Betriebssystem nicht eingeplant, bleiben Aktivierung, Studiendurchführung und Submission weiterhin funktionsfähig.
+
+Die Portierung ist damit als eigenständige vollständige Clientimplementierung zu bewerten, nicht als bloßer UI-Prototyp. Gleichzeitig ist zwischen Implementierungsreife und Distributionsreife zu unterscheiden. Das interne Definition-of-Done-Audit weist die Architektur, den funktionalen Umfang, die Studienmethodik und die automatisierbaren Sicherheits- und Testkriterien als implementiert beziehungsweise bestanden aus. Die formale Freigabe bleibt jedoch blockiert, solange reale Staging-Ende-zu-Ende-Prüfungen, Distribution-Signing, TestFlight-Prüfung und externe Freigaben nicht abgeschlossen sind. Für die Masterarbeit ist diese Differenz relevant, weil sie einen technisch vollständigen Prototypen belegt, ohne daraus eine bereits produktiv veröffentlichte iOS-App abzuleiten.
+
+\section{Plattformunabhängige Spezifikation als gemeinsame fachliche Referenz}
+
+Mit der Erweiterung um eine zweite native Clientplattform entstand die Notwendigkeit, fachliche Anforderungen von plattformspezifischen Implementierungsdetails zu trennen. Zu diesem Zweck wurde eine plattformunabhängige Spezifikation der CueLens-Studien-App erstellt. Sie beschreibt die gemeinsame Sollfunktion von Android und iOS für Studienablauf, Datenflüsse, Protokolle, Persistenz, Fehlerbehandlung, Datenschutz und Sicherheit, ohne eine konkrete Programmiersprache, UI-Technologie oder Betriebssystem-API vorzuschreiben. Die vorhandene Android-App dient dabei als Referenzimplementierung; die iOS-App wird gegen dieselben fachlichen Invarianten entwickelt und geprüft.
+
+Die Spezifikation ist methodisch nicht als vollständig prospektiv festgelegtes Lastenheft zu interpretieren. Sie wurde aus dem bereits vorhandenen Android-System abgeleitet und stellt damit teilweise eine retrospektive Formalisierung implementierter Regeln dar. Ihr Nutzen liegt vor allem darin, zuvor implizit in Kotlin-, PHP- und UI-Code verteilte Anforderungen explizit zu machen und für die zweite Plattform überprüfbar zu formulieren. Für die Dokumentation der Entwicklungsreihenfolge ist deshalb zwischen der ursprünglichen Implementierung und der späteren Formalisierung ihrer fachlichen Invarianten zu unterscheiden.
+
+Die Anforderungen verwenden normative Begriffe wie \emph{MUSS}, \emph{DARF NICHT}, \emph{SOLL} und \emph{KANN}. Zusätzlich unterscheidet die Spezifikation zwischen gemeinsamem Referenzverhalten und ausdrücklich zulässigen Plattformabweichungen. Dadurch wird nicht gefordert, Android und iOS technisch identisch zu implementieren. Gefordert wird vielmehr, dass die wissenschaftlich und sicherheitstechnisch relevanten Eigenschaften trotz unterschiedlicher Plattformmechanismen erhalten bleiben.
+
+Diese Trennung kann formal als Projektion auf den studienrelevanten Zustand beschrieben werden. Sei \(S_p\) der vollständige Laufzeitzustand einer Plattform \(p\in\{\mathrm{Android},\mathrm{iOS}\}\) und \(\pi(S_p)\) die Projektion auf fachlich relevante Größen wie bestätigten Situationsindex, Bedingungsfolge, ausstehenden Craving-Wert, Abschlussmodus und übertragene Payload. Für die Menge gemeinsamer Invarianten \(I\) gilt als Konformitätsbedingung
+
+\[
+\forall p\in\{\mathrm{Android},\mathrm{iOS}\}:\quad I\bigl(\pi(S_p)\bigr)=\mathrm{wahr}.
+\]
+
+Plattformspezifische Zustände, beispielsweise Keychain-Attribute, Android-Keystore-Parameter, SwiftUI-Navigation oder Compose-interne Darstellung, liegen außerhalb dieser Projektion, solange sie die gemeinsamen Invarianten nicht verändern. Plattformäquivalenz bedeutet damit fachliche Konformität und nicht Quellcode-, Layout- oder Zufallsfolgenidentität.
+
+\subsection{Gemeinsame Invarianten und zulässige Plattformabweichungen}
+
+Zu den verbindlichen studienmethodischen Invarianten gehören insbesondere 20 produktive Situationen, davon zunächst zehn Cue-Matching- und anschließend zehn Cue-Labeling-Situationen, fünf Trials je Situation, genau ein Craving-Selbstbericht je Situation, die ganzzahlige Skala von 0 bis 100 mit Standardwert 50 sowie der dreistündige Mindestabstand nach bestätigten Situationen 1 bis 19. Matching- und Labeling-Auswahlen werden nicht als Forschungsdaten gespeichert oder übertragen. Ebenso bleibt der Selbstberichtvertrag auf \texttt{app\_token}, \texttt{craving} und \texttt{app\_version} beschränkt; Situation, Bedingung und Plattform werden nicht durch den Client als fachliche Felder übertragen.
+
+Die Spezifikation definiert zugleich Bereiche, in denen unterschiedliche native Mechanismen ausdrücklich zulässig sind. Tabelle~\ref{tab:platform-spec-invariants} stellt diese Trennung exemplarisch dar.
+
+\begin{table}[htbp]
+\centering
+\caption{Trennung gemeinsamer Invarianten und plattformspezifischer Umsetzung}
+\label{tab:platform-spec-invariants}
+\begin{tabular}{p{0.27\textwidth}p{0.31\textwidth}p{0.29\textwidth}}
+\textbf{Bereich} & \textbf{Gemeinsame fachliche Invariante} & \textbf{Zulässige native Umsetzung} \\
+\hline
+UI-Technologie & identischer Studienablauf und dieselben Reize & Jetpack Compose beziehungsweise SwiftUI \\
+Sicherer Tokenspeicher & kein Klartexttoken, keine Cloud-Synchronisation, fail closed & Android Keystore beziehungsweise iOS Keychain \\
+Randomisierung & vollständige Matching-Permutation und zufällige Optionsposition & plattformeigener Zufallszahlengenerator; konkrete Folge darf abweichen \\
+Hintergrundmechanismen & Hintergrundausführung nicht autoritativ für Forschungsdaten & WorkManager beziehungsweise iOS Background Refresh \\
+Erinnerungen & nur zulässiger Studienzustand, neutrale Inhalte & Android Notification beziehungsweise iOS Local Notification \\
+Navigation & kein Überspringen bestätigungspflichtiger Zustände & Android-Back-Verhalten beziehungsweise native iOS-Navigation \\
+Datenschutzstatus & produktive Nutzung nur bei dokumentierter Einwilligung & bestehender zusätzlicher Android-Dialog beziehungsweise vorgelagerte Webeinwilligung für iOS \\
+Layoutdetails & Reizfolge, Wartezeiten und Skala bleiben erhalten & native Abstände, Schriftmetriken und Controls \\
+\end{tabular}
+\end{table}
+
+Nicht zulässig sind dagegen Änderungen, die die wissenschaftliche Vergleichbarkeit oder Datensparsamkeit verändern würden. Dazu zählen insbesondere eine zusätzliche Plattformvariable im Forschungsdatensatz, eine andere Bedingungsreihenfolge, zusätzliche experimentelle Messwerte, die Übertragung von Trialentscheidungen, Cloud-Synchronisation des Studienzustands oder eine plattformspezifische Erweiterung des Submission-Schemas. Auch eine unterschiedliche konkrete Zufallsfolge ist nur deshalb zulässig, weil die Spezifikation als Invariante nicht die konkrete Permutation, sondern deren mathematische Eigenschaft festlegt: Bei 50 Matching-Items muss die gespeicherte Reihenfolge eine Permutation sein, in der jeder Index genau einmal vorkommt.
+
+\subsection{Spezifikation von Daten- und Fehlergrenzen}
+
+Die gemeinsame Referenz beschreibt neben sichtbaren Funktionen auch die fachlichen Daten- und Vertrauensgrenzen. Administrative Registrierung, Feedback und pseudonymisierte Selbstberichte bleiben getrennt. E-Mail-Adresse und Prolific-ID dürfen nicht in \texttt{self\_reports} gelangen; das App-Token wird dort nicht im Klartext gespeichert; Feedback darf nicht automatisch mit einer Studienidentität verknüpft werden. Unvermeidbare Transportmetadaten des Hostings sind ausdrücklich keine Forschungsvariablen und dürfen nicht in die Wirksamkeitsauswertung übernommen werden.
+
+Für Fehlersituationen wird zwischen fail-safe und fail-closed unterschieden. Ein nicht erreichbarer Informationsfeed darf den App-Start nicht blockieren, weil dieser Datenfluss für die wissenschaftliche Durchführung nicht kritisch ist. Ein fehlerhafter Feature-Abruf, ein inkonsistenter Studienzustand, ein nicht lesbarer sicherer Token oder eine unerwartete Submission-Antwort sperren dagegen die produktive Studie. Damit wird die Fehlerstrategie nicht pauschal an technische Ausnahmen gekoppelt, sondern an die mögliche Auswirkung auf Studienintegrität und sensible Daten.
+
+Auch Recovery wird plattformunabhängig beschrieben. Vor dem ersten Submission-Versuch muss der Craving-Wert persistent als ausstehend markiert sein. Solange dieser Zustand besteht, darf kein weiterer Durchgang begonnen werden. Fortschritt wird erst nach semantisch gültiger Serverantwort erhöht. Der direkte Abschluss muss einen erhaltenen Kompensationscode vor dessen Bestätigungsrequest dauerhaft sichern; beim Prolific-Abschluss darf kein solcher Code entstehen. Diese Regeln definieren das gewünschte Verhalten unabhängig davon, ob Android hierfür \texttt{SharedPreferences} und iOS einen dateigeschützten Store verwendet.
+
+\subsection{Abnahmekriterien und Rückverfolgbarkeit}
+
+Die Spezifikation endet mit 35 konkreten Abnahmekriterien. Sie reichen von Sprachumschaltung, Aktivierung und Demo über Studiensequenz, Craving-Skala und Pending-Recovery bis zu HTTPS, Berechtigungsminimierung, identischen Reizressourcen und dem Verbot einer Plattformvariable. Diese Kriterien machen die fachliche Referenz testbar und verhindern, dass der Begriff ``plattformgleich'' lediglich qualitativ verwendet wird.
+
+Für die iOS-Implementierung ergänzt eine Traceability-Matrix diese Spezifikation. Sie ordnet 35 mit \texttt{IOS-FUN-001} bis \texttt{IOS-FUN-035} bezeichnete Funktionsanforderungen jeweils konkreten Implementierungsstellen und mindestens einem automatisierten Nachweis zu. Beispielsweise werden der sichere Keychain-Speicher, das Start-Gate, die Matching-Regeln, Pending-Persistenz, beide Abschlussmodi und das minimale Submission-Payload jeweils mit zugehörigen Unit-, UI- oder Verifikationsskripten verknüpft. Dadurch entsteht eine nachvollziehbare Kette
+
+\[
+\text{fachliche Anforderung}\rightarrow\text{Implementierung}\rightarrow\text{automatisierter Nachweis}.
+\]
+
+Diese Rückverfolgbarkeit erhöht die Reproduzierbarkeit der Portierung, ist jedoch nicht mit einer formalen Produktfreigabe gleichzusetzen. Automatisierte Konformität kann insbesondere reale TestFlight-Distribution, Gerätesperrverhalten, Staging-Ende-zu-Ende-Abläufe oder externe Datenschutz- und Ethikfreigaben nicht ersetzen. Die Spezifikation dient daher als gemeinsame fachliche Referenz und Prüfgrundlage; die tatsächliche Freigabe bleibt ein zusätzlicher technischer und organisatorischer Prozess.
+
+\section{iOS-spezifische Sicherheitsarchitektur}
+
+Die iOS-/iPadOS-Portierung übernimmt die fachlichen Sicherheitsziele der plattformunabhängigen Spezifikation, setzt sie jedoch mit den nativen Schutzmechanismen von iOS um. Das Sicherheitskonzept folgt dabei keinem einzelnen Schutzmechanismus, sondern einer mehrschichtigen Architektur aus Credential-Schutz, geschützter Dateipersistenz, restriktiver Netzwerkkommunikation, strikter Protokollvalidierung, minimierten Berechtigungen und fail-closed behandelten Zustandsfehlern. Für die Studienanwendung ist diese Schichtung relevant, weil lokal sowohl ein dauerhaftes App-Token als auch temporär ein Craving-Wert und gegebenenfalls ein Kompensationscode verarbeitet werden. Ein Fehler in einer einzelnen Schicht soll deshalb nicht automatisch zu einer Freigabe der produktiven Studie oder zu einer unkontrollierten Weiterverarbeitung führen.
+
+Tabelle~\ref{tab:ios-security-layers} fasst die wichtigsten Schutzschichten zusammen.
+
+\begin{table}[htbp]
+\centering
+\caption{iOS-spezifische Schutzschichten der CueLens-App}
+\label{tab:ios-security-layers}
+\begin{tabular}{p{0.22\textwidth}p{0.34\textwidth}p{0.31\textwidth}}
+\textbf{Schutzobjekt} & \textbf{Mechanismus} & \textbf{Fehlerverhalten} \\
+\hline
+App-Token & Keychain, nicht synchronisierbar, \texttt{WhenUnlockedThisDeviceOnly} & ungültiger oder nicht lesbarer Token sperrt Aktivierung und produktive Nutzung \\
+Studienzustand & atomare Datei mit vollständigem Dateischutz und Backup-Ausschluss & Schema-, Größen- oder Persistenzfehler werden nicht als gültiger Fortschritt akzeptiert \\
+Installation & geschützter zufälliger 32-Byte-Installationsmarker & inkonsistente Neuinstallationslage führt fail closed; verwaister Keychain-Token wird nicht übernommen \\
+Aktivierungs-Recovery & geschützter neutraler Marker für unklaren Bestätigungszustand & keine automatische erneute Aktivierung bei mehrdeutigem Abschluss \\
+Netzwerk & ephemere \texttt{URLSession}, HTTPS-Policy, Redirect-Verbot, Größen- und Zeitlimits & unerwartete Transport- oder Protokollantwort wird verworfen \\
+Bildschirm/Notifications & Privacy Curtain und inhaltsarme lokale Benachrichtigungen & sensible Zustände sollen nicht über App-Switcher oder Benachrichtigungstext offengelegt werden \\
+Build/Distribution & getrennte Konfigurationen, minimierte Entitlements und Privacy Manifest & Release-Freigabe bleibt ohne Archiv- und Realgeräteprüfung blockiert \\
+\end{tabular}
+\end{table}
+
+\subsection{Gerätegebundener Token im Keychain}
+
+Der App-Token wird auf iOS nicht zusätzlich durch eine selbst verwaltete symmetrische Verschlüsselungsschicht geschützt, sondern als Generic-Password-Eintrag im systemeigenen Keychain gespeichert. Der Descriptor verwendet den Service \texttt{de.eachandevery.cuelens}, das Konto \texttt{app-token-v1}, \texttt{kSecAttrSynchronizable=false} und die Zugriffsklasse \texttt{kSecAttrAccessibleWhenUnlockedThisDeviceOnly}. Dadurch ist der Credential-Eintrag ausdrücklich nicht für eine geräteübergreifende Synchronisation vorgesehen. Die Persistenzschicht akzeptiert ausschließlich einen syntaktisch gültigen UUID-v4-Token; ein nicht dekodierbarer Wert wird als Persistenzfehler behandelt.
+
+Das Schreiben ist konfliktorientiert ausgelegt. Existiert bereits derselbe Token, ist der Vorgang idempotent. Existiert ein anderer Token oder liefert ein konkurrierender Add-Vorgang einen bereits vorhandenen, aber abweichenden Wert, wird ein \texttt{tokenConflict} ausgelöst. Die App überschreibt damit einen vorhandenen Credential-Eintrag nicht stillschweigend. Diese Entscheidung ist besonders für den Aktivierungsprozess relevant, weil eine zweite Identität nicht unbemerkt an einen bereits aktivierten lokalen Studienzustand gebunden werden soll.
+
+Eine iOS-spezifische Besonderheit besteht darin, dass Keychain-Einträge eine Deinstallation der App technisch überleben können. CueLens koppelt den Credential-Zustand deshalb an einen separaten Installationsmarker im App-Container. Beim Start prüft ein \texttt{InstallationCoordinator}, ob ein geschützter 32-Byte-Marker vorhanden ist. Fehlt sowohl dieser Marker als auch ein lokaler Studienzustand, wird ein gegebenenfalls verbliebener Keychain-Token gelöscht und ein kryptographisch zufälliger neuer Marker erzeugt. Existiert dagegen ein Studienzustand ohne den zugehörigen Marker oder besitzt der Marker nicht die erwartete Länge, wird die Installation als inkonsistent behandelt. Damit wird ein überlebender Keychain-Eintrag nicht automatisch als gültige Fortsetzung einer neu installierten App interpretiert.
+
+\subsection{Geschützter und strikt validierter Studienzustand}
+
+Studienfortschritt, Pending-Craving und Abschlusszustand liegen nicht in \texttt{UserDefaults}, sondern in einer eigenen Datei unter \texttt{Library/Application Support/CueLens}. Verzeichnisse und Dateien werden mit \texttt{FileProtectionType.complete} angelegt; zusätzlich setzt die Implementierung \texttt{isExcludedFromBackup=true}. Schreibvorgänge verwenden die atomare Dateischreiboption zusammen mit vollständigem Dateischutz. Nach dem Setzen der Schutzattribute werden diese erneut gelesen und geprüft. Auf realen Geräten führt ein nicht gesetzter vollständiger Dateischutz zu einem Fehler; im Simulator wird diese konkrete Eigenschaft nicht als zuverlässig messbar vorausgesetzt.
+
+Der persistierte Zustand besitzt zusätzlich eine logische Integritätsprüfung. Vor dem Schreiben wird der serialisierte Zustand erneut mit demselben strikten Decoder gelesen und mit dem Ausgangszustand verglichen. Dateien größer als 64~KiB, leere Dateien, unbekannte Top-Level-Felder, fehlende Pflichtfelder, eine unbekannte Schema-Version oder nicht erlaubte Abschlussfeldkombinationen werden abgelehnt. Beispielsweise darf ein direkter Abschluss nur mit einem Codefeld gespeichert sein, während \texttt{prolific\_completed} kein Codefeld besitzen darf. Die Dateischutzklasse ersetzt damit nicht die fachliche Zustandsvalidierung; beide Ebenen werden unabhängig geprüft.
+
+Für den zweistufigen Aktivierungsprozess existiert ein weiterer kleiner geschützter Persistenzzustand. Vor dem potenziell mehrdeutigen Bestätigungsrequest kann ein neutraler Marker \texttt{cuelens-activation-confirmation-uncertain-v1} atomar geschrieben werden. Ein solcher Marker enthält weder E-Mail-Adresse noch Prolific-ID oder Token. Bleibt er nach Timeout oder Prozessabbruch erhalten, wird der Zustand beim nächsten Start als unklar erkannt, anstatt eine neue Aktivierung automatisch zu beginnen. Die Recovery-Information enthält damit nur die für die Sicherheitsentscheidung notwendige Aussage, nicht die eigentliche Identität.
+
+\subsection{Restriktive Netzwerk- und Protokollschicht}
+
+Die iOS-App verwendet einen zentralen, actor-gekapselten HTTP-Client auf Basis einer ephemeren \texttt{URLSession}. URL-Cache, Cookie-Speicher und Credential-Speicher der Session sind deaktiviert; Requests ignorieren lokale Cache-Daten. Für einzelne Requests gilt ein Timeout von 15~Sekunden, für die Ressource insgesamt 30~Sekunden. HTTP-Redirects werden durch einen eigenen Delegate verworfen. Dadurch wird ein Request mit Token oder Craving nicht automatisch an ein vom Server angegebenes alternatives Ziel weitergereicht.
+
+Vor jedem Request wird die Ziel-URL gegen eine buildabhängige Transportpolicy geprüft. Der Release-Build enthält ausschließlich HTTPS-Endpunkte und setzt \texttt{CUELENS\_ALLOWS\_LOCAL\_HTTP=NO}. Zusätzlich akzeptiert der Client keine URL mit Benutzername, Passwort, Query oder Fragment. Die produktiven Endpunkte werden damit als feste Ressourcen konfiguriert und nicht dynamisch aus Nutzereingaben zusammengesetzt. Eine eigene Trust-Umgehung oder deaktivierte Zertifikatsprüfung ist nicht Bestandteil der Implementierung.
+
+Auch erfolgreiche HTTP-Statuscodes genügen nicht für einen fachlichen Erfolg. Der Client prüft die erwarteten Statusbereiche, den Content-Type für JSON-Antworten und ein pro Response definiertes Größenlimit. Das Limit wird sowohl anhand einer bekannten \texttt{Content-Length} als auch während des byteweisen Empfangs durchgesetzt; überschreitet die Antwort das erlaubte Maximum, wird der Task abgebrochen. Für Antworten, die leer sein müssen, führt bereits ein empfangenes Byte zu einem Protokollfehler. Darauf aufbauend validieren die fachlichen Services ihre JSON-Strukturen streng. Diese Kombination reduziert das Risiko, dass unerwartete oder übergroße Antworten als gültiger Aktivierungs-, Feature- oder Studienzustand interpretiert werden.
+
+Die Netzwerkinstrumentierung folgt ebenfalls dem Prinzip der Datenminimierung. Der Logger erhält nur abstrakten Requesttyp, HTTP-Status und technische Fehlerkategorie. Request-Payloads mit Token oder Craving, Aktivierungskennungen, Feedbacktexte und Kompensationscodes sind nicht Teil dieses Logging-Vertrags. Die ephemere Session verhindert dabei nicht serverseitige Transportlogs; deren Aufbewahrung bleibt eine separate Betriebs- und Datenschutzfrage außerhalb des lokalen iOS-Clients.
+
+\subsection{Minimierung von Exposition und Berechtigungen}
+
+Bei Wechsel aus dem aktiven App-Zustand wird die sichtbare Oberfläche durch einen undurchsichtigen Privacy Curtain überdeckt. \texttt{ContentView} blendet dabei nicht nur den eigentlichen Inhalt visuell aus, sondern markiert ihn während des Curtains auch als für Accessibility verborgen. Die Umschaltung wird an die iOS-\texttt{scenePhase} gekoppelt. Dadurch soll insbesondere verhindert werden, dass ein aktuell sichtbarer Craving-Wert oder ein bestätigter Kompensationscode in der App-Switcher-Vorschau stehen bleibt. Ob dies auf dem final signierten Release-Artefakt in allen relevanten Gerätezuständen funktioniert, ist zusätzlich als manueller Prüfschritt vorgesehen.
+
+Benachrichtigungen werden als unterstützende Funktion und nicht als Transportkanal für Studiendaten behandelt. Die Sicherheitsprüfung fordert neutrale Texte ohne Rauchstatus, Craving, Token, Teilnehmerkennung oder Kompensationscode. Eine verweigerte oder später entzogene Benachrichtigungsberechtigung darf die Kernfunktionen nicht sperren. Damit wird vermieden, dass für die wissenschaftliche Durchführung eine weitergehende Systemberechtigung erzwungen werden muss.
+
+Die Release-Konfiguration sieht keine Kamera-, Foto-, Mikrofon-, Standort-, HealthKit-, CloudKit-, iCloud- oder App-Group-Funktion für die aktuelle Studienversion vor. Ebenso werden keine Tracking- oder Analytics-SDKs benötigt. Das eingecheckte Privacy Manifest setzt \texttt{NSPrivacyTracking=false} und deklariert konservativ die in der App verarbeiteten Kategorien E-Mail-Adresse, User-ID, Gesundheitsdaten und sonstige Nutzereingaben. Für verwendete Required-Reason-APIs sind die im Projekt begründeten Kategorien für Dateizeitstempel und \texttt{UserDefaults} angegeben. Die technische Deklaration ersetzt jedoch nicht den Abgleich mit App Store Connect und der tatsächlich produktiven Serverkonfiguration.
+
+\subsection{Nebenläufigkeit und Sicherheitsgrenzen}
+
+Keychain-, Persistenz-, Aktivierungs- und Netzwerkkomponenten sind als Swift-Actors beziehungsweise über serialisierte Koordinatoren umgesetzt. Kritische Zustandsänderungen werden dadurch innerhalb der jeweiligen Komponente sequenziell verarbeitet. Dies ergänzt die UI-seitige Deaktivierung laufender Aktionen und reduziert insbesondere das Risiko paralleler Aktivierungs-, Submission- oder Persistenzoperationen. Die Actor-Isolation ist dabei eine Nebenläufigkeitsgarantie innerhalb des Prozesses; sie ersetzt weder serverseitige Transaktionen noch die bereits diskutierte Ende-zu-Ende-Idempotenz des Studien-Backends.
+
+Die Sicherheitsarchitektur schützt vor allem gegen unbeabsichtigte Offenlegung, inkonsistente lokale Zustände, fehlerhafte Serverantworten und eine unnötige Synchronisation sensibler App-Daten. Sie ist nicht als Schutz gegen ein vollständig kompromittiertes Betriebssystem oder ein entsperrtes Gerät mit erfolgreichem Zugriff auf den laufenden App-Prozess zu verstehen. Insbesondere verlangt die gewählte Keychain-Klasse keine zusätzliche biometrische Freigabe bei jedem App-Zugriff. Diese Abgrenzung ist für die Alltagstauglichkeit bewusst relevant: Hintergrund- und Wiederaufnahmeabläufe sollen nach regulärer Geräteentsperrung funktionieren, ohne vor jedem Studienrequest eine zusätzliche Authentisierung auszulösen.
+
+\subsection{Automatisierte Nachweise und verbleibende manuelle Prüfungen}
+
+Die Security- und Release-Skripte prüfen unter anderem Keychain-Attribute, Dateischutz- und Backup-Konfiguration, Release-Endpunkte, Privacy Manifest, unerwartete Entitlements, verbotene Berechtigungsschlüssel, Drittanbieterabhängigkeiten sowie das Fehlen unsicherer Swift-Konstrukte wie Force-Unwraps und \texttt{try!}. Das Definition-of-Done-Audit bewertet diese automatisierbaren Sicherheitskriterien für den Source Candidate als bestanden.
+
+Nicht vollständig automatisierbar sind jedoch mehrere Eigenschaften der realen Distribution. Offen bleiben insbesondere die Prüfung eines finalen Distribution-Archivs und seiner Entitlements, das tatsächliche Verhalten von Keychain und geschützten Dateien bei Gerätesperre, die App-Switcher-Vorschau, reale Benachrichtigungen sowie Deinstallation und Neuinstallation auf physischen Geräten. Die Security-Review-Checkliste führt diese Punkte deshalb als manuelle Release-Gates. Für die Masterarbeit ist damit zwischen \emph{implementierter Sicherheitsarchitektur} und \emph{vollständig nachgewiesener Sicherheit des ausgelieferten Artefakts} zu unterscheiden. Der Quellcode und die automatisierten Prüfungen belegen die vorgesehenen Schutzmechanismen; die noch ausstehenden Realgeräte- und Distributionsprüfungen bleiben als Restrisiko beziehungsweise Freigabevoraussetzung dokumentiert.
+
+\section{iOS-Benachrichtigungen und Background Refresh}
+
+Benachrichtigungen sind in der iOS-/iPadOS-Implementierung als optionale unterstützende Infrastruktur ausgeführt und nicht als Bestandteil der eigentlichen Cue-Labeling-Intervention. Sie sollen auf neue allgemeine Informationen beziehungsweise auf die Verfügbarkeit einer weiteren Studiensituation hinweisen, verändern jedoch weder die Reihenfolge der Studienbedingungen noch den wissenschaftlichen Submission-Vertrag. Insbesondere werden über das Benachrichtigungssystem keine Rauchverlangenswerte, Reizzuordnungen oder sonstigen Forschungsdaten übertragen. Die Implementierung verwendet ausschließlich lokale iOS-Benachrichtigungen; eine Push-Registrierung oder ein externer Push-Dienst ist für diesen Zweck nicht erforderlich.
+
+\subsection{Optionale Benachrichtigungspräferenz und Systemberechtigung}
+
+Die App trennt die eigene Benachrichtigungspräferenz von der iOS-Systemberechtigung. Nach dem erstmaligen Abarbeiten des Informationsfeeds wird einmalig eine appinterne Auswahl angezeigt. Nur wenn die Option dort aktiviert bleibt, fordert CueLens anschließend die systemseitige Berechtigung an. Dabei wird ausschließlich die Berechtigungsoption \texttt{alert} angefordert; Ton- und Badge-Berechtigungen werden nicht verlangt. Eine Ablehnung verhindert weder die Aktivierung noch Demo, Feedback oder die produktive Studiendurchführung.
+
+Für die weitere Laufzeit werden zwei Zustände gemeinsam ausgewertet: die in den lokalen Einstellungen gespeicherte Präferenz \(P_{\mathrm{app}}\) und die aktuell vom System gemeldete Berechtigung \(P_{\mathrm{sys}}\). Die Benachrichtigungsinfrastruktur gilt nur dann als effektiv aktiviert, wenn
+
+\[
+E_{\mathrm{notif}} = P_{\mathrm{app}} \land P_{\mathrm{sys}}.
+\]
+
+Damit wird auch ein nachträglicher Entzug der iOS-Berechtigung berücksichtigt. Bei der Zustandsabstimmung werden dann keine neuen Studienerinnerungen geplant und ein gegebenenfalls vorgemerkter Background-Refresh-Request wird verworfen. Die gespeicherte appinterne Präferenz wird dadurch nicht mit der Studienaufklärung oder datenschutzrechtlichen Einwilligung gleichgesetzt; sie steuert ausschließlich die optionale Erinnerungsfunktion.
+
+\subsection{Lokale Erinnerungen an Studiensituationen}
+
+Studienerinnerungen werden aus dem bereits vorhandenen lokalen Studienzustand abgeleitet. Der Client benötigt dafür keinen zusätzlichen Backendendpunkt. Die \texttt{StudyReminderPolicy} plant eine Erinnerung nur, wenn Benachrichtigungen sowohl appseitig als auch systemseitig freigegeben sind, die App aktiviert ist, das serverseitig abgefragte Studienfeature freigeschaltet ist, der Studienzustand noch unvollständig ist, kein Selbstbericht auf Übertragung wartet und bereits mindestens eine, aber noch nicht alle 20 Situationen bestätigt wurden. Zusätzlich muss für die nächste Situation ein persistierter Freischaltzeitpunkt existieren.
+
+Mit \(n\) als Zahl der bestätigten Situationen lässt sich der Kern der Planungsbedingung vereinfachend als
+
+\[
+R = E_{\mathrm{notif}}
+\land A
+\land F
+\land (1 \leq n < 20)
+\land \neg P
+\land C
+\]
+
+angeben. Dabei bezeichnet \(A\) einen vorhandenen Aktivierungsstatus, \(F\) die aktivierte Studienfunktion, \(P\) einen ausstehenden Craving-Transfer und \(C\) einen vorhandenen Cooldown-Zeitpunkt. Die Zielnummer der Erinnerung ist \(n+1\). Die konkrete Auslieferung bleibt dem Betriebssystem überlassen; der Client hinterlegt den bereits im \texttt{StudyState} gespeicherten Zeitpunkt \texttt{nextSituationAvailableAt} als gewünschtes Lieferdatum.
+
+Für jede Studiensituation wird ein deterministischer Bezeichner der Form \texttt{de.eachandevery.cuelens.study-reminder.<n>} verwendet. Beim Reconcile werden Erinnerungen für nicht mehr aktuelle Situationen aus den vorgemerkten und ausgelieferten CueLens-Benachrichtigungen entfernt. Eine bereits als ausgeliefert gefundene Erinnerung mit demselben Bezeichner wird nicht erneut geplant. Ein Sprachwechsel kann dagegen einen noch ausstehenden Request unter demselben Bezeichner durch eine entsprechend lokalisierte Variante ersetzen.
+
+Der sichtbare Inhalt ist absichtlich generisch. Der Titel lautet lediglich \enquote{CueLens}; der deutschsprachige Remindertext lautet \enquote{Eine neue Aufgabe ist verfügbar.}. Weder Rauchen noch Rauchverlangen, Studienbedingung, Situationsnummer oder ein Personenbezug werden in den Benachrichtigungsinhalt aufgenommen. Für ausgeblendete Benachrichtigungsvorschauen registriert die App zusätzlich einen noch allgemeineren Platzhalter wie \enquote{Eine neue Information ist verfügbar.}. Damit reduziert die App die Wahrscheinlichkeit, dass aus einem gesperrten Bildschirm unmittelbar gesundheitsbezogene Rückschlüsse gezogen werden können.
+
+Eine Benachrichtigung startet keine Studiensituation automatisch. Der Notification-Delegate übersetzt den Bezeichner lediglich in die interne Route \texttt{studyHome}. Nach dem Aktivieren der App wird zur Startseite navigiert; dort gelten weiterhin das aktuelle Start-Gate, der Studienzustand, der Feature-Status und die Cooldown-Prüfung. Die Benachrichtigung ist somit ein Hinweis auf eine mögliche Verfügbarkeit und keine autoritative Freigabe der Intervention.
+
+\subsection{Informationshinweise und Background Refresh}
+
+Neben Studienerinnerungen unterstützt die App einen generischen Hinweis auf neue Einträge im Informationsfeed. Hierfür wird \texttt{BGAppRefreshTask} als best-effort Hintergrundmechanismus verwendet. Der \texttt{BackgroundRefreshCoordinator} registriert den Bezeichner \texttt{de.eachandevery.cuelens.infofeed.refresh}. Wenn die Benachrichtigungsfunktion effektiv aktiviert ist, wird ein nächster Refresh mit einem frühestmöglichen Start nach 24 Stunden eingereicht. Dieser Zeitpunkt ist keine Ausführungsgarantie; die tatsächliche Planung und Laufzeit des Tasks wird durch iOS bestimmt.
+
+Der Hintergrundtask führt ausschließlich einen Informationsabruf aus. Der \texttt{InfoFeedBackgroundChecker} liest zunächst die gespeicherte Benachrichtigungspräferenz und prüft erneut die aktuelle Systemberechtigung. Nur dann werden die Informationsnachrichten vom bestehenden Feed-Service abgerufen. Zur Entscheidung über einen Hinweis werden ausschließlich die numerischen Nachrichten-IDs mit den lokal bekannten und dauerhaft ausgeblendeten IDs verglichen. Neue IDs ergeben sich als
+
+\[
+I_{\mathrm{neu}}
+=
+I_{\mathrm{fetch}}
+\setminus
+\left(I_{\mathrm{bekannt}} \cup I_{\mathrm{ausgeblendet}}\right).
+\]
+
+Die abgerufenen IDs werden anschließend als bekannt markiert. Ist \(I_{\mathrm{neu}}\neq\emptyset\), wird eine lokale Informationsbenachrichtigung geplant. Ihr Text bleibt wiederum generisch, beispielsweise \enquote{Neue Information zu CueLens verfügbar}. Nachrichtentexte selbst werden für diesen Zweck nicht im lokalen Background-Status gespeichert. Ebenso verwendet dieser Hintergrundpfad weder den App-Token noch den Selbstberichtsendpunkt und kann deshalb keinen wissenschaftlichen Studienfortschritt erzeugen.
+
+Nach Beginn eines Background-Tasks wird der nächste Refresh erneut vorgemerkt. Wird die Aufgabe durch iOS wegen Zeitablaufs beendet, wird die zugehörige Swift-Concurrency-Task abgebrochen und der Task als nicht erfolgreich abgeschlossen. Fehler beim Feedabruf führen ebenfalls zu keinem wissenschaftlichen Zustandsübergang. Damit bleibt die Hintergrundfunktion gegenüber der eigentlichen Studiendurchführung entkoppelt.
+
+\begin{table}[htbp]
+\centering
+\caption{Rollen der iOS-Benachrichtigungstypen}
+\label{tab:ios-notification-types}
+\begin{tabular}{p{0.20\textwidth}p{0.25\textwidth}p{0.23\textwidth}p{0.20\textwidth}}
+\textbf{Typ} & \textbf{Auslöser} & \textbf{Inhalt und Datenbezug} & \textbf{Route nach Tap} \\
+\hline
+Studienerinnerung & lokaler bestätigter Fortschritt und Freischaltzeitpunkt & generischer Hinweis; kein Craving, kein Cue, keine Bedingung & Startseite; Start-Gate bleibt autoritativ \\
+Informationshinweis & Background-Feed enthält mindestens eine bisher unbekannte, nicht ausgeblendete ID & generischer Hinweis; Nachrichtentext wird nicht in die Notification übernommen & Informationsfeed wird beim Aktivieren erneut geladen \\
+\end{tabular}
+\end{table}
+
+\subsection{Lebenszyklus, Routing und Fehlerverhalten}
+
+Der \texttt{UNUserNotificationCenterDelegate} wird beim App-Start registriert. Trifft eine lokale Benachrichtigung ein, während die App bereits im Vordergrund aktiv ist, fordert die Implementierung keine zusätzliche Systemdarstellung an; die Delegate-Methode gibt eine leere Menge von Präsentationsoptionen zurück. Beim Antippen einer Benachrichtigung wird ausschließlich anhand des internen Bezeichners zwischen Informationsfeed und Studienstartseite unterschieden. Zusätzliche Nutzdaten aus der Benachrichtigung werden für die Navigation nicht ausgewertet.
+
+Die App stimmt die Benachrichtigungsinfrastruktur an mehreren fachlich relevanten Übergängen erneut ab, unter anderem nach der Benachrichtigungsauswahl und nach Änderungen des Studienfortschritts. Nach einer erfolgreichen oder fehlgeschlagenen Submission wird zunächst der produktive Studienzustand aktualisiert beziehungsweise beibehalten und anschließend die Erinnerungsplanung neu bewertet. Dadurch können veraltete Erinnerungen nach einem bestätigten Fortschritt entfernt und die nächste zulässige Situation vorgemerkt werden. Background Refresh bleibt davon unabhängig und wird nur entsprechend der effektiven Benachrichtigungsfreigabe aktiviert oder abbestellt.
+
+Die Architektur priorisiert dabei den Studienzustand vor der Zustellungskomfortfunktion. Scheitert ein lokaler Reminder oder wird ein Background-Task vom Betriebssystem nicht ausgeführt, darf daraus weder ein künstlicher Selbstbericht noch ein veränderter Situationszähler entstehen. Die wissenschaftlichen Endpunkte werden weiterhin ausschließlich über den in den vorherigen Abschnitten beschriebenen Submission- und Recovery-Pfad verändert.
+
+\subsection{Verifikation und verbleibende Grenzen}
+
+Für die Benachrichtigungslogik liegen automatisierte Tests auf der Ebene der Policy und der abstrahierten Notification-Center-Schnittstelle vor. Geprüft werden unter anderem die einmalige Anforderung der Systemberechtigung, deterministische Reminder-Bezeichner, die neutralen lokalisierten Texte, das Entfernen obsoleter Reminder, die Unterdrückung bei fehlender Aktivierung, fehlender Feature-Freigabe, Pending-Transfer oder abgeschlossenem Studium sowie die Navigation der beiden Benachrichtigungstypen. Für den Hintergrundchecker prüfen Tests insbesondere die Differenzbildung zwischen abgerufenen, bekannten und ausgeblendeten Nachrichten-IDs sowie das Verhalten bei deaktivierten Benachrichtigungen und Feedfehlern.
+
+Diese automatisierten Nachweise dürfen nicht mit einer Garantie realer iOS-Zustellung gleichgesetzt werden. \texttt{BGAppRefreshTask} und lokale Notifications werden vom Betriebssystem geplant und können beispielsweise aufgrund von Gerätezustand, Energieverwaltung, Nutzerkonfiguration oder fehlender Ausführungszeit ausbleiben. Der in der App angegebene 24-Stunden-Abstand ist daher lediglich ein \emph{earliest begin date} für den nächsten Hintergrundtask. Der reguläre Feedabruf beim aktiven Öffnen der App und das lokale Start-Gate bleiben für Inhalt beziehungsweise Studienfreigabe autoritativ.
+
+Auch zwei implementierungsspezifische Grenzen sind zu berücksichtigen. Erstens markiert der Background-Checker nach einem erfolgreichen Feedabruf die dabei gesehenen IDs bereits als bekannt, bevor beziehungsweise unabhängig davon, ob die anschließend best-effort geplante lokale Informationsbenachrichtigung tatsächlich beim Nutzer erscheint. Ein fehlgeschlagener oder vom System unterdrückter Hinweis wird deshalb nicht als zuverlässige Zustellwarteschlange erneut versucht. Zweitens berücksichtigt die Reminder-Policy zwar das Feld \texttt{lastNotifiedSituationNumber}; die eigentliche Benachrichtigungskomponente besitzt jedoch keinen Schreibzugriff auf den wissenschaftlichen Zustandsstore. Die primäre technische Duplikatkontrolle erfolgt damit über deterministische Notification-Bezeichner und die aktuell vom Notification Center gemeldeten Pending-/Delivered-Zustände, nicht über eine verteilte Zustellbestätigung.
+
+Aus studienmethodischer Sicht sind Benachrichtigungen deshalb als Adhärenzunterstützung und nicht als kontrollierter Bestandteil der Cue-Labeling-Manipulation einzuordnen. Sie enthalten keine Information darüber, ob als Nächstes Matching oder Labeling durchgeführt wird, und ändern den Messendpunkt nicht. Gleichwohl kann eine optionale beziehungsweise betriebssystemabhängig unterschiedlich zuverlässige Erinnerung beeinflussen, wann Teilnehmende zur App zurückkehren. Bei einer späteren Interpretation von Nutzungsdauer, Abbruchraten oder Plattformunterschieden darf die Existenz dieser unterstützenden Funktion daher nicht mit einer exakt kontrollierten Exposition gleichgesetzt werden. Die im Release-Audit noch vorgesehenen realen Gerätetests des Notification-Systemverhaltens bleiben entsprechend ein separater Freigabenachweis.
+
+\section{iOS-Unterstützung für direkten und Prolific-Abschluss}
+
+Die iOS-/iPadOS-Implementierung bildet beide im Backend vorgesehenen Abschlussmodi ab, ohne daraus zwei unterschiedliche wissenschaftliche Studienpfade zu erzeugen. Bis einschließlich des zwanzigsten Selbstberichts ist der Clientablauf identisch: Der Request enthält ausschließlich \texttt{app\_token}, \texttt{craving} und \texttt{app\_version}. Weder die bei der Aktivierung verwendete E-Mail-Adresse noch eine Prolific-ID oder ein expliziter Rekrutierungskanal werden mit dem wissenschaftlichen Selbstbericht übertragen. Erst die Antwort des Backends auf Situation~20 entscheidet, welcher administrative Abschlusszustand lokal persistiert wird.
+
+Diese Trennung ist insbesondere für die Datenminimierung und die Konsistenz zwischen Android, iOS und Backend relevant. Der iOS-Client leitet den Abschlussmodus nicht aus dem zuvor eingegebenen Aktivierungs-Identifier ab und speichert hierfür keine separate Prolific-ID im Studienzustand. Damit bleibt die Kanalentscheidung serverseitig an die bereits registrierte pseudonyme App-Identität gebunden. Für die wissenschaftliche Auswertung bleibt der Abschlussmodus von der Messung des Rauchverlangens getrennt.
+
+\subsection{Strikte Unterscheidung der Abschlussantworten}
+
+Der \texttt{SelfReportResponseDecoder} unterscheidet drei Antwortklassen: regulären Fortschritt, direkten Abschluss und Prolific-Abschluss. Für alle Klassen müssen \texttt{success}, \texttt{situation\_index} und \texttt{condition\_code} exakt zum lokal erwarteten Zustand passen. Zusätzliche oder widersprüchliche Felder werden nicht toleriert.
+
+Ein direkter Abschluss wird nur akzeptiert, wenn Situation~20 bestätigt wird, \texttt{status=complete} vorliegt und die Antwort zusätzlich genau einen syntaktisch gültigen UUID-v4-Wert in \texttt{compensation\_code} enthält. Ein Feld \texttt{completion\_mode} darf in diesem Antwortformat nicht vorhanden sein. Dies erhält zugleich die Rückwärtskompatibilität zum bestehenden direkten Backendvertrag.
+
+Der Prolific-Abschluss wird dagegen nur akzeptiert, wenn Situation~20 bestätigt wird, \texttt{status=complete} vorliegt und \texttt{completion\_mode} exakt den Wert \texttt{PROLIFIC\_MANUAL} trägt. Ein \texttt{compensation\_code} ist in diesem Antwortformat unzulässig. Eine Mischform, beispielsweise Prolific-Modus zusammen mit Kompensationscode, wird als Protokollverletzung behandelt und darf keinen lokalen Studienabschluss erzeugen.
+
+Formal kann die Entscheidung des Clients für die letzte Situation als partielle Abbildung
+
+\[
+f(r)=
+\begin{cases}
+D(c), & r \in R_D \land c\text{ ist UUID-v4},\\
+P, & r \in R_P \land \texttt{completion\_mode}=\texttt{PROLIFIC\_MANUAL},\\
+\bot, & \text{sonst}
+\end{cases}
+\]
+
+beschrieben werden. Dabei bezeichnet \(R_D\) die exakt zulässige Feldmenge des direkten Abschlusses, \(R_P\) die Feldmenge des Prolific-Abschlusses und \(\bot\) einen ungültigen Protokollzustand. Der Abschlussmodus entsteht somit nicht durch eine heuristische Interpretation einzelner Felder, sondern durch eine vollständige Vertragsprüfung der Antwort.
+
+\subsection{Persistiertes Abschlusszustandsmodell}
+
+Das lokale \texttt{CompletionState}-Modell unterscheidet \texttt{incomplete}, \texttt{invalid}, \texttt{directPendingConfirmation(code)}, \texttt{directCompleted(code)} und \texttt{prolificCompleted}. Nur \texttt{directCompleted} und \texttt{prolificCompleted} erfüllen die Eigenschaft \texttt{isCompleted}. Für die beiden direkten Zustände ist der Kompensationscode Bestandteil des persistierten Zustands; ein Prolific-Abschluss darf demgegenüber keinen Code enthalten. Auch die Codable-Dekodierung prüft diese Feldmengen strikt, sodass beispielsweise ein lokal gespeicherter \texttt{prolificCompleted}-Zustand mit zusätzlichem Code nicht akzeptiert wird.
+
+Damit entstehen zwei administrative Abschlussautomaten mit gemeinsamer wissenschaftlicher Vorstufe:
+
+\[
+\texttt{pendingCraving}_{20}
+\rightarrow
+\begin{cases}
+\texttt{directPendingConfirmation}(c)
+\rightarrow
+\texttt{directCompleted}(c),\\
+\texttt{prolificCompleted}.
+\end{cases}
+\]
+
+Der zentrale Unterschied besteht darin, dass der direkte Pfad eine zusätzliche serverseitige Bestätigung des Kompensationscodes verlangt, während der Prolific-Pfad nach der gültigen Abschlussantwort unmittelbar abgeschlossen werden kann.
+
+\begin{table}[htbp]
+\centering
+\caption{iOS-seitige Behandlung der beiden Studienabschlussmodi}
+\label{tab:ios-completion-modes}
+\begin{tabular}{p{0.22\textwidth}p{0.31\textwidth}p{0.31\textwidth}}
+\textbf{Merkmal} & \textbf{Direkte Teilnahme} & \textbf{Prolific-Teilnahme} \\
+\hline
+Abschlussantwort & \texttt{status=complete} und UUID-v4-\texttt{compensation\_code} & \texttt{status=complete}, \texttt{completion\_mode=PROLIFIC\_MANUAL}, kein Code \\
+Lokaler Zwischenzustand & \texttt{directPendingConfirmation(code)} & keiner \\
+Zusätzlicher Request & Bestätigung des Codes, erwarteter HTTP-Status 204 & keiner \\
+Persistierter Endzustand & \texttt{directCompleted(code)} & \texttt{prolificCompleted} \\
+Anzeige in der App & Abschlussmeldung, Code und Kopierfunktion & Abschlussmeldung ohne CueLens-Kompensationscode \\
+Prolific-Plattformaktion & keine & keine automatische Freigabe oder Auszahlung durch den iOS-Client \\
+\end{tabular}
+\end{table}
+
+\subsection{Direkter Abschluss mit Kompensationscode}
+
+Beim direkten Abschluss wird der vom Backend erhaltene UUID-v4-Code zunächst als \texttt{directPendingConfirmation} in den geschützten Studienzustand geschrieben. Erst danach sendet der \texttt{StudySubmissionService} einen separaten PUT-Request mit dem Feld \texttt{compensation\_code}. Erwartet wird exakt HTTP~204 mit leerem Responsebody. Der Code ist somit bereits lokal rekonstruierbar, bevor eine nicht atomar mit dem Gerät gekoppelte Netzwerkoperation erfolgt.
+
+Scheitert die Bestätigung durch Netzwerk- oder Serverfehler, verbleibt der Zustand in \texttt{directPendingConfirmation}. Ein späterer Recovery-Versuch sendet dann ausschließlich die Codebestätigung erneut und nicht noch einmal den zwanzigsten wissenschaftlichen Selbstbericht. Erst nach erfolgreicher Bestätigung und erfolgreicher Persistenz wird \texttt{confirmedSituationCount=20} zusammen mit \texttt{directCompleted(code)} gespeichert. Diese Reihenfolge verhindert, dass ein bereits ausgegebener Kompensationscode durch einen lokalen Prozessabbruch verloren geht.
+
+Auf der Startseite wird der Code nur für einen tatsächlich abgeschlossenen direkten Zustand angezeigt. Die Kopierfunktion verwendet \texttt{UIPasteboard} mit \texttt{localOnly=true} und einem Ablaufzeitpunkt nach 600~Sekunden. Dadurch soll der Inhalt nicht über die universelle Zwischenablage an andere Apple-Geräte synchronisiert werden und nur zeitlich begrenzt im Pasteboard verbleiben. Diese Maßnahme reduziert die Exposition des administrativen Zahlungsnachweises, ersetzt jedoch keinen vertraulichen Speicher: Ein Nutzer kann den Code weiterhin manuell kopieren, weitergeben oder als Bildschirmaufnahme erfassen. Der autoritative persistierte Zustand bleibt daher der geschützte lokale Studienzustand und nicht die Zwischenablage.
+
+\subsection{Prolific-Abschluss ohne lokalen Kompensationscode}
+
+Beim Prolific-Pfad wird nach einer gültigen Antwort mit \texttt{completion\_mode=PROLIFIC\_MANUAL} unmittelbar \texttt{prolificCompleted} mit \texttt{confirmedSituationCount=20} persistiert. Dabei wird weder ein CueLens-Kompensationscode erzeugt noch ein Bestätigungsrequest für einen solchen Code versendet. Die iOS-App zeigt entsprechend nur eine kanalspezifische Abschlussinformation an.
+
+Die Bezeichnung \texttt{PROLIFIC\_MANUAL} ist dabei wörtlich zu verstehen: Der iOS-Client führt keine automatische Freigabe, Vergütung oder Statusänderung über eine Prolific-Schnittstelle durch. Die im Backend vorgesehene administrative Markierung des CueLens-Studienabschlusses und die weitere Bearbeitung auf der Prolific-Plattform sind vom wissenschaftlichen iOS-Submissionpfad getrennt. Aus einem lokalen \texttt{prolificCompleted}-Zustand darf daher nicht abgeleitet werden, dass die externe Plattform bereits eine Auszahlung oder finale Submission-Freigabe vorgenommen hat.
+
+Diese Architektur vermeidet insbesondere, dass Prolific-Teilnehmende zusätzlich einen CueLens-Kompensationscode als parallelen Zahlungsnachweis erhalten. Umgekehrt bleibt für direkt Rekrutierte der bestehende Codepfad erhalten. Beide Gruppen erreichen denselben wissenschaftlichen Endpunkt von 20 bestätigten Selbstberichten, unterscheiden sich jedoch in der nachgelagerten administrativen Abwicklung.
+
+\subsection{UI-Verhalten nach Studienabschluss}
+
+Das App-Modell leitet die Darstellung ausschließlich aus dem persistierten Abschlusszustand ab. Bei \texttt{directCompleted(code)} ist \texttt{directCompensationCode} gesetzt; bei \texttt{prolificCompleted} ist stattdessen \texttt{hasProlificCompletion} wahr. Die Startansicht zeigt zunächst in beiden Fällen den allgemeinen Studienabschluss. Nur im direkten Fall folgen Code, Instruktion und Kopierfunktion. Im Prolific-Fall erscheint stattdessen ein eigener Hinweis ohne Codefeld.
+
+Da beide Endzustände \texttt{isCompleted=true} liefern, werden keine weiteren produktiven Studiensituationen angeboten. Damit verhindert die UI nicht nur versehentliche Folgesubmissions, sondern spiegelt den fachlichen Zustandsautomaten wider. Der Unterschied zwischen den Rekrutierungskanälen wird erst nach abgeschlossenem wissenschaftlichem Datensatz sichtbar und beeinflusst weder Cue-Matching noch Cue-Labeling oder die Craving-Erhebung.
+
+\subsection{Verifikation und verbleibende Fehlerfenster}
+
+Automatisierte Domänentests prüfen, dass direkte und Prolific-Abschlussantworten als unterschiedliche Typen dekodiert werden. Test-Fixtures mit ungültigen UUIDs, falscher Bedingung, zusätzlichen Feldern oder widersprüchlichen Abschlusskombinationen werden verworfen. Auf Koordinatorebene wird geprüft, dass der direkte Code vor seiner Bestätigung persistiert wird, dass eine fehlgeschlagene Bestätigung nach einem Neustart ausschließlich als Bestätigungsrequest wiederholt wird und dass der Prolific-Abschluss ohne Code und ohne weiteren Cooldown in den Endzustand übergeht.
+
+Die Unterstützung beider Modi beseitigt jedoch nicht das bereits beschriebene allgemeine Ende-zu-Ende-Problem einer verlorenen Antwort nach serverseitig erfolgreichem Selbstbericht. Besonders relevant ist dies beim direkten zwanzigsten Selbstbericht: Geht die Antwort mit dem neu erzeugten Kompensationscode verloren, besitzt der Client weiterhin nur den zuvor gespeicherten \texttt{pendingCraving}-Zustand und kennt den serverseitig erzeugten Code nicht. Ohne idempotenten Requestschlüssel oder einen Backendendpunkt zum erneuten Abruf des autoritativen Abschlusszustands kann der Client dieses spezielle Fenster nicht allein auflösen. Sobald der direkte Code dagegen einmal empfangen und als \texttt{directPendingConfirmation} persistiert wurde, ist die weitere Bestätigungswiederholung lokal rekonstruierbar.
+
+Beim Prolific-Pfad ist die Recovery günstiger, sofern das Backend bei einem erneuten Request nach bereits gespeichertem zwanzigstem Selbstbericht den bestehenden Prolific-Abschluss erneut als gültige Abschlussantwort zurückliefert. Die Clientarchitektur ist für diesen Fall vorbereitet, da ein weiterhin vorhandenes \texttt{pendingCraving} erneut über denselben Submissionpfad gesendet und eine gültige \texttt{prolificComplete}-Antwort anschließend persistiert wird. Diese Asymmetrie ist kein Unterschied der wissenschaftlichen Messung, sondern eine Folge der unterschiedlichen administrativen Abschlussprotokolle.
+
+Für die Interpretation der Studie ist daher weiterhin die Zahl der serverseitig bestätigten Selbstberichte das maßgebliche Vollständigkeitskriterium. Weder das Vorhandensein eines direkten Kompensationscodes noch der lokale Prolific-Abschlussstatus sollten als eigenständiger wissenschaftlicher Endpunkt ausgewertet werden. Die iOS-Implementierung bildet beide administrativen Modi explizit ab, hält sie aber technisch und semantisch vom eigentlichen Craving-Datensatz getrennt.
+
+\section{Umfangreiche Qualitätssicherung der iOS-/iPadOS-Implementierung}
+
+Die Qualitätssicherung der nativen iOS-/iPadOS-Portierung wurde als mehrstufige Verifikationskette aufgebaut. Sie ergänzt die zuvor beschriebene plattformübergreifende Testarchitektur um iOS-spezifische Prüfungen von Domänenlogik, Persistenz, Netzwerkverträgen, Recovery, SwiftUI-Oberfläche, Accessibility, Buildkonfiguration und Releasehärtung. Für eine medizinisch-informatische Studien-App ist diese Schichtung besonders relevant, weil ein technisch unauffälliger Oberflächenfehler ebenso wie ein Persistenz- oder Protokollfehler die Vollständigkeit, Reihenfolge oder Vertraulichkeit wissenschaftlicher Daten beeinflussen kann.
+
+Die Verifikation lässt sich als Menge komplementärer Nachweise
+
+\[
+V = V_{\mathrm{stat}}
+\cup V_{\mathrm{unit}}
+\cup V_{\mathrm{ui}}
+\cup V_{\mathrm{access}}
+\cup V_{\mathrm{build}}
+\cup V_{\mathrm{manual}}
+\]
+
+auffassen. Die Teilmengen sind nicht gegeneinander austauschbar: Ein bestandener Unit-Test weist beispielsweise weder reale Notification-Zustellung noch die korrekte Distribution-Signatur nach; umgekehrt kann ein manueller Test auf einem einzelnen Gerät keine systematische Prüfung aller Protokollrandfälle ersetzen. Die Freigabeentscheidung wird deshalb nicht aus einer einzelnen Testzahl abgeleitet, sondern aus dem Zusammenspiel mehrerer Verifikationsarten.
+
+\subsection{Dokumentierter automatisierter Testumfang}
+
+Für den am 24.08.2026 dokumentierten Source Candidate weist das Release-Manifest 170 Unit-Tests unter iOS~26.5 und dieselben 170 Unit-Tests unter iOS~17.5 aus. Ergänzend wurden 25 UI-Szenarien auf einem iPhone-Simulator und 25 UI-Szenarien auf einem iPad-Simulator unter iOS~26.5 ausgeführt. Das lokale Quality-Gate und der Release-Analyze-Lauf sind für diesen Stand als bestanden dokumentiert. Die Deployment-Untergrenze der App liegt bei iOS/iPadOS~17.0; der zusätzliche Testlauf auf iOS~17.5 dient damit als verfügbare Laufzeitprüfung nahe der unteren unterstützten Betriebssystemgeneration, ist jedoch kein Nachweis für jede einzelne Minor-Version ab 17.0.
+
+Tabelle~\ref{tab:ios-quality-assurance-layers} ordnet die wesentlichen Ebenen ihrer Aussagekraft und ihren Grenzen zu.
+
+\begin{table}[htbp]
+\centering
+\caption{Ebenen der iOS-/iPadOS-Qualitätssicherung}
+\label{tab:ios-quality-assurance-layers}
+\begin{tabular}{p{0.18\textwidth}p{0.27\textwidth}p{0.27\textwidth}p{0.18\textwidth}}
+\textbf{Ebene} & \textbf{Technischer Schwerpunkt} & \textbf{Dokumentierter Nachweis} & \textbf{Wesentliche Grenze} \\
+\hline
+Statische Gates & Schichtgrenzen, Security-Härtung, Konfiguration, verbotene Konstrukte & mehrere ausführbare Verifikationsskripte im Repository & keine reale Laufzeit- oder Gerätezustellung \\
+Unit-/Infrastructure-Tests & Domainregeln, Parser, Stores, Netzwerkfehler, Recovery, Nebenläufigkeit & 170 Tests auf iOS~26.5 und 170 auf iOS~17.5 & keine produktive Server-/Gerätekette \\
+UI-Tests & Navigation, Formulare, Studienablauf, Retry, beide Abschlüsse & je 25 Szenarien auf iPhone und iPad & synthetische Debug-Testservices statt Live-Backend \\
+Accessibility & Dynamic Type, Kontrast, Elementerkennung, Touchbereiche & maximale Accessibility-Schriftgröße und automatisierter Audit & vollständiger VoiceOver-Rundgang manuell offen \\
+Build/Analyze & Debug, Staging, Releasekonfiguration, Compiler-/Analyze-Befunde & lokales Quality-Gate und Release Analyze bestanden & keine Distribution-Signatur nachgewiesen \\
+Reale Freigabe & Gerät, TestFlight, Notifications, E2E, Langzeitbetrieb & Protokolle und Checklisten vorhanden & zum dokumentierten Stand noch offen \\
+\end{tabular}
+\end{table}
+
+Die Testanzahlen sind dabei keine Code-Coverage-Metrik. Im Repository ist für den betrachteten Source Candidate kein prozentualer Statement-, Branch- oder Path-Coverage-Wert als Freigabekriterium dokumentiert. Die Zahlen belegen daher die Breite wiederholbarer Tests, erlauben aber keine Aussage wie \enquote{170 Tests entsprechen einer bestimmten prozentualen Codeabdeckung}. Für die Bewertung ist stattdessen entscheidend, welche fachlich kritischen Zustände und Fehlerklassen tatsächlich adressiert werden.
+
+\subsection{Unit- und Infrastructure-Tests entlang kritischer Zustandsübergänge}
+
+Die Unit- und Infrastructure-Tests prüfen nicht nur isolierte Hilfsfunktionen, sondern insbesondere fachlich kritische Zustandsautomaten. Dazu gehören die Validierung von Teilnehmeridentifikatoren, der Studienplan mit zehn Matching- und zehn Labeling-Situationen, der Craving-Wertebereich, die strikte Dekodierung der Backendantworten, die Unterscheidung von direktem und Prolific-Abschluss, die Integritätsregeln des persistierten Studienzustands sowie der Start-Gate-Entscheid.
+
+Ein eigener Schwerpunkt liegt auf Fehler- und Recovery-Injektion. Für den produktiven Studienkoordinator wird unter anderem geprüft, dass ein Pending-Craving vor dem ersten Netzwerkrequest persistiert sein muss, dass Netzwerk- oder Protokollfehler keinen lokalen Fortschritt erzeugen, dass ein unerwarteter Situationsindex nicht akzeptiert wird und dass ein fehlender sicherer App-Token fail closed behandelt wird. Für den direkten Abschluss wird getestet, dass der Kompensationscode vor dem separaten Bestätigungsrequest gespeichert wird und ein Neustart nach fehlgeschlagener Bestätigung ausschließlich diesen Request wiederholt. Der Prolific-Pfad wird separat darauf geprüft, dass kein Kompensationscode und kein weiterer Cooldown persistiert werden.
+
+Damit wird die technische Qualitätssicherung direkt auf die wissenschaftlich relevanten Invarianten ausgerichtet. Ein bestandener Test soll nicht lediglich bestätigen, dass eine Methode einen erwarteten Rückgabewert erzeugt, sondern beispielsweise, dass ein Fehler zwischen lokaler Persistenz und Serverkommunikation keinen zusätzlichen Situationsfortschritt vortäuscht. Die Actor-basierte Serialisierung wird ergänzend durch Konkurrenztests geprüft: Zwei gleichzeitig ausgelöste Recovery-Versuche dürfen nicht zwei parallele wissenschaftliche Requests erzeugen.
+
+\subsection{UI-Automation auf iPhone und iPad}
+
+Die XCUITest-Suite deckt den App-Start, Informationsfeed, Sprachumschaltung, Benachrichtigungsauswahl, Aktivierung mit E-Mail-Adresse und Prolific-ID, Fehlerzustände der Aktivierung, Demo, Feedback, produktiven Matching- und Labeling-Ablauf, Pending-Retry sowie beide Abschlussmodi ab. Für den produktiven Matching-Pfad wird beispielsweise geprüft, dass genau fünf Trials vor der Craving-Abfrage durchlaufen werden, der Slider mit 50 startet und nach erfolgreicher Submission ein gesperrter nächster Durchgang angezeigt wird. Weitere Szenarien prüfen den Prolific-Abschluss ohne Code, den direkten Abschluss mit erst nach Abschluss sichtbarer Kopierfunktion sowie eine fehlgeschlagene Codebestätigung mit anschließendem Retry.
+
+Die UI-Suite wird im Quality-Gate getrennt auf einer iPhone- und einer iPad-Simulatorinstanz ausgeführt. Damit werden unterschiedliche Viewportklassen berücksichtigt, ohne für beide Plattformen separate UI-Codebasen zu unterhalten. Der Test auf zwei Geräteklassen ist jedoch kein vollständiger Gerätekompatibilitätsnachweis; reale Displaygrößen, Speicherzustände, Energiesparmodi, Gerätesperre und Betriebssystemplanung von Hintergrundaufgaben werden durch Simulatoren nur unvollständig repräsentiert.
+
+Für die Aussagekraft der UI-Tests ist außerdem die verwendete Testarchitektur zu berücksichtigen. Im Debug-Build können definierte Launch-Argumente eine explizite UI-Testumgebung aktivieren. Diese injiziert unter anderem synthetische Persistenz-, Aktivierungs-, Feature-, Submission- und Kopierdienste sowie einen deterministischen Randomizer. Matching-Zeitintervalle werden für die UI-Automation verkürzt und Abschluss- beziehungsweise Fehlerantworten deterministisch simuliert. Dadurch lassen sich Oberflächen- und Zustandsübergänge reproduzierbar testen, ohne echte Teilnehmerdaten oder produktive Servertransaktionen zu verwenden. Genau deshalb sind diese Tests jedoch nicht mit einem Staging-Ende-zu-Ende-Test gleichzusetzen.
+
+Diese Trennung ist methodisch erwünscht: Die UI-Suite soll Fehler im Client deterministisch reproduzieren, während die reale Integrationskette aus Registrierung, Backend, App-Aktivierung, zwanzig Selbstberichten und administrativem Abschluss separat freigegeben werden muss. Ein erfolgreicher UI-Test des Prolific-Abschlusses belegt somit, dass die App eine gültige \texttt{PROLIFIC\_MANUAL}-Antwort korrekt darstellt; er belegt nicht, dass eine reale Prolific-Registrierung und die produktive administrative Bearbeitung Ende zu Ende funktionieren.
+
+\subsection{Reproduzierbares lokales Quality-Gate}
+
+Die wesentlichen automatisierbaren Prüfungen werden durch \texttt{Scripts/quality\_gate.sh} zu einem lokalen Gate zusammengeführt. Vor den Xcode-Testläufen werden unter anderem Schichtgrenzen, Persistenz-, Netzwerk-, Notification-, Aktivierungs-, Pre-Study-, produktive Studien-, Submission- und Hardening-Regeln sowie Release-Dokumentation und Staging-Konfiguration durch spezialisierte Skripte geprüft. Anschließend verifiziert das Gate die festgelegte Toolchain Xcode~26.6 mit Build~17F113, baut Debug und Staging für den iOS-Simulator, führt die Unit-Tests aus, startet die UI-Suite auf iPhone und iPad und prüft abschließend die Release-Konfiguration.
+
+Die Fixierung der Toolchain reduziert eine häufige Reproduzierbarkeitsquelle bei Swift-/Xcode-Projekten: Ein Testlauf mit einer anderen Compiler- oder SDK-Version wird nicht stillschweigend als gleichwertig behandelt. Gleichzeitig ist diese Entscheidung wartungsrelevant. Ein späteres Xcode-Update erfordert eine bewusste Anpassung und erneute Verifikation des Gates, statt die Toolchain unkontrolliert zu verändern.
+
+Zusätzlich zum Quality-Gate ist ein Release-Analyze-Lauf vorgesehen. Für den dokumentierten Source Candidate wird dieser als bestanden geführt. Die Security- und Hardening-Prüfungen kontrollieren unter anderem das Fehlen von Force-Unwraps, \texttt{try!}, erzwungenen Casts, unerlaubten Release-Endpunkten, Tracking-/Analytics-SDKs und bestimmten nicht benötigten Berechtigungen beziehungsweise Entitlements. Solche statischen Negativprüfungen sind besonders geeignet, unerwünschte Architekturabweichungen früh zu erkennen; sie ersetzen jedoch keine Laufzeitprüfung des final signierten Artefakts.
+
+\subsection{Accessibility als Qualitätsmerkmal}
+
+Barrierefreiheit wurde nicht ausschließlich als nachgelagerte manuelle Prüfung behandelt. Ein UI-Szenario startet die App mit der maximalen Accessibility-Schriftgröße und prüft, ob zentrale Formulare und Aktionen weiterhin erreichbar beziehungsweise scrollbar bleiben. Ein weiterer Test verwendet den automatisierten Accessibility-Audit von XCTest für Kontrast, Elementerkennung und Touchbereiche auf der Startansicht. Zusätzlich enthalten die UI-Szenarien fachlich neutrale Accessibility-Labels für Studienbilder und prüfen die Beschriftung des Craving-Sliders.
+
+Automatisierte Accessibility-Prüfungen erfassen jedoch nicht die vollständige Nutzung mit assistiven Technologien. Die vorhandene Review-Checkliste sieht deshalb weiterhin einen manuellen VoiceOver-Gesamtrundgang in Deutsch und Englisch, die Fokusreihenfolge nach Zustandsänderungen, Hoch- und Querformat auf iPad sowie die Bedienbarkeit bei maximaler Schriftgröße vor. Insbesondere die neutrale Beschreibung rauchbezogener Reizbilder ist hier nicht nur eine Bedienbarkeits-, sondern auch eine studienmethodische Anforderung, weil eine suggestive Accessibility-Beschriftung die intendierte Reizverarbeitung verändern könnte.
+
+\subsection{Trennung von automatisierter Verifikation und Releasefreigabe}
+
+Der dokumentierte DoD-Audit unterscheidet konsequent zwischen \enquote{BESTANDEN automatisiert}, \enquote{MANUELL OFFEN} und \enquote{EXTERN OFFEN}. Zum betrachteten Stand sind in den automatisierten Prüfungen keine offenen kritischen oder hohen Produktbefunde dokumentiert. Daraus wurde dennoch keine Releasefreigabe abgeleitet. Der Gesamtstatus bleibt \texttt{RELEASE BLOCKED}, weil mehrere Nachweise außerhalb der Simulator- und Repositorytests fehlen.
+
+Zu diesen offenen Gates gehören insbesondere reale Tests von Gerätesperre und App-Switcher-Sichtschutz, Notification-Systemverhalten, ein vollständiger VoiceOver-Rundgang, ein Distribution-signiertes Archiv, TestFlight auf mehreren realen Geräten, je ein vollständiger direkter und Prolific-Staging-Abschluss sowie der geplante 14-Tage-Langzeittest. Zusätzlich bleiben der Abgleich der Datenschutzangaben und die formalen externen Freigaben eigenständige Voraussetzungen. Ein vorhandenes Development-signiertes Archiv mit \texttt{get-task-allow=true} wird ausdrücklich nicht als Distributionsnachweis gewertet.
+
+Für den Langzeittest liegt bereits ein datensparsames Protokoll vor. Vorgesehen sind 20 Situationen mit produktivem dreistündigem Cooldown über mindestens 14 Kalendertage, App- und Geräteneustarts, Sprachwechsel, Notification-Erlaubnis und -Entzug, Hintergrundphasen, kontrollierte Netzwerkunterbrechung nach persistiertem Pending-Wert, manueller Retry sowie beide administrativen Abschlusswege auf mindestens zwei Geräten beziehungsweise Geräteläufen. Zum dokumentierten Stand ist dieses Protokoll mit \enquote{NICHT DURCHGEFÜHRT} gekennzeichnet. Die Existenz des Testplans wird daher nicht als Testergebnis ausgegeben.
+
+Diese Trennung verhindert eine Überinterpretation automatisierter Testzahlen. Die iOS-Portierung besitzt einen umfangreichen und reproduzierbaren technischen Nachweis auf Quellcode-, Simulator- und Build-Ebene. Aussagen über reale Langzeitstabilität, Distribution, tatsächliche Notification-Zustellung oder vollständige Ende-zu-Ende-Integration werden dagegen erst nach den dafür vorgesehenen manuellen beziehungsweise externen Prüfungen gerechtfertigt. Für die Masterarbeit ist damit sowohl der erreichte technische Reifegrad als auch dessen Grenze nachvollziehbar dokumentiert.

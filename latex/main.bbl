@@ -1,5 +1,5 @@
 % $ biblatex auxiliary file $
-% $ biblatex bbl format version 3.2 $
+% $ biblatex bbl format version 3.3 $
 % Do not modify the above lines!
 %
 % This is an auxiliary file used by the 'biblatex' package.
@@ -18,8 +18,8 @@
 
 
 \refsection{0}
-  \datalist[entry]{none/global//global/global}
-    \entry{effertz_viarisio_kosten_rauchens_2015}{report}{}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{effertz_viarisio_kosten_rauchens_2015}{report}{}{}
       \name{author}{2}{}{%
         {{hash=621a38749dccc8e5906b19588f6d3430}{%
            family={Effertz},
@@ -40,10 +40,12 @@
       }
       \strng{namehash}{fd69834459eaa90a34eca19cdc3381e8}
       \strng{fullhash}{fd69834459eaa90a34eca19cdc3381e8}
+      \strng{fullhashraw}{fd69834459eaa90a34eca19cdc3381e8}
       \strng{bibnamehash}{fd69834459eaa90a34eca19cdc3381e8}
       \strng{authorbibnamehash}{fd69834459eaa90a34eca19cdc3381e8}
       \strng{authornamehash}{fd69834459eaa90a34eca19cdc3381e8}
       \strng{authorfullhash}{fd69834459eaa90a34eca19cdc3381e8}
+      \strng{authorfullhashraw}{fd69834459eaa90a34eca19cdc3381e8}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -63,7 +65,7 @@
       \verb https://www.dkfz.de/fileadmin/user_upload/Krebspraevention/Download/pdf/AdWfdP/AdWfdP_2015_Die-Kosten-des-Rauchens-in-Deutschland.pdf
       \endverb
     \endentry
-    \entry{bmg_rauchen_2026}{online}{}
+    \entry{bmg_rauchen_2026}{online}{}{}
       \name{author}{1}{}{%
         {{hash=461b3b9f7a186a0fe5412479d9ab16e4}{%
            family={{Bundesministerium für Gesundheit}},
@@ -71,10 +73,12 @@
       }
       \strng{namehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{fullhash}{461b3b9f7a186a0fe5412479d9ab16e4}
+      \strng{fullhashraw}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{bibnamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authorbibnamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authornamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authorfullhash}{461b3b9f7a186a0fe5412479d9ab16e4}
+      \strng{authorfullhashraw}{461b3b9f7a186a0fe5412479d9ab16e4}
       \field{extraname}{1}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
@@ -97,7 +101,7 @@
       \verb https://www.bundesgesundheitsministerium.de/service/begriffe-von-a-z/r/rauchen
       \endverb
     \endentry
-    \entry{olk_esa_tabak_2026}{report}{}
+    \entry{olk_esa_tabak_2026}{report}{}{}
       \name{author}{4}{}{%
         {{hash=cfcbef57f2c560c5870dbf987b3e410b}{%
            family={Olk},
@@ -125,10 +129,12 @@
       }
       \strng{namehash}{d3b54199bb57209b35d295af7ae578bc}
       \strng{fullhash}{bec2b1f6e482b0f895662dfd42c3fac1}
+      \strng{fullhashraw}{bec2b1f6e482b0f895662dfd42c3fac1}
       \strng{bibnamehash}{d3b54199bb57209b35d295af7ae578bc}
       \strng{authorbibnamehash}{d3b54199bb57209b35d295af7ae578bc}
       \strng{authornamehash}{d3b54199bb57209b35d295af7ae578bc}
       \strng{authorfullhash}{bec2b1f6e482b0f895662dfd42c3fac1}
+      \strng{authorfullhashraw}{bec2b1f6e482b0f895662dfd42c3fac1}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
@@ -151,7 +157,7 @@
       \verb https://doi.org/10.5281/zenodo.18847143
       \endverb
     \endentry
-    \entry{who_tobacco_cessation_guideline_2024}{book}{}
+    \entry{who_tobacco_cessation_guideline_2024}{book}{}{}
       \name{author}{1}{}{%
         {{hash=531217507bec092b6ec36c0f78f46736}{%
            family={{World Health Organization}},
@@ -165,10 +171,12 @@
       }
       \strng{namehash}{531217507bec092b6ec36c0f78f46736}
       \strng{fullhash}{531217507bec092b6ec36c0f78f46736}
+      \strng{fullhashraw}{531217507bec092b6ec36c0f78f46736}
       \strng{bibnamehash}{531217507bec092b6ec36c0f78f46736}
       \strng{authorbibnamehash}{531217507bec092b6ec36c0f78f46736}
       \strng{authornamehash}{531217507bec092b6ec36c0f78f46736}
       \strng{authorfullhash}{531217507bec092b6ec36c0f78f46736}
+      \strng{authorfullhashraw}{531217507bec092b6ec36c0f78f46736}
       \field{sortinit}{4}
       \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
@@ -180,7 +188,7 @@
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
-    \entry{bmg_gesund_bleiben_praevention_2025}{online}{}
+    \entry{bmg_gesund_bleiben_praevention_2025}{online}{}{}
       \name{author}{1}{}{%
         {{hash=461b3b9f7a186a0fe5412479d9ab16e4}{%
            family={{Bundesministerium für Gesundheit}},
@@ -188,10 +196,12 @@
       }
       \strng{namehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{fullhash}{461b3b9f7a186a0fe5412479d9ab16e4}
+      \strng{fullhashraw}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{bibnamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authorbibnamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authornamehash}{461b3b9f7a186a0fe5412479d9ab16e4}
       \strng{authorfullhash}{461b3b9f7a186a0fe5412479d9ab16e4}
+      \strng{authorfullhashraw}{461b3b9f7a186a0fe5412479d9ab16e4}
       \field{extraname}{2}
       \field{sortinit}{5}
       \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
@@ -211,7 +221,7 @@
       \verb https://www.bundesgesundheitsministerium.de/themen/krankenversicherung/online-ratgeber-krankenversicherung/medizinische-versorgung-und-leistungen-der-krankenversicherung/gesundheitsfoerderung-und-praevention
       \endverb
     \endentry
-    \entry{gba_tabakentwoehnung_2025}{online}{}
+    \entry{gba_tabakentwoehnung_2025}{online}{}{}
       \name{author}{1}{}{%
         {{hash=8fa1018ef7253862e810d3f275ecc1d1}{%
            family={{Gemeinsamer Bundesausschuss}},
@@ -219,10 +229,12 @@
       }
       \strng{namehash}{8fa1018ef7253862e810d3f275ecc1d1}
       \strng{fullhash}{8fa1018ef7253862e810d3f275ecc1d1}
+      \strng{fullhashraw}{8fa1018ef7253862e810d3f275ecc1d1}
       \strng{bibnamehash}{8fa1018ef7253862e810d3f275ecc1d1}
       \strng{authorbibnamehash}{8fa1018ef7253862e810d3f275ecc1d1}
       \strng{authornamehash}{8fa1018ef7253862e810d3f275ecc1d1}
       \strng{authorfullhash}{8fa1018ef7253862e810d3f275ecc1d1}
+      \strng{authorfullhashraw}{8fa1018ef7253862e810d3f275ecc1d1}
       \field{sortinit}{6}
       \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
@@ -240,7 +252,7 @@
       \verb https://www.g-ba.de/presse/pressemitteilungen-meldungen/1256/
       \endverb
     \endentry
-    \entry{baecke_gkv_bonusprogramme_2026}{online}{}
+    \entry{baecke_gkv_bonusprogramme_2026}{online}{}{}
       \name{author}{1}{}{%
         {{hash=b7a8ed78defff1b09d317d4b4f6c89a5}{%
            family={Baecke},
@@ -250,10 +262,12 @@
       }
       \strng{namehash}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \strng{fullhash}{b7a8ed78defff1b09d317d4b4f6c89a5}
+      \strng{fullhashraw}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \strng{bibnamehash}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \strng{authorbibnamehash}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \strng{authornamehash}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \strng{authorfullhash}{b7a8ed78defff1b09d317d4b4f6c89a5}
+      \strng{authorfullhashraw}{b7a8ed78defff1b09d317d4b4f6c89a5}
       \field{sortinit}{7}
       \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
@@ -271,7 +285,7 @@
       \verb https://www.handelsblatt.com/vergleich/gkv-bonusprogramme/
       \endverb
     \endentry
-    \entry{tabibnia_cuelabeling_2026}{article}{}
+    \entry{tabibnia_cuelabeling_2026}{article}{}{}
       \name{author}{8}{}{%
         {{hash=93c7f015a28fbcd8aa00dbe50eb6cda2}{%
            family={Tabibnia},
@@ -316,10 +330,12 @@
       }
       \strng{namehash}{07cd59aafd1bc9e19229ffb5067f554c}
       \strng{fullhash}{cb1177bce51a03cf350fcea344910bdb}
+      \strng{fullhashraw}{cb1177bce51a03cf350fcea344910bdb}
       \strng{bibnamehash}{07cd59aafd1bc9e19229ffb5067f554c}
       \strng{authorbibnamehash}{07cd59aafd1bc9e19229ffb5067f554c}
       \strng{authornamehash}{07cd59aafd1bc9e19229ffb5067f554c}
       \strng{authorfullhash}{cb1177bce51a03cf350fcea344910bdb}
+      \strng{authorfullhashraw}{cb1177bce51a03cf350fcea344910bdb}
       \field{sortinit}{8}
       \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
@@ -353,7 +369,7 @@
       \verb https://www.nature.com/articles/s41386-025-02297-8
       \endverb
     \endentry
-    \entry{addiction_research_center_qsu}{online}{}
+    \entry{addiction_research_center_qsu}{online}{}{}
       \name{author}{1}{}{%
         {{hash=c6050ceb181334710a98a390f2bdad3c}{%
            family={{Addiction Research Center}},
@@ -361,10 +377,12 @@
       }
       \strng{namehash}{c6050ceb181334710a98a390f2bdad3c}
       \strng{fullhash}{c6050ceb181334710a98a390f2bdad3c}
+      \strng{fullhashraw}{c6050ceb181334710a98a390f2bdad3c}
       \strng{bibnamehash}{c6050ceb181334710a98a390f2bdad3c}
       \strng{authorbibnamehash}{c6050ceb181334710a98a390f2bdad3c}
       \strng{authornamehash}{c6050ceb181334710a98a390f2bdad3c}
       \strng{authorfullhash}{c6050ceb181334710a98a390f2bdad3c}
+      \strng{authorfullhashraw}{c6050ceb181334710a98a390f2bdad3c}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -381,7 +399,7 @@
       \verb https://arc.psych.wisc.edu/self-report/questionnaire-on-smoking-urges-qsu/
       \endverb
     \endentry
-    \entry{pericot_valverde_vr_smoking_cessation_2019}{article}{}
+    \entry{pericot_valverde_vr_smoking_cessation_2019}{article}{}{}
       \name{author}{3}{}{%
         {{hash=a5af1f2e8f596e4b6eab585260542c3d}{%
            family={Pericot-Valverde},
@@ -401,10 +419,12 @@
       }
       \strng{namehash}{52de0edcd77ffea054a8a0714c19937d}
       \strng{fullhash}{52de0edcd77ffea054a8a0714c19937d}
+      \strng{fullhashraw}{52de0edcd77ffea054a8a0714c19937d}
       \strng{bibnamehash}{52de0edcd77ffea054a8a0714c19937d}
       \strng{authorbibnamehash}{52de0edcd77ffea054a8a0714c19937d}
       \strng{authornamehash}{52de0edcd77ffea054a8a0714c19937d}
       \strng{authorfullhash}{52de0edcd77ffea054a8a0714c19937d}
+      \strng{authorfullhashraw}{52de0edcd77ffea054a8a0714c19937d}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -434,7 +454,7 @@
       \verb https://linkinghub.elsevier.com/retrieve/pii/S0740547218301648
       \endverb
     \endentry
-    \entry{dougan_ar_smoking_cessation_2025}{article}{}
+    \entry{dougan_ar_smoking_cessation_2025}{article}{}{}
       \name{author}{16}{}{%
         {{hash=af46d232b2afd50d3271b7083a0c0191}{%
            family={Dougan},
@@ -519,10 +539,12 @@
       }
       \strng{namehash}{03f1afa79241e9d66ebef47b76670885}
       \strng{fullhash}{7cf5a2982b85b49c9ccd240698058c68}
+      \strng{fullhashraw}{7cf5a2982b85b49c9ccd240698058c68}
       \strng{bibnamehash}{03f1afa79241e9d66ebef47b76670885}
       \strng{authorbibnamehash}{03f1afa79241e9d66ebef47b76670885}
       \strng{authornamehash}{03f1afa79241e9d66ebef47b76670885}
       \strng{authorfullhash}{7cf5a2982b85b49c9ccd240698058c68}
+      \strng{authorfullhashraw}{7cf5a2982b85b49c9ccd240698058c68}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -553,7 +575,7 @@
       \verb https://jnccn.org/view/journals/jnccn/23/3.5/article-TIP25-241.xml
       \endverb
     \endentry
-    \entry{cohen_power_2013}{book}{}
+    \entry{cohen_power_2013}{book}{}{}
       \name{author}{1}{}{%
         {{hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
            family={Cohen},
@@ -566,10 +588,12 @@
       }
       \strng{namehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{fullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{bibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorbibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -596,7 +620,7 @@
       \verb https://www.taylorfrancis.com/books/9781134742707
       \endverb
     \endentry
-    \entry{giner_sorolla_power_2024}{article}{}
+    \entry{giner_sorolla_power_2024}{article}{}{}
       \name{author}{11}{}{%
         {{hash=1c3802f3df95f698d5d72a0fb200f311}{%
            family={Giner-Sorolla},
@@ -656,10 +680,12 @@
       }
       \strng{namehash}{65087b4783f4ae43d53f25722e1eb2fa}
       \strng{fullhash}{ced973506d3b7cbd1a3dca3b1985ddc7}
+      \strng{fullhashraw}{ced973506d3b7cbd1a3dca3b1985ddc7}
       \strng{bibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
       \strng{authorbibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
       \strng{authornamehash}{65087b4783f4ae43d53f25722e1eb2fa}
       \strng{authorfullhash}{ced973506d3b7cbd1a3dca3b1985ddc7}
+      \strng{authorfullhashraw}{ced973506d3b7cbd1a3dca3b1985ddc7}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
@@ -694,7 +720,7 @@
       \verb https://journals.sagepub.com/doi/10.1177/10888683241228328
       \endverb
     \endentry
-    \entry{weinfurt_clinically_meaningful_2019}{article}{}
+    \entry{weinfurt_clinically_meaningful_2019}{article}{}{}
       \name{author}{1}{}{%
         {{hash=c4ca1c27883f501a7a3511954f439325}{%
            family={Weinfurt},
@@ -704,10 +730,12 @@
       }
       \strng{namehash}{c4ca1c27883f501a7a3511954f439325}
       \strng{fullhash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{fullhashraw}{c4ca1c27883f501a7a3511954f439325}
       \strng{bibnamehash}{c4ca1c27883f501a7a3511954f439325}
       \strng{authorbibnamehash}{c4ca1c27883f501a7a3511954f439325}
       \strng{authornamehash}{c4ca1c27883f501a7a3511954f439325}
       \strng{authorfullhash}{c4ca1c27883f501a7a3511954f439325}
+      \strng{authorfullhashraw}{c4ca1c27883f501a7a3511954f439325}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
@@ -740,7 +768,121 @@
       \verb https://jamanetwork.com/journals/jama/fullarticle/2757036
       \endverb
     \endentry
-    \entry{james_islr_2021}{book}{}
+    \entry{ho_diffusion_2020}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=2ac2ca10b22e4d13af1767e87495412f}{%
+           family={Ho},
+           familyi={H\bibinitperiod},
+           given={Jonathan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=31ac0835ffc3ba6d612252522a6a2011}{%
+           family={Jain},
+           familyi={J\bibinitperiod},
+           given={Ajay},
+           giveni={A\bibinitperiod}}}%
+        {{hash=e28d4ee199593959d8c29980a64f1974}{%
+           family={Abbeel},
+           familyi={A\bibinitperiod},
+           given={Pieter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Curran Associates, Inc.}%
+      }
+      \strng{namehash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{fullhash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{fullhashraw}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{bibnamehash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{authorbibnamehash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{authornamehash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{authorfullhash}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \strng{authorfullhashraw}{1ef17e0fed8d834b029ebb1c6adf76b4}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Advances in Neural Information Processing Systems}
+      \field{langid}{english}
+      \field{title}{Denoising Diffusion Probabilistic Models}
+      \field{urlday}{2}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{6840\bibrangedash 6851}
+      \range{pages}{12}
+      \verb{urlraw}
+      \verb https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html
+      \endverb
+    \endentry
+    \entry{rombach_latent_diffusion_2022}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=0921e3810ca1ba112b5f374d82f0735f}{%
+           family={Rombach},
+           familyi={R\bibinitperiod},
+           given={Robin},
+           giveni={R\bibinitperiod}}}%
+        {{hash=43a95cf5d0fe271fe6d6d0e5803cbfc9}{%
+           family={Blattmann},
+           familyi={B\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=809ae73566d8d76e9931ffde3969f1dc}{%
+           family={Lorenz},
+           familyi={L\bibinitperiod},
+           given={Dominik},
+           giveni={D\bibinitperiod}}}%
+        {{hash=e61c1cb5e29d764299a12d1ab334cdc2}{%
+           family={Esser},
+           familyi={E\bibinitperiod},
+           given={Patrick},
+           giveni={P\bibinitperiod}}}%
+        {{hash=030fdbe4b0bf5c4210fa2e50c87b9ff1}{%
+           family={Ommer},
+           familyi={O\bibinitperiod},
+           given={Björn},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{b5bfcd95459df0d66c58a299cbec3e9a}
+      \strng{fullhash}{c1e635e3f33ee547be2644eb3d687673}
+      \strng{fullhashraw}{c1e635e3f33ee547be2644eb3d687673}
+      \strng{bibnamehash}{b5bfcd95459df0d66c58a299cbec3e9a}
+      \strng{authorbibnamehash}{b5bfcd95459df0d66c58a299cbec3e9a}
+      \strng{authornamehash}{b5bfcd95459df0d66c58a299cbec3e9a}
+      \strng{authorfullhash}{c1e635e3f33ee547be2644eb3d687673}
+      \strng{authorfullhashraw}{c1e635e3f33ee547be2644eb3d687673}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{title}{High-Resolution Image Synthesis with Latent Diffusion Models}
+      \field{urlday}{2}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{10684\bibrangedash 10695}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1109/CVPR52688.2022.01042
+      \endverb
+      \verb{urlraw}
+      \verb https://openaccess.thecvf.com/content/CVPR2022/html/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.html
+      \endverb
+      \verb{url}
+      \verb https://openaccess.thecvf.com/content/CVPR2022/html/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.html
+      \endverb
+    \endentry
+    \entry{james_islr_2021}{book}{}{}
       \name{author}{4}{}{%
         {{hash=df184c5fa522ac8a515ec4de13aef234}{%
            family={James},
@@ -771,10 +913,12 @@
       }
       \strng{namehash}{f8f737f83d9e451c1afaa13cdc120516}
       \strng{fullhash}{da61646157a6be769f34984f5cb603b0}
+      \strng{fullhashraw}{da61646157a6be769f34984f5cb603b0}
       \strng{bibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
       \strng{authorbibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
       \strng{authornamehash}{f8f737f83d9e451c1afaa13cdc120516}
       \strng{authorfullhash}{da61646157a6be769f34984f5cb603b0}
+      \strng{authorfullhashraw}{da61646157a6be769f34984f5cb603b0}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
@@ -792,7 +936,203 @@
       \verb C:\Users\sberg\Zotero\storage\2BJQFI8E\James et al. - 2021 - An introduction to statistical learning with applications in R.pdf
       \endverb
     \endentry
-    \entry{manning_ir_2008}{book}{}
+    \entry{pan_transfer_learning_2010}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=224c02b5d289fefd08d4f9f1a83c5d0c}{%
+           family={Pan},
+           familyi={P\bibinitperiod},
+           given={Sinno\bibnamedelima Jialin},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=55242d2a60270145342841e4d4238da0}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Qiang},
+           giveni={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{fullhash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{fullhashraw}{770fc1d95710074c9506ab4f7d386573}
+      \strng{bibnamehash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{authorbibnamehash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{authornamehash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{authorfullhash}{770fc1d95710074c9506ab4f7d386573}
+      \strng{authorfullhashraw}{770fc1d95710074c9506ab4f7d386573}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1041-4347}
+      \field{journaltitle}{IEEE Transactions on Knowledge and Data Engineering}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{number}{10}
+      \field{title}{A Survey on Transfer Learning}
+      \field{urlday}{2}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{22}
+      \field{year}{2010}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1345\bibrangedash 1359}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1109/TKDE.2009.191
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1109/TKDE.2009.191
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1109/TKDE.2009.191
+      \endverb
+    \endentry
+    \entry{howard_mobilenetv3_2019}{inproceedings}{}{}
+      \name{author}{12}{}{%
+        {{hash=315c4166fc1f7cb66324a7f0d82827cd}{%
+           family={Howard},
+           familyi={H\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+        {{hash=8f90fd131c2bbfde4d0e9fdd7ed4ea8b}{%
+           family={Sandler},
+           familyi={S\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+        {{hash=23d7392f104cfe02f7b2ad118417c972}{%
+           family={Chu},
+           familyi={C\bibinitperiod},
+           given={Grace},
+           giveni={G\bibinitperiod}}}%
+        {{hash=9dddfcfd529634a150ee38ee5c0203d7}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Liang-Chieh},
+           giveni={L\bibinithyphendelim C\bibinitperiod}}}%
+        {{hash=31960f03389184b7f052f5b197cc9fdf}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Bo},
+           giveni={B\bibinitperiod}}}%
+        {{hash=1e7d6abb8225099acc71f672b9ec336e}{%
+           family={Tan},
+           familyi={T\bibinitperiod},
+           given={Mingxing},
+           giveni={M\bibinitperiod}}}%
+        {{hash=47ad65c82b1de7d642988df185d7d8ea}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Weijun},
+           giveni={W\bibinitperiod}}}%
+        {{hash=41859f30c12640f5249fa065131fc2f4}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Yukun},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=79b11327e6066baac1563390e41c13f2}{%
+           family={Pang},
+           familyi={P\bibinitperiod},
+           given={Ruoming},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bab2011f2b9e7af47ab45308470b9faf}{%
+           family={Vasudevan},
+           familyi={V\bibinitperiod},
+           given={Vijay},
+           giveni={V\bibinitperiod}}}%
+        {{hash=c636f146591d51579a8119b777394878}{%
+           family={Le},
+           familyi={L\bibinitperiod},
+           given={Quoc\bibnamedelima V.},
+           giveni={Q\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=c707ec5b5997dc408a14a34a8380166c}{%
+           family={Adam},
+           familyi={A\bibinitperiod},
+           given={Hartwig},
+           giveni={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{9c50b2a45a0cfd3fd86fb7850dc23eb0}
+      \strng{fullhash}{1f186e1a9b32bef8cdecf585255a11d6}
+      \strng{fullhashraw}{1f186e1a9b32bef8cdecf585255a11d6}
+      \strng{bibnamehash}{9c50b2a45a0cfd3fd86fb7850dc23eb0}
+      \strng{authorbibnamehash}{9c50b2a45a0cfd3fd86fb7850dc23eb0}
+      \strng{authornamehash}{9c50b2a45a0cfd3fd86fb7850dc23eb0}
+      \strng{authorfullhash}{1f186e1a9b32bef8cdecf585255a11d6}
+      \strng{authorfullhashraw}{1f186e1a9b32bef8cdecf585255a11d6}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE/CVF International Conference on Computer Vision}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{title}{Searching for MobileNetV3}
+      \field{urlday}{2}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1314\bibrangedash 1324}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/ICCV.2019.00140
+      \endverb
+      \verb{urlraw}
+      \verb https://openaccess.thecvf.com/content_ICCV_2019/html/Howard_Searching_for_MobileNetV3_ICCV_2019_paper.html
+      \endverb
+      \verb{url}
+      \verb https://openaccess.thecvf.com/content_ICCV_2019/html/Howard_Searching_for_MobileNetV3_ICCV_2019_paper.html
+      \endverb
+    \endentry
+    \entry{tan_efficientnet_2019}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=1e7d6abb8225099acc71f672b9ec336e}{%
+           family={Tan},
+           familyi={T\bibinitperiod},
+           given={Mingxing},
+           giveni={M\bibinitperiod}}}%
+        {{hash=c636f146591d51579a8119b777394878}{%
+           family={Le},
+           familyi={L\bibinitperiod},
+           given={Quoc\bibnamedelima V.},
+           giveni={Q\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{fullhash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{fullhashraw}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{bibnamehash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{authorbibnamehash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{authornamehash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{authorfullhash}{d029e8131f7a0bef056d7edc726f1529}
+      \strng{authorfullhashraw}{d029e8131f7a0bef056d7edc726f1529}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 36th International Conference on Machine Learning}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks}
+      \field{urlday}{2}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{volume}{97}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{6105\bibrangedash 6114}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v97/tan19a.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v97/tan19a.html
+      \endverb
+    \endentry
+    \entry{manning_ir_2008}{book}{}{}
       \name{author}{3}{}{%
         {{hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
            family={Manning},
@@ -815,10 +1155,12 @@
       }
       \strng{namehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \strng{fullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{fullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \strng{bibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \strng{authorbibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \strng{authornamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \strng{authorfullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{authorfullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
@@ -844,7 +1186,7 @@
       \verb https://www.cambridge.org/core/product/identifier/9780511809071/type/book
       \endverb
     \endentry
-    \entry{bsi_tr03161_mobile_2024}{report}{}
+    \entry{bsi_tr03161_mobile_2024}{report}{}{}
       \name{author}{1}{}{%
         {{hash=c61cd4100327b033030a8fe0fadc5c54}{%
            family={{Bundesamt für Sicherheit in der Informationstechnik}},
@@ -858,13 +1200,15 @@
       }
       \strng{namehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{fullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{fullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{bibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorbibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authornamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{1}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
@@ -874,7 +1218,7 @@
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
-    \entry{google_litert_android_2026}{online}{}
+    \entry{google_litert_android_2026}{online}{}{}
       \name{author}{1}{}{%
         {{hash=8b36e9207c24c76e6719268e49201d94}{%
            family={{Google}},
@@ -885,12 +1229,14 @@
       }
       \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
       \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
       \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
       \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
       \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
       \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{13}
@@ -909,7 +1255,7 @@
       \verb https://ai.google.dev/edge/litert/android?hl=de
       \endverb
     \endentry
-    \entry{bsi_tr03161_web_2024}{report}{}
+    \entry{bsi_tr03161_web_2024}{report}{}{}
       \name{author}{1}{}{%
         {{hash=c61cd4100327b033030a8fe0fadc5c54}{%
            family={{Bundesamt für Sicherheit in der Informationstechnik}},
@@ -923,13 +1269,15 @@
       }
       \strng{namehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{fullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{fullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{bibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorbibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authornamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{2}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
@@ -939,7 +1287,7 @@
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
-    \entry{bsi_tr03161_backend_2024}{report}{}
+    \entry{bsi_tr03161_backend_2024}{report}{}{}
       \name{author}{1}{}{%
         {{hash=c61cd4100327b033030a8fe0fadc5c54}{%
            family={{Bundesamt für Sicherheit in der Informationstechnik}},
@@ -953,13 +1301,15 @@
       }
       \strng{namehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{fullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{fullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{bibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorbibnamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authornamehash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
+      \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{3}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
@@ -969,7 +1319,7 @@
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
-    \entry{klompstraChallengesStrategiesEffective2025}{article}{}
+    \entry{klompstraChallengesStrategiesEffective2025}{article}{}{}
       \name{author}{4}{}{%
         {{hash=82c7b13ef650df6739149e8bd2777146}{%
            family={Klompstra},
@@ -994,10 +1344,12 @@
       }
       \strng{namehash}{65d44ab6f65df76329f01b92c6f7120b}
       \strng{fullhash}{36472b0d0276ee1369fc71f7141c6f92}
+      \strng{fullhashraw}{36472b0d0276ee1369fc71f7141c6f92}
       \strng{bibnamehash}{65d44ab6f65df76329f01b92c6f7120b}
       \strng{authorbibnamehash}{65d44ab6f65df76329f01b92c6f7120b}
       \strng{authornamehash}{65d44ab6f65df76329f01b92c6f7120b}
       \strng{authorfullhash}{36472b0d0276ee1369fc71f7141c6f92}
+      \strng{authorfullhashraw}{36472b0d0276ee1369fc71f7141c6f92}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
@@ -1028,7 +1380,7 @@
       \verb https://academic.oup.com/eurjcn/article/24/5/808/7935389
       \endverb
     \endentry
-    \entry{anastasiRecruitmentRetentionClinical2024}{article}{}
+    \entry{anastasiRecruitmentRetentionClinical2024}{article}{}{}
       \name{author}{5}{}{%
         {{hash=9e8c5a108f2468612540588797add1d1}{%
            family={Anastasi},
@@ -1058,10 +1410,12 @@
       }
       \strng{namehash}{ef719341fda432ed7976a2ba971e44ae}
       \strng{fullhash}{831c2b8ef22266ae48cc1c4a44aa44d0}
+      \strng{fullhashraw}{831c2b8ef22266ae48cc1c4a44aa44d0}
       \strng{bibnamehash}{ef719341fda432ed7976a2ba971e44ae}
       \strng{authorbibnamehash}{ef719341fda432ed7976a2ba971e44ae}
       \strng{authornamehash}{ef719341fda432ed7976a2ba971e44ae}
       \strng{authorfullhash}{831c2b8ef22266ae48cc1c4a44aa44d0}
+      \strng{authorfullhashraw}{831c2b8ef22266ae48cc1c4a44aa44d0}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
@@ -1095,7 +1449,7 @@
       \verb https://www.frontiersin.org/articles/10.3389/fpain.2023.1330937/full
       \endverb
     \endentry
-    \entry{parker2024press2protocol}{online}{}
+    \entry{parker2024press2protocol}{online}{}{}
       \name{author}{12}{}{%
         {{hash=3f4580a3ad41778b8f4f56f392ea5057}{%
            family={Parker},
@@ -1160,12 +1514,14 @@
       }
       \strng{namehash}{6807242ff86130b6622d0db870481a51}
       \strng{fullhash}{94fd8f8c11bf399262d3816f9082d88b}
+      \strng{fullhashraw}{94fd8f8c11bf399262d3816f9082d88b}
       \strng{bibnamehash}{6807242ff86130b6622d0db870481a51}
       \strng{authorbibnamehash}{6807242ff86130b6622d0db870481a51}
       \strng{authornamehash}{6807242ff86130b6622d0db870481a51}
       \strng{authorfullhash}{94fd8f8c11bf399262d3816f9082d88b}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \strng{authorfullhashraw}{94fd8f8c11bf399262d3816f9082d88b}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{8}
@@ -1185,7 +1541,7 @@
       \verb https://www.trialforge.org/wp-content/uploads/2025/03/PRESS2_Protocol_v1.0_08.05.24.pdf
       \endverb
     \endentry
-    \entry{bruhnEstimatingSitePerformance2019}{article}{}
+    \entry{bruhnEstimatingSitePerformance2019}{article}{}{}
       \name{author}{9}{}{%
         {{hash=62953754dd4d9d4f099c3ab58cfb31de}{%
            family={Bruhn},
@@ -1235,12 +1591,14 @@
       }
       \strng{namehash}{36e2778fd41ff16f407d2cb708edfc8a}
       \strng{fullhash}{d6e44ecbc92ee0f40edc58bb77374c84}
+      \strng{fullhashraw}{d6e44ecbc92ee0f40edc58bb77374c84}
       \strng{bibnamehash}{36e2778fd41ff16f407d2cb708edfc8a}
       \strng{authorbibnamehash}{36e2778fd41ff16f407d2cb708edfc8a}
       \strng{authornamehash}{36e2778fd41ff16f407d2cb708edfc8a}
       \strng{authorfullhash}{d6e44ecbc92ee0f40edc58bb77374c84}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \strng{authorfullhashraw}{d6e44ecbc92ee0f40edc58bb77374c84}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
       \field{issn}{1745-6215}

@@ -1,0 +1,5 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[1] Config.pm:331> INFO - Logfile is 'main.bcf-SAVE-ERROR.blg'
+[29] biber-darwin:342> INFO - === Wed Sep 23, 2026, 13:10:17
+[115] Utils.pm:479> ERROR - Cannot find 'main.bcf-SAVE-ERROR.bcf'!
+[115] Biber.pm:137> INFO - ERRORS: 1

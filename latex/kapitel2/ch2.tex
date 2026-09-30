@@ -1,3 +1,5 @@
+% !TeX root = ../main.tex
+
 %%
 %% Berliner Hochschule für Technik --  Abschlussarbeit
 %%
@@ -38,7 +40,7 @@ Die technischen Komponenten, die für die Studie verwendet werden, müssen nach 
 
 Alle Teilnahmedaten werden über den Webspace-Anbieter united-domains.de auf einem Anwendungsserver in Deutschland gespeichert, und es wird eine Sicherungskopie beim Webspace-Anbieter infomaniak.com in der Schweiz gepflegt. Es wurde mit united-domains GmbH und Infomania\-k Network AG jeweils eine Vereinbarung über die Verarbeitung von Daten gemäß Art.~28 DSGVO beziehungsweise Art. 9 DSG getroffen. 
 
-Studienergebnisse werden ausschließlich aus anonymisierten Daten gewonnen. Kontakt- und Zahlungsinformationen werden für die Überprüfung der Teilnahme und Abrechnung der Aufwandsentschädigung benötigt. 
+Studienergebnisse werden ausschließlich aus anonymisierten Daten gewonnen. Kontakt- {\linebreak}und Zahlungsinformationen werden für die Überprüfung der Teilnahme und Abrechnung der Aufwandsentschädigung benötigt. 
 
 Die in diesem Kapitel genannten Grundsätze und Vorgehensweisen werden für die Dauer dieser Arbeit, insbesondere für die Appentwicklung, die Planung und Durchführung der App-Studie und der Auswertung der Berichte, eingehalten.
 
@@ -51,3 +53,63 @@ Während der Nutzung der App können eigene Bilddateien und Kamerabilder verwend
 
  Der Name der Studie ist CueLens. Der Name wird nicht in Markenregistern eingetragen. In deutschen (DPMA), schweize\-rischen (IGE), europäischen (EUIPO) und globalen (WIPO) Markenregistern sowie im Google Play Store wurden zum Suchbegriff "`CueLens"' keine bestehende Einträge gefunden.
 
+\section{Pseudonymisierte Datenbestände}
+
+Die wissenschaftlichen Selbstberichte sind nicht anonym, sondern pseudonymisiert. Für das intraindividuelle Studiendesign müssen die zwanzig Berichte derselben App-Installation zusammengeführt werden können. Zu diesem Zweck berechnet der Server aus dem lokal gespeicherten App-Token eine stabile Teilnehmerkennung. Die Berichtstabelle enthält damit zwar keine unmittelbar identifizierenden Angaben wie Name, E-Mail-Adresse oder Bankverbindung, aber eine wiederkehrende Kennung, anhand derer die Berichte derselben Person beziehungsweise Installation verknüpft werden können. Die Selbstberichte bleiben deshalb personenbezogene und wegen ihres Inhalts gesundheitsbezogene Daten.
+
+Die Implementierung trennt drei Datenzusammenhänge. Die Registrierungsdatenbank enthält die für Anmeldung, Teilnahmeprüfung und Abrechnung erforderlichen direkten Identifikatoren. Die Studiendatenbank enthält die pseudonymisierten Selbstberichte, die experimentelle Bedingung und den Craving-Wert. Die Android-App hält das App-Token und den lokalen Studienfortschritt. Eine unmittelbare Fremdschlüsselbeziehung zwischen Registrierung und Selbstberichten wird nicht angelegt. Die Verbindung entsteht nur mittelbar über geheimnisgebundene Hashwerte, die in unterschiedlichen fachlichen Kontexten berechnet werden.
+
+Für diese Hashwerte wird HMAC-SHA-256 mit einem ausschließlich serverseitig vorgehaltenen Geheimnis eingesetzt. Zusätzlich wird eine Domänentrennung verwendet. Aus demselben App-Token entstehen dadurch unterschiedliche Werte für die Zuordnung zur Registrierung, die Freigabe wissenschaftlicher Übertragungen und die pseudonyme Teilnehmerkennung. Verschiedene HMAC-Kontexte verhindern, dass ein in einer Tabelle gespeicherter Hash ohne Kenntnis des Geheimnisses unmittelbar mit einem Hash aus einer anderen Tabelle verglichen werden kann. Diese Maßnahme reduziert die Verknüpfbarkeit der Datenbestände gegenüber einem einfachen SHA-256-Hash des Tokens.
+
+\section{Aktivierung und Datenminimierung}
+
+Die Aktivierung der App erfolgt in zwei technischen Schritten. Zunächst übermittelt die App die normalisierte E-Mail-Adresse. Der Server prüft, ob die Registrierung per Double-Opt-In bestätigt wurde, die Studieninformation akzeptiert wurde und noch kein App-Token ausgegeben worden ist. Bei erfolgreicher Prüfung erzeugt er ein zufälliges UUID-v4-Token und gibt es an die App zurück. In der Registrierung wird zu diesem Zeitpunkt nur ein zeitlich befristeter, an E-Mail-Adresse und Token gebundener HMAC gespeichert. Das Token selbst wird nicht dauerhaft in der Datenbank abgelegt.
+
+Anschließend bestätigt die App den Empfang des Tokens in einem zweiten Request. Erst nach dieser Bestätigung werden der temporäre Aktivierungshash und seine Gültigkeitsfrist entfernt, der Ausgabezeitpunkt vermerkt und die für spätere Statusprüfungen benötigten domänengetrennten Hashwerte gespeichert. Die Zweiteilung soll vermeiden, dass eine Registrierung bereits als aktiviert gilt, obwohl das Token die App wegen eines Verbindungsabbruchs nie erreicht hat. Die Gültigkeit des ersten Schritts ist auf fünf Minuten beschränkt; ein neuer Aktivierungsversuch ersetzt einen noch ausstehenden älteren Versuch.
+
+Die E-Mail-Adresse wird ausschließlich für die Aktivierung verwendet. Wissenschaftliche Selbstberichte enthalten sie nicht. Auch der für Selbstberichte verwendete Endpunkt erhält nur das App-Token, den Craving-Wert und gegebenenfalls die App-Version. Situation und Versuchsbedingung werden serverseitig aus der Zahl bereits gespeicherter Berichte abgeleitet. Dadurch werden überflüssige, von der App manipulierbare Felder vermieden.
+
+\section{Erneute Datenschutzzustimmung}
+
+Die App unterstützt eine erneute Zustimmung, wenn der in der Registrierung gespeicherte Datenschutzstatus zurückgesetzt wurde. Der Status wird nicht anhand der E-Mail-Adresse, sondern anhand des domänengetrennten Registrierungs-Token-Hashs abgefragt. Der Server kann damit die zugehörige Registrierung finden, ohne das App-Token selbst zu speichern. Ein \texttt{POST}-Request liest den Status; ein \texttt{PUT}-Request mit dem ausdrücklich gesetzten Wert \texttt{dataprot=true} dokumentiert die Zustimmung und setzt den Zeitpunkt \path{dataprot_accepted_at}. Die Speicherung des Zeitpunkts ist idempotent: Eine wiederholte Übermittlung verändert den zuerst gespeicherten Annahmezeitpunkt nicht.
+
+Bei fehlendem Token, unbekannter Registrierung, fehlerhafter Serverantwort oder nicht erreichbarem Dienst verhält sich die App grundsätzlich geschlossen. Die produktive Studienfunktion wird dann nicht geöffnet. Damit wird vermieden, dass ein technischer Fehler als Zustimmung interpretiert wird. Die Demo und das anonyme Feedback können getrennt davon angeboten werden, sofern sie keine wissenschaftlichen Selbstberichte übertragen.
+
+\section{Datensparsame Benachrichtigungen}
+
+Die App bietet allgemeine Informationsbenachrichtigungen und Erinnerungen an eine wieder verfügbare Studiensituation. Beide Funktionen sind freiwillig. Unter Android 13 oder neuer wird die Systemberechtigung \path{POST_NOTIFICATIONS} erst nach einer kontextbezogenen Erklärung angefordert. Wird die Berechtigung nicht erteilt oder später entzogen, bleiben Aktivierung, Demo, Feedback und die manuelle Durchführung der Studie möglich.
+
+Benachrichtigungen dürfen keine E-Mail-Adresse, kein App-Token, keinen Rauchstatus und keinen Craving-Wert enthalten. Für Studienerinnerungen wird zusätzlich eine reduzierte öffentliche Version bereitgestellt, die auf dem Sperrbildschirm lediglich auf neue allgemeine Informationen hinweist. Erst nach dem Öffnen der App werden Feature-Freigabe, Aktivierungsstatus, ausstehende Übertragungen, Studienabschluss und Sperrzeit erneut geprüft. Eine Benachrichtigung stellt damit keine Autorisierung zum Start einer Studiensituation dar.
+
+Die lokale Planung erfolgt über Android WorkManager. Das Betriebssystem darf die Ausführung wegen Energiesparmechanismen oder fehlender Netzverbindung verzögern. Die Erinnerung ist deshalb als unverbindliche Komfortfunktion und nicht als medizinisch oder studienmethodisch exakter Alarm einzuordnen.
+
+\section{Lokale Verarbeitung}
+
+Das App-Token wird mit AES-256-GCM verschlüsselt gespeichert. Der Schlüssel wird im Android Keystore erzeugt und verlässt den geschützten Schlüsselbereich nicht. Ist der Schlüssel verloren gegangen oder ungültig, bricht die App den Zugriff ab und verwendet den Wert nicht weiter.
+
+Andere lokale Studienwerte, darunter Fortschritt, Sperrzeit, ein ausstehender Craving-Wert und der Abrechnungscode, liegen weiterhin in privaten App-Einstellungen. Die automatische Android-Sicherung ist deaktiviert, damit diese Werte nicht über allgemeine Cloud- oder Gerätebackups verbreitet werden.
+
+\section{App-Verteilung}
+Die derzeitige Verteilung erfolgt als direkt herunterladbares APK mit deutscher und englischer Installationsanleitung. Dieses Verfahren erlaubt die Durchführung außerhalb eines öffentlichen App-Stores, verlangt aber eine besonders klare Information über Herkunft, Version und Installation der Datei. Die Anleitung weist darauf hin, dass Dialoge je nach Browser und Android-Version abweichen können.
+
+\section{Registrierungskanäle und Datenminimierung}
+
+Im Verlauf der Studienvorbereitung wurde die ursprünglich ausschließlich E-Mail-basierte Registrierung um einen zweiten Zugang über Prolific ergänzt. Die beiden Wege werden serverseitig durch das Feld \path{registration\_channel} explizit als \texttt{DIRECT} beziehungsweise \texttt{PROLIFIC} unterschieden. Diese Kennzeichnung ist nicht Bestandteil der wissenschaftlichen Selbstberichte, sondern verbleibt im administrativen Registrierungskontext. Die experimentelle Bedingung und die Craving-Werte werden weiterhin ausschließlich in der getrennten Studiendatenbank verarbeitet.
+
+Für direkt geworbene Teilnehmende werden weiterhin E-Mail-Adresse, Name und die zur Auszahlung benötigten Bankangaben erhoben. Die Registrierung wird erst nach dem Double-Opt-In der angegebenen E-Mail-Adresse als bestätigt markiert. Bei einer Registrierung über Prolific wird stattdessen die 24-stellige alphanumerische Prolific-ID gespeichert. Name, IBAN und BIC werden in diesem Modus weder benötigt noch serverseitig übernommen; die entsprechenden Formularfelder werden bereits im Browser deaktiviert und bei der serverseitigen Validierung unabhängig vom Clientzustand auf \texttt{NULL} gesetzt. Alter, angegebene Zahl gerauchter Zigaretten sowie die Zustimmung zu Studieninformation und Datenschutzerklärung bleiben für beide Registrierungskanäle erforderlich.
+
+Die Prolific-ID ist trotz des Verzichts auf Name, E-Mail-Adresse und Bankverbindung kein anonymes Datum. Sie ermöglicht innerhalb des Plattformkontexts die Zuordnung zu einem Prolific-Konto und wird deshalb im CueLens-System als administrativer Teilnehmeridentifikator behandelt. Die Trennung von Registrierungs- und Studiendaten verhindert, dass dieser Identifikator unmittelbar zusammen mit den gesundheitsbezogenen Craving-Selbstberichten gespeichert wird. Für die wissenschaftliche Übertragung wird nach der Aktivierung weiterhin ausschließlich das zufällig erzeugte App-Token verwendet, aus dem serverseitig die pseudonyme Studienkennung abgeleitet wird.
+
+Auch die Bestätigung der Registrierung unterscheidet sich zwischen den beiden Kanälen. Der direkte Weg verwendet den bereits beschriebenen E-Mail-Double-Opt-In. Für Prolific wird kein zusätzlicher E-Mail-Bestätigungsprozess erzeugt; eine erfolgreich angelegte Prolific-Regis\-trierung erhält unmittelbar einen Bestätigungszeitpunkt. Die gesonderte technische Prüfung, ob die Prolific-ID tatsächlich zu einer für die CueLens-Studie zulässigen Prolific-Submission gehört, wird im Zusammenhang mit der externen Prolific-Schnittstelle beschrieben.
+
+Durch diese kanalabhängige Datenerhebung wird vermieden, personenbezogene Angaben lediglich deshalb zu duplizieren, weil sie für den direkten Rekrutierungs- und Auszahlungsweg benötigt werden. Gleichzeitig bleiben die für Einschlussprüfung, Einwilligungsnachweis und Aktivierung erforderlichen Informationen erhalten. Die Einführung von Prolific erweitert damit den administrativen Zugang zur Studie, ohne den Umfang des wissenschaftlichen Selbstberichtdatensatzes zu erhöhen.
+
+\section{Externe Prolific-Teilnahmeprüfung}
+
+Für Registrierungen über Prolific wird die angegebene Prolific-ID nicht allein syntaktisch geprüft. Vor dem Anlegen des CueLens-Registrierungsdatensatzes fragt das Backend zusätzlich die Prolific-Programmierschnittstelle ab und prüft, ob für die konfigurierte Prolific-Studie mindestens eine geeignete Submission mit exakt dieser Teilnehmerkennung vorliegt. Diese Prüfung betrifft ausschließlich den Rekrutierungskanal \texttt{PROLIFIC}; direkte Registrierungen per E-Mail werden dadurch nicht verändert.
+
+Die Schnittstelle bildet eine zusätzliche externe Datenverarbeitungsgrenze. Der API-Zugriff erfolgt ausschließlich serverseitig. Das zur Authentisierung verwendete Prolific-Token wird aus der Host-Konfiguration gelesen und nur im HTTP-Header \texttt{Authorization} übertragen. Es wird weder an Browser noch App ausgeliefert. Der Request enthält als fachlichen Suchparameter die konfigurierte Prolific-Studienkennung sowie Angaben zur Pagination. Name, Bankverbindung, App-Token und Rauchverlangenswerte werden nicht an Prolific übertragen.
+
+Die Prolific-Antwort enthält dagegen Submission-Datensätze der konfigurierten Studie. Die CueLens-Prüfroutine verarbeitet daraus die Felder \texttt{participant\_id} und \texttt{status}, bis die angegebene Prolific-ID gefunden oder die Ergebnismenge vollständig durchsucht wurde. Da die verwendete API-Abfrage seitenweise Submissions der Studie liefert und nicht ausschließlich den angefragten CueLens-Teilnehmenden, können während der Prüfung auch Kennungen anderer Prolific-Teilnehmender im Arbeitsspeicher des Servers verarbeitet werden. Die Prüfroutine persistiert diese API-Antworten nicht in der CueLens-Datenbank. Dieser Datenfluss muss dennoch in der Datenschutzbewertung der Rekrutierungsschnittstelle berücksichtigt werden.
+
+Ein negatives Prüfergebnis und ein technischer Fehler werden getrennt behandelt. Nur wenn die API erfolgreich vollständig durchsucht wurde und keine geeignete Submission gefunden wurde, gilt die Prolific-ID als nicht zur konfigurierten Studie gehörig. Netzwerkfehler, unerwartete HTTP-Statuscodes oder formal ungültige API-Antworten führen dagegen zu einem technischen Fehler und nicht zu einer Einstufung als unberechtigte Person. Damit wird vermieden, dass die Nichterreichbarkeit eines externen Dienstes als fachliches Ausschlusskriterium interpretiert wird. Gleichzeitig entsteht eine Verfügbarkeitsabhängigkeit: Solange die Prolific-Schnittstelle technisch nicht zuverlässig geprüft werden kann, kann eine neue Prolific-Registrierung nicht abgeschlossen werden.

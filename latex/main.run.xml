@@ -81,6 +81,7 @@
     </requires>
     <requires type="editable">
       <file>bhtThesis.bib</file>
+      <file>revision/kapitel1_sources.bib</file>
     </requires>
   </external>
 </requests>

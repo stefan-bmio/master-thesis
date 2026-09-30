@@ -10,9 +10,9 @@
 \documentclass[11pt, a4paper]{book}
 %\documentclass[11pt, a4paper, oneside]{book}
 %% Übersetzen als Entwurf
-\usepackage[entwurf]{bhtThesis}
+%\usepackage[entwurf]{bhtThesis}
 %% Übersetzen für die Abgabe
-%\usepackage[abgabe]{bhtThesis}
+\usepackage[abgabe]{bhtThesis}
 \typeout{BHT-Abschlussarbeit V2.0 26.08.21 S.Tschirley}
 
 \usepackage{blindtext}   %für Blindtext in Kapitel 2
@@ -67,16 +67,23 @@
 \titel{Mobile App zur Reduktion von Rauch\-verlangen durch Cue-Labeling im Alltag} 
 \untertitel{Konzeption, Entwicklung und Wirksamkeits\-studie einer KI-gestützten App zur Benennung von Rauchreizen}
 \betreuerFeld{
-  \begin{tabular}{lr}
-    \multicolumn{2}{l}{\textbf{Gutachter}}\\
+\begin{adjustwidth}{0pt}{-2.5cm}
+\begin{tabularx}{13cm} {
+  >{\raggedright\arraybackslash}p{5.5cm}
+  >{\raggedleft\arraybackslash}X }
+    \textbf{Gutachter} & \\
     Prof.~Dr.~Friedhelm~Mündemann & Technische Hochschule Brandenburg \\
     Prof.~Dr. Selcan Ipek-Ugay & Berliner Hochschule für Technik
-  \end{tabular}
+\end{tabularx}
+\end{adjustwidth}
 }
 
 %%\renewcommand{\baselinestretch}{1.05} 
 \PassOptionsToPackage{ngerman}{babel}
 \begin{document}
+\overfullrule=5pt
+\lefthyphenmin=4
+\righthyphenmin=4
 \pagestyle{fancy}
 
 \input{titelseiten.tex}
@@ -85,50 +92,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Die Kapitel der Arbeitw
 
-\newcommand{\insertrevisionatnextnull}[1]{%
-  \let\revisionOriginalNull\null
-  \def\null{%
-    \let\null\revisionOriginalNull
-    \input{#1}%
-    \revisionOriginalNull
-  }%
-}
-
 \input{einführung/einführung.tex}
-\insertrevisionatnextnull{revision/kapitel1_update.tex}
 \input{kapitel1/ch1.tex}
-\let\null\revisionOriginalNull
 \input{kapitel2/ch2.tex}
-\input{revision/kapitel2_update.tex}
-\input{revision/kapitel2_dual_registration.tex}
-\input{revision/kapitel2_prolific_api.tex}
-\insertrevisionatnextnull{revision/kapitel3_update.tex}
 \input{kapitel3/ch3.tex}
-\let\null\revisionOriginalNull
 \input{kapitel4/ch4.tex}
-\input{revision/kapitel4_update.tex}
-\input{revision/kapitel4_ios_native.tex}
 \input{kapitel5/ch5.tex}
-\input{revision/kapitel5_update.tex}
-\input{revision/kapitel5_dual_registration.tex}
-\input{revision/kapitel5_prolific_api.tex}
-\input{revision/kapitel5_completion_modes.tex}
-\input{revision/kapitel5_android_completion_recovery.tex}
-\input{revision/kapitel5_automated_tests.tex}
-\input{revision/kapitel5_ios_native.tex}
-\input{revision/kapitel5_platform_independent_spec.tex}
-\input{revision/kapitel5_ios_security_architecture.tex}
-\input{revision/kapitel5_ios_network_persistence_recovery.tex}
-\input{revision/kapitel5_ios_notifications_background_refresh.tex}
-\input{revision/kapitel5_ios_completion_modes.tex}
-\input{revision/kapitel5_ios_quality_assurance.tex}
 \input{kapitel6/ch6.tex}
-\input{revision/kapitel6_update.tex}
-\input{revision/kapitel6_dual_registration.tex}
-\input{revision/kapitel6_prolific_api.tex}
-\input{revision/kapitel6_completion_modes.tex}
-\input{revision/kapitel6_ios_native.tex}
-\input{revision/kapitel6_platform_independent_spec.tex}
 \input{kapitel7/ch7.tex}
 \input{kapitel8/ch8.tex}
 

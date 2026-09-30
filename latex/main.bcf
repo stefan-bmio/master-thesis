@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bcf:controlfile version="3.8" bltxversion="3.17" xmlns:bcf="https://sourceforge.net/projects/biblatex">
+<bcf:controlfile version="3.11" bltxversion="3.21" xmlns:bcf="https://sourceforge.net/projects/biblatex">
   <!-- BIBER OPTIONS -->
   <bcf:options component="biber" type="global">
     <bcf:option type="singlevalued">
@@ -37,6 +37,11 @@
     <bcf:option type="singlevalued">
       <bcf:key>alphaothers</bcf:key>
       <bcf:value>+</bcf:value>
+    </bcf:option>
+    <bcf:option type="multivalued">
+      <bcf:key>extradatecontext</bcf:key>
+      <bcf:value order="1">labelname</bcf:value>
+      <bcf:value order="2">labeltitle</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>labelalpha</bcf:key>
@@ -135,6 +140,10 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>nosortothers</bcf:key>
+      <bcf:value>0</bcf:value>
+    </bcf:option>
+    <bcf:option type="singlevalued">
+      <bcf:key>pluralothers</bcf:key>
       <bcf:value>0</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
@@ -272,6 +281,11 @@
   </bcf:options>
   <!-- online -->
   <bcf:options component="biblatex" type="online">
+    <bcf:option type="multivalued">
+      <bcf:key>extradatecontext</bcf:key>
+      <bcf:value order="1">labelname</bcf:value>
+      <bcf:value order="2">labeltitle</bcf:value>
+    </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>labelalpha</bcf:key>
       <bcf:value>0</bcf:value>
@@ -372,11 +386,11 @@
       <bcf:value>0</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
-      <bcf:key>skiplab</bcf:key>
+      <bcf:key>skipbiblist</bcf:key>
       <bcf:value>0</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
-      <bcf:key>skipbiblist</bcf:key>
+      <bcf:key>skiplab</bcf:key>
       <bcf:value>0</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
@@ -488,9 +502,11 @@
     <bcf:option datatype="xml">inheritance</bcf:option>
     <bcf:option datatype="xml">translit</bcf:option>
     <bcf:option datatype="xml">uniquenametemplate</bcf:option>
+    <bcf:option datatype="xml">namehashtemplate</bcf:option>
     <bcf:option datatype="xml">sortingnamekeytemplate</bcf:option>
     <bcf:option datatype="xml">sortingtemplate</bcf:option>
     <bcf:option datatype="xml">extradatespec</bcf:option>
+    <bcf:option datatype="xml">extradatecontext</bcf:option>
     <bcf:option datatype="xml">labelnamespec</bcf:option>
     <bcf:option datatype="xml">labeltitlespec</bcf:option>
     <bcf:option datatype="xml">labeldatespec</bcf:option>
@@ -498,6 +514,7 @@
     <bcf:option datatype="string">alphaothers</bcf:option>
     <bcf:option datatype="string">sortalphaothers</bcf:option>
     <bcf:option datatype="string">presort</bcf:option>
+    <bcf:option datatype="string">citepagerange</bcf:option>
     <bcf:option datatype="string">texencoding</bcf:option>
     <bcf:option datatype="string">bibencoding</bcf:option>
     <bcf:option datatype="string">sortingtemplatename</bcf:option>
@@ -599,6 +616,7 @@
     <bcf:option datatype="boolean">labeltitle</bcf:option>
     <bcf:option datatype="boolean">labeltitleyear</bcf:option>
     <bcf:option datatype="boolean">labeldateparts</bcf:option>
+    <bcf:option datatype="boolean">pluralothers</bcf:option>
     <bcf:option datatype="boolean">nohashothers</bcf:option>
     <bcf:option datatype="boolean">nosortothers</bcf:option>
     <bcf:option datatype="boolean">noroman</bcf:option>
@@ -713,6 +731,7 @@
     <bcf:option datatype="xml">translit</bcf:option>
     <bcf:option datatype="xml">sortexclusion</bcf:option>
     <bcf:option datatype="xml">sortinclusion</bcf:option>
+    <bcf:option datatype="xml">extradatecontext</bcf:option>
     <bcf:option datatype="xml">labelnamespec</bcf:option>
     <bcf:option datatype="xml">labeltitlespec</bcf:option>
     <bcf:option datatype="xml">labeldatespec</bcf:option>
@@ -731,9 +750,10 @@
   </bcf:optionscope>
   <bcf:optionscope type="ENTRY">
     <bcf:option datatype="string">noinherit</bcf:option>
-    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename">nametemplates</bcf:option>
+    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename,namehashtemplatename">nametemplates</bcf:option>
     <bcf:option datatype="string" backendout="1">labelalphanametemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">uniquenametemplatename</bcf:option>
+    <bcf:option datatype="string" backendout="1">namehashtemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">sortingnamekeytemplatename</bcf:option>
     <bcf:option datatype="string">presort</bcf:option>
     <bcf:option datatype="string" backendout="1">indexing</bcf:option>
@@ -810,9 +830,10 @@
     <bcf:option datatype="integer" backendout="1">minalphanames</bcf:option>
   </bcf:optionscope>
   <bcf:optionscope type="NAMELIST">
-    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename">nametemplates</bcf:option>
+    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename,namehashtemplatename">nametemplates</bcf:option>
     <bcf:option datatype="string" backendout="1">labelalphanametemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">uniquenametemplatename</bcf:option>
+    <bcf:option datatype="string" backendout="1">namehashtemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">sortingnamekeytemplatename</bcf:option>
     <bcf:option datatype="string">uniquelist</bcf:option>
     <bcf:option datatype="string">uniquename</bcf:option>
@@ -826,9 +847,10 @@
     <bcf:option datatype="boolean" backendout="1">useprefix</bcf:option>
   </bcf:optionscope>
   <bcf:optionscope type="NAME">
-    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename">nametemplates</bcf:option>
+    <bcf:option datatype="string" backendin="sortingnamekeytemplatename,uniquenametemplatename,labelalphanametemplatename,namehashtemplatename">nametemplates</bcf:option>
     <bcf:option datatype="string" backendout="1">labelalphanametemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">uniquenametemplatename</bcf:option>
+    <bcf:option datatype="string" backendout="1">namehashtemplatename</bcf:option>
     <bcf:option datatype="string" backendout="1">sortingnamekeytemplatename</bcf:option>
     <bcf:option datatype="string">uniquename</bcf:option>
     <bcf:option datatype="boolean" backendout="1">familyinits</bcf:option>
@@ -1042,8 +1064,15 @@
     <bcf:namepart order="2" base="1">family</bcf:namepart>
     <bcf:namepart order="3">given</bcf:namepart>
   </bcf:uniquenametemplate>
+  <!-- NAME HASH TEMPLATES -->
+  <bcf:namehashtemplate name="global">
+    <bcf:namepart order="1" hashscope="full">family</bcf:namepart>
+    <bcf:namepart order="2" hashscope="full">given</bcf:namepart>
+    <bcf:namepart order="3" hashscope="full">prefix</bcf:namepart>
+    <bcf:namepart order="4" hashscope="full">suffix</bcf:namepart>
+  </bcf:namehashtemplate>
   <!-- SORTING NAME KEY TEMPLATES -->
-  <bcf:sortingnamekeytemplate name="global">
+  <bcf:sortingnamekeytemplate name="global" visibility="sort">
     <bcf:keypart order="1">
       <bcf:part type="namepart" order="1" use="1">prefix</bcf:part>
       <bcf:part type="namepart" order="2">family</bcf:part>
@@ -2342,93 +2371,87 @@
   <!-- SECTION 0 -->
   <bcf:bibdata section="0">
     <bcf:datasource type="file" datatype="bibtex" glob="false">bhtThesis.bib</bcf:datasource>
+    <bcf:datasource type="file" datatype="bibtex" glob="false">revision/kapitel1_sources.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
-    <bcf:citekey order="2">bmg_rauchen_2026</bcf:citekey>
-    <bcf:citekey order="3">olk_esa_tabak_2026</bcf:citekey>
-    <bcf:citekey order="4">who_tobacco_cessation_guideline_2024</bcf:citekey>
-    <bcf:citekey order="5">bmg_gesund_bleiben_praevention_2025</bcf:citekey>
-    <bcf:citekey order="6">gba_tabakentwoehnung_2025</bcf:citekey>
-    <bcf:citekey order="7">baecke_gkv_bonusprogramme_2026</bcf:citekey>
-    <bcf:citekey order="8">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="9">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="10">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="11">addiction_research_center_qsu</bcf:citekey>
-    <bcf:citekey order="12">who_tobacco_cessation_guideline_2024</bcf:citekey>
-    <bcf:citekey order="13">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="14">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="15">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="16">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="17">dougan_ar_smoking_cessation_2025</bcf:citekey>
-    <bcf:citekey order="18">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="19">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="20">giner_sorolla_power_2024</bcf:citekey>
-    <bcf:citekey order="21">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="22">james_islr_2021</bcf:citekey>
-    <bcf:citekey order="23">manning_ir_2008</bcf:citekey>
-    <bcf:citekey order="24">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="25">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="26">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="26">bsi_tr03161_web_2024</bcf:citekey>
-    <bcf:citekey order="26">bsi_tr03161_backend_2024</bcf:citekey>
-    <bcf:citekey order="27">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="28">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="28">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="29">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="30">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="30">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="31">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="31">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="31">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="32">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="33">bruhnEstimatingSitePerformance2019</bcf:citekey>
-    <bcf:citekey order="33">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="34">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="34">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="35">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="35">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="36">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="36">giner_sorolla_power_2024</bcf:citekey>
-    <bcf:citekey order="37">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
-    <bcf:citekey order="38">bmg_rauchen_2026</bcf:citekey>
-    <bcf:citekey order="39">olk_esa_tabak_2026</bcf:citekey>
-    <bcf:citekey order="40">who_tobacco_cessation_guideline_2024</bcf:citekey>
-    <bcf:citekey order="41">bmg_gesund_bleiben_praevention_2025</bcf:citekey>
-    <bcf:citekey order="42">gba_tabakentwoehnung_2025</bcf:citekey>
-    <bcf:citekey order="43">baecke_gkv_bonusprogramme_2026</bcf:citekey>
-    <bcf:citekey order="44">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="45">addiction_research_center_qsu</bcf:citekey>
-    <bcf:citekey order="46">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="47">dougan_ar_smoking_cessation_2025</bcf:citekey>
-    <bcf:citekey order="48">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="49">giner_sorolla_power_2024</bcf:citekey>
-    <bcf:citekey order="50">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="51">james_islr_2021</bcf:citekey>
-    <bcf:citekey order="52">manning_ir_2008</bcf:citekey>
-    <bcf:citekey order="53">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="54">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="55">bsi_tr03161_web_2024</bcf:citekey>
-    <bcf:citekey order="56">bsi_tr03161_backend_2024</bcf:citekey>
-    <bcf:citekey order="57">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="58">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="59">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="60">bruhnEstimatingSitePerformance2019</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">bmg_rauchen_2026</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">olk_esa_tabak_2026</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">bmg_gesund_bleiben_praevention_2025</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">gba_tabakentwoehnung_2025</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">baecke_gkv_bonusprogramme_2026</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">addiction_research_center_qsu</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">dougan_ar_smoking_cessation_2025</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="22" intorder="2">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
+    <bcf:citekey order="22" intorder="3">dougan_ar_smoking_cessation_2025</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">ho_diffusion_2020</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">rombach_latent_diffusion_2022</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">pan_transfer_learning_2010</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">howard_mobilenetv3_2019</bcf:citekey>
+    <bcf:citekey order="27" intorder="2">tan_efficientnet_2019</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">manning_ir_2008</bcf:citekey>
+    <bcf:citekey order="28" intorder="2">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">who_tobacco_cessation_guideline_2024</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">manning_ir_2008</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">google_litert_android_2026</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
+    <bcf:citekey order="35" intorder="2">bsi_tr03161_web_2024</bcf:citekey>
+    <bcf:citekey order="35" intorder="3">bsi_tr03161_backend_2024</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="37" intorder="2">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="39" intorder="2">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">parker2024press2protocol</bcf:citekey>
+    <bcf:citekey order="40" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="40" intorder="3">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">bruhnEstimatingSitePerformance2019</bcf:citekey>
+    <bcf:citekey order="42" intorder="2">parker2024press2protocol</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="43" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="44" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="45" intorder="2">giner_sorolla_power_2024</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
     <bcf:sort order="1">
       <bcf:sortitem order="1">citeorder</bcf:sortitem>
     </bcf:sort>
+    <bcf:sort order="2">
+      <bcf:sortitem order="1">intciteorder</bcf:sortitem>
+    </bcf:sort>
   </bcf:sortingtemplate>
   <!-- DATALISTS -->
   <bcf:datalist section="0"
-                name="none/global//global/global"
+                name="none/global//global/global/global"
                 type="entry"
                 sortingtemplatename="none"
                 sortingnamekeytemplatename="global"
                 labelprefix=""
                 uniquenametemplatename="global"
-                labelalphanametemplatename="global">
+                labelalphanametemplatename="global"
+                namehashtemplatename="global">
   </bcf:datalist>
 </bcf:controlfile>
