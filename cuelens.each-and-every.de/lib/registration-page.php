@@ -138,6 +138,7 @@ if (empty($_SESSION['csrf_token'])) {
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+<!--
 <h1><?= htmlspecialchars($registrationPage['heading'], ENT_QUOTES, 'UTF-8') ?></h1>
 <p><?= htmlspecialchars($registrationPage['introduction'], ENT_QUOTES, 'UTF-8') ?>
     <a href="<?= htmlspecialchars($registrationPage['study_information_url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($registrationPage['study_information_label'], ENT_QUOTES, 'UTF-8') ?></a>.
@@ -187,6 +188,7 @@ if (empty($_SESSION['csrf_token'])) {
 <?php if ($message !== ''): ?>
     <p class="error"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
+-->
 </body>
 <script src="index.js"></script>
 </html>
