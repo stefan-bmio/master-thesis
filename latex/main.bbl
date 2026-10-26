@@ -50,8 +50,8 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{series}{Aus Der {{Wissenschaft}} – Für Die {{Politik}}}
-      \field{title}{Die Kosten Des Rauchens in Deutschland}
+      \field{series}{Aus {{Der Wissenschaft}} – {{Für Die Politik}}}
+      \field{title}{Die {{Kosten Des Rauchens}} in {{Deutschland}}}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
@@ -85,7 +85,6 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{18}
-      \field{langid}{german}
       \field{month}{2}
       \field{title}{Rauchen}
       \field{urlday}{6}
@@ -140,9 +139,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{10}
-      \field{langid}{german}
       \field{month}{3}
-      \field{title}{Kurzbericht Epidemiologischer Suchtsurvey 2024. Tabellenband: Konsum von Tabak, Wasserpfeifen und alternativen Nikotinabgabesystemen in Deutschland unter Erwachsenen (18–85 Jahre) nach Geschlecht und Alter im Jahr 2024}
+      \field{title}{Kurzbericht {{Epidemiologischer Suchtsurvey}} 2024. {{Tabellenband}}: {{Konsum}} von {{Tabak}}, {{Wasserpfeifen}} Und Alternativen {{Nikotinabgabesystemen}} in {{Deutschland}} Unter {{Erwachsenen}} (18–85 {{Jahre}}) Nach {{Geschlecht}} Und {{Alter}} Im {{Jahr}} 2024}
       \field{type}{Report}
       \field{version}{v1}
       \field{year}{2026}
@@ -182,9 +180,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{isbn}{978-92-4-009643-1}
-      \field{langid}{english}
       \field{pagetotal}{1}
-      \field{title}{{{WHO}} Clinical Treatment Guideline for Tobacco Cessation in Adults}
+      \field{title}{{{WHO Clinical Treatment Guideline}} for {{Tobacco Cessation}} in {{Adults}}}
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
@@ -207,7 +204,7 @@
       \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Gesund Bleiben: {{Gesundheitsförderung}} Und Prävention}
+      \field{title}{Gesund {{Bleiben}}: {{Gesundheitsförderung Und Prävention}}}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
@@ -239,11 +236,14 @@
       \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{G-{{BA}} Definiert {{Details}} Des Neuen {{Leistungsanspruchs}} Auf {{Arzneimittel}} Zur {{Tabakentwöhnung}}}
+      \field{day}{15}
+      \field{month}{5}
+      \field{title}{G-{{BA Definiert Details Des Neuen Leistungsanspruchs Auf Arzneimittel Zur Tabakentwöhnung}}}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
-      \field{year}{2025-05-15, 2025}
+      \field{year}{2025}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.g-ba.de/presse/pressemitteilungen-meldungen/1256/
@@ -272,11 +272,14 @@
       \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{{{GKV Bonusprogramme}}: {{Welche Kasse}} Zahlt Wie Viel Zurück?}
+      \field{day}{16}
+      \field{month}{3}
+      \field{title}{{{GKV Bonusprogramme}}: {{Welche Kasse Zahlt Wie Viel Zurück}}?}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
-      \field{year}{2026-03-16, 2026}
+      \field{year}{2026}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.handelsblatt.com/vergleich/gkv-bonusprogramme/
@@ -342,11 +345,10 @@
       \field{labeltitlesource}{title}
       \field{issn}{0893-133X, 1740-634X}
       \field{journaltitle}{Neuropsychopharmacology}
-      \field{langid}{english}
       \field{month}{4}
       \field{number}{5}
       \field{shortjournal}{Neuropsychopharmacol.}
-      \field{title}{Cue Labeling Reduces Cigarette Craving and Associated Neural Activity}
+      \field{title}{Cue {{Labeling Reduces Cigarette Craving}} and {{Associated Neural Activity}}}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
@@ -358,9 +360,6 @@
       \range{pages}{9}
       \verb{doi}
       \verb 10.1038/s41386-025-02297-8
-      \endverb
-      \verb{file}
-      \verb C:\Users\sberg\Zotero\storage\JT4CEUXR\Tabibnia et al. - 2026 - Cue labeling reduces cigarette craving and associated neural activity.pdf
       \endverb
       \verb{urlraw}
       \verb https://www.nature.com/articles/s41386-025-02297-8
@@ -387,7 +386,7 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Questionnaire on Smoking Urges ({{QSU}})}
+      \field{title}{Questionnaire on {{Smoking Urges}} ({{QSU}})}
       \field{urlday}{11}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
@@ -431,10 +430,9 @@
       \field{labeltitlesource}{title}
       \field{issn}{07405472}
       \field{journaltitle}{Journal of Substance Abuse Treatment}
-      \field{langid}{english}
       \field{month}{1}
       \field{shortjournal}{Journal of Substance Abuse Treatment}
-      \field{title}{A Randomized Clinical Trial of Cue Exposure Treatment through Virtual Reality for Smoking Cessation}
+      \field{title}{A {{Randomized Clinical Trial}} of {{Cue Exposure Treatment}} through {{Virtual Reality}} for {{Smoking Cessation}}}
       \field{urlday}{6}
       \field{urlmonth}{4}
       \field{urlyear}{2026}
@@ -601,7 +599,6 @@
       \field{day}{13}
       \field{edition}{0}
       \field{isbn}{978-1-134-74270-7}
-      \field{langid}{english}
       \field{month}{5}
       \field{title}{Statistical {{Power Analysis}} for the {{Behavioral Sciences}}}
       \field{urlday}{26}
@@ -621,104 +618,10 @@
       \endverb
     \endentry
     \entry{giner_sorolla_power_2024}{article}{}{}
-      \name{author}{11}{}{%
-        {{hash=1c3802f3df95f698d5d72a0fb200f311}{%
-           family={Giner-Sorolla},
-           familyi={G\bibinithyphendelim S\bibinitperiod},
-           given={Roger},
-           giveni={R\bibinitperiod}}}%
-        {{hash=c4daf26da1a1db45a598a917f2ab25e2}{%
-           family={Montoya},
-           familyi={M\bibinitperiod},
-           given={Amanda\bibnamedelima K.},
-           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
-        {{hash=cfcd663083762a4e794c565cbc31eb4b}{%
-           family={Reifman},
-           familyi={R\bibinitperiod},
-           given={Alan},
-           giveni={A\bibinitperiod}}}%
-        {{hash=2931d1413db76667e7c223c7610c0c85}{%
-           family={Carpenter},
-           familyi={C\bibinitperiod},
-           given={Tom},
-           giveni={T\bibinitperiod}}}%
-        {{hash=cce05fcefa7a91aedf1e7491985b1e31}{%
-           family={Lewis},
-           familyi={L\bibinitperiod},
-           given={Neil\bibnamedelima A.},
-           giveni={N\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
-        {{hash=6f857b567fdd7415fc0d5f4d51d889d8}{%
-           family={Aberson},
-           familyi={A\bibinitperiod},
-           given={Christopher\bibnamedelima L.},
-           giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
-        {{hash=f87d33b7afa67c034b4a4a24b489f096}{%
-           family={Bostyn},
-           familyi={B\bibinitperiod},
-           given={Dries\bibnamedelima H.},
-           giveni={D\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
-        {{hash=42c63442b4af644289bea17d1d4a4b0c}{%
-           family={Conrique},
-           familyi={C\bibinitperiod},
-           given={Beverly\bibnamedelima G.},
-           giveni={B\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
-        {{hash=4ca3e5f470592ca0f9e93b97d4df9050}{%
-           family={Ng},
-           familyi={N\bibinitperiod},
-           given={Brandon\bibnamedelima W.},
-           giveni={B\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
-        {{hash=7aea3d0de85571d89c69dbb647802caa}{%
-           family={Schoemann},
-           familyi={S\bibinitperiod},
-           given={Alexander\bibnamedelima M.},
-           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
-        {{hash=60abbb6dd2ac084973171453d67ea90a}{%
-           family={Soderberg},
-           familyi={S\bibinitperiod},
-           given={Courtney},
-           giveni={C\bibinitperiod}}}%
-      }
-      \strng{namehash}{65087b4783f4ae43d53f25722e1eb2fa}
-      \strng{fullhash}{ced973506d3b7cbd1a3dca3b1985ddc7}
-      \strng{fullhashraw}{ced973506d3b7cbd1a3dca3b1985ddc7}
-      \strng{bibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
-      \strng{authorbibnamehash}{65087b4783f4ae43d53f25722e1eb2fa}
-      \strng{authornamehash}{65087b4783f4ae43d53f25722e1eb2fa}
-      \strng{authorfullhash}{ced973506d3b7cbd1a3dca3b1985ddc7}
-      \strng{authorfullhashraw}{ced973506d3b7cbd1a3dca3b1985ddc7}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{shorttitle}
-      \field{issn}{1088-8683, 1532-7957}
-      \field{journaltitle}{Personality and Social Psychology Review}
-      \field{langid}{english}
-      \field{month}{8}
-      \field{number}{3}
-      \field{shortjournal}{Pers Soc Psychol Rev}
-      \field{shorttitle}{Power to {{Detect What}}?}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
       \field{title}{Power to {{Detect What}}? {{Considerations}} for {{Planning}} and {{Evaluating Sample Size}}}
-      \field{urlday}{26}
-      \field{urlmonth}{4}
-      \field{urlyear}{2026}
-      \field{volume}{28}
-      \field{year}{2024}
-      \field{dateera}{ce}
-      \field{urldateera}{ce}
-      \field{pages}{276\bibrangedash 301}
-      \range{pages}{26}
-      \verb{doi}
-      \verb 10.1177/10888683241228328
-      \endverb
-      \verb{file}
-      \verb C:\Users\sberg\Zotero\storage\VFH8TVPZ\Giner-Sorolla et al. - 2024 - Power to Detect What Considerations for Planning and Evaluating Sample Size.pdf
-      \endverb
-      \verb{urlraw}
-      \verb https://journals.sagepub.com/doi/10.1177/10888683241228328
-      \endverb
-      \verb{url}
-      \verb https://journals.sagepub.com/doi/10.1177/10888683241228328
-      \endverb
     \endentry
     \entry{weinfurt_clinically_meaningful_2019}{article}{}{}
       \name{author}{1}{}{%
@@ -736,14 +639,13 @@
       \strng{authornamehash}{c4ca1c27883f501a7a3511954f439325}
       \strng{authorfullhash}{c4ca1c27883f501a7a3511954f439325}
       \strng{authorfullhashraw}{c4ca1c27883f501a7a3511954f439325}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
       \field{day}{24}
       \field{issn}{0098-7484}
       \field{journaltitle}{JAMA}
-      \field{langid}{english}
       \field{month}{12}
       \field{number}{24}
       \field{shortjournal}{JAMA}
@@ -801,9 +703,8 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Advances in Neural Information Processing Systems}
-      \field{langid}{english}
-      \field{title}{Denoising Diffusion Probabilistic Models}
+      \field{booktitle}{Advances in {{Neural Information Processing Systems}}}
+      \field{title}{Denoising {{Diffusion Probabilistic Models}}}
       \field{urlday}{2}
       \field{urlmonth}{8}
       \field{urlyear}{2026}
@@ -860,10 +761,9 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}
-      \field{langid}{english}
+      \field{booktitle}{Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}}
       \field{month}{6}
-      \field{title}{High-Resolution Image Synthesis with Latent Diffusion Models}
+      \field{title}{High-{{Resolution Image Synthesis}} with {{Latent Diffusion Models}}}
       \field{urlday}{2}
       \field{urlmonth}{8}
       \field{urlyear}{2026}
@@ -880,60 +780,6 @@
       \endverb
       \verb{url}
       \verb https://openaccess.thecvf.com/content/CVPR2022/html/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.html
-      \endverb
-    \endentry
-    \entry{james_islr_2021}{book}{}{}
-      \name{author}{4}{}{%
-        {{hash=df184c5fa522ac8a515ec4de13aef234}{%
-           family={James},
-           familyi={J\bibinitperiod},
-           given={Gareth},
-           giveni={G\bibinitperiod}}}%
-        {{hash=1ab16961e0de50711fa6bd9425f9b4a6}{%
-           family={Witten},
-           familyi={W\bibinitperiod},
-           given={Daniela},
-           giveni={D\bibinitperiod}}}%
-        {{hash=0cb8fe4210baa81c4b0e67913b4d2768}{%
-           family={Hastie},
-           familyi={H\bibinitperiod},
-           given={Trevor},
-           giveni={T\bibinitperiod}}}%
-        {{hash=88eea600247d798f8b2ce0b2dc614492}{%
-           family={Tibshirani},
-           familyi={T\bibinitperiod},
-           given={Robert},
-           giveni={R\bibinitperiod}}}%
-      }
-      \list{location}{1}{%
-        {New York}%
-      }
-      \list{publisher}{1}{%
-        {Springer}%
-      }
-      \strng{namehash}{f8f737f83d9e451c1afaa13cdc120516}
-      \strng{fullhash}{da61646157a6be769f34984f5cb603b0}
-      \strng{fullhashraw}{da61646157a6be769f34984f5cb603b0}
-      \strng{bibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
-      \strng{authorbibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
-      \strng{authornamehash}{f8f737f83d9e451c1afaa13cdc120516}
-      \strng{authorfullhash}{da61646157a6be769f34984f5cb603b0}
-      \strng{authorfullhashraw}{da61646157a6be769f34984f5cb603b0}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{shorttitle}
-      \field{edition}{Second edition}
-      \field{isbn}{978-1-0716-1417-4 978-1-0716-1418-1}
-      \field{langid}{english}
-      \field{pagetotal}{1}
-      \field{series}{Springer Texts in Statistics}
-      \field{shorttitle}{An Introduction to Statistical Learning}
-      \field{title}{An Introduction to Statistical Learning: With Applications in {{R}}}
-      \field{year}{2021}
-      \field{dateera}{ce}
-      \verb{file}
-      \verb C:\Users\sberg\Zotero\storage\2BJQFI8E\James et al. - 2021 - An introduction to statistical learning with applications in R.pdf
       \endverb
     \endentry
     \entry{pan_transfer_learning_2010}{article}{}{}
@@ -963,10 +809,9 @@
       \field{labeltitlesource}{title}
       \field{issn}{1041-4347}
       \field{journaltitle}{IEEE Transactions on Knowledge and Data Engineering}
-      \field{langid}{english}
       \field{month}{10}
       \field{number}{10}
-      \field{title}{A Survey on Transfer Learning}
+      \field{title}{A {{Survey}} on {{Transfer Learning}}}
       \field{urlday}{2}
       \field{urlmonth}{8}
       \field{urlyear}{2026}
@@ -1061,10 +906,9 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Proceedings of the IEEE/CVF International Conference on Computer Vision}
-      \field{langid}{english}
+      \field{booktitle}{Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}}
       \field{month}{10}
-      \field{title}{Searching for MobileNetV3}
+      \field{title}{Searching for {{MobileNetV3}}}
       \field{urlday}{2}
       \field{urlmonth}{8}
       \field{urlyear}{2026}
@@ -1111,11 +955,10 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Proceedings of the 36th International Conference on Machine Learning}
-      \field{langid}{english}
+      \field{booktitle}{Proceedings of the 36th {{International Conference}} on {{Machine Learning}}}
       \field{month}{6}
-      \field{series}{Proceedings of Machine Learning Research}
-      \field{title}{EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks}
+      \field{series}{Proceedings of {{Machine Learning Research}}}
+      \field{title}{{{EfficientNet}}: {{Rethinking Model Scaling}} for {{Convolutional Neural Networks}}}
       \field{urlday}{2}
       \field{urlmonth}{8}
       \field{urlyear}{2026}
@@ -1132,58 +975,223 @@
       \verb https://proceedings.mlr.press/v97/tan19a.html
       \endverb
     \endentry
-    \entry{manning_ir_2008}{book}{}{}
-      \name{author}{3}{}{%
-        {{hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
-           family={Manning},
-           familyi={M\bibinitperiod},
-           given={Christopher\bibnamedelima D.},
-           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
-        {{hash=68f523934985e2f967ab2b15f4ded07c}{%
-           family={Raghavan},
-           familyi={R\bibinitperiod},
-           given={Prabhakar},
-           giveni={P\bibinitperiod}}}%
-        {{hash=9a80de0e5ec6df57363aaf321a5d05be}{%
-           family={Schütze},
-           familyi={S\bibinitperiod},
-           given={Hinrich},
-           giveni={H\bibinitperiod}}}%
+    \entry{prolificVerificationOnboardingGuide2026}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=72c035606a07faa83f56eeb7a1be1beb}{%
+           family={{Prolific}},
+           familyi={P\bibinitperiod}}}%
       }
-      \list{publisher}{1}{%
-        {Cambridge University Press}%
-      }
-      \strng{namehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{fullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{fullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{bibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{authorbibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{authornamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{authorfullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
-      \strng{authorfullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{namehash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{fullhash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{fullhashraw}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{bibnamehash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{authorbibnamehash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{authornamehash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{authorfullhash}{72c035606a07faa83f56eeb7a1be1beb}
+      \strng{authorfullhashraw}{72c035606a07faa83f56eeb7a1be1beb}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{day}{7}
-      \field{edition}{1}
-      \field{isbn}{978-0-521-86571-5 978-0-511-80907-1}
-      \field{month}{7}
-      \field{title}{Introduction to {{Information Retrieval}}}
-      \field{urlday}{8}
-      \field{urlmonth}{5}
+      \field{day}{17}
+      \field{month}{8}
+      \field{title}{Verification and {{Onboarding Guide}}}
+      \field{urlday}{10}
+      \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2008}
+      \field{year}{2026}
       \field{dateera}{ce}
       \field{urldateera}{ce}
-      \verb{doi}
-      \verb 10.1017/CBO9780511809071
-      \endverb
       \verb{urlraw}
-      \verb https://www.cambridge.org/core/product/identifier/9780511809071/type/book
+      \verb https://participant-help.prolific.com/en/articles/580553-verification-and-onboarding-guide
       \endverb
       \verb{url}
-      \verb https://www.cambridge.org/core/product/identifier/9780511809071/type/book
+      \verb https://participant-help.prolific.com/en/articles/580553-verification-and-onboarding-guide
+      \endverb
+    \endentry
+    \entry{prolific_researcher_terms}{online}{}{}
+      \list{organization}{1}{%
+        {prolific in Notion}%
+      }
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A collaborative AI workspace, built on your company context. Build and orchestrate agents right alongside your team's projects, meetings, and connected apps.}
+      \field{langid}{ngerman}
+      \field{title}{Researcher Terms}
+      \field{urlday}{11}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/macneo/Zotero/storage/5H6F8AQS/Researcher-Terms-7787f102f0c541bdbe2c04b5d3285acb.html
+      \endverb
+      \verb{urlraw}
+      \verb https://prolific.notion.site/Researcher-Terms-7787f102f0c541bdbe2c04b5d3285acb
+      \endverb
+      \verb{url}
+      \verb https://prolific.notion.site/Researcher-Terms-7787f102f0c541bdbe2c04b5d3285acb
+      \endverb
+    \endentry
+    \entry{testable_processing_data}{online}{}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{Processing of {{Data}} - {{Testable}} - {{Build}} Studies | {{Recruit}} Participants}
+      \field{urlday}{11}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.testable.org/legal/processing-of-data
+      \endverb
+      \verb{url}
+      \verb https://www.testable.org/legal/processing-of-data
+      \endverb
+    \endentry
+    \entry{james_islr_2021}{book}{}{}
+      \name{author}{4}{}{%
+        {{hash=df184c5fa522ac8a515ec4de13aef234}{%
+           family={James},
+           familyi={J\bibinitperiod},
+           given={Gareth},
+           giveni={G\bibinitperiod}}}%
+        {{hash=1ab16961e0de50711fa6bd9425f9b4a6}{%
+           family={Witten},
+           familyi={W\bibinitperiod},
+           given={Daniela},
+           giveni={D\bibinitperiod}}}%
+        {{hash=0cb8fe4210baa81c4b0e67913b4d2768}{%
+           family={Hastie},
+           familyi={H\bibinitperiod},
+           given={Trevor},
+           giveni={T\bibinitperiod}}}%
+        {{hash=88eea600247d798f8b2ce0b2dc614492}{%
+           family={Tibshirani},
+           familyi={T\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{f8f737f83d9e451c1afaa13cdc120516}
+      \strng{fullhash}{da61646157a6be769f34984f5cb603b0}
+      \strng{fullhashraw}{da61646157a6be769f34984f5cb603b0}
+      \strng{bibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
+      \strng{authorbibnamehash}{f8f737f83d9e451c1afaa13cdc120516}
+      \strng{authornamehash}{f8f737f83d9e451c1afaa13cdc120516}
+      \strng{authorfullhash}{da61646157a6be769f34984f5cb603b0}
+      \strng{authorfullhashraw}{da61646157a6be769f34984f5cb603b0}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{edition}{Second edition}
+      \field{isbn}{978-1-0716-1417-4 978-1-0716-1418-1}
+      \field{pagetotal}{1}
+      \field{series}{Springer {{Texts}} in {{Statistics}}}
+      \field{shorttitle}{An {{Introduction}} to {{Statistical Learning}}}
+      \field{title}{An {{Introduction}} to {{Statistical Learning}}: {{With Applications}} in {{R}}}
+      \field{year}{2021}
+      \field{dateera}{ce}
+    \endentry
+    \entry{deng2009imagenet}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=0ae7fdc13773f928525f673b05f37149}{%
+           family={Deng},
+           familyi={D\bibinitperiod},
+           given={Jia},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7d87c5957b07153c7f18918b92830bf8}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod}}}%
+        {{hash=d5670b2600fea169724521e252d9d09d}{%
+           family={Socher},
+           familyi={S\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod}}}%
+        {{hash=2afdae52015b97674d81efea449edce2}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Li-Jia},
+           giveni={L\bibinithyphendelim J\bibinitperiod}}}%
+        {{hash=4838f7fdd28d5cefb28f3b3c734976d4}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Kai},
+           giveni={K\bibinitperiod}}}%
+        {{hash=cd00ce5bc45f687c432e52e0fa1a7aa6}{%
+           family={Fei-Fei},
+           familyi={F\bibinithyphendelim F\bibinitperiod},
+           given={Li},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE Computer Society}%
+      }
+      \strng{namehash}{990420f755e01028377fcad1464c9706}
+      \strng{fullhash}{a16fdd05c52c264b99fe98f4a5e24c60}
+      \strng{fullhashraw}{a16fdd05c52c264b99fe98f4a5e24c60}
+      \strng{bibnamehash}{990420f755e01028377fcad1464c9706}
+      \strng{authorbibnamehash}{990420f755e01028377fcad1464c9706}
+      \strng{authornamehash}{990420f755e01028377fcad1464c9706}
+      \strng{authorfullhash}{a16fdd05c52c264b99fe98f4a5e24c60}
+      \strng{authorfullhashraw}{a16fdd05c52c264b99fe98f4a5e24c60}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2009 {{IEEE}} Conference on Computer Vision and Pattern Recognition}
+      \field{title}{{{ImageNet}}: A Large-Scale Hierarchical Image Database}
+      \field{year}{2009}
+      \field{dateera}{ce}
+      \field{pages}{248\bibrangedash 255}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/CVPR.2009.5206848
+      \endverb
+    \endentry
+    \entry{google_litert_android_2026}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=8b36e9207c24c76e6719268e49201d94}{%
+           family={{Google}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Google AI for Developers}%
+      }
+      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{13}
+      \field{month}{5}
+      \field{title}{{{LiteRT Für Android}}}
+      \field{urlday}{18}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://ai.google.dev/edge/litert/android?hl=de
+      \endverb
+      \verb{url}
+      \verb https://ai.google.dev/edge/litert/android?hl=de
       \endverb
     \endentry
     \entry{bsi_tr03161_mobile_2024}{report}{}{}
@@ -1207,53 +1215,15 @@
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{1}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
-      \field{langid}{german}
       \field{month}{3}
-      \field{title}{Technische Richtlinie TR-03161: Anforderungen an Anwendungen im Gesundheitswesen. Teil 1: Mobile Anwendungen. Version 3.0}
+      \field{title}{Technische {{Richtlinie TR-03161}}: {{Anforderungen}} an {{Anwendungen}} Im {{Gesundheitswesen}}. {{Teil}} 1: {{Mobile Anwendungen}}. {{Version}} 3.0}
       \field{year}{2024}
       \field{dateera}{ce}
-    \endentry
-    \entry{google_litert_android_2026}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=8b36e9207c24c76e6719268e49201d94}{%
-           family={{Google}},
-           familyi={G\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Google AI for Developers}%
-      }
-      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
-      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
-      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{day}{13}
-      \field{month}{5}
-      \field{title}{{{LiteRT}} Für Android}
-      \field{urlday}{18}
-      \field{urlmonth}{5}
-      \field{urlyear}{2026}
-      \field{year}{2026}
-      \field{dateera}{ce}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://ai.google.dev/edge/litert/android?hl=de
-      \endverb
-      \verb{url}
-      \verb https://ai.google.dev/edge/litert/android?hl=de
-      \endverb
     \endentry
     \entry{bsi_tr03161_web_2024}{report}{}{}
       \name{author}{1}{}{%
@@ -1276,14 +1246,13 @@
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{2}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
-      \field{langid}{german}
       \field{month}{3}
-      \field{title}{Technische Richtlinie TR-03161: Anforderungen an Anwendungen im Gesundheitswesen. Teil 2: Web-Anwendungen. Version 2.0}
+      \field{title}{Technische {{Richtlinie TR-03161}}: {{Anforderungen}} an {{Anwendungen}} Im {{Gesundheitswesen}}. {{Teil}} 2: {{Web-Anwendungen}}. {{Version}} 2.0}
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
@@ -1308,14 +1277,13 @@
       \strng{authorfullhash}{c61cd4100327b033030a8fe0fadc5c54}
       \strng{authorfullhashraw}{c61cd4100327b033030a8fe0fadc5c54}
       \field{extraname}{3}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{25}
-      \field{langid}{german}
       \field{month}{3}
-      \field{title}{Technische Richtlinie TR-03161: Anforderungen an Anwendungen im Gesundheitswesen. Teil 3: Hintergrundsysteme. Version 2.0}
+      \field{title}{Technische {{Richtlinie TR-03161}}: {{Anforderungen}} an {{Anwendungen}} Im {{Gesundheitswesen}}. {{Teil}} 3: {{Hintergrundsysteme}}. {{Version}} 2.0}
       \field{year}{2024}
       \field{dateera}{ce}
     \endentry
@@ -1357,10 +1325,9 @@
       \field{day}{21}
       \field{issn}{1474-5151, 1873-1953}
       \field{journaltitle}{European Journal of Cardiovascular Nursing}
-      \field{langid}{english}
       \field{month}{7}
       \field{number}{5}
-      \field{title}{Challenges and Strategies for Effective Recruitment and Retention of Participants in Clinical Research Studies}
+      \field{title}{Challenges and {{Strategies}} for {{Effective Recruitment}} and {{Retention}} of {{Participants}} in {{Clinical Research Studies}}}
       \field{urlday}{1}
       \field{urlmonth}{7}
       \field{urlyear}{2026}
@@ -1425,8 +1392,8 @@
       \field{journaltitle}{Frontiers in Pain Research}
       \field{month}{3}
       \field{shortjournal}{Front. Pain Res.}
-      \field{shorttitle}{Recruitment and Retention of Clinical Trial Participants}
-      \field{title}{Recruitment and Retention of Clinical Trial Participants: Understanding Motivations of Patients with Chronic Pain and Other Populations}
+      \field{shorttitle}{Recruitment and {{Retention}} of {{Clinical Trial Participants}}}
+      \field{title}{Recruitment and {{Retention}} of {{Clinical Trial Participants}}: {{Understanding Motivations}} of {{Patients}} with {{Chronic Pain}} and {{Other Populations}}}
       \field{urlday}{4}
       \field{urlmonth}{7}
       \field{urlyear}{2026}
@@ -1438,9 +1405,6 @@
       \range{pages}{1}
       \verb{doi}
       \verb 10.3389/fpain.2023.1330937
-      \endverb
-      \verb{file}
-      \verb C:\Users\sberg\Zotero\storage\PRP4QYSK\Anastasi et al. - 2024 - Recruitment and retention of clinical trial participants understanding motivations of patients with.pdf
       \endverb
       \verb{urlraw}
       \verb https://www.frontiersin.org/articles/10.3389/fpain.2023.1330937/full
@@ -1520,13 +1484,13 @@
       \strng{authornamehash}{6807242ff86130b6622d0db870481a51}
       \strng{authorfullhash}{94fd8f8c11bf399262d3816f9082d88b}
       \strng{authorfullhashraw}{94fd8f8c11bf399262d3816f9082d88b}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{8}
       \field{month}{5}
-      \field{title}{Protocol and Resources Development for Prioritised Recruitment and Retention Strategies ({{PRESS-2}})}
+      \field{title}{Protocol and {{Resources Development}} for {{Prioritised Recruitment}} and {{Retention Strategies}} ({{PRESS-2}})}
       \field{urlday}{1}
       \field{urlmonth}{7}
       \field{urlyear}{2026}
@@ -1597,18 +1561,17 @@
       \strng{authornamehash}{36e2778fd41ff16f407d2cb708edfc8a}
       \strng{authorfullhash}{d6e44ecbc92ee0f40edc58bb77374c84}
       \strng{authorfullhashraw}{d6e44ecbc92ee0f40edc58bb77374c84}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
       \field{issn}{1745-6215}
       \field{journaltitle}{Trials}
-      \field{langid}{english}
       \field{month}{12}
       \field{number}{1}
       \field{shortjournal}{Trials}
       \field{shorttitle}{Estimating {{Site Performance}} ({{ESP}})}
-      \field{title}{Estimating {{Site Performance}} ({{ESP}}): Can Trial Managers Predict Recruitment Success at Trial Sites? {{An}} Exploratory Study}
+      \field{title}{Estimating {{Site Performance}} ({{ESP}}): {{Can Trial Managers Predict Recruitment Success}} at {{Trial Sites}}? {{An Exploratory Study}}}
       \field{urlday}{1}
       \field{urlmonth}{7}
       \field{urlyear}{2026}
@@ -1620,9 +1583,6 @@
       \range{pages}{1}
       \verb{doi}
       \verb 10.1186/s13063-019-3287-6
-      \endverb
-      \verb{file}
-      \verb C:\Users\sberg\Zotero\storage\Z85VIALB\Bruhn et al. - 2019 - Estimating Site Performance (ESP) can trial managers predict recruitment success at trial sites An.pdf
       \endverb
       \verb{urlraw}
       \verb https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-019-3287-6

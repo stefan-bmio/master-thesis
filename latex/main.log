@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.9.22)  30 SEP 2026 21:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.9.22)  26 OCT 2026 19:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -745,7 +745,23 @@ Package biblatex Info: ... and expl3
 Package: xparse 2025-10-09 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
-)) (/usr/local/texlive/2026/texmf-dist/tex/latex/xurl/xurl.sty
+)) (/usr/local/texlive/2026/texmf-dist/tex/latex/footmisc/footmisc.sty
+Package: footmisc 2025/05/09 v7.0b a miscellany of footnote facilities
+\FN@temptoken=\toks33
+\footnotemargin=\dimen194
+\FN@tempboxb=\box116
+\FN@tempboxc=\box117
+\footglue=\skip115
+\footnotebaselineskip=\dimen195
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 294.
+Package footmisc Info: Declaring symbol style bringhurst on input line 549.
+Package footmisc Info: Declaring symbol style chicago on input line 557.
+Package footmisc Info: Declaring symbol style wiley on input line 566.
+Package footmisc Info: Declaring symbol style lamport-robust on input line 577.
+Package footmisc Info: Declaring symbol style lamport* on input line 597.
+Package footmisc Info: Declaring symbol style lamport*-robust on input line 618.
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/xurl/xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
 
 xurl: Set penalties for biblatex
@@ -768,7 +784,7 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 ) (/usr/local/texlive/2026/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
 )
-\@linkdim=\dimen194
+\@linkdim=\dimen196
 \Hy@linkcounter=\count501
 \Hy@pagecounter=\count502
  (/usr/local/texlive/2026/texmf-dist/tex/latex/hyperref/pd1enc.def
@@ -793,15 +809,15 @@ Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4468.
 \c@Hy@tempcnt=\count504
 LaTeX Info: Redefining \url on input line 4807.
-\XeTeXLinkMargin=\dimen195
+\XeTeXLinkMargin=\dimen197
  (/usr/local/texlive/2026/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
  (/usr/local/texlive/2026/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
 ))
 \Fld@menulength=\count505
-\Field@Width=\dimen196
-\Fld@charsize=\dimen197
+\Field@Width=\dimen198
+\Fld@charsize=\dimen199
 Package hyperref Info: Hyper figures OFF on input line 6084.
 Package hyperref Info: Link nesting OFF on input line 6089.
 Package hyperref Info: Hyper index ON on input line 6092.
@@ -825,103 +841,103 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
 )
-\Hy@SectionHShift=\skip115
+\Hy@SectionHShift=\skip116
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/silence/silence.sty
 Package: silence 2012/07/02 v1.5b Selective filtering of warnings and error messages
 \sl@Save=\count511
 \sl@StateNumber=\count512
 \sl@MessageCount=\count513
 \sl@Casualties=\count514
-\sl@Filter=\toks33
-\sl@Message=\toks34
-\sl@UnexpandedMessage=\toks35
-\sl@Mess@ge=\toks36
+\sl@Filter=\toks34
+\sl@Message=\toks35
+\sl@UnexpandedMessage=\toks36
+\sl@Mess@ge=\toks37
 \sl@WarningCount=\count515
 \sl@WarningNumber=\count516
 \sl@WarningCasualties=\count517
-\sl@TempBOW=\toks37
-\sl@BankOfWarnings=\toks38
+\sl@TempBOW=\toks38
+\sl@BankOfWarnings=\toks39
 LaTeX Info: Redefining \GenericWarning on input line 433.
 \sl@ErrorCount=\count518
 \sl@ErrorNumber=\count519
 \sl@ErrorCasualties=\count520
-\sl@TempBOE=\toks39
-\sl@BankOfErrors=\toks40
+\sl@TempBOE=\toks40
+\sl@BankOfErrors=\toks41
 LaTeX Info: Redefining \GenericError on input line 601.
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/pdfpages/pdfpages.sty
 Package: pdfpages 2025/07/23 v0.6g Insert pages of external PDF documents (AM)
  (/usr/local/texlive/2026/texmf-dist/tex/latex/eso-pic/eso-pic.sty
 Package: eso-pic 2025/12/10 v3.0d eso-pic (RN)
-\ESO@tempdima=\dimen198
-\ESO@tempdimb=\dimen199
+\ESO@tempdima=\dimen256
+\ESO@tempdimb=\dimen257
 )
-\AM@pagewidth=\dimen256
-\AM@pageheight=\dimen257
-\AM@fboxrule=\dimen258
+\AM@pagewidth=\dimen258
+\AM@pageheight=\dimen259
+\AM@fboxrule=\dimen260
  (/usr/local/texlive/2026/texmf-dist/tex/latex/pdfpages/pppdftex.def
 File: pppdftex.def 2025/07/23 v0.6g Pdfpages driver for pdfTeX (AM)
 )
 \pdfpages@includegraphics@status=\count521
-\AM@pagebox=\box116
-\AM@global@opts=\toks41
+\AM@pagebox=\box118
+\AM@global@opts=\toks42
 \AM@pagecnt=\count522
-\AM@toc@title=\toks42
-\AM@lof@heading=\toks43
+\AM@toc@title=\toks43
+\AM@lof@heading=\toks44
 \c@AM@survey=\count523
-\AM@templatesizebox=\box117
+\AM@templatesizebox=\box119
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/xltabular/xltabular.sty
 Package: xltabular 2025/02/28 v0.2i `xltabular' package (hv,RN)
  (/usr/local/texlive/2026/texmf-dist/tex/latex/ltablex/ltablex.sty
 Package: ltablex 2014/08/13 v1.1 Modified tabularx
  (/usr/local/texlive/2026/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
-\LTleft=\skip116
-\LTright=\skip117
-\LTpre=\skip118
-\LTpost=\skip119
+\LTleft=\skip117
+\LTright=\skip118
+\LTpre=\skip119
+\LTpost=\skip120
 \LTchunksize=\count524
-\LTcapwidth=\dimen259
-\LT@head=\box118
-\LT@firsthead=\box119
-\LT@foot=\box120
-\LT@lastfoot=\box121
-\LT@gbox=\box122
+\LTcapwidth=\dimen261
+\LT@head=\box120
+\LT@firsthead=\box121
+\LT@foot=\box122
+\LT@lastfoot=\box123
+\LT@gbox=\box124
 \LT@cols=\count525
 \LT@rows=\count526
 \c@LT@tables=\count527
 \c@LT@chunks=\count528
-\LT@p@ftn=\toks44
+\LT@p@ftn=\toks45
 ))) (/usr/local/texlive/2026/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen260
-\lightrulewidth=\dimen261
-\cmidrulewidth=\dimen262
-\belowrulesep=\dimen263
-\belowbottomsep=\dimen264
-\aboverulesep=\dimen265
-\abovetopsep=\dimen266
-\cmidrulesep=\dimen267
-\cmidrulekern=\dimen268
-\defaultaddspace=\dimen269
+\heavyrulewidth=\dimen262
+\lightrulewidth=\dimen263
+\cmidrulewidth=\dimen264
+\belowrulesep=\dimen265
+\belowbottomsep=\dimen266
+\aboverulesep=\dimen267
+\abovetopsep=\dimen268
+\cmidrulesep=\dimen269
+\cmidrulekern=\dimen270
+\defaultaddspace=\dimen271
 \@cmidla=\count529
 \@cmidlb=\count530
-\@aboverulesep=\dimen270
-\@belowrulesep=\dimen271
+\@aboverulesep=\dimen272
+\@belowrulesep=\dimen273
 \@thisruleclass=\count531
 \@lastruleclass=\count532
-\@thisrulewidth=\dimen272
+\@thisrulewidth=\dimen274
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
  (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen273
-\captionmargin=\dimen274
-\caption@leftmargin=\dimen275
-\caption@rightmargin=\dimen276
-\caption@width=\dimen277
-\caption@indent=\dimen278
-\caption@parindent=\dimen279
-\caption@hangindent=\dimen280
+\caption@tempdima=\dimen275
+\captionmargin=\dimen276
+\caption@leftmargin=\dimen277
+\caption@rightmargin=\dimen278
+\caption@width=\dimen279
+\caption@indent=\dimen280
+\caption@parindent=\dimen281
+\caption@hangindent=\dimen282
 Package caption Info: Standard document class detected.
 )
 \c@caption@flags=\count533
@@ -931,11 +947,11 @@ Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
  (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
-))) (/usr/local/texlive/2026/texmf-dist/tex/latex/changepage/changepage.sty
+)) (/usr/local/texlive/2026/texmf-dist/tex/latex/changepage/changepage.sty
 Package: changepage 2009/10/20 v1.0c check page and change page layout
 \c@cp@cntr=\count535
 \cp@tempcnt=\count536
-)
+))
 -----------------------------------------------------------
 ----> main.tex ---- Zentrales Dokument---------------------
 -----------------------------------------------------------
@@ -949,37 +965,37 @@ Package babel Info: 'ngerman' activates 'german' shorthands.
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 83.
-LaTeX Font Info:    ... okay on input line 83.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
  (/usr/local/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count537
-\scratchdimen=\dimen281
-\scratchbox=\box123
+\scratchdimen=\dimen283
+\scratchbox=\box125
 \nofMPsegments=\count538
 \nofMParguments=\count539
-\everyMPshowfont=\toks45
+\everyMPshowfont=\toks46
 \MPscratchCnt=\count540
-\MPscratchDim=\dimen282
+\MPscratchDim=\dimen284
 \MPnumerator=\count541
 \makeMPintoPDFobject=\count542
-\everyMPtoPDFconversion=\toks46
+\everyMPtoPDFconversion=\toks47
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -988,7 +1004,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 )) (/usr/local/texlive/2026/texmf-dist/tex/latex/translations/translations-basic-dictionary-german.trsl
 File: translations-basic-dictionary-german.trsl (german translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `german'. on input line 83.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `german'. on input line 86.
 \c@mv@tabular=\count543
 \c@mv@boldtabular=\count544
 \c@lstlisting=\count545
@@ -1014,9 +1030,9 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl)
-Package biblatex Info: Reference section=0 on input line 83.
-Package biblatex Info: Reference segment=0 on input line 83.
-Package hyperref Info: Link coloring OFF on input line 83.
+Package biblatex Info: Reference section=0 on input line 86.
+Package biblatex Info: Reference segment=0 on input line 86.
+Package hyperref Info: Link coloring OFF on input line 86.
  (./main.out) (./main.out)
 \@outlinefile=\write6
 \openout6 = `main.out'.
@@ -1032,8 +1048,8 @@ Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: changepage package is loaded.
-\caption@adjustwidth@hsize=\dimen283
-\caption@adjustwidth@linewidth=\dimen284
+\caption@adjustwidth@hsize=\dimen285
+\caption@adjustwidth@linewidth=\dimen286
 Package caption Info: End \AtBeginDocument code.
  (./titelseiten.tex
 LaTeX Font Info:    Trying to load font information for T1+phv on input line 11.
@@ -1044,18 +1060,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 11--11
 \T1/phv/b/n/17 verlangen durch Cue-Labeling im
  []
 
-<pictures/BHT-Logo-vertikal.pdf, id=582, 53.01094pt x 126.0707pt>
+<pictures/BHT-Logo-vertikal.pdf, id=514, 53.01094pt x 126.0707pt>
 File: pictures/BHT-Logo-vertikal.pdf Graphic file (type pdf)
 <use pictures/BHT-Logo-vertikal.pdf>
 Package pdftex.def Info: pictures/BHT-Logo-vertikal.pdf  used on input line 11.
 (pdftex.def)             Requested size: 64.01935pt x 152.25937pt.
-<BHT-Elements.pdf, id=583, 32.04338pt x 161.86708pt>
+<BHT-Elements.pdf, id=515, 32.04338pt x 161.86708pt>
 File: BHT-Elements.pdf Graphic file (type pdf)
 <use BHT-Elements.pdf>
 Package pdftex.def Info: BHT-Elements.pdf  used on input line 11.
 (pdftex.def)             Requested size: 32.04329pt x 161.86667pt.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd) (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd) (/usr/local/texlive/2026/texmf-dist/tex/latex/trsym/utrsy.fd)
-<BHT-Studiere-vertikal.pdf, id=584, 8.48169pt x 86.94461pt>
+<BHT-Studiere-vertikal.pdf, id=516, 8.48169pt x 86.94461pt>
 File: BHT-Studiere-vertikal.pdf Graphic file (type pdf)
 <use BHT-Studiere-vertikal.pdf>
 Package pdftex.def Info: BHT-Studiere-vertikal.pdf  used on input line 11.
@@ -1106,7 +1122,7 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 24.88pt on input line 59.
  (./main.toc [3]
 Package babel Info: 'ngerman' activates 'german' shorthands.
-(babel)             Reported on input line 90.
+(babel)             Reported on input line 64.
  [4{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}] [5])
 \tf@toc=\write7
 \openout7 = `main.toc'.
@@ -1163,875 +1179,396 @@ Underfull \hbox (badness 10000) in paragraph at lines 16--17
  []
 
 
-Underfull \hbox (badness 2846) in paragraph at lines 18--19
+Underfull \hbox (badness 2846) in paragraph at lines 18--20
 []\T1/LinuxLibertineT-TLF/m/n/10.95 Die WHO-Leitlinie zur Tabakent-wöh-nung bei Erwach-senen empfiehlt digi-tale Interven-
  []
 
-[9]
-Overfull \hbox (11.93588pt too wide) in paragraph at lines 28--29
-\T1/LinuxLibertineT-TLF/m/n/10.95 genen Bild eines von zwei rauch-be-zo-genen Wörtern zuge-ordnet. In der Gender-Labeling-Bedingung|
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10]
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+
  []
 
-
-Overfull \hbox (12.36292pt too wide) in paragraph at lines 28--29
-\T1/LinuxLibertineT-TLF/m/n/10.95 wurde als Kontroll-be-din-gung das Geschlecht einer abge-bil-deten Person benannt. Verwendet wurden|
- []
-
-
-Overfull \hbox (3.05331pt too wide) in paragraph at lines 28--29
-\T1/LinuxLibertineT-TLF/m/n/10.95 dem psycho-lo-gi-schen Wirk-me-cha-nismus liefert die Studie damit auch metho-di-sches Grund-muster|
- []
-
-
-Overfull \hbox (8.39255pt too wide) in paragraph at lines 30--31
-\T1/LinuxLibertineT-TLF/m/n/10.95 auslösten. Das berich-tete Verlangen war in der Cue-Matching-Bedingung höher als in der neutralen|
- []
-
-
-Overfull \hbox (15.39606pt too wide) in paragraph at lines 32--33
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 In der App-Studie wird Cue-Labeling als prüf-bare Hypo-these behan-delt. Labor-be-din-gungen erlauben|
- []
-
-
-Overfull \hbox (0.90271pt too wide) in paragraph at lines 32--33
-\T1/LinuxLibertineT-TLF/m/n/10.95 reale Rauch-reize nur begrenzt abbilden. Die App muss daher den Labor-ver-gleich möglichst sauber|
- []
-
-
-Overfull \hbox (5.13269pt too wide) in paragraph at lines 32--33
-\T1/LinuxLibertineT-TLF/m/n/10.95 Reihen-folge und eine unmit-tel-bare Erfas-sung des Rauch-ver-lan-gens. Zugleich muss die App alltags-|
- []
-
-
-Overfull \hbox (9.50934pt too wide) in paragraph at lines 40--41
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Verwandt sind Arbeiten zu Cue Exposure in virtu-ellen und erwei-terten Umge-bungen. Cue Exposure|
- []
-
-[10]
-Overfull \hbox (4.87648pt too wide) in paragraph at lines 44--45
-\T1/LinuxLibertineT-TLF/m/n/10.95 Reality als Unter-stüt-zung der Rauchent-wöh-nung [[]11[]]. Das zuge-hö-rige Studi-en-pro-to-koll beschreibt|
- []
-
-
-Overfull \hbox (19.22856pt too wide) in paragraph at lines 44--45
-\T1/LinuxLibertineT-TLF/m/n/10.95 präsen-tiert oder durch ein Klas-si-fi-ka-ti-ons-mo-dell aus selbst-ge-wählten Bildern erkannt. Diese Entschei-|
- []
-
-
-Overfull \hbox (13.40738pt too wide) in paragraph at lines 44--45
-\T1/LinuxLibertineT-TLF/m/n/10.95 dung redu-ziert Entwick-lungs-auf-wand, Gerä-te-ab-hän-gig-keit und Fehler-ri-siken. Sie passt zum Rahmen|
- []
-
-[11]
-Overfull \hbox (0.29161pt too wide) in paragraph at lines 54--55
-\T1/LinuxLibertineT-TLF/m/n/10.95 furt unter-scheidet zwischen einer Verän-de-rung, die für Pati-en-tinnen und Pati-enten wahr-nehmbar|
- []
-
-
-Overfull \hbox (8.56195pt too wide) in paragraph at lines 58--59
-\T1/LinuxLibertineT-TLF/m/n/10.95 Bilder und fest-ge-legte Antwort-op-tionen, sodass alle Teil-neh-menden einen repro-du-zier-baren Aufga-|
- []
-
-
-Overfull \hbox (3.42325pt too wide) in paragraph at lines 60--61
-\T1/LinuxLibertineT-TLF/m/n/10.95 Denoi-sing Diffu-sion Proba-bi-li-stic Models lernen einen schritt-weisen Prozess, der aus verrauschten|
- []
-
-
-Overfull \hbox (11.63582pt too wide) in paragraph at lines 60--61
-\T1/LinuxLibertineT-TLF/m/n/10.95 Reprä-sen-ta-tionen wieder Bild-daten erzeugt [[]15[]]. Latent-Diffusion-Modelle verla-gern diesen rechen-|
- []
-
-[12]
-Overfull \hbox (8.6245pt too wide) in paragraph at lines 64--65
-\T1/LinuxLibertineT-TLF/m/n/10.95 die interne Nach-voll-zieh-bar-keit der Wirk-sam-keits-studie. Würde ein Klas-si-fi-ka-ti-ons-mo-dell während|
- []
-
-
-Overfull \hbox (12.76485pt too wide) in paragraph at lines 64--65
-\T1/LinuxLibertineT-TLF/m/n/10.95 tatsäch-lich vorhan-denen Rauch-reiz über-sehen. Ein falsch posi-tives Ergebnis könnte für ein neutrales|
- []
-
-
-Overfull \hbox (6.08401pt too wide) in paragraph at lines 66--67
-\T1/LinuxLibertineT-TLF/m/n/10.95 basierte Soft-ware als mögliche digi-tale Unter-stüt-zung der Tabakent-wöh-nung, bewertet die Evidenz|
- []
-
-
-Overfull \hbox (3.62578pt too wide) in paragraph at lines 68--69
-\T1/LinuxLibertineT-TLF/m/n/10.95 mente gemeinsam zu betrachten [[]22[]]. On-Device-Inferenz redu-ziert damit einen Daten-fluss, besei-|
- []
-
-) (./kapitel2/ch2.tex
-Overfull \hbox (0.31796pt too wide) in paragraph at lines 70--2
-\T1/LinuxLibertineT-TLF/m/n/10.95 Bilder klas-si-fi-ziert. Eine spätere Verbin-dung beider Kompo-nenten wäre ein neuer Unter-su-chungs-|
- []
-
-[13] [14
-
-]
+[11]) (./kapitel2/ch2.tex [12]
 Kapitel 2.
-
-Overfull \hbox (5.50581pt too wide) in paragraph at lines 14--15
-\T1/LinuxLibertineT-TLF/m/n/10.95 nicht von der Auswer-tung ausge-schlossen, können aber als Ausreiÿer inter-pre-tiert werden. Einma-|
- []
-
-
-Overfull \hbox (8.75256pt too wide) in paragraph at lines 23--24
-\T1/LinuxLibertineT-TLF/m/n/10.95 bestimmter Bedin-gungen, in der DSGVO, und die ausdrück-liche Erlaubnis bei Vorliegen bestimmter|
- []
-
-[15]
-Underfull \hbox (badness 2932) in paragraph at lines 43--44
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Studienergebnisse werden ausschlieÿ-lich aus anony-mi-sierten Daten gewonnen. Kontakt-
- []
-
-
-Underfull \vbox (badness 7740) has occurred while \output is active []
-
- [16]
-Overfull \hbox (4.01134pt too wide) in paragraph at lines 52--53
-\T1/LinuxLibertineT-TLF/m/n/10.95 direkt anschlie-ÿendes Cue-Matching oder Cue-Labeling verwendet. Danach werden sie verworfen|
- []
-
-
-Overfull \hbox (12.05733pt too wide) in paragraph at lines 58--59
-\T1/LinuxLibertineT-TLF/m/n/10.95 Die wissen-schaft-li-chen Selbst-be-richte sind nicht anonym, sondern pseud-ony-mi-siert. Für das intrain-|
- []
-
-[17]
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 74.
- (/usr/local/texlive/2026/texmf-dist/tex/latex/bera/t1fvm.fd
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 16.
+(/usr/local/texlive/2026/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 9.08852pt on input line 74.
-
-Overfull \hbox (1.9713pt too wide) in paragraph at lines 74--75
-\T1/LinuxLibertineT-TLF/m/n/10.95 Die App unter-stützt eine erneute Zustim-mung, wenn der in der Regis-trie-rung gespei-cherte Daten-|
- []
-
-
-Overfull \hbox (2.60501pt too wide) in paragraph at lines 80--81
-\T1/LinuxLibertineT-TLF/m/n/10.95 ange-for-dert. Wird die Berech-ti-gung nicht erteilt oder später entzogen, bleiben Akti-vie-rung, Demo,|
- []
-
-
-Overfull \hbox (8.40967pt too wide) in paragraph at lines 82--83
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Benachrichtigungen dürfen keine E-Mail-Adresse, kein App-Token, keinen Rauch-status und keinen|
- []
-
-[18]
-Overfull \hbox (6.24606pt too wide) in paragraph at lines 90--91
-\T1/LinuxLibertineT-TLF/m/n/10.95 der Abrech-nungs-code, liegen weiterhin in privaten App-Einstellungen. Die auto-ma-ti-sche Android-|
- []
-
-
-Overfull \hbox (9.13698pt too wide) in paragraph at lines 97--98
-\T1/LinuxLibertineT-TLF/m/n/10.95 schieden. Diese Kenn-zeich-nung ist nicht Bestand-teil der wissen-schaft-li-chen Selbst-be-richte, sondern|
- []
-
-
-Overfull \hbox (13.49399pt too wide) in paragraph at lines 97--98
-\T1/LinuxLibertineT-TLF/m/n/10.95 verbleibt im admi-nis-tra-tiven Regis-trie-rungs-kon-text. Die expe-ri-men-telle Bedin-gung und die Craving-|
- []
-
-
-Overfull \hbox (2.6752pt too wide) in paragraph at lines 99--100
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für direkt gewor-bene Teil-neh-mende werden weiterhin E-Mail-Adresse, Name und die zur Auszah-|
- []
-
-
-Overfull \hbox (13.1174pt too wide) in paragraph at lines 101--102
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Prolific-ID ist trotz des Verzichts auf Name, E-Mail-Adresse und Bank-ver-bin-dung kein anonymes|
- []
-
-
-Overfull \hbox (4.34616pt too wide) in paragraph at lines 103--104
-\T1/LinuxLibertineT-TLF/m/n/10.95 zusätz-li-cher E-Mail-Bestätigungsprozess erzeugt; eine erfolg-reich ange-legte Prolific-Regis-trierung|
- []
-
-
-Overfull \hbox (8.31242pt too wide) in paragraph at lines 103--104
-\T1/LinuxLibertineT-TLF/m/n/10.95 erhält unmit-telbar einen Bestä-ti-gungs-zeit-punkt. Die geson-derte tech-ni-sche Prüfung, ob die Prolific-|
- []
-
-[19]
-Overfull \hbox (5.29474pt too wide) in paragraph at lines 109--110
-\T1/LinuxLibertineT-TLF/m/n/10.95 Vor dem Anlegen des CueLens-Registrierungsdatensatzes fragt das Backend zusätz-lich die Prolific-|
- []
-
-
-Overfull \hbox (21.27623pt too wide) in paragraph at lines 109--110
-\T1/LinuxLibertineT-TLF/m/n/10.95 geeig-nete Submis-sion mit exakt dieser Teil-neh-mer-ken-nung vorliegt. Diese Prüfung betrifft ausschlieÿ-|
- []
-
-
-Overfull \hbox (5.62105pt too wide) in paragraph at lines 111--112
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Schnitt-stelle bildet eine zusätz-liche externe Daten-ver-ar-bei-tungs-grenze. Der API-Zugriff erfolgt|
- []
-
-
-Overfull \hbox (2.37216pt too wide) in paragraph at lines 111--112
-\T1/LinuxLibertineT-TLF/m/n/10.95 Host-Konfiguration gelesen und nur im HTTP-Header \T1/fvm/m/n/10.95 Authorization \T1/LinuxLibertineT-TLF/m/n/10.95 über-tragen. Es wird weder|
- []
-
-
-Overfull \hbox (19.01282pt too wide) in paragraph at lines 113--114
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Prolific-Antwort enthält dagegen Submission-Datensätze der konfi-gu-rierten Studie. Die CueLens-|
- []
-
-
-Overfull \hbox (8.25136pt too wide) in paragraph at lines 113--114
-\T1/LinuxLibertineT-TLF/m/n/10.95 Prüfroutine verar-beitet daraus die Felder \T1/fvm/m/n/10.95 participant_id \T1/LinuxLibertineT-TLF/m/n/10.95 und \T1/fvm/m/n/10.95 status\T1/LinuxLibertineT-TLF/m/n/10.95 , bis die ange-ge-bene Prolific-|
- []
-
-
-Overfull \hbox (35.29425pt too wide) in paragraph at lines 113--114
-\T1/LinuxLibertineT-TLF/m/n/10.95 CueLens-Teilnehmenden, können während der Prüfung auch Kennungen anderer Prolific-Teilnehmender|
- []
-
-
-Overfull \hbox (9.42825pt too wide) in paragraph at lines 113--114
-\T1/LinuxLibertineT-TLF/m/n/10.95 im Arbeitsspei-cher des Servers verar-beitet werden. Die Prüf-rou-tine persis-tiert diese API-Antworten|
- []
-
-) (./kapitel3/ch3.tex [20]
-Kapitel 3.
-
-Overfull \hbox (6.47374pt too wide) in paragraph at lines 19--20
-\T1/LinuxLibertineT-TLF/m/n/10.95 Manning et al. beschreiben hierfür allge-meine Prin-zi-pien wie Toke-ni-sie-rung, Inde-xie-rung, Gewich-|
- []
-
-
-Overfull \hbox (0.42075pt too wide) in paragraph at lines 19--20
-\T1/LinuxLibertineT-TLF/m/n/10.95 Label-menge stammen sollten. Eine einfache Daten-struktur kann aus Reiz-ka-te-go-rien, Synonymen,|
- []
-
-[21
+(Font)              scaled to size 7.47002pt on input line 16.
+ [13
 
 ]
-Overfull \hbox (6.10645pt too wide) in paragraph at lines 24--25
-\T1/fvm/m/n/10.95 cigarette\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 cigarette pack\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 people smoking\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 smoke \T1/LinuxLibertineT-TLF/m/n/10.95 oder \T1/fvm/m/n/10.95 negative\T1/LinuxLibertineT-TLF/m/n/10.95 . Für die prak-ti-sche Verwen-|
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
+ [14]) (./kapitel3/ch3.tex
+Overfull \vbox (1.3982pt too high) has occurred while \output is active []
 
-Overfull \hbox (18.52773pt too wide) in paragraph at lines 39--40
-\T1/LinuxLibertineT-TLF/m/n/10.95 Weg wieder in Flieÿkomma-Scores umge-rechnet. Dieses Vorgehen vermeidet fest codierte Annahmen|
- []
+ [15] [16
 
-[22]
-Overfull \hbox (1.31761pt too wide) in paragraph at lines 45--46
-\T1/LinuxLibertineT-TLF/m/n/10.95 Die ML-Kit-Baseline verwendet das allge-meine Stan-dard-mo-dell zur Bild-klas-si-fi-zie-rung. Da dessen|
- []
+]
+Kapitel 3.
+[17]
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 9.08852pt on input line 38.
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-Underfull \hbox (badness 2368) in paragraph at lines 45--46
-\T1/LinuxLibertineT-TLF/m/n/10.95 Ausga-be-label nicht mit den sechs CueLens-Klassen über-ein-stimmen, wird eine einfache
- []
-
-
-Underfull \vbox (badness 3861) has occurred while \output is active []
-
- [23]
-Overfull \hbox (18.67633pt too wide) in paragraph at lines 61--62
-\T1/LinuxLibertineT-TLF/m/n/10.95 nicht über \T1/fvm/m/n/10.95 hub.KerasLayer \T1/LinuxLibertineT-TLF/m/n/10.95 fein-jus-tiert werden kann. Deshalb bleibt der EfficientNet-Lite0-Backbone|
- []
-
-
-Overfull \hbox (7.0409pt too wide) in paragraph at lines 63--64
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Das Trai-ning verwendet eben-falls Adam, kate-go-ri-sche Kreu-zen-tropie, höchs-tens zwanzig Epochen,|
- []
-
-
-Overfull \hbox (6.92467pt too wide) in paragraph at lines 67--68
-\T1/LinuxLibertineT-TLF/m/n/10.95 Eine zentrale Modell-be-schrei-bung enthält Modell-ID, Backendtyp, Asset-pfad, Einga-be-gröÿe, Label-|
- []
-
-
-Overfull \hbox (0.78654pt too wide) in paragraph at lines 69--70
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Der LiteRT-Adapter verwendet zwei Interpreter-Threads und deak-ti-viert XNNPACK. Diese Konfi-|
- []
-
-
-Overfull \hbox (2.08408pt too wide) in paragraph at lines 69--70
-\T1/LinuxLibertineT-TLF/m/n/10.95 gu-ra-tion erhöht die Repro-du-zier-bar-keit zwischen Läufen, nutzt aber nicht zwin-gend die schnellste|
- []
-
-
-Overfull \hbox (0.5348pt too wide) in paragraph at lines 69--70
-\T1/LinuxLibertineT-TLF/m/n/10.95 schaft der doku-men-tierten Bench-mark-kon-fi-gu-ra-tion und nicht auto-ma-tisch die mini-male erreich-|
- []
-
-
-Overfull \hbox (6.18498pt too wide) in paragraph at lines 71--72
-\T1/LinuxLibertineT-TLF/m/n/10.95 die App klas-sen-weise One-vs-Rest-Konfusionsmatrizen sowie eine binäre Matrix ^^R  Rauch-reiz gegen|
- []
-
-[24]) (./kapitel4/ch4.tex
-Overfull \hbox (7.59512pt too wide) in paragraph at lines 81--2
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Zum Zeit-punkt dieses Entwurfs beschreibt das Repo-si-tory eine repro-du-zier-bare Trainings-, Export-|
- []
-
-[25] [26
+ [18]) (./kapitel4/ch4.tex [19] [20
 
 ]
 Kapitel 4.
+[21]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-Overfull \hbox (6.1072pt too wide) in paragraph at lines 11--12
-\T1/LinuxLibertineT-TLF/m/n/10.95 nahme an der Studie kommen Smart-phones und Tablets infrage. Die Anfor-de-rungen unter-scheiden|
+ [22]) (./kapitel5/ch5.tex [23] [24
+
+]
+Kapitel 5.
+
+Underfull \vbox (badness 2050) has occurred while \output is active []
+
+ [25]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [26]
+Underfull \vbox (badness 6094) has occurred while \output is active []
+
+ [27]
+
+Package caption Warning: \setcaptiontype
+(caption)                outside box or environment on input line 94.
+See the caption package documentation for explanation.
+
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 94.
+See the caption package documentation for explanation.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--99
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die Imple-men-tie-rung besteht aus vier getrennten Berei-chen: der Android-App, der
  []
 
 
-Overfull \hbox (0.39565pt too wide) in paragraph at lines 14--15
-\T1/LinuxLibertineT-TLF/m/n/10.95 Endge-räte. Bild-dar-stel-lungen im Voll-bild und Buttons mit Grafik oder Text sind auf allen gängigen|
+Underfull \hbox (badness 1194) in paragraph at lines 98--99
+\T1/LinuxLibertineT-TLF/m/n/10.95 vie-rung, Daten-schutz-be-stä-ti-gung, Benach-rich-ti-gungen und Über-tra-gung der Selbst-be-richte.
  []
 
 
-Overfull \hbox (1.20364pt too wide) in paragraph at lines 18--19
-\T1/LinuxLibertineT-TLF/m/n/10.95 Sicherung deak-ti-viert ist, damit lokale Fort-schritts-daten nicht über allge-meine Gerä-te-si-che-rungen|
- []
-
-[27]
-Overfull \hbox (3.60587pt too wide) in paragraph at lines 27--28
-\T1/LinuxLibertineT-TLF/m/n/10.95 und Hinter-grund-me-cha-nismen zur Verfü-gung, insbe-son-dere Android Keystore, AES-GCM, DataS-|
- []
-
-
-Overfull \hbox (7.35884pt too wide) in paragraph at lines 42--43
-\T1/LinuxLibertineT-TLF/m/n/10.95 Das App-Token wird mit einem 256-Bit-AES-Schlüssel im GCM-Modus verschlüs-selt. Der Schlüssel|
- []
-
-
-Overfull \hbox (9.1546pt too wide) in paragraph at lines 42--43
-\T1/LinuxLibertineT-TLF/m/n/10.95 eine beschä-digte Schlüs-sel-da-ten-bank beein-träch-tigt werden. Kann der Schlüssel nicht mehr geladen|
- []
-
-
-Overfull \hbox (0.98167pt too wide) in paragraph at lines 46--47
-\T1/LinuxLibertineT-TLF/m/n/10.95 vom Betriebs-system vorge-se-henen Schutz-grenzen abschwä-chen. Eine tech-ni-sche Prüfung solcher|
+Underfull \hbox (badness 1917) in paragraph at lines 98--99
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die Weban-wen-dung dient der Regis-trie-rung, dem Double-Opt-In, der Bereit-stel-lung von
  []
 
 [28]
-Overfull \hbox (11.82849pt too wide) in paragraph at lines 50--51
-\T1/LinuxLibertineT-TLF/m/n/10.95 vorhan-dene Netz-werk-ver-bin-dung einge-stellt. Bei vorüber-ge-henden Netz-werk-pro-blemen verwendet|
+Underfull \vbox (badness 3826) has occurred while \output is active []
+
+ [29]
+Underfull \hbox (badness 1502) in paragraph at lines 137--138
+\T1/LinuxLibertineT-TLF/m/n/10.95 tion, nächste Frei-ga-be-zeit, stabile Matching-Reihenfolge, zuletzt benach-rich-tigte Situa-tion,
  []
 
 
-Overfull \hbox (5.75131pt too wide) in paragraph at lines 55--56
-\T1/LinuxLibertineT-TLF/m/n/10.95 können. Die Infe-renz ist derzeit auf zwei CPU-Threads konfi-gu-riert. Der Benchmark-Flavor enthält|
+Underfull \hbox (badness 1092) in paragraph at lines 144--145
+\T1/LinuxLibertineT-TLF/m/n/10.95 server-sei-tigen Rück-nahme oder einer erneuten Ände-rung der Daten-schut-z-er-klä-rung muss
  []
 
-
-Overfull \hbox (13.13686pt too wide) in paragraph at lines 57--58
-\T1/LinuxLibertineT-TLF/m/n/10.95 Hinzu kommen Modell-ge-wichte, Inter-preter und Zwischen-ak-ti-vie-rungen. Float32- und Int8-Modelle|
- []
-
-[29]
-Overfull \hbox (14.32936pt too wide) in paragraph at lines 67--68
-\T1/LinuxLibertineT-TLF/m/n/10.95 punkte, Staging ein frei-ge-ge-benes lokales Test-system und Release ausschlieÿ-lich produk-tive HTTPS-|
- []
-
-) (./kapitel5/ch5.tex
-Underfull \hbox (badness 10000) in paragraph at lines 77--2
-\T1/LinuxLibertineT-TLF/m/n/10.95 einschlieÿ-lich produk-tivem Studi-ena-b-lauf, Akti-vie-rung, Feed, Feed-back, Erin-ne-rungen,
- []
-
-[30]
-Kapitel 5.
-
-Overfull \hbox (5.22066pt too wide) in paragraph at lines 13--14
-\T1/LinuxLibertineT-TLF/m/n/10.95 lich geeig-nete Check-liste, um Daten-spar-sam-keit, Einga-be-va-li-die-rung, Trans-portab-si-che-rung, Spei-|
- []
-
-
-Overfull \hbox (4.4296pt too wide) in paragraph at lines 13--14
-\T1/LinuxLibertineT-TLF/m/n/10.95 cher-si-cher-heit, Fehler-be-hand-lung und den Umgang mit Drit-tan-bie-ter-bi-blio-theken nach-voll-ziehbar|
- []
-
-
-Overfull \hbox (11.11002pt too wide) in paragraph at lines 15--16
-\T1/LinuxLibertineT-TLF/m/n/10.95 Studien-si-tua-tionen, der Zeit-punkt der nächsten frei-ge-ge-benen Studien-si-tua-tion und der im Craving-|
- []
-
-
-Overfull \hbox (17.62158pt too wide) in paragraph at lines 15--16
-\T1/LinuxLibertineT-TLF/m/n/10.95 Screen ausge-wählte Zahlen-wert. Für die Persis-tenz des lokalen Fort-schritts wird \T1/fvm/m/n/10.95 SharedPreferences|
- []
-
-
-Overfull \hbox (6.28447pt too wide) in paragraph at lines 15--16
-\T1/LinuxLibertineT-TLF/m/n/10.95 der nächste erlaubte Start-zeit-punkt, die zufällig erzeugte Reihen-folge der Cue-Matching-Aufgaben,|
- []
-
-
-Overfull \hbox (19.95222pt too wide) in paragraph at lines 17--18
-\T1/LinuxLibertineT-TLF/m/n/10.95 des aktu-ellen Rauch-ver-lan-gens. Die ersten zehn Durch-gänge verwenden Cue-Matching, die folgenden|
- []
-
-
-Overfull \hbox (15.77254pt too wide) in paragraph at lines 17--18
-\T1/LinuxLibertineT-TLF/m/n/10.95 gesetzt. Dadurch wird verhin-dert, dass mehrere Selbst-be-richte unmit-telbar hinter-ein-ander entstehen. |
- []
-
-
-Overfull \hbox (6.33669pt too wide) in paragraph at lines 24--25
-\T1/LinuxLibertineT-TLF/m/n/10.95 Zusätz-lich enthält der Selbst-be-richt das lokal gespei-cherte \T1/fvm/m/n/10.95 app_token \T1/LinuxLibertineT-TLF/m/n/10.95 und die App-Version. Durch-|
- []
-
-
-Overfull \hbox (0.29794pt too wide) in paragraph at lines 24--25
-\T1/LinuxLibertineT-TLF/m/n/10.95 verwendet einen Test-Endpunkt, die Produk-ti-ons-va-ri-ante verwendet die offi-zi-elle Domain-adresse|
- []
-
-
-Overfull \hbox (23.26866pt too wide) in paragraph at lines 24--25
-\T1/fvm/m/n/10.95 https://cuelens.each-and-every.de/submit\T1/LinuxLibertineT-TLF/m/n/10.95 . Netz-werkan-fragen werden in einem I/O-Coroutine-|
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [31
-
-]
-Overfull \hbox (1.66696pt too wide) in paragraph at lines 28--29
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für die Auswer-tung wird aus dem norma-li-sierten App-Token eine pseud-onyme Kennung gebildet: |
- []
-
-
-Overfull \hbox (8.33583pt too wide) in paragraph at lines 31--33
-\T1/LinuxLibertineT-TLF/m/n/10.95 Diese Kennung wird in \T1/fvm/m/n/10.95 self_reports \T1/LinuxLibertineT-TLF/m/n/10.95 gespei-chert und erlaubt es, mehrere Selbst-be-richte derselben|
- []
-
-
-Overfull \hbox (4.08412pt too wide) in paragraph at lines 34--35
-\T1/LinuxLibertineT-TLF/m/n/10.95 dieselbe \T1/fvm/m/n/10.95 participant_id\T1/LinuxLibertineT-TLF/m/n/10.95 . Unter Trans-ak-ti-ons-schutz werden vorhan-dene Einträge gezählt, daraus|
- []
-
-
-Overfull \hbox (7.5844pt too wide) in paragraph at lines 38--39
-\T1/LinuxLibertineT-TLF/m/n/10.95 selte Über-tra-gungen sind nur in Staging-Umgebungen vorge-sehen. Daten-bank-zu-gangs-daten liegen|
+[30] [31]
+Underfull \hbox (badness 1466) in paragraph at lines 190--191
+\T1/LinuxLibertineT-TLF/m/n/10.95 Gespei-chert werden Status-code, Kompo-nente und Request-ID, nicht der Request-Payload.
  []
 
 [32]
-Overfull \hbox (0.74693pt too wide) in paragraph at lines 48--49
-\T1/fvm/m/n/10.95 index.js \T1/LinuxLibertineT-TLF/m/n/10.95 die gene-ri-schen Brow-ser-mel-dungen durch passen-dere Hinweise, etwa zur Alters-grenze|
- []
-
-
-Overfull \hbox (0.22482pt too wide) in paragraph at lines 48--49
-\T1/LinuxLibertineT-TLF/m/n/10.95 von 30 bis 65 Jahren und zur Mindest-menge von 10 Ziga-retten pro Tag. Diese client-sei-tige Prüfung|
- []
-
-
-Overfull \hbox (10.67451pt too wide) in paragraph at lines 48--49
-\T1/LinuxLibertineT-TLF/m/n/10.95 mu-lars. Es werden die E-Mail-Adresse mit \T1/fvm/m/n/10.95 FILTER_VALIDATE_EMAIL \T1/LinuxLibertineT-TLF/m/n/10.95 und die nume-ri-schen Eingaben|
- []
-
-
-Overfull \hbox (8.6056pt too wide) in paragraph at lines 52--53
-\T1/LinuxLibertineT-TLF/m/n/10.95 erzeugt, als verstecktes Formu-lar-feld ausge-geben und bei POST-Anfragen mit \T1/fvm/m/n/10.95 hash_equals \T1/LinuxLibertineT-TLF/m/n/10.95 geprüft|
- []
-
-
-Overfull \hbox (4.35527pt too wide) in paragraph at lines 54--55
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Regis-trie-rung wird über ein Double-Opt-In abge-si-chert. Beim Absenden des Formu-lars erzeugt|
- []
-
-
-Overfull \hbox (0.28172pt too wide) in paragraph at lines 54--55
-\T1/LinuxLibertineT-TLF/m/n/10.95 geben. Dadurch kann das Formular nicht als frei adres-sier-barer Mail-ver-sender verwendet werden.|
- []
-
-
-Overfull \hbox (29.99025pt too wide) in paragraph at lines 54--55
-\T1/LinuxLibertineT-TLF/m/n/10.95 Die SMTP-Zugangsdaten liegen wie die MySQL-Zugangsdaten in Konfi-gu-ra-ti-ons-da-teien im geschützten|
- []
-
-[33]
-Overfull \hbox (1.00778pt too wide) in paragraph at lines 56--57
-[]\T1/LinuxLibertineT-TLF/m/n/10.95 Nach erfolg-rei-chem Versand leitet das Formular auf die Double-Opt-In-Hinweisseite weiter. Diese|
- []
-
-
-Overfull \hbox (3.43651pt too wide) in paragraph at lines 64--65
-\T1/LinuxLibertineT-TLF/m/n/10.95 Die Studi-en-da-ten-banken für Teil-nah-me-daten und pseud-ony-mi-sierte Selbst-be-richte sind bei United|
- []
-
-
-Overfull \hbox (1.39638pt too wide) in paragraph at lines 66--67
-\T1/LinuxLibertineT-TLF/m/n/10.95 damit wöchent-lich ein manu-elles Backup durch-ge-führt. Die SQL-Skripte, die dabei für jede Daten-|
- []
-
-
-Package caption Warning: \setcaptiontype
-(caption)                outside box or environment on input line 96.
-See the caption package documentation for explanation.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 96.
-See the caption package documentation for explanation.
-
-[34]
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 128.
-See the caption package documentation for explanation.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [35]
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 148.
-See the caption package documentation for explanation.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [36]
-Underfull \hbox (badness 1292) in paragraph at lines 152--153
-\T1/LinuxLibertineT-TLF/m/n/10 und Infor-ma-ti-ons-web-seite, einem PHP-Backend sowie zwei fach-lich getrennten Daten-banken. Die
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [37] [38] [39] [40]
-Underfull \hbox (badness 10000) in paragraph at lines 254--255
-[]\T1/LinuxLibertineT-TLF/m/n/10 Android-Unit-Tests prüfen Control-ler-zu-stände, HTTP-Protokolle, Info-feed-fil-te-rung, Feature-
- []
-
-
-Underfull \hbox (badness 2096) in paragraph at lines 254--255
-\T1/LinuxLibertineT-TLF/m/n/10 Fehlerverhalten und Erin-ne-rungs-ent-schei-dungen. Tests auf einem Android-Gerät bezie-hungs-weise
- []
-
-
-Underfull \hbox (badness 1184) in paragraph at lines 254--255
-\T1/LinuxLibertineT-TLF/m/n/10 Emulator prüfen unter anderem die Keystore-Verschlüsselung, wech-selnde Initia-li-sie-rungs-vek-toren,
- []
-
-
-Underfull \hbox (badness 3803) in paragraph at lines 254--255
-\T1/LinuxLibertineT-TLF/m/n/10 mani-pu-lierte Chif-frate, fehlende Schlüssel, Entfer-nung alter Klar-text-werte, Compose-Oberflächen
- []
-
-
-Underfull \hbox (badness 1014) in paragraph at lines 254--255
-\T1/LinuxLibertineT-TLF/m/n/10 zwanzig, frühe Worker-Ausführung, veral-tete Aufgaben, doppelte Benach-rich-ti-gungen, ausste-hende
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 275--275
+Underfull \hbox (badness 10000) in paragraph at lines 217--217
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Studieninformation und
  []
 
 
-Underfull \hbox (badness 2334) in paragraph at lines 276--277
+Underfull \hbox (badness 2334) in paragraph at lines 218--219
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 kein zusätz-li-cher E-Mail-
  []
 
-[41]
+[33]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 12.0pt on input line 295.
+(Font)              scaled to size 12.0pt on input line 237.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 12.0pt on input line 295.
+(Font)              scaled to size 12.0pt on input line 237.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 1509) in paragraph at lines 239--240
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die API-Abfrage wird mit der konfi-gu-rierten Studien-ken-nung, einer Seiten-gröÿe von 20
+ []
 
- [42]
-Underfull \hbox (badness 3679) in paragraph at lines 314--315
-\T1/LinuxLibertineT-TLF/m/n/10 Regis-trie-rungs-kanäle iden-tisch verar-beitet. Erst beim zwan-zigsten bestä-tigten Selbst-be-richt wird
+[34]
+Underfull \hbox (badness 1226) in paragraph at lines 251--252
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die auto-ma-ti-sierten Tests prüfen die akzep-tierten und abge-lehnten Status-werte, mehr-sei-
  []
 
 
-Underfull \hbox (badness 1688) in paragraph at lines 314--315
-\T1/LinuxLibertineT-TLF/m/n/10 nis-tra-tive Abschlussweg folgt. Die Imple-men-tie-rung kennt dafür ausschlieÿ-lich die beiden Werte
- []
-
-
-Underfull \hbox (badness 3635) in paragraph at lines 316--317
-[]\T1/LinuxLibertineT-TLF/m/n/10 Die Zuord-nung wird aus dem Regis-trie-rungs-kanal abge-leitet: Eine direkte Regis-trie-rung erhält
- []
-
-[43]
-Overfull \hbox (7.65617pt too wide) in paragraph at lines 325--325
+Overfull \hbox (7.65617pt too wide) in paragraph at lines 267--267
 []|\T1/LinuxLibertineT-TLF/b/n/10.95 COMPENSATION_CODE| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 328--328
+Underfull \hbox (badness 10000) in paragraph at lines 270--270
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Wissenschaftlicher
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 328--328
+Underfull \hbox (badness 10000) in paragraph at lines 270--270
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 20 bestä-tigte Selbst-be-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 328--329
+Underfull \hbox (badness 10000) in paragraph at lines 270--271
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 20 bestä-tigte Selbst-be-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 329--330
+Underfull \hbox (badness 10000) in paragraph at lines 271--272
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 kein CueLens-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 330--330
+Underfull \hbox (badness 10000) in paragraph at lines 272--272
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Zusätzlicher admi-nis-tra-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 330--331
+Underfull \hbox (badness 10000) in paragraph at lines 272--273
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Abschlussmarkierung in
  []
 
 
-Overfull \hbox (54.3743pt too wide) in paragraph at lines 331--332
+Overfull \hbox (54.3743pt too wide) in paragraph at lines 273--274
 []|\T1/fvm/m/n/10.95 completion_mode=PROLIFIC_MANUAL| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 332--332
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 unverändert pseud-ony-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 332--333
+Underfull \hbox (badness 10000) in paragraph at lines 274--275
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 unverändert pseud-ony-
  []
 
-[44]
-Underfull \hbox (badness 10000) in paragraph at lines 359--360
+[35]
+Underfull \hbox (badness 1515) in paragraph at lines 282--283
+\T1/LinuxLibertineT-TLF/m/n/10.95 führt ein erneuter Request keinen einund-zwan-zigsten Selbst-be-richt ein. Statt-dessen wird
+ []
+
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 301--302
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 regulärer Studi-en-fort-schritt
  []
 
 
-Underfull \hbox (badness 5832) in paragraph at lines 359--360
+Underfull \hbox (badness 5832) in paragraph at lines 301--302
 \T1/LinuxLibertineT-TLF/m/n/10.95 hender Request und keine
  []
 
 
-Overfull \hbox (25.81868pt too wide) in paragraph at lines 360--360
+Overfull \hbox (25.81868pt too wide) in paragraph at lines 302--302
 []|\T1/fvm/m/n/10.95 DirectPendingConfirmation| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 302--302
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Abrechnungscode
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 302--302
 \T1/LinuxLibertineT-TLF/m/n/10.95 empfangen und lokal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 302--302
 \T1/LinuxLibertineT-TLF/m/n/10.95 gespei-chert, Bestä-ti-gung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--361
+Underfull \hbox (badness 10000) in paragraph at lines 302--303
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 ausschlieÿlich Bestä-ti-gung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--361
+Underfull \hbox (badness 10000) in paragraph at lines 302--303
 \T1/LinuxLibertineT-TLF/m/n/10.95 des vorhan-denen Codes
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 361--361
+Underfull \hbox (badness 10000) in paragraph at lines 303--303
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 direkter Abschluss
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 361--361
+Underfull \hbox (badness 10000) in paragraph at lines 303--303
 \T1/LinuxLibertineT-TLF/m/n/10.95 einschlieÿ-lich Code-be-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 361--362
+Underfull \hbox (badness 10000) in paragraph at lines 303--304
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 weitere Studien-si-tua-tionen
  []
 
 
-Underfull \hbox (badness 4108) in paragraph at lines 361--362
+Underfull \hbox (badness 4108) in paragraph at lines 303--304
 \T1/LinuxLibertineT-TLF/m/n/10.95 gesperrt, Code kann ange-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 362--362
+Underfull \hbox (badness 10000) in paragraph at lines 304--304
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Prolific-Abschluss vom
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 362--363
+Underfull \hbox (badness 10000) in paragraph at lines 304--305
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 weitere Studien-si-tua-tionen
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--363
+Underfull \hbox (badness 10000) in paragraph at lines 305--305
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 persistierte Angaben sind
  []
 
 
-Underfull \hbox (badness 1675) in paragraph at lines 363--363
+Underfull \hbox (badness 1675) in paragraph at lines 305--305
 \T1/LinuxLibertineT-TLF/m/n/10.95 wider-sprüch-lich oder nicht
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--364
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 fail closed; keine neue
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--364
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
 \T1/LinuxLibertineT-TLF/m/n/10.95 Studien-si-tua-tion, Reco-very
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--364
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
 \T1/LinuxLibertineT-TLF/m/n/10.95 bezie-hungs-weise Support
  []
 
-[45]
-Underfull \hbox (badness 2478) in paragraph at lines 381--382
-\T1/LinuxLibertineT-TLF/m/n/10 bekannte Abrech-nungs-code erneut bestä-tigt. Nach erfolg-rei-cher Bestä-ti-gung wird derselbe Code
+[37]
+Underfull \hbox (badness 3449) in paragraph at lines 327--328
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für den direkten Abschluss wird eine zusätz-liche Persis-tenz-bar-riere einge-führt. Sobald
  []
 
 
-Underfull \hbox (badness 2073) in paragraph at lines 393--394
-[]\T1/LinuxLibertineT-TLF/m/n/10 Auf der Start-seite werden ausste-hende Über-tra-gungen und Recovery-Zustände getrennt von der
+Underfull \hbox (badness 3713) in paragraph at lines 327--328
+\T1/LinuxLibertineT-TLF/m/n/10.95 der Response des zwan-zigsten Berichts einen gültigen Abrech-nungs-code enthält, spei-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 393--394
-\T1/LinuxLibertineT-TLF/m/n/10 normalen Sperr-zeit darge-stellt. Solange \T1/fvm/m/n/10 studyTransferPending \T1/LinuxLibertineT-TLF/m/n/10 bezie-hungs-weise ein lokales
+Underfull \hbox (badness 10000) in paragraph at lines 329--330
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Der Prolific-Abschluss benö-tigt keinen zweiten Client-Request. Bei einem gültigen
  []
 
 
-Underfull \hbox (badness 1189) in paragraph at lines 393--394
-\T1/fvm/m/n/10 hasPendingSubmission \T1/LinuxLibertineT-TLF/m/n/10 vorliegt, wird der Start einer neuen Situa-tion deak-ti-viert und statt-dessen
+Underfull \hbox (badness 5050) in paragraph at lines 329--330
+\T1/fvm/m/n/10.95 PROLIFIC_MANUAL\T1/LinuxLibertineT-TLF/m/n/10.95 -Response werden Abschluss-modus, Abschluss-marker und $\OML/cmm/m/it/10.95 n \OT1/cmr/m/n/10.95 = 20$
  []
 
-[46]
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 401.
 
-Underfull \hbox (badness 10000) in paragraph at lines 408--408
+Underfull \hbox (badness 3557) in paragraph at lines 329--330
+\T1/LinuxLibertineT-TLF/m/n/10.95 gemeinsam gespei-chert; ein even-tuell vorhan-dener Abrech-nungs-code sowie der ausste-
+ []
+
+
+Underfull \hbox (badness 2418) in paragraph at lines 329--330
+\T1/LinuxLibertineT-TLF/m/n/10.95 erneut versucht. Dieser Pfad ist damit gegen-über einer unter-bro-chenen admi-nis-tra-tiven
+ []
+
+[38]
+Underfull \hbox (badness 1515) in paragraph at lines 345--346
+\T1/LinuxLibertineT-TLF/m/n/10.95 Craving-Werts: Dieser wird mit der asyn-chronen Android-Methode \T1/fvm/m/n/10.95 apply() \T1/LinuxLibertineT-TLF/m/n/10.95 gesetzt und
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 350--350
 []\T1/LinuxLibertineT-TLF/b/n/14.4 Erweiterte auto-ma-ti-sierte Veri-fi-ka-tion von Android,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 421--422
+Underfull \hbox (badness 2680) in paragraph at lines 352--353
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die Erwei-te-rungen für Prolific, die kanal-ab-hän-gigen Abschluss-modi und das Recovery-
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (14.0pt): 
+(fancyhdr)                Make it at least 24.9125pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.9125pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.9125pt}.
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 363--364
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Identifier, Response-Parsing,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 422--422
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Android Instru-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 422--422
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Android-Gerät oder
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 423--423
+Underfull \hbox (badness 10000) in paragraph at lines 365--365
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Backend Unit-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 423--424
+Underfull \hbox (badness 10000) in paragraph at lines 365--366
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Validierung, Prolific-API-Logik,
  []
 
 
-Underfull \hbox (badness 4303) in paragraph at lines 423--424
+Underfull \hbox (badness 4303) in paragraph at lines 365--366
 \T1/LinuxLibertineT-TLF/m/n/10.95 Abschlussant-worten, Fehler- und
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 424--424
+Underfull \hbox (badness 10000) in paragraph at lines 366--366
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Backend Inte-gra-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 425--425
+Underfull \hbox (badness 10000) in paragraph at lines 367--367
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Web-Browser-
  []
 
 
-Overfull \hbox (25.1262pt too wide) in paragraph at lines 425--425
+Overfull \hbox (25.1262pt too wide) in paragraph at lines 367--367
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Firefox/GeckoDriver/WebDriver| |
  []
 
 
-Underfull \hbox (badness 2134) in paragraph at lines 425--426
+Underfull \hbox (badness 2134) in paragraph at lines 367--368
 \T1/LinuxLibertineT-TLF/m/n/10.95 li-sierte Vali-die-rung und kanal-ab-
  []
 
-
-Package fancyhdr Warning: \headheight is too small (14.0pt): 
-(fancyhdr)                Make it at least 24.9125pt, for example:
-(fancyhdr)                \setlength{\headheight}{24.9125pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-10.9125pt}.
-
-[47]
-Underfull \hbox (badness 10000) in paragraph at lines 443--444
-[]\T1/LinuxLibertineT-TLF/m/n/10 Die Abschluss-logik besitzt sowohl isolierte Proto-koll-tests als auch Daten-ban-kin-te-gra-ti-ons-
+[40]
+Underfull \hbox (badness 4303) in paragraph at lines 385--386
+\T1/LinuxLibertineT-TLF/m/n/10.95 aber kein \T1/fvm/m/n/10.95 completion_mode\T1/LinuxLibertineT-TLF/m/n/10.95 -Feld enthält, während ein Prolific-Abschluss ausschlieÿ-lich
  []
 
 
-Underfull \hbox (badness 3815) in paragraph at lines 443--444
-\T1/LinuxLibertineT-TLF/m/n/10 tests. Die Unit-Tests veri-fi-zieren, dass ein direkter Abschluss einen UUID-v4-Abrechnungscode,
- []
+Underfull \vbox (badness 7869) has occurred while \output is active []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 443--444
-\T1/LinuxLibertineT-TLF/m/n/10 aber kein \T1/fvm/m/n/10 completion_mode\T1/LinuxLibertineT-TLF/m/n/10 -Feld enthält, während ein Prolific-Abschluss ausschlieÿ-lich
- []
-
-
-Underfull \hbox (badness 1648) in paragraph at lines 443--444
-\T1/fvm/m/n/10 completion_mode=PROLIFIC_MANUAL \T1/LinuxLibertineT-TLF/m/n/10 und keinen Abrech-nungs-code zurück-gibt. Die MariaDB-Tests
- []
-
-[48]
-Underfull \hbox (badness 1655) in paragraph at lines 449--450
-\T1/LinuxLibertineT-TLF/m/n/10 einen Proto-koll-fehler. Zusätz-lich wird die Rekon-struk-tion persis-tierter Abschluss-zu-stände geprüft,
- []
-
-
-Underfull \hbox (badness 1571) in paragraph at lines 453--454
-[]\T1/LinuxLibertineT-TLF/m/n/10 Diese Tests ergänzen die bereits vorhan-denen instru-men-tierten Prüfungen für Android Keystore,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 457--458
-\T1/LinuxLibertineT-TLF/m/n/10 Die Regis-trie-rungs-web-seite wird nicht ausschlieÿ-lich über server-sei-tige PHP-Tests geprüft.
- []
-
-
-Underfull \hbox (badness 4805) in paragraph at lines 457--458
-\T1/fvm/m/n/10 FormValidationBrowserTest.php \T1/LinuxLibertineT-TLF/m/n/10 startet bezie-hungs-weise verwendet Gecko-Driver, erzeugt eine
- []
-
-
-Underfull \hbox (badness 2376) in paragraph at lines 465--466
-\T1/LinuxLibertineT-TLF/m/n/10 Test-da-ten-banken; fehlen die entspre-chenden Umge-bungs-va-ria-blen, werden sie über-sprungen. Die
- []
 
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
@@ -2040,785 +1577,943 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-10.9125pt}.
 
-[49]
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 474.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.0pt on input line 474.
-
-Underfull \hbox (badness 1910) in paragraph at lines 479--480
-\T1/LinuxLibertineT-TLF/m/n/10 und englisch-spra-chige Ober-fläche, Infor-ma-ti-ons-feed, lokale Ausblen-dung gele-sener Infor-ma-tionen,
+[41]
+Underfull \hbox (badness 1360) in paragraph at lines 395--396
+\T1/LinuxLibertineT-TLF/m/n/10.95 Compose-Oberflächen und Benach-rich-ti-gungen. Zusammen entsteht damit eine Tren-nung
  []
 
-[50] [51]
-Underfull \hbox (badness 10000) in paragraph at lines 522--522
+[42]
+Underfull \hbox (badness 1019) in paragraph at lines 413--414
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die Apple-Portierung wurde als eigen-stän-dige native Anwen-dung umge-setzt. Die oberste
+ []
+
+
+Underfull \hbox (badness 1466) in paragraph at lines 413--414
+\T1/LinuxLibertineT-TLF/m/n/10.95 Darstel-lungs-schicht besteht aus SwiftUI-Views, deren Zustände durch ein zentrales App-
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 421--422
+\T1/LinuxLibertineT-TLF/m/n/10.95 produk-tive Matching- und Labeling-Durchläufe, Craving-Selbstbericht, Wieder-ho-lungs-logik
+ []
+
+[43]
+Underfull \hbox (badness 1755) in paragraph at lines 433--434
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für Hinter-grund-funk-tionen wurde bewusst keine Abhän-gig-keit der Kern-studie von iOS-
+ []
+
+
+Underfull \hbox (badness 1057) in paragraph at lines 439--440
+\T1/LinuxLibertineT-TLF/m/n/10.95 Proto-kolle, Persis-tenz, Fehler-be-hand-lung, Daten-schutz und Sicher-heit, ohne eine konkrete
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 443--444
+\T1/LinuxLibertineT-TLF/m/n/10.95 Zusätz-lich unter-scheidet die Spezi-fi-ka-tion zwischen gemein-samem Refe-renz-ver-halten und
+ []
+
+[44]
+Underfull \hbox (badness 1314) in paragraph at lines 455--456
+\T1/LinuxLibertineT-TLF/m/n/10.95 Zu den verbind-li-chen studien-me-tho-di-schen Inva-ri-anten gehören insbe-son-dere 20 produk-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 464--464
 []|\T1/LinuxLibertineT-TLF/b/n/10.95 Gemeinsame fach-liche
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 524--525
+Underfull \hbox (badness 10000) in paragraph at lines 466--467
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Jetpack Compose bezie-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 525--525
+Underfull \hbox (badness 10000) in paragraph at lines 467--467
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 kein Klar-text-token, keine
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 525--525
+Underfull \hbox (badness 10000) in paragraph at lines 467--467
 \T1/LinuxLibertineT-TLF/m/n/10.95 Cloud-Synchronisation, fail
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 525--526
+Underfull \hbox (badness 10000) in paragraph at lines 467--468
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Android Keystore bezie-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 526--526
+Underfull \hbox (badness 10000) in paragraph at lines 468--468
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 vollständige Matching-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 526--526
+Underfull \hbox (badness 10000) in paragraph at lines 468--468
 \T1/LinuxLibertineT-TLF/m/n/10.95 Permutation und zufäl-lige
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 526--527
+Underfull \hbox (badness 10000) in paragraph at lines 468--469
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 plattformeigener Zufalls-
  []
 
 
-Underfull \hbox (badness 8170) in paragraph at lines 526--527
+Underfull \hbox (badness 8170) in paragraph at lines 468--469
 \T1/LinuxLibertineT-TLF/m/n/10.95 zah-len-ge-ne-rator; konkrete
  []
 
 
-Overfull \hbox (2.78339pt too wide) in paragraph at lines 527--527
+Overfull \hbox (2.78339pt too wide) in paragraph at lines 469--469
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Hintergrundmechanismen| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 527--527
+Underfull \hbox (badness 10000) in paragraph at lines 469--469
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Hintergrundausführung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 527--527
+Underfull \hbox (badness 10000) in paragraph at lines 469--469
 \T1/LinuxLibertineT-TLF/m/n/10.95 nicht auto-ri-tativ für
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 527--528
+Underfull \hbox (badness 10000) in paragraph at lines 469--470
 \T1/LinuxLibertineT-TLF/m/n/10.95 weise iOS Back-ground
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 528--528
+Underfull \hbox (badness 10000) in paragraph at lines 470--470
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 nur zuläs-siger Studi-en-zu-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--529
+Underfull \hbox (badness 10000) in paragraph at lines 471--471
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 kein Über-springen bestä-ti-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--530
+Underfull \hbox (badness 10000) in paragraph at lines 471--472
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Android-Back-Verhalten
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--530
+Underfull \hbox (badness 10000) in paragraph at lines 471--472
 \T1/LinuxLibertineT-TLF/m/n/10.95 bezie-hungs-weise native
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 530--531
+Underfull \hbox (badness 10000) in paragraph at lines 472--473
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 bestehender zusätz-li-cher
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 530--531
+Underfull \hbox (badness 10000) in paragraph at lines 472--473
 \T1/LinuxLibertineT-TLF/m/n/10.95 Android-Dialog bezie-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 530--531
+Underfull \hbox (badness 10000) in paragraph at lines 472--473
 \T1/LinuxLibertineT-TLF/m/n/10.95 hungs-weise vorge-la-gerte
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 531--531
+Underfull \hbox (badness 10000) in paragraph at lines 473--473
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Reizfolge, Warte-zeiten und
  []
 
-[52]
-Underfull \hbox (badness 2285) in paragraph at lines 549--550
-\T1/LinuxLibertineT-TLF/m/n/10 Keychain-Speicher, das Start-Gate, die Matching-Regeln, Pending-Persistenz, beide Abschluss-modi
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 570--570
+[45] [46]
+Underfull \hbox (badness 10000) in paragraph at lines 512--512
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Keychain, nicht
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 570--570
+Underfull \hbox (badness 10000) in paragraph at lines 512--512
 \T1/LinuxLibertineT-TLF/m/n/10.95 synchro-ni-sierbar,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 571--571
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 atomare Datei mit voll-stän-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 571--572
+Underfull \hbox (badness 10000) in paragraph at lines 513--514
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Schema-, Gröÿen- oder
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 571--572
+Underfull \hbox (badness 10000) in paragraph at lines 513--514
 \T1/LinuxLibertineT-TLF/m/n/10.95 Persis-tenz-fehler werden
  []
 
 
-Underfull \hbox (badness 2495) in paragraph at lines 572--572
+Underfull \hbox (badness 2495) in paragraph at lines 514--514
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 geschützter zufäl-liger 32-Byte-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 572--573
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 inkonsistente Neuin-stal-la-
  []
 
 
-Underfull \hbox (badness 6268) in paragraph at lines 572--573
+Underfull \hbox (badness 6268) in paragraph at lines 514--515
 \T1/LinuxLibertineT-TLF/m/n/10.95 ti-ons-lage führt fail closed;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 572--573
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 \T1/LinuxLibertineT-TLF/m/n/10.95 verwaister Keychain-Token
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 573--573
+Underfull \hbox (badness 10000) in paragraph at lines 515--515
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Aktivierungs-
  []
 
 
-Underfull \hbox (badness 3482) in paragraph at lines 573--574
+Underfull \hbox (badness 3482) in paragraph at lines 515--516
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 keine auto-ma-ti-sche erneute
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 573--574
+Underfull \hbox (badness 10000) in paragraph at lines 515--516
 \T1/LinuxLibertineT-TLF/m/n/10.95 Akti-vie-rung bei mehr-deu-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 574--575
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 unerwartete Transport-
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 574--575
+Underfull \hbox (badness 3780) in paragraph at lines 516--517
 \T1/LinuxLibertineT-TLF/m/n/10.95 oder Proto-kol-lant-wort wird
  []
 
 
-Overfull \hbox (15.59421pt too wide) in paragraph at lines 575--575
+Overfull \hbox (15.59421pt too wide) in paragraph at lines 517--517
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Bildschirm/Notifications| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--576
+Underfull \hbox (badness 10000) in paragraph at lines 517--518
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 sensible Zustände sollen
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--576
+Underfull \hbox (badness 10000) in paragraph at lines 517--518
 \T1/LinuxLibertineT-TLF/m/n/10.95 nicht über App-Switcher
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--576
+Underfull \hbox (badness 10000) in paragraph at lines 517--518
 \T1/LinuxLibertineT-TLF/m/n/10.95 oder Benach-rich-ti-gungs-text
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 576--576
+Underfull \hbox (badness 10000) in paragraph at lines 518--518
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 getrennte Konfi-gu-ra-tionen,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 576--576
+Underfull \hbox (badness 10000) in paragraph at lines 518--518
 \T1/LinuxLibertineT-TLF/m/n/10.95 mini-mierte Entit-le-ments und
  []
 
 
-Underfull \hbox (badness 3503) in paragraph at lines 576--577
+Underfull \hbox (badness 3503) in paragraph at lines 518--519
 \T1/LinuxLibertineT-TLF/m/n/10.95 Archiv- und Real-ge-rä-te-prü-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 582--583
-\T1/LinuxLibertineT-TLF/m/n/10 Der App-Token wird auf iOS nicht zusätz-lich durch eine selbst verwal-tete symme-tri-sche
+Underfull \hbox (badness 1014) in paragraph at lines 524--525
+\T1/LinuxLibertineT-TLF/m/n/10.95 Der App-Token wird auf iOS nicht zusätz-lich durch eine selbst verwal-tete symme-tri-sche
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 582--583
-\T1/LinuxLibertineT-TLF/m/n/10 Verschlüs-se-lungs-schicht geschützt, sondern als Generic-Password-Eintrag im syste-mei-genen
+Underfull \hbox (badness 1571) in paragraph at lines 524--525
+\T1/LinuxLibertineT-TLF/m/n/10.95 Keychain gespei-chert. Der Descriptor verwendet den Service \T1/fvm/m/n/10.95 de.eachandevery.cuelens\T1/LinuxLibertineT-TLF/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 582--583
-\T1/LinuxLibertineT-TLF/m/n/10 Keychain gespei-chert. Der Descriptor verwendet den Service \T1/fvm/m/n/10 de.eachandevery.cuelens\T1/LinuxLibertineT-TLF/m/n/10 ,
+Underfull \hbox (badness 10000) in paragraph at lines 524--525
+\T1/LinuxLibertineT-TLF/m/n/10.95 das Konto \T1/fvm/m/n/10.95 app-token-v1\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 kSecAttrSynchronizable=false \T1/LinuxLibertineT-TLF/m/n/10.95 und die Zugriffs-klasse
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 582--583
-\T1/LinuxLibertineT-TLF/m/n/10 das Konto \T1/fvm/m/n/10 app-token-v1\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 kSecAttrSynchronizable=false \T1/LinuxLibertineT-TLF/m/n/10 und die Zugriffs-klasse
+Underfull \hbox (badness 10000) in paragraph at lines 524--525
+\T1/fvm/m/n/10.95 kSecAttrAccessibleWhenUnlockedThisDeviceOnly\T1/LinuxLibertineT-TLF/m/n/10.95 . Dadurch ist der Credential-Eintrag
  []
 
 
-Underfull \hbox (badness 2042) in paragraph at lines 582--583
-\T1/fvm/m/n/10 kSecAttrAccessibleWhenUnlockedThisDeviceOnly\T1/LinuxLibertineT-TLF/m/n/10 . Dadurch ist der Credential-Eintrag ausdrück-
+Underfull \hbox (badness 2126) in paragraph at lines 524--525
+\T1/LinuxLibertineT-TLF/m/n/10.95 ausdrück-lich nicht für eine gerä-te-über-grei-fende Synchro-ni-sa-tion vorge-sehen. Die Persis-
+ []
+
+[47] [48]
+Underfull \hbox (badness 4181) in paragraph at lines 528--529
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Eine iOS-spezifische Beson-der-heit besteht darin, dass Keychain-Einträge eine Dein-stal-
  []
 
 
-Underfull \hbox (badness 1924) in paragraph at lines 582--583
-\T1/LinuxLibertineT-TLF/m/n/10 ausschlieÿ-lich einen syntak-tisch gültigen UUID-v4-Token; ein nicht deko-dier-barer Wert wird als
- []
-
-[53] [54]
-Underfull \hbox (badness 1546) in paragraph at lines 590--591
-\T1/LinuxLibertineT-TLF/m/n/10 Studienfortschritt, Pending-Craving und Abschluss-zu-stand liegen nicht in \T1/fvm/m/n/10 UserDefaults\T1/LinuxLibertineT-TLF/m/n/10 , sondern
+Underfull \hbox (badness 4403) in paragraph at lines 528--529
+\T1/LinuxLibertineT-TLF/m/n/10.95 la-tion der App tech-nisch über-leben können. CueLens koppelt den Credential-Zustand
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 590--591
-\T1/LinuxLibertineT-TLF/m/n/10 in einer eigenen Datei unter \T1/fvm/m/n/10 Library/Application Support/CueLens\T1/LinuxLibertineT-TLF/m/n/10 . Verzeich-nisse und Dateien
+Underfull \hbox (badness 2158) in paragraph at lines 528--529
+\T1/LinuxLibertineT-TLF/m/n/10.95 deshalb an einen sepa-raten Instal-la-ti-ons-marker im App-Container. Beim Start prüft ein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 590--591
-\T1/LinuxLibertineT-TLF/m/n/10 werden mit \T1/fvm/m/n/10 FileProtectionType.complete \T1/LinuxLibertineT-TLF/m/n/10 ange-legt; zusätz-lich setzt die Imple-men-tie-rung
+Underfull \hbox (badness 1540) in paragraph at lines 528--529
+\T1/LinuxLibertineT-TLF/m/n/10.95 dieser Marker als auch ein lokaler Studi-en-zu-stand, wird ein gege-be-nen-falls verblie-bener
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 594--595
-[]\T1/LinuxLibertineT-TLF/m/n/10 Für den zwei-stu-figen Akti-vie-rungs-pro-zess exis-tiert ein weiterer kleiner geschützter Persis-
+Underfull \hbox (badness 1917) in paragraph at lines 532--533
+\T1/LinuxLibertineT-TLF/m/n/10.95 Studienfortschritt, Pending-Craving und Abschluss-zu-stand liegen nicht in \T1/fvm/m/n/10.95 UserDefaults\T1/LinuxLibertineT-TLF/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 4846) in paragraph at lines 594--595
-\T1/LinuxLibertineT-TLF/m/n/10 tenz-zu-stand. Vor dem poten-ziell mehr-deu-tigen Bestä-ti-gungs-re-quest kann ein neutraler Marker
- []
-
-[55]
-Underfull \hbox (badness 1014) in paragraph at lines 612--613
-[]\T1/LinuxLibertineT-TLF/m/n/10 Die Release-Konfiguration sieht keine Kamera-, Foto-, Mikrofon-, Standort-, HealthKit-, CloudKit-,
- []
-
-[56]
-Underfull \hbox (badness 1968) in paragraph at lines 628--629
-\T1/LinuxLibertineT-TLF/m/n/10 Benachrichtigungen sind in der iOS-/iPadOS-Implementierung als optio-nale unter-stüt-zende Infra-
- []
-
-[57]
-Underfull \hbox (badness 10000) in paragraph at lines 659--660
-[]\T1/LinuxLibertineT-TLF/m/n/10 Für jede Studien-si-tua-tion wird ein deter-mi-nis-ti-scher Bezeichner der Form
+Underfull \hbox (badness 2096) in paragraph at lines 540--541
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die iOS-App verwendet einen zentralen, actor-gekapselten HTTP-Client auf Basis einer
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 667--668
-\T1/LinuxLibertineT-TLF/m/n/10 Neben Studie-nerin-ne-rungen unter-stützt die App einen gene-ri-schen Hinweis auf neue
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [49]
+Underfull \hbox (badness 10000) in paragraph at lines 542--543
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Vor jedem Request wird die Ziel-URL gegen eine build-ab-hän-gige Trans-port-po-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 667--668
-\T1/LinuxLibertineT-TLF/m/n/10 Einträge im Infor-ma-ti-ons-feed. Hierfür wird \T1/fvm/m/n/10 BGAppRefreshTask \T1/LinuxLibertineT-TLF/m/n/10 als best-effort Hinter-grund-
+Underfull \hbox (badness 10000) in paragraph at lines 542--543
+\T1/LinuxLibertineT-TLF/m/n/10.95 licy geprüft. Der Release-Build enthält ausschlieÿ-lich HTTPS-Endpunkte und setzt
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 667--668
-\T1/LinuxLibertineT-TLF/m/n/10 me-cha-nismus verwendet. Der \T1/fvm/m/n/10 BackgroundRefreshCoordinator \T1/LinuxLibertineT-TLF/m/n/10 regis-triert den Bezeichner
+Underfull \hbox (badness 1590) in paragraph at lines 542--543
+\T1/fvm/m/n/10.95 CUELENS_ALLOWS_LOCAL_HTTP=NO\T1/LinuxLibertineT-TLF/m/n/10.95 . Zusätz-lich akzep-tiert der Client keine URL mit Benut-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 669--670
-[]\T1/LinuxLibertineT-TLF/m/n/10 Der Hinter-grund-task führt ausschlieÿ-lich einen Infor-ma-ti-ons-a-bruf aus. Der
+Underfull \hbox (badness 1264) in paragraph at lines 542--543
+\T1/LinuxLibertineT-TLF/m/n/10.95 zer-name, Pass-wort, Query oder Frag-ment. Die produk-tiven Endpunkte werden damit als
  []
 
 
-Underfull \hbox (badness 3746) in paragraph at lines 688--688
+Underfull \hbox (badness 1694) in paragraph at lines 546--547
+\T1/LinuxLibertineT-TLF/m/n/10.95 erhält nur abstrakten Requesttyp, HTTP-Status und tech-ni-sche Fehler-ka-te-gorie. Request-
+ []
+
+
+Underfull \hbox (badness 1609) in paragraph at lines 552--553
+\T1/LinuxLibertineT-TLF/m/n/10.95 Studi-en-daten behan-delt. Die Sicher-heits-prü-fung fordert neutrale Texte ohne Rauch-status,
+ []
+
+
+Underfull \hbox (badness 3323) in paragraph at lines 554--555
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Release-Konfiguration sieht keine Kamera-, Foto-, Mikrofon-, Standort-, HealthKit-,
+ []
+
+
+Underfull \hbox (badness 1264) in paragraph at lines 554--555
+\T1/LinuxLibertineT-TLF/m/n/10.95 CloudKit-, iCloud- oder App-Group-Funktion für die aktu-elle Studi-en-ver-sion vor. Ebenso
+ []
+
+[50]
+Underfull \hbox (badness 1502) in paragraph at lines 558--559
+\T1/LinuxLibertineT-TLF/m/n/10.95 Aktivierungs-, Submission- oder Persis-ten-z-ope-ra-tionen. Die Actor-Isolation ist dabei eine
+ []
+
+
+Underfull \hbox (badness 1515) in paragraph at lines 570--571
+\T1/LinuxLibertineT-TLF/m/n/10.95 be-din-gungen noch den wissen-schaft-li-chen Submission-Vertrag. Insbe-son-dere werden über
+ []
+
+
+Underfull \hbox (badness 3108) in paragraph at lines 570--571
+\T1/LinuxLibertineT-TLF/m/n/10.95 Forschungs-daten über-tragen. Die Imple-men-tie-rung verwendet ausschlieÿ-lich lokale iOS-
+ []
+
+[51]
+Underfull \hbox (badness 1077) in paragraph at lines 582--583
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Damit wird auch ein nach-träg-li-cher Entzug der iOS-Berechtigung berück-sich-tigt. Bei der
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 601--602
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für jede Studien-si-tua-tion wird ein deter-mi-nis-ti-scher Bezeichner der Form
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 601--602
+\T1/fvm/m/n/10.95 de.eachandevery.cuelens.study-reminder.<n> \T1/LinuxLibertineT-TLF/m/n/10.95 verwendet. Beim Recon-cile werden
+ []
+
+
+Underfull \hbox (badness 1629) in paragraph at lines 601--602
+\T1/LinuxLibertineT-TLF/m/n/10.95 CueLens-Benachrichtigungen entfernt. Eine bereits als ausge-lie-fert gefun-dene Erin-ne-rung
+ []
+
+
+Underfull \hbox (badness 2005) in paragraph at lines 603--604
+\T1/LinuxLibertineT-TLF/m/n/10.95 spra-chige Remin-der-text lautet ^^R  Eine neue Aufgabe ist verfügbar.^^P . Weder Rauchen noch
+ []
+
+[52]
+Underfull \hbox (badness 5008) in paragraph at lines 609--610
+\T1/LinuxLibertineT-TLF/m/n/10.95 Neben Studie-nerin-ne-rungen unter-stützt die App einen gene-ri-schen Hinweis auf neue
+ []
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 609--610
+\T1/LinuxLibertineT-TLF/m/n/10.95 me-cha-nismus verwendet. Der \T1/fvm/m/n/10.95 BackgroundRefreshCoordinator \T1/LinuxLibertineT-TLF/m/n/10.95 regis-triert den Bezeichner
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 611--612
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Der Hinter-grund-task führt ausschlieÿ-lich einen Infor-ma-ti-ons-a-bruf aus. Der
+ []
+
+
+Underfull \hbox (badness 3407) in paragraph at lines 611--612
+\T1/fvm/m/n/10.95 InfoFeedBackgroundChecker \T1/LinuxLibertineT-TLF/m/n/10.95 liest zunächst die gespei-cherte Benach-rich-ti-gungs-prä-fe-renz
+ []
+
+
+Underfull \hbox (badness 1565) in paragraph at lines 611--612
+\T1/LinuxLibertineT-TLF/m/n/10.95 richten vom beste-henden Feed-Service abge-rufen. Zur Entschei-dung über einen Hinweis
+ []
+
+
+Underfull \hbox (badness 3746) in paragraph at lines 630--630
 []|\T1/LinuxLibertineT-TLF/b/n/10.95 Inhalt und Daten-
  []
 
 
-Underfull \hbox (badness 2547) in paragraph at lines 690--690
+Underfull \hbox (badness 2547) in paragraph at lines 632--632
 \T1/LinuxLibertineT-TLF/m/n/10.95 schritt und Frei-schalt-
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 690--690
+Underfull \hbox (badness 1910) in paragraph at lines 632--632
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 generischer Hinweis;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 690--690
+Underfull \hbox (badness 10000) in paragraph at lines 632--632
 \T1/LinuxLibertineT-TLF/m/n/10.95 kein Craving, kein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 690--691
+Underfull \hbox (badness 10000) in paragraph at lines 632--633
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Startseite; Start-
  []
 
 
-Overfull \hbox (7.64117pt too wide) in paragraph at lines 691--691
+Overfull \hbox (7.64117pt too wide) in paragraph at lines 633--633
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Informationshinweis| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--691
+Underfull \hbox (badness 10000) in paragraph at lines 633--633
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Background-Feed
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--691
+Underfull \hbox (badness 10000) in paragraph at lines 633--633
 \T1/LinuxLibertineT-TLF/m/n/10.95 bisher unbe-kannte,
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 691--691
+Underfull \hbox (badness 1910) in paragraph at lines 633--633
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 generischer Hinweis;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--692
+Underfull \hbox (badness 10000) in paragraph at lines 633--634
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Informationsfeed
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--692
+Underfull \hbox (badness 10000) in paragraph at lines 633--634
 \T1/LinuxLibertineT-TLF/m/n/10.95 wird beim Akti-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--692
+Underfull \hbox (badness 10000) in paragraph at lines 633--634
 \T1/LinuxLibertineT-TLF/m/n/10.95 vieren erneut
  []
 
-[58]
-Underfull \hbox (badness 3907) in paragraph at lines 709--710
-[]\T1/LinuxLibertineT-TLF/m/n/10 Auch zwei imple-men-tie-rungs-spe-zi-fi-sche Grenzen sind zu berück-sich-tigen. Erstens markiert der
- []
-
-[59]
-Underfull \hbox (badness 10000) in paragraph at lines 721--722
-\T1/LinuxLibertineT-TLF/m/n/10 Abschluss und Prolific-Abschluss. Für alle Klassen müssen \T1/fvm/m/n/10 success\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 situation_index \T1/LinuxLibertineT-TLF/m/n/10 und
+[53]
+Underfull \hbox (badness 2197) in paragraph at lines 647--648
+\T1/LinuxLibertineT-TLF/m/n/10.95 insbe-son-dere die Diffe-renz-bil-dung zwischen abge-ru-fenen, bekannten und ausge-blen-deten
  []
 
 
-Underfull \hbox (badness 2103) in paragraph at lines 721--722
-\T1/fvm/m/n/10 condition_code \T1/LinuxLibertineT-TLF/m/n/10 exakt zum lokal erwar-teten Zustand passen. Zusätz-liche oder wider-sprüch-liche
+Underfull \hbox (badness 1297) in paragraph at lines 651--652
+\T1/LinuxLibertineT-TLF/m/n/10.95 oder vom System unter-drückter Hinweis wird deshalb nicht als zuver-läs-sige Zustell-war-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 742--743
-\T1/LinuxLibertineT-TLF/m/n/10 Das lokale \T1/fvm/m/n/10 CompletionState\T1/LinuxLibertineT-TLF/m/n/10 -Modell unter-scheidet \T1/fvm/m/n/10 incomplete\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 invalid\T1/LinuxLibertineT-TLF/m/n/10 ,
+Underfull \hbox (badness 2582) in paragraph at lines 651--652
+\T1/LinuxLibertineT-TLF/m/n/10.95 te-schlange erneut versucht. Zwei-tens berück-sich-tigt die Reminder-Policy zwar das Feld
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 742--743
-\T1/fvm/m/n/10 directPendingConfirmation(code)\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 directCompleted(code) \T1/LinuxLibertineT-TLF/m/n/10 und \T1/fvm/m/n/10 prolificCompleted\T1/LinuxLibertineT-TLF/m/n/10 . Nur
+Underfull \hbox (badness 2582) in paragraph at lines 653--654
+\T1/LinuxLibertineT-TLF/m/n/10.95 und nicht als kontrol-lierter Bestand-teil der Cue-Labeling-Manipulation einzu-ordnen. Sie
+ []
+
+[54]
+Underfull \hbox (badness 2111) in paragraph at lines 665--666
+\T1/LinuxLibertineT-TLF/m/n/10.95 vorliegt und die Antwort zusätz-lich genau einen syntak-tisch gültigen UUID-v4-Wert in
  []
 
 
-Underfull \hbox (badness 1314) in paragraph at lines 742--743
-\T1/fvm/m/n/10 directCompleted \T1/LinuxLibertineT-TLF/m/n/10 und \T1/fvm/m/n/10 prolificCompleted \T1/LinuxLibertineT-TLF/m/n/10 erfüllen die Eigen-schaft \T1/fvm/m/n/10 isCompleted\T1/LinuxLibertineT-TLF/m/n/10 . Für die beiden
+Underfull \hbox (badness 3407) in paragraph at lines 667--668
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Der Prolific-Abschluss wird dagegen nur akzep-tiert, wenn Situa-tion 20 bestä-tigt wird,
  []
 
 
-Underfull \hbox (badness 1371) in paragraph at lines 742--743
-\T1/LinuxLibertineT-TLF/m/n/10 direkten Zustände ist der Kompen-sa-ti-ons-code Bestand-teil des persis-tierten Zustands; ein Prolific-
+Underfull \hbox (badness 2865) in paragraph at lines 680--681
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 beschrieben werden. Dabei bezeichnet $\OML/cmm/m/it/10.95 R[]$ \T1/LinuxLibertineT-TLF/m/n/10.95 die exakt zuläs-sige Feld-menge des direkten
  []
 
 
-Underfull \hbox (badness 1331) in paragraph at lines 742--743
-\T1/LinuxLibertineT-TLF/m/n/10 Abschluss darf demge-gen-über keinen Code enthalten. Auch die Codable-Dekodierung prüft diese
+Underfull \hbox (badness 10000) in paragraph at lines 684--685
+\T1/LinuxLibertineT-TLF/m/n/10.95 Das lokale \T1/fvm/m/n/10.95 CompletionState\T1/LinuxLibertineT-TLF/m/n/10.95 -Modell unter-scheidet \T1/fvm/m/n/10.95 incomplete\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 invalid\T1/LinuxLibertineT-TLF/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 1661) in paragraph at lines 742--743
-\T1/LinuxLibertineT-TLF/m/n/10 Feld-mengen strikt, sodass beispiels-weise ein lokal gespei-cherter \T1/fvm/m/n/10 prolificCompleted\T1/LinuxLibertineT-TLF/m/n/10 -Zustand mit
+Underfull \hbox (badness 10000) in paragraph at lines 684--685
+\T1/fvm/m/n/10.95 directPendingConfirmation(code)\T1/LinuxLibertineT-TLF/m/n/10.95 , \T1/fvm/m/n/10.95 directCompleted(code) \T1/LinuxLibertineT-TLF/m/n/10.95 und \T1/fvm/m/n/10.95 prolificCompleted\T1/LinuxLibertineT-TLF/m/n/10.95 .
  []
 
-[60]
-Underfull \hbox (badness 10000) in paragraph at lines 766--766
+
+Underfull \hbox (badness 4805) in paragraph at lines 684--685
+\T1/LinuxLibertineT-TLF/m/n/10.95 Nur \T1/fvm/m/n/10.95 directCompleted \T1/LinuxLibertineT-TLF/m/n/10.95 und \T1/fvm/m/n/10.95 prolificCompleted \T1/LinuxLibertineT-TLF/m/n/10.95 erfüllen die Eigen-schaft \T1/fvm/m/n/10.95 isCompleted\T1/LinuxLibertineT-TLF/m/n/10.95 .
+ []
+
+
+Underfull \hbox (badness 1389) in paragraph at lines 684--685
+\T1/LinuxLibertineT-TLF/m/n/10.95 Dekodierung prüft diese Feld-mengen strikt, sodass beispiels-weise ein lokal gespei-cherter
+ []
+
+[55]
+Underfull \hbox (badness 10000) in paragraph at lines 708--708
 []|\T1/fvm/m/n/10.95 status=complete
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 766--766
+Underfull \hbox (badness 10000) in paragraph at lines 708--708
 \T1/LinuxLibertineT-TLF/m/n/10.95 und UUID-v4-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 766--767
+Underfull \hbox (badness 10000) in paragraph at lines 708--709
 []|\T1/fvm/m/n/10.95 status=complete\T1/LinuxLibertineT-TLF/m/n/10.95 ,
  []
 
 
-Overfull \hbox (39.71451pt too wide) in paragraph at lines 766--767
+Overfull \hbox (39.71451pt too wide) in paragraph at lines 708--709
 \T1/fvm/m/n/10.95 completion_mode=PROLIFIC_MANUAL\T1/LinuxLibertineT-TLF/m/n/10.95 ,|
  []
 
 
-Overfull \hbox (37.30551pt too wide) in paragraph at lines 767--767
+Overfull \hbox (37.30551pt too wide) in paragraph at lines 709--709
 []|\T1/fvm/m/n/10.95 directPendingConfirmation(code)| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 768--768
+Underfull \hbox (badness 10000) in paragraph at lines 710--710
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Bestätigung des Codes,
  []
 
 
-Underfull \hbox (badness 5475) in paragraph at lines 769--769
+Underfull \hbox (badness 5475) in paragraph at lines 711--711
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Persistierter Endzu-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 770--771
+Underfull \hbox (badness 10000) in paragraph at lines 712--713
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Abschlussmeldung ohne
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 771--771
+Underfull \hbox (badness 10000) in paragraph at lines 713--713
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Prolific-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 777--778
-\T1/LinuxLibertineT-TLF/m/n/10 Beim direkten Abschluss wird der vom Backend erhal-tene UUID-v4-Code zunächst als
+Underfull \hbox (badness 2635) in paragraph at lines 719--720
+\T1/LinuxLibertineT-TLF/m/n/10.95 Beim direkten Abschluss wird der vom Backend erhal-tene UUID-v4-Code zunächst als
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 779--780
-[]\T1/LinuxLibertineT-TLF/m/n/10 Scheitert die Bestä-ti-gung durch Netzwerk- oder Server-fehler, verbleibt der Zustand in
+Underfull \hbox (badness 10000) in paragraph at lines 719--720
+\T1/fvm/m/n/10.95 directPendingConfirmation \T1/LinuxLibertineT-TLF/m/n/10.95 in den geschützten Studi-en-zu-stand geschrieben. Erst
  []
 
 
-Underfull \hbox (badness 2922) in paragraph at lines 785--786
-\T1/LinuxLibertineT-TLF/m/n/10 telbar \T1/fvm/m/n/10 prolificCompleted \T1/LinuxLibertineT-TLF/m/n/10 mit \T1/fvm/m/n/10 confirmedSituationCount=20 \T1/LinuxLibertineT-TLF/m/n/10 persis-tiert. Dabei wird weder ein
- []
-
-[61]
-Underfull \hbox (badness 2932) in paragraph at lines 789--790
-[]\T1/LinuxLibertineT-TLF/m/n/10 Diese Archi-tektur vermeidet insbe-son-dere, dass Prolific-Teilnehmende zusätz-lich einen CueLens-
+Underfull \hbox (badness 3354) in paragraph at lines 721--722
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Scheitert die Bestä-ti-gung durch Netzwerk- oder Server-fehler, verbleibt der Zustand in
  []
 
 
-Underfull \hbox (badness 2653) in paragraph at lines 803--804
-[]\T1/LinuxLibertineT-TLF/m/n/10 Beim Prolific-Pfad ist die Reco-very güns-tiger, sofern das Backend bei einem erneuten Request
+Underfull \hbox (badness 2717) in paragraph at lines 721--722
+\T1/fvm/m/n/10.95 directPendingConfirmation\T1/LinuxLibertineT-TLF/m/n/10.95 . Ein späterer Recovery-Versuch sendet dann ausschlieÿ-lich
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 807--807
+Underfull \hbox (badness 7981) in paragraph at lines 721--722
+\T1/LinuxLibertineT-TLF/m/n/10.95 die Code-be-stä-ti-gung erneut und nicht noch einmal den zwan-zigsten wissen-schaft-li-
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 721--722
+\T1/LinuxLibertineT-TLF/m/n/10.95 chen Selbst-be-richt. Erst nach erfolg-rei-cher Bestä-ti-gung und erfolg-rei-cher Persis-tenz wird
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 723--724
+\T1/LinuxLibertineT-TLF/m/n/10.95 ange-zeigt. Die Kopier-funk-tion verwendet \T1/fvm/m/n/10.95 UIPasteboard \T1/LinuxLibertineT-TLF/m/n/10.95 mit \T1/fvm/m/n/10.95 localOnly=true \T1/LinuxLibertineT-TLF/m/n/10.95 und einem
+ []
+
+[56]
+Underfull \hbox (badness 1231) in paragraph at lines 729--730
+\T1/LinuxLibertineT-TLF/m/n/10.95 und die weitere Bear-bei-tung auf der Prolific-Plattform sind vom wissen-schaft-li-chen iOS-
+ []
+
+[57]
+Underfull \hbox (badness 1292) in paragraph at lines 745--746
+\T1/LinuxLibertineT-TLF/m/n/10.95 nach bereits gespei-chertem zwan-zigstem Selbst-be-richt den beste-henden Prolific-Abschluss
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
 []\T1/LinuxLibertineT-TLF/b/n/14.4 Umfangreiche Quali-täts-si-che-rung der iOS-/iPadOS-
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [62]
-Underfull \hbox (badness 10000) in paragraph at lines 835--835
+[58]
+Underfull \hbox (badness 10000) in paragraph at lines 777--777
 []|\T1/LinuxLibertineT-TLF/b/n/10.95 Technischer Schwer-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 835--836
+Underfull \hbox (badness 10000) in paragraph at lines 777--778
 []|\T1/LinuxLibertineT-TLF/b/n/10.95 Wesentliche
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 837--837
+Underfull \hbox (badness 10000) in paragraph at lines 779--779
 \T1/LinuxLibertineT-TLF/m/n/10.95 Härtung, Konfi-gu-ra-tion,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 837--837
+Underfull \hbox (badness 10000) in paragraph at lines 779--779
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 mehrere ausführ-bare
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 837--837
+Underfull \hbox (badness 10000) in paragraph at lines 779--779
 \T1/LinuxLibertineT-TLF/m/n/10.95 Veri-fi-ka-ti-ons-s-kripte im
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 837--838
+Underfull \hbox (badness 10000) in paragraph at lines 779--780
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 keine reale
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 837--838
+Underfull \hbox (badness 10000) in paragraph at lines 779--780
 \T1/LinuxLibertineT-TLF/m/n/10.95 Laufzeit- oder
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--838
+Underfull \hbox (badness 10000) in paragraph at lines 780--780
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Unit-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--838
+Underfull \hbox (badness 10000) in paragraph at lines 780--780
 \T1/LinuxLibertineT-TLF/m/n/10.95 /Infrastructure-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--838
+Underfull \hbox (badness 10000) in paragraph at lines 780--780
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Domainregeln, Parser,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--838
+Underfull \hbox (badness 10000) in paragraph at lines 780--780
 \T1/LinuxLibertineT-TLF/m/n/10.95 Stores, Netz-werk-fehler,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--838
+Underfull \hbox (badness 10000) in paragraph at lines 780--780
 \T1/LinuxLibertineT-TLF/m/n/10.95 Reco-very, Neben-läu-fig-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--839
+Underfull \hbox (badness 10000) in paragraph at lines 780--781
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 keine produk-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 838--839
+Underfull \hbox (badness 10000) in paragraph at lines 780--781
 \T1/LinuxLibertineT-TLF/m/n/10.95 tive Server-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 839--839
+Underfull \hbox (badness 10000) in paragraph at lines 781--781
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Navigation, Formu-lare,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 839--839
+Underfull \hbox (badness 10000) in paragraph at lines 781--781
 \T1/LinuxLibertineT-TLF/m/n/10.95 Studi-ena-b-lauf, Retry,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 839--840
+Underfull \hbox (badness 10000) in paragraph at lines 781--782
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 synthetische
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 839--840
+Underfull \hbox (badness 10000) in paragraph at lines 781--782
 \T1/LinuxLibertineT-TLF/m/n/10.95 Debug-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--840
+Underfull \hbox (badness 10000) in paragraph at lines 782--782
 \T1/LinuxLibertineT-TLF/m/n/10.95 Elemen-ter-ken-nung,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--840
+Underfull \hbox (badness 10000) in paragraph at lines 782--782
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 maximale Accessibility-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--841
+Underfull \hbox (badness 10000) in paragraph at lines 782--783
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 vollständiger
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--841
+Underfull \hbox (badness 10000) in paragraph at lines 782--783
 \T1/LinuxLibertineT-TLF/m/n/10.95 VoiceOver-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--841
+Underfull \hbox (badness 10000) in paragraph at lines 782--783
 \T1/LinuxLibertineT-TLF/m/n/10.95 Rundgang
  []
 
 
-Underfull \hbox (badness 1264) in paragraph at lines 841--841
+Underfull \hbox (badness 1264) in paragraph at lines 783--783
 \T1/LinuxLibertineT-TLF/m/n/10.95 kon-fi-gu-ra-tion, Compiler-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 841--841
+Underfull \hbox (badness 10000) in paragraph at lines 783--783
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 lokales Quality-Gate
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 841--841
+Underfull \hbox (badness 10000) in paragraph at lines 783--783
 \T1/LinuxLibertineT-TLF/m/n/10.95 und Release Analyze
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 841--842
+Underfull \hbox (badness 10000) in paragraph at lines 783--784
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 keine
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 841--842
+Underfull \hbox (badness 10000) in paragraph at lines 783--784
 \T1/LinuxLibertineT-TLF/m/n/10.95 Distribution-
  []
 
 
-Underfull \hbox (badness 1033) in paragraph at lines 842--842
+Underfull \hbox (badness 1033) in paragraph at lines 784--784
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Gerät, Test-F-light, Noti-fi-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 842--842
+Underfull \hbox (badness 10000) in paragraph at lines 784--784
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 Protokolle und Check-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 842--843
+Underfull \hbox (badness 10000) in paragraph at lines 784--785
 []|\T1/LinuxLibertineT-TLF/m/n/10.95 zum doku-men-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 842--843
+Underfull \hbox (badness 10000) in paragraph at lines 784--785
 \T1/LinuxLibertineT-TLF/m/n/10.95 tierten Stand
  []
 
 
-Overfull \hbox (5.31822pt too wide) in paragraph at lines 834--844
+Overfull \hbox (5.31822pt too wide) in paragraph at lines 776--786
  [][] |
  []
 
-[63] [64]
-Underfull \hbox (badness 1275) in paragraph at lines 862--863
-\T1/LinuxLibertineT-TLF/m/n/10 sowie einen deter-mi-nis-ti-schen Rando-mizer. Matching-Zeitintervalle werden für die UI-Automation
+[59]
+Underfull \hbox (badness 1221) in paragraph at lines 804--805
+\T1/LinuxLibertineT-TLF/m/n/10.95 akti-vieren. Diese inji-ziert unter anderem synthe-ti-sche Persistenz-, Aktivierungs-, Feature-
  []
 
 
-Underfull \hbox (badness 1275) in paragraph at lines 868--869
-\T1/LinuxLibertineT-TLF/m/n/10 lokalen Gate zusam-men-ge-führt. Vor den Xcode-Testläufen werden unter anderem Schicht-grenzen,
- []
-
-[65]
-Underfull \hbox (badness 3826) in paragraph at lines 882--883
-\T1/LinuxLibertineT-TLF/m/n/10 Der doku-men-tierte DoD-Audit unter-scheidet konse-quent zwischen ^^R  BESTANDEN auto-ma-ti-siert^^P ,
+Underfull \hbox (badness 3769) in paragraph at lines 804--805
+\T1/LinuxLibertineT-TLF/m/n/10.95 , Submission- und Kopier-dienste sowie einen deter-mi-nis-ti-schen Rando-mizer. Matching-
  []
 
 
-Underfull \hbox (badness 1917) in paragraph at lines 884--885
-[]\T1/LinuxLibertineT-TLF/m/n/10 Zu diesen offenen Gates gehören insbe-son-dere reale Tests von Gerä-te-sperre und App-Switcher-
+Underfull \hbox (badness 4013) in paragraph at lines 804--805
+\T1/LinuxLibertineT-TLF/m/n/10.95 Zeitintervalle werden für die UI-Automation verkürzt und Abschluss- bezie-hungs-weise
  []
 
 
-Underfull \hbox (badness 1694) in paragraph at lines 884--885
-\T1/LinuxLibertineT-TLF/m/n/10 Sichtschutz, Notification-Systemverhalten, ein voll-stän-diger VoiceOver-Rundgang, ein Distribution-
+Underfull \hbox (badness 1924) in paragraph at lines 806--807
+\T1/LinuxLibertineT-TLF/m/n/10.95 Aktivierung, zwanzig Selbst-be-richten und admi-nis-tra-tivem Abschluss separat frei-ge-geben
  []
 
-) (./kapitel6/ch6.tex [66]
+[60]
+Underfull \hbox (badness 2318) in paragraph at lines 826--827
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Zu diesen offenen Gates gehören insbe-son-dere reale Tests von Gerä-te-sperre und App-
+ []
+
+
+Underfull \hbox (badness 2012) in paragraph at lines 826--827
+\T1/LinuxLibertineT-TLF/m/n/10.95 Switcher-Sichtschutz, Notification-Systemverhalten, ein voll-stän-diger VoiceOver-Rundgang,
+ []
+
+
+Underfull \hbox (badness 2903) in paragraph at lines 826--827
+\T1/LinuxLibertineT-TLF/m/n/10.95 ein Distribution-signiertes Archiv, Test-F-light auf mehreren realen Geräten, je ein voll-
+ []
+
+
+Underfull \hbox (badness 1189) in paragraph at lines 826--827
+\T1/LinuxLibertineT-TLF/m/n/10.95 stän-diger direkter und Prolific-Staging-Abschluss sowie der geplante 14-Tage-Langzeittest.
+ []
+
+
+Underfull \hbox (badness 2538) in paragraph at lines 830--831
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Diese Tren-nung verhin-dert eine Über-in-ter-pre-ta-tion auto-ma-ti-sierter Test-zahlen. Die iOS-
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 830--831
+\T1/LinuxLibertineT-TLF/m/n/10.95 Portierung besitzt einen umfang-rei-chen und repro-du-zier-baren tech-ni-schen Nach-weis auf
+ []
+
+
+Underfull \hbox (badness 1590) in paragraph at lines 830--831
+\T1/LinuxLibertineT-TLF/m/n/10.95 Quellcode-, Simulator- und Build-Ebene. Aussagen über reale Lang-zeit-sta-bi-lität, Distri-bu-
+ []
+
+[61]) (./kapitel6/ch6.tex [62]
 Kapitel 6.
+[63
 
-Underfull \hbox (badness 1521) in paragraph at lines 26--27
-\T1/LinuxLibertineT-TLF/m/n/10 Teil-neh-menden erhalten die glei-chen Aufgaben, die sowohl Cue-Matching als auch Cue-Labeling
- []
-
-[67
-
-]
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 38.
- [68]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [69] [70]
-Underfull \hbox (badness 1331) in paragraph at lines 107--108
-\T1/LinuxLibertineT-TLF/m/n/10 neuem Feed-back, erreichter Feed-back-grenze sowie Client- und Server-feh-lern senden. Die E-Mails
+] [64] [65]
+Underfull \hbox (badness 1275) in paragraph at lines 64--65
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Die Teil-nahme ist frei-willig und kann jeder-zeit abge-bro-chen werden. Ein Abbruch führt
  []
 
 
-Underfull \hbox (badness 1102) in paragraph at lines 114--115
-\T1/LinuxLibertineT-TLF/m/n/10 Die den Teil-neh-menden bereit-ge-stellten Doku-mente müssen den tatsäch-li-chen tech-ni-schen Ablauf
+Underfull \hbox (badness 1546) in paragraph at lines 73--74
+\T1/LinuxLibertineT-TLF/m/n/10.95 Zusätz-lich werden die Rekrutierungs- und Reten-ti-ons-kenn-zahlen beob-achtet: Aufrufe der
+ []
+
+[66]
+Underfull \hbox (badness 1389) in paragraph at lines 91--92
+\T1/LinuxLibertineT-TLF/m/n/10.95 werden. Die Demo über-trägt keinen wissen-schaft-li-chen Craving-Wert und verän-dert den
+ []
+
+[67]
+Underfull \hbox (badness 1783) in paragraph at lines 100--101
+\T1/LinuxLibertineT-TLF/m/n/10.95 Sicher-heits-war-nungen können Miss-trauen auslösen, und Herstel-lero-ber-flä-chen verwenden
  []
 
 
-Underfull \vbox (badness 2293) has occurred while \output is active []
-
- [71] [72]
-Underfull \hbox (badness 10000) in paragraph at lines 134--135
-[]\T1/LinuxLibertineT-TLF/m/n/10 Die Imple-men-tie-rung akzep-tiert die Prolific-Statuswerte \T1/fvm/m/n/10 ACTIVE\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 AWAITING_REVIEW\T1/LinuxLibertineT-TLF/m/n/10 , \T1/fvm/m/n/10 APPROVED\T1/LinuxLibertineT-TLF/m/n/10 ,
+Underfull \hbox (badness 1490) in paragraph at lines 109--110
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Für den laufenden Betrieb sollten mindes-tens Erreich-bar-keit der Endpunkte, Zahl bestä-
  []
 
 
-Underfull \hbox (badness 3884) in paragraph at lines 138--139
-[]\T1/LinuxLibertineT-TLF/m/n/10 Diese Abhän-gig-keit ist für die Bewer-tung des Rekru-tie-rungs-pro-zesses rele-vant. Wenn Prolific-
+Underfull \hbox (badness 1107) in paragraph at lines 116--117
+\T1/LinuxLibertineT-TLF/m/n/10.95 verspä-tete Erin-ne-rungen, Geräte- und Netz-werkun-ter-schiede, Support-in-ter-ven-tionen sowie
  []
 
-[73]
-Underfull \hbox (badness 1721) in paragraph at lines 164--165
-\T1/LinuxLibertineT-TLF/m/n/10 ti-gung; Prolific-Teilnehmende erhalten keinen solchen Code und werden über den server-sei-tigen
+[68]
+Underfull \hbox (badness 1147) in paragraph at lines 124--125
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Der direkte Teil-nah-meweg umfasst nach dem Absenden des Webfor-mu-lars weiterhin ein
  []
 
 
-Underfull \vbox (badness 1688) has occurred while \output is active []
+Underfull \hbox (badness 1132) in paragraph at lines 124--125
+\T1/LinuxLibertineT-TLF/m/n/10.95 E-Mail-Double-Opt-In. Erst nach Aufruf des Bestä-ti-gungs-links kann die Regis-trie-rung für
+ []
 
- [74]) (./kapitel7/ch7.tex [75] [76
+[69] [70] [71]
+Underfull \vbox (badness 8151) has occurred while \output is active []
+
+ [72]) (./kapitel7/ch7.tex [73] [74
 
 ]
 Kapitel 7.
 (../analysis/testable/output/numbers.tex)
-LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 7.47002pt on input line 16.
+Underfull \hbox (badness 1715) in paragraph at lines 16--17
+\T1/LinuxLibertineT-TLF/m/n/10.95 Die brow-ser-ba-sierte Testable-Erhebung wird als eigen-stän-dige Umset-zung des Vergleichs
+ []
+
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
 (Font)              scaled to size 9.0pt on input line 18.
 
-Underfull \hbox (badness 1210) in paragraph at lines 18--19
-\T1/LinuxLibertineT-TLF/m/n/10 Antworten, Trial-Zeilennummern und Zeit-an-gaben. Frei-textant-worten und indi-vi-du-elle Kennungen
+Underfull \hbox (badness 1502) in paragraph at lines 20--21
+[]\T1/LinuxLibertineT-TLF/m/n/10.95 Das Trial-File enthält 20 Blöcke mit je fünf Bild-auf-gaben und anschlie-ÿendem Craving-
  []
 
-[77]
-Underfull \hbox (badness 1173) in paragraph at lines 43--44
-[]\T1/LinuxLibertineT-TLF/m/n/10 Die Datei-zahl erlaubt keine Bestim-mung der Rekrutierungs-, Abbruch- oder Abschluss-quote, weil
+
+Overfull \hbox (72.3287pt too wide) has occurred while \output is active
+[][] []\T1/LinuxLibertineT-TLF/m/n/9 Vollständiger Commit: []$\T1/fvm/m/n/9 h t t p s : / / g i t h u b . c o m / s t e f a n-[] b m i o / m a s t e r -[] t h e s i s / t r e e / b 0 a c 2 8 b e 3 a b 0 c 2 9 d 6 6 4 3 f 0 7 3 c b 5 5 5 f 0 8 7 7 6 9 a 8 f 2$[]\T1/LinuxLibertineT-TLF/m/n/9 .|
  []
 
-[78]
-<../analysis/testable/output/testable_results.pdf, id=1274, 650.43pt x 303.1325pt>
+[75] [76]
+<../analysis/testable/output/testable_results.pdf, id=1188, 650.43pt x 303.1325pt>
 File: ../analysis/testable/output/testable_results.pdf Graphic file (type pdf)
 <use ../analysis/testable/output/testable_results.pdf>
 Package pdftex.def Info: ../analysis/testable/output/testable_results.pdf  used on input line 72.
 (pdftex.def)             Requested size: 426.79134pt x 198.91171pt.
- (../analysis/testable/output/sensitivity_table.tex)
-<../analysis/testable/output/testable_timecourse.pdf, id=1277, 578.16pt x 274.02374pt>
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][] []\T1/LinuxLibertineT-TLF/m/n/9 R Core Team (2024), \T1/LinuxLibertineT-TLF/m/it/9 R: A Language and Envi-ron-ment for Stati-stical Compu-ting\T1/LinuxLibertineT-TLF/m/n/9 , R Foun-da-tion
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+\T1/LinuxLibertineT-TLF/m/n/9 for Stati-stical Compu-ting, Wien; []$\T1/fvm/m/n/9 h t t p s : / / w w w . R-[] p r o j e c t . o r g /$[]\T1/LinuxLibertineT-TLF/m/n/9 . Funk-ti-ons-do-ku-men-ta-tion:
+ []
+
+[77] (../analysis/testable/output/sensitivity_table.tex)
+<../analysis/testable/output/testable_timecourse.pdf, id=1199, 578.16pt x 274.02374pt>
 File: ../analysis/testable/output/testable_timecourse.pdf Graphic file (type pdf)
 <use ../analysis/testable/output/testable_timecourse.pdf>
 Package pdftex.def Info: ../analysis/testable/output/testable_timecourse.pdf  used on input line 89.
 (pdftex.def)             Requested size: 426.79134pt x 202.281pt.
- [79] [80 <../analysis/testable/output/testable_results.pdf> <../analysis/testable/output/testable_timecourse.pdf
 
-pdfTeX warning: pdflatex (file ../analysis/testable/output/testable_timecourse.pdf): PDF inclusion: multiple pdfs with page group included in a single page
->]
-Underfull \hbox (badness 8075) in paragraph at lines 103--104
-\T1/LinuxLibertineT-TLF/m/n/10 Listing []7.1[] enthält den voll-stän-digen ausführ-baren Quell-text. Er wird aus dem Repository-
- []
+Underfull \vbox (badness 3199) has occurred while \output is active []
 
-
-Underfull \hbox (badness 3219) in paragraph at lines 103--104
-\T1/LinuxLibertineT-TLF/m/n/10 Hauptverzeichnis mit \T1/fvm/m/n/10 Rscript analysis/testable/analyse_testable.R \T1/LinuxLibertineT-TLF/m/n/10 gest-artet. Die Funk-tion
- []
-
-(/usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
+ [78 <../analysis/testable/output/testable_results.pdf>] [79 <../analysis/testable/output/testable_timecourse.pdf>] (/usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
 ) (/usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang2.sty
 File: lstlang2.sty 2025/11/14 1.11b listings language file
@@ -2833,33 +2528,30 @@ LaTeX Font Info:    Font shape `T1/fvm/m/sl' will be
 (Font)              scaled to size 6.64001pt on input line 1.
 LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
 (Font)              scaled to size 6.64001pt on input line 1.
- [81]
+ [80]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [82]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [83])) (./kapitel8/ch8.tex [84]
+ [81])) (./kapitel8/ch8.tex [82]
 Kapitel 8.
-) (./anhang/anhang.tex [85
+) (./anhang/anhang.tex [83
 
-] [86
+] [84
 
-] [87] [88
+] [85] [86
 
 ]
 Anhang A.
 
-Overfull \hbox (1.3372pt too wide) in paragraph at lines 13--13
-[]|\T1/LinuxLibertineT-TLF/m/n/10 Subject|  |
+Overfull \hbox (4.16724pt too wide) in paragraph at lines 13--13
+[]|\T1/LinuxLibertineT-TLF/m/n/10.95 Subject|  |
  []
 
 
-Overfull \hbox (1.3372pt too wide) in paragraph at lines 37--37
-[]|\T1/LinuxLibertineT-TLF/m/n/10 Subject|  |
+Overfull \hbox (4.16724pt too wide) in paragraph at lines 37--37
+[]|\T1/LinuxLibertineT-TLF/m/n/10.95 Subject|  |
  []
 
-[89]) (./anhang/adressen.tex [90
+[87]) (./anhang/adressen.tex [88
 
 ]
 Anhang B.
@@ -2934,6 +2626,8 @@ Overfull \hbox (0.90598pt too wide) in paragraph at lines 357--357
  []
 
 
+ignored: Infinite glue shrinkage found in box being split [89]
+ignored: Infinite glue shrinkage found in box being split [90]
 ignored: Infinite glue shrinkage found in box being split [91]
 ignored: Infinite glue shrinkage found in box being split [92]
 ignored: Infinite glue shrinkage found in box being split [93]
@@ -2946,8 +2640,6 @@ ignored: Infinite glue shrinkage found in box being split [99]
 ignored: Infinite glue shrinkage found in box being split [100]
 ignored: Infinite glue shrinkage found in box being split [101]
 ignored: Infinite glue shrinkage found in box being split [102]
-ignored: Infinite glue shrinkage found in box being split [103]
-ignored: Infinite glue shrinkage found in box being split [104]
 Overfull \hbox (11.36598pt too wide) in paragraph at lines 519--519
 []|\T1/LinuxLibertineT-TLF/m/n/10 suchtberatung.andelfingen@ajb.zh.ch|  |
  []
@@ -2973,19 +2665,19 @@ Overfull \hbox (9.10596pt too wide) in paragraph at lines 519--519
  []
 
 
+ignored: Infinite glue shrinkage found in box being split [103]
+ignored: Infinite glue shrinkage found in box being split [104]
 ignored: Infinite glue shrinkage found in box being split [105]
 ignored: Infinite glue shrinkage found in box being split [106]
 ignored: Infinite glue shrinkage found in box being split [107]
 ignored: Infinite glue shrinkage found in box being split [108]
-ignored: Infinite glue shrinkage found in box being split [109]
-ignored: Infinite glue shrinkage found in box being split [110]
-ignored: Infinite glue shrinkage found in box being split [111]) (./anhang/flyer.tex
-<anhang/flyer.pdf, id=1661, 845.0471pt x 597.50829pt>
+ignored: Infinite glue shrinkage found in box being split [109]) (./anhang/flyer.tex
+<anhang/flyer.pdf, id=1577, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf>
 Package pdftex.def Info: anhang/flyer.pdf  used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
-<anhang/flyer.pdf, id=1663, page=1, 845.0471pt x 597.50829pt>
+<anhang/flyer.pdf, id=1579, page=1, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
@@ -2994,7 +2686,7 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
- [112]
+ [110]
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
@@ -3007,10 +2699,10 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 1>
 Package pdftex.def Info: anhang/flyer.pdf , page1 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
- [113
+ [111
 
  <./anhang/flyer.pdf>]
-<anhang/flyer.pdf, id=1754, page=2, 845.0471pt x 597.50829pt>
+<anhang/flyer.pdf, id=1669, page=2, 845.0471pt x 597.50829pt>
 File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 2>
 Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
@@ -3023,15 +2715,15 @@ File: anhang/flyer.pdf Graphic file (type pdf)
 <use anhang/flyer.pdf, page 2>
 Package pdftex.def Info: anhang/flyer.pdf , page2 used on input line 10.
 (pdftex.def)             Requested size: 845.04504pt x 597.50682pt.
- [114
+ [112
 
  <./anhang/flyer.pdf>]) (./anhang/studieninformation.tex
-<anhang/studieninformation.pdf, id=1792, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=1708, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf>
 Package pdftex.def Info: anhang/studieninformation.pdf  used on input line 9.
 (pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
-<anhang/studieninformation.pdf, id=1794, page=1, 597.50829pt x 845.0471pt>
+<anhang/studieninformation.pdf, id=1710, page=1, 597.50829pt x 845.0471pt>
 File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 1>
 Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
@@ -3052,47 +2744,47 @@ File: anhang/studieninformation.pdf Graphic file (type pdf)
 <use anhang/studieninformation.pdf, page 1>
 Package pdftex.def Info: anhang/studieninformation.pdf , page1 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+ [113
+
+ <./anhang/studieninformation.pdf>]
+<anhang/studieninformation.pdf, id=1736, page=2, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 2>
+Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+ [114
+
+ <./anhang/studieninformation.pdf>]
+<anhang/studieninformation.pdf, id=1741, page=3, 597.50829pt x 845.0471pt>
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/studieninformation.pdf Graphic file (type pdf)
+<use anhang/studieninformation.pdf, page 3>
+Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
  [115
 
- <./anhang/studieninformation.pdf>]
-<anhang/studieninformation.pdf, id=1822, page=2, 597.50829pt x 845.0471pt>
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 2>
-Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 2>
-Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 2>
-Package pdftex.def Info: anhang/studieninformation.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
- [116
-
- <./anhang/studieninformation.pdf>]
-<anhang/studieninformation.pdf, id=1827, page=3, 597.50829pt x 845.0471pt>
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 3>
-Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 3>
-Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/studieninformation.pdf Graphic file (type pdf)
-<use anhang/studieninformation.pdf, page 3>
-Package pdftex.def Info: anhang/studieninformation.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
- [117
-
  <./anhang/studieninformation.pdf>]) (./anhang/datenschutzerklaerung.tex
-<anhang/datenschutzerklaerung.pdf, id=1832, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=1747, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf  used on input line 9.
 (pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
-<anhang/datenschutzerklaerung.pdf, id=1834, page=1, 597.50829pt x 845.0471pt>
+<anhang/datenschutzerklaerung.pdf, id=1749, page=1, 597.50829pt x 845.0471pt>
 File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 1>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
@@ -3113,70 +2805,74 @@ File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
 <use anhang/datenschutzerklaerung.pdf, page 1>
 Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page1 used on input line 9.
 (pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+ [116
+
+ <./anhang/datenschutzerklaerung.pdf>]
+<anhang/datenschutzerklaerung.pdf, id=1775, page=2, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 2>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+ [117
+
+ <./anhang/datenschutzerklaerung.pdf>]
+<anhang/datenschutzerklaerung.pdf, id=1780, page=3, 597.50829pt x 845.0471pt>
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
+File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
+<use anhang/datenschutzerklaerung.pdf, page 3>
+Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
+(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
  [118
-
- <./anhang/datenschutzerklaerung.pdf>]
-<anhang/datenschutzerklaerung.pdf, id=1860, page=2, 597.50829pt x 845.0471pt>
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 2>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 2>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 2>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page2 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
- [119
-
- <./anhang/datenschutzerklaerung.pdf>]
-<anhang/datenschutzerklaerung.pdf, id=1865, page=3, 597.50829pt x 845.0471pt>
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 3>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 3>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
-File: anhang/datenschutzerklaerung.pdf Graphic file (type pdf)
-<use anhang/datenschutzerklaerung.pdf, page 3>
-Package pdftex.def Info: anhang/datenschutzerklaerung.pdf , page3 used on input line 9.
-(pdftex.def)             Requested size: 597.53416pt x 845.08372pt.
- [120
 
  <./anhang/datenschutzerklaerung.pdf>])
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.95pt on input line 119.
- [121
+(Font)              scaled to size 10.95pt on input line 122.
+ [119
 
 
-{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}] [122] [123] (./main.aux)
+{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}] [120] [121] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6A148FE60A13D7629BA8E7B8F1FA96D1;34941.
+(rerunfilecheck)             Checksum: 99C4AC99F788FB39C97A87439617D26A;31171.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 32455 strings out of 467525
- 617250 string characters out of 5418982
- 2728109 words of memory out of 5000000
- 60291 multiletter control sequences out of 15000+600000
- 765243 words of font info for 145 fonts, out of 8000000 for 9000
+ 32546 strings out of 467525
+ 619422 string characters out of 5418982
+ 2672573 words of memory out of 5000000
+ 60392 multiletter control sequences out of 15000+600000
+ 748451 words of font info for 136 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 88i,19n,120p,1836b,3669s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmro8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on main.pdf (135 pages, 2974457 bytes).
+ 88i,19n,120p,1597b,3666s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/bera/fvmro8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on main.pdf (133 pages, 2924678 bytes).
 PDF statistics:
- 2148 PDF objects out of 2487 (max. 8388607)
- 1890 compressed objects within 19 object streams
- 545 named destinations out of 1000 (max. 500000)
- 1248 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2054 PDF objects out of 2073 (max. 8388607)
+ 1802 compressed objects within 19 object streams
+ 534 named destinations out of 1000 (max. 500000)
+ 1112 words of extra memory for PDF output out of 10000 (max. 10000000)
 

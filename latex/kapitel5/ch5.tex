@@ -9,143 +9,89 @@
 
 \chapter{Appentwicklung}
 
-\section{Sicherheit}
-Die Anwendung ist eine Kombination aus mobiler App, Web-Anwendung und Hintergrundsystem. Die Struktur orientiert sich an den Prüfaspekten der BSI TR-03161 für mobile Anwendungen, Web-Anwendungen und Hintergrundsysteme \cite{bsi_tr03161_mobile_2024,bsi_tr03161_web_2024,bsi_tr03161_backend_2024}. Die Richtlinie dient als fachlich geeignete Checkliste, um Datensparsamkeit, Eingabevalidierung, Transportabsicherung, Speichersicherheit, Fehlerbehandlung und den Umgang mit Drittanbieterbibliotheken nachvollziehbar zu dokumentieren.
+Die Struktur der Anwendung orientiert sich an den Prüfaspekten der BSI TR-03161 für mobile Anwendungen, Web-Anwendungen und Hintergrundsysteme \cite{bsi_tr03161_mobile_2024,bsi_tr03161_web_2024,bsi_tr03161_backend_2024}. Die Richtlinie dient als Checkliste, um Datensparsamkeit, Eingabevalidierung, Transportabsicherung, Speichersicherheit, Fehlerbehandlung und den Umgang mit Drittanbieterbibliotheken nachvollziehbar zu dokumentieren.
 
-Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Com\-pose-Ober\-fl"a\-che. Die wesentlichen Zustandsvariablen sind die aktuelle Phase, der aktuelle Aufgabenindex, die für den aktuellen Durchgang ausgewählte Aufgabenliste, die Zahl bereits abgeschlossener Studiensituationen, der Zeitpunkt der nächsten freigegebenen Studiensituation und der im Craving-Screen ausgewählte Zahlenwert. Für die Persistenz des lokalen Fortschritts wird \texttt{SharedPreferences} verwendet. Gespeichert werden insbesondere die Anzahl abgeschlossener Studiensituationen, der nächste erlaubte Startzeitpunkt, die zufällig erzeugte Reihenfolge der Cue-Matching-Aufgaben, das App-Token, ein ausstehender Craving-Wert und ein noch zu bestätigender Abrechnungscode.
+Die Android-App ist in Kotlin als native Anwendung mit Jetpack Compose umgesetzt. Die App verwendet eine einzige Activity und hält den Interaktionszustand innerhalb der Com\-pose-Ober\-fl"a\-che. Die wesentlichen Zustandsvariablen sind die aktuelle Studienbedingung, der aktuelle Aufgabenindex, der Zeitpunkt der nächsten freigegebenen Studiensituation und der im Craving-Slider ausgewählte Zahlenwert. Der lokale Fortschritt wird mittels \texttt{SharedPreferences} persistiert. Gespeichert werden die Anzahl abgeschlossener Studiensituationen, der nächste erlaubte Startzeitpunkt, die zufällig erzeugte Reihenfolge der Cue-Matching-Aufgaben, das App-Token, ein ausstehender Craving-Wert und ein noch zu bestätigender Abrechnungscode.
 
-Die App ist als sequenzieller Studienprototyp modelliert. Sie beginnt mit einem Startbildschirm, der den Studienfortschritt, die verbleibende Sperrzeit und den Start des nächsten Durchgangs darstellt. Ein Durchgang besteht aus fünf Zuordnungsaufgaben und der anschließenden Angabe des aktuellen Rauchverlangens. Die ersten zehn Durchgänge verwenden Cue-Matching, die folgenden zehn Durchgänge Cue-Labeling. Nach jedem Durchgang wird eine Sperrzeit von drei Stunden gesetzt. Dadurch wird verhindert, dass mehrere Selbstberichte unmittelbar hintereinander entstehen.
+Der Startbildschirm zeigt den Studienfortschritt, die verbleibende Sperrzeit und den Start des nächsten Durchgangs. Ein Durchgang besteht aus fünf Zuordnungsaufgaben und der anschließenden Angabe des aktuellen Rauchverlangens. Die ersten zehn Durchgänge verwenden Cue-Matching, die folgenden zehn Durchgänge Cue-Labeling. Auf jeden Durchgang folgt eine Pause von mindestens drei Stunden.
 
-Die Aufgabenlogik ist ressourcenbasiert und folgt einem deterministischen Namensschema. Für die Cue-Matching-Phase werden aus 150 Drawables mit den Namen \texttt{cue\_0nn}, \texttt{match\_a\_0nn} und \texttt{match\_b\_0nn} anhand der Nummerierung zu Tripletts gruppiert und in zufälliger Reihenfolge präsentiert. Für die Cue-Labeling-Phase werden die Cue-Bilder mit einer statischen Liste von Labelpaaren kombiniert. Jedes Labelpaar enthält ein passendes und ein weniger passendes Label.
-
-Die Interaktion ist bewusst einfach gehalten. Beim Cue-Matching werden die beiden Bildoptionen links und rechts zufällig vertauscht. Zusätzlich wird nach der Präsentation des Cue-Bildes ein Countdown von vier Sekunden angezeigt, bevor die Antwortoptionen aktiv werden. Damit soll vermieden werden, dass Teilnehmende ohne Betrachtung des Zielreizes sofort eine Option antippen. Beim Cue-Labeling werden auch die beiden Wortoptionen zufällig angeordnet. Ein Tippen auf eines der beiden Bilder oder Wörter führt zur nächsten Aufgabe. Diese Randomisierung reduziert Positionsartefakte, ohne zusätzliche personenbezogene Daten zu erheben.
+Die Interaktion ist bewusst einfach gehalten. Beim Cue-Matching werden die beiden Bildoptionen links und rechts zufällig vertauscht. Zusätzlich wird nach der Präsentation des Cue-Bildes ein Countdown von vier Sekunden angezeigt, bevor die Antwortoptionen aktiv werden. Damit soll vermieden werden, dass Teilnehmende ohne Betrachtung des Zielreizes sofort eine Option antippen. Beim Cue-Labeling werden auch die beiden Wortoptionen zufällig angeordnet. Ein Tippen auf eines der beiden Bilder oder Wörter führt zur nächsten Aufgabe.
 
 \section{Craving-Übertragung, Pseudonymisierung und Sicherheitskonzept}
-Die inhaltlich relevante Selbstberichtsvariable der App ist der Craving-Wert. Er wird als ganzzahliger Wert zwischen 0 und 100 geführt und erst nach Abschluss der fünf Aufgaben eines Durchgangs übertragen. Die App sendet den Wert als JSON-Payload per HTTP-\texttt{PUT} an \texttt{submit.php}. Zusätzlich enthält der Selbstbericht das lokal gespeicherte \texttt{app\_token} und die App-Version. Durchgangsindex und Studienbedingung werden im Backend aus dem bisherigen Studienfortschritt abgeleitet. Die Endpunkt-URL wird über die Build-Konfiguration gesetzt: die Staging-Variante verwendet einen Test-Endpunkt, die Produktionsvariante verwendet die offizielle Domainadresse \texttt{https://cuelens.each-and-every.de/submit}. Netzwerkanfragen werden in einem I/O-Coroutine-Kontext ausgeführt und blockieren daher nicht den UI-Thread.
 
-Vor der ersten Übertragung eines Selbstberichts ist eine Aktivierung erforderlich. Dafür sendet die App die E"~Mail-Adresse aus der Registrierung an \texttt{activate.php}. Der Server prüft, ob diese Adresse in der Tabelle \texttt{register} vorhanden ist, die Einwilligungen und das Double-Opt-In bestätigt sind und noch kein App-Token ausgegeben wurde. Bei gültiger Registrierung erzeugt der Server ein zufälliges UUID-v4-App-Token, gibt dieses an die App zurück und setzt in \texttt{register} ausschließlich den Zeitstempel \texttt{app\_token\_issued\_at}. Weder das App-Token noch dessen Hash werden in der Registrierung gespeichert.
+Die Craving-Selbstberichte werden als ganzzahlige Werte zwischen 0 und 100 geführt und erst nach Abschluss der fünf Aufgaben eines Durchgangs übertragen. Die App sendet den Wert als JSON-Payload per HTTP-\texttt{PUT} an \texttt{submit.php}. Zusätzlich enthält der Selbstbericht das lokal gespeicherte \texttt{app\_token} und die App-Version. Durchgangsindex und Studienbedingung werden im Backend aus dem bisherigen Studienfortschritt abgeleitet.
 
-Für die Auswertung wird aus dem normalisierten App-Token eine pseudonyme Kennung gebildet:
-\[
-  \texttt{participant\_id} = \mathrm{SHA256}(\mathrm{lowercase}(\texttt{app\_token})).
-\]
-Diese Kennung wird in \texttt{self\_reports} gespeichert und erlaubt es, mehrere Selbstberichte derselben App-Installation zusammenzuführen. In der Berichtstabelle befinden sich keine direkten Identifikatoren wie Name, E"~Mail-Adresse, IBAN oder BIC. Die Selbstberichte sind daher als pseudonymisierte gesundheitsbezogene Daten mit reduziertem Identifizierungsrisiko zu betrachten.
+Vor der ersten Übertragung eines Selbstberichts ist eine Aktivierung erforderlich. Dafür sendet die App die E"~Mail-Adresse aus der Registrierung an \texttt{activate.php}. Der Server prüft, ob diese Adresse in der Tabelle \texttt{register} vorhanden ist, die Einwilligungen und das Double-Opt-In bestätigt sind und noch kein App-Token ausgegeben wurde. Bei gültiger Registrierung erzeugt der Server ein zufälliges UUID-v4-App-Token, gibt dieses an die App zurück und setzt in \texttt{register} den Zeitstempel \texttt{app\_token\_issued\_at}. Weder das App-Token noch dessen Hash werden in der Registrierungsdatenbank gespeichert.
 
-Die serverseitige Studienlogik verwendet die Anzahl bereits gespeicherter Selbstberichte für dieselbe \texttt{participant\_id}. Unter Transaktionsschutz werden vorhandene Einträge gezählt, daraus \texttt{situation\_index = submitted\_count + 1} berechnet und die Bedingung gesetzt: Situationen 1 bis 10 werden als \texttt{CUE\_MATCHING}, Situationen 11 bis 20 als \texttt{CUE\_LABELING} gespeichert. Dadurch muss die App keine vertrauenswürdigen Angaben zu Bedingung oder Situation übertragen. Sind bereits 20 Selbstberichte vorhanden, wird ein weiterer Selbstbericht mit \texttt{HTTP 400} abgelehnt.
+Aus dem App-Token wird ein Pseudonym für die Selbstberichte in Form eines SHA256-Hash gebildet. Dieses Pseudonym wird in \texttt{self\_reports} gespeichert und erlaubt es, mehrere Selbstberichte derselben App-Installation zusammenzuführen. In der Berichtstabelle befinden sich keine Informationen, mit denen Teilnehmende direkt identifiziert werden können.
 
-Bei der zwanzigsten Situation erzeugt der Server einen UUID-v4-Abrechnungscode, speichert ihn in \texttt{compensation\_code} und gibt ihn an die App zurück. Die App speichert diesen Code lokal, bis sie ihn mit einem separaten \texttt{PUT} bestätigt hat. Der Server setzt dabei \texttt{confirmed\_at} und antwortet mit \texttt{HTTP 204}. Diese Trennung verhindert, dass Auszahlungsinformationen in die wissenschaftliche Berichtstabelle aufgenommen werden. Der Code selbst ist jedoch ein abrechnungsbezogener Nachweis und muss deshalb bis zur Auszahlung geschützt behandelt werden.
+Bei Übertragung des zwanzigsten Craving-Werts erzeugt der Server einen UUID-v4-Abrech\-nungs\-code, speichert ihn in der Tabelle \texttt{compensation\_code} und gibt ihn an die App zurück. Die App speichert diesen Code lokal, bis sie ihn mit einem separaten \texttt{PUT} bestätigt hat. Der Server setzt dabei \texttt{confirmed\_at} und antwortet mit \texttt{HTTP 204}. Der Abrechnungscode muss von der registrierten E-Mail-Adresse bestätigt werden.
 
-Das Sicherheitskonzept folgt dem Prinzip der Datensparsamkeit und der Trennung von Verantwortlichkeiten. Produktive Übertragungen erfolgen ausschließlich über HTTPS. Unverschlüsselte Übertragungen sind nur in Staging-Umgebungen vorgesehen. Datenbankzugangsdaten liegen in Konfigurationsdateien im geschützten Verzeichnis \texttt{config} und nicht im Repository oder in Web-auslieferbaren Verzeichnissen. Die App fordert im Grundbetrieb nur die Inter\-net-Be\-rech\-ti\-gung an, speichert keine Namen, Zahlungsdaten oder Freitexte und deaktiviert die automatische An\-droid-Sicherung. Dadurch sollen App-Token, lokaler Studienfortschritt und ausstehende Übertragungszustände nicht in allgemeine Cloud- oder Gerätebackups gelangen.
+Das Sicherheitskonzept folgt den Prinzipien der Datensparsamkeit und der Trennung von Verantwortlichkeiten. Produktive Übertragungen erfolgen ausschließlich über HTTPS. Unverschlüsselte Übertragungen sind nur in Staging-Umgebungen vorgesehen. Die Zugangsdaten für Datenbanken liegen in Konfigurationsdateien in einem durch eine \texttt{.htaccess}-Datei geschützten Ver\-zeichnis \texttt{config} und nicht im Repository. Die App fordert im Grundbetrieb nur die Inter\-net-Be\-rech\-ti\-gung an, speichert keine Namen, Zahlungsdaten oder Freitexte und deaktiviert die automatische An\-droid-Sicherung. Dadurch sollen App-Token, lokaler Studienfortschritt und ausstehende Übertragungszustände nicht in allgemeine Cloud- oder Gerätebackups gelangen.
 
-Serverseitig werden alle Requests als JSON-Objekt geparst. Andere HTTP-Methoden als \texttt{PUT} führen zu \texttt{HTTP 405}. Der Craving-Wert wird als Ganzzahl validiert und auf den Bereich 0 bis 100 beschränkt. App-Token und Abrechnungscode müssen dem UUID-Format entsprechen. Für Datenbankzugriffe wird PDO mit deaktivierter Emulation vorbereiteter Statements verwendet. Zustandsänderungen bei Aktivierung, Selbstbericht und Abrechnungscode werden transaktionsbezogen beziehungsweise mit vorbereiteten Statements ausgeführt. Produktives Logging soll keine E"~Mail-Adressen, App-Tokens, Craving-Werte, Serverantworten oder personenbezogenen Angaben enthalten. Fehlermeldungen an Clients müssen für die produktive Fassung generisch bleiben; technische Details gehören nur in ein geschütztes Fehlerprotokoll.
+Serverseitig werden alle Requests aus JSON-Objekt gelesen. Der Craving-Wert wird als Ganzzahl validiert und auf den Bereich 0 bis 100 beschränkt. App-Token und Abrechnungscode müssen dem UUID-Format entsprechen. Für Datenbankzugriffe wird PDO mit deaktivierter Emulation vorbereiteter Statements verwendet. Zustandsänderungen bei Aktivierung, Selbstbericht und Abrechnungscode werden als Transaktionen und mit Prepared Statements ausgeführt. Produktives Logging enthält keine E"~Mail-Adressen, App-Tokens, Craving-Werte, Serverantworten oder personenbezogene Angaben. Fehlermeldungen an Clients bleiben generisch.
 
 Vor einem Selbstbericht persistiert die App den ausstehenden Craving-Wert lokal. Wenn vor der Serverantwort ein Fehler auftritt, wird derselbe Selbstbericht erneut übertragen. Nach erfolgreicher Antwort entfernt die App den ausstehenden Wert, erhöht die Anzahl bestätigter Situationen und setzt die nächste Sperrzeit. Enthält die Antwort den Abschlussstatus, speichert die App den Abrechnungscode und bestätigt nur diesen Code erneut, falls die Bestätigung fehlschlägt. Das Backend kann damit die meisten kurzzeitigen Verbindungsabbrüche handhaben. 
 
-Das Testkonzept leitet sich aus den sicherheits- und studienrelevanten Fehlerfällen ab. Während der Aktivierung dürfen nur registrierte, freigegebene und noch nicht aktivierte E"~Mail-Adressen ein UUID-v4-App-Token erhalten. Das App-Token darf serverseitig nicht dauerhaft gespeichert werden. In \texttt{register} darf nur \texttt{app\_token\_issued\_at} gesetzt werden. Für Selbstberichte sind das gültiges App-Token, Craving-Grenzen von 0 bis 100, Speicherung von \texttt{participant\_id} als SHA-256-Hash des normalisierten App-Tokens, keine Speicherung des rohen App-Tokens in \texttt{self\_reports}, korrekte Ableitung von Situation und Bedingung aus der Anzahl gespeicherter Selbstberichte und Ablehnung weiterer Berichte nach 20 Situationen zu prüfen. In Negativtests müssen fehlende Felder, falsch formatierte UUIDs, ungültige Craving-Werte, nicht unterstützte Payloads und falsche HTTP-Methoden müssen ohne neuen Berichtseintrag fehlschlagen.
+Das Anmeldeformular \texttt{index-de.php} beziehungsweise \texttt{index-en.php} erhebt E-Mail-Adres\-se, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Validierungsmeldungen des Browsers durch passendere Hinweise. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die in PHP vordefinierten Filterkonstanten \texttt{FILTER\_VALIDATE\_EMAIL} und \texttt{FILTER\_VALIDATE\_INT} verwendet. Anschließend werden die für Alters- und Konsumwerte zulässigen Grenzen und die Zustimmungen zu Studieninformation und Datenschutzerklärung erneut geprüft.
 
-Die Studiensequenz muss 20 Situationen mit je fünf Aufgaben umfassen, die ersten zehn in der Matching- und die folgenden zehn in der Labeling-Bedingung. Die Slidergrenzen 0 und 100, die Staging- und Production-Endpunkte, die Wiederaufnahme ausstehender Übertragungen beim App-Start, die Anzeige und Bestätigung des Abrechnungscodes sowie die Sperrzeit nach bestätigter Übertragung sind separat zu prüfen. Eine Änderung gilt erst dann als abgeschlossen, wenn Staging- und Production-Build erzeugt werden können, neue Datenfelder in Code, Backend-Vertrag und Dokumentation beschrieben sind, lokale Speicherungen nach Zweck, Lebensdauer und Schutzbedarf dokumentiert sind und Fehlerfälle zu eindeutigen UI-Zuständen führen.
+Die Werte \texttt{studyinfo} und \texttt{dataprot} für die Einwilligungen in Studieninformation und Datenschutzerklärung werden ebenfalls in der Tabelle \texttt{register} persistiert. Damit ist technisch nachvollziehbar, dass die Anmeldung nur nach aktiver Bestätigung beider Dokumente verarbeitet wurde.
 
-Das Anmeldeformular \texttt{index-de.php} beziehungsweise \texttt{index-en.php} erhebt E-Mail-Adres\-se, Name, IBAN, BIC, Alter und durchschnittliche Anzahl gerauchter Zigaretten pro Tag. Die HTML-Felder nutzen für Alter und Zigarettenanzahl die Attribute \texttt{min}, \texttt{max} und \texttt{step}. Zusätzlich ersetzt \texttt{index.js} die generischen Browsermeldungen durch passendere Hinweise, etwa zur Altersgrenze von 30 bis 65 Jahren und zur Mindestmenge von 10 Zigaretten pro Tag. Diese clientseitige Prüfung dient sowohl der Benutzerführung als auch der Überprüfung der korrekten Nutzung des Webformulars. Es werden die E-Mail-Adresse mit \texttt{FILTER\_VALIDATE\_EMAIL} und die numerischen Eingaben mit \texttt{FILTER\_VALIDATE\_INT} validiert. Anschließend werden die Alters- und Konsumgrenzen und die Einwilligungen in Studieninformation und Datenschutzerklärung erneut geprüft. Dadurch werden HTTP-Anfragen außerhalb eines Browsers oder mit manipulierten Formularattributen erkannt.
+Der Registrierungsendpunkt verwendet zusätzlich ein CSRF-Token, das als verstecktes Formularfeld ausgegeben und bei POST-Anfragen geprüft wird. Nach erfolgreichem Versand der Bestä\-ti\-gungs-E-Mail wird das Token erneuert, sodass derselbe Formular-POST nicht ohne erneutes Laden der Seite wiederverwendet werden kann. Rückmeldungen werden mit \texttt{htmlspecialchars} ausgegeben, um schädliche Interpretation von HTML aus Eingaben zu verhindern.
 
-Die Werte \texttt{studyinfo} und \texttt{dataprot} für die Einwilligungen in Studieninformation und Datenschutzerklärung werden ebenfalls beim Insert in die Tabelle \texttt{register} persistiert. Damit ist technisch nachvollziehbar, dass die Anmeldung nur nach aktiver Bestätigung beider Dokumente verarbeitet wurde.
-
-Der Registrierungsendpunkt verwendet zusätzlich einen CSRF-Token, der in der PHP-Session erzeugt, als verstecktes Formularfeld ausgegeben und bei POST-Anfragen mit \texttt{hash\_equals} geprüft wird. Nach erfolgreichem Versand der Bestätigungs-E-Mail wird der Token erneuert, sodass derselbe Formular-POST nicht ohne erneutes Laden der Seite wiederverwendet werden kann. Rückmeldungen an Nutzende werden mit \texttt{htmlspecialchars} ausgegeben, um schädliche Interpretation von HTML-Sonderzeichen aus Eingaben oder Meldungen zu verhindern.
-
-Die Registrierung wird über ein Double-Opt-In abgesichert. Beim Absenden des Formulars erzeugt \texttt{index-de.php} beziehungsweise \texttt{index-en.php} mit \texttt{random\_bytes(32)} einen 256-Bit-Token und speichert einen SHA-256-Hash davon in der Datenbank. Anschließend wird eine E-Mail mit dem Klartext-Token im URL-Parameter eines Bestätigungslinks an die angegebene Adresse versendet. Für den Mailversand wird PHPMailer mit einem authentifizierten SMTP-Zugang des Do\-main-Post\-fachs verwendet. Empfängeradresse, Betreff und Nachrichtentext sind serverseitig vorgegeben. Dadurch kann das Formular nicht als frei adressierbarer Mailversender verwendet werden. Die SMTP-Zugangsdaten liegen wie die MySQL-Zugangsdaten in Konfigurationsdateien im geschützten Verzeichnis \texttt{config}.
-
-Nach erfolgreichem Versand leitet das Formular auf die Double-Opt-In-Hinweisseite weiter. Diese Seite liest die E"~Mail-Adresse aus der Session, validiert sie erneut und entfernt sie anschließend aus der Session. Die Bestätigungsseite verarbeitet den Bestätigungslink. Sie akzeptiert nur Token im erwarteten Hex-Format, hasht den übergebenen Token erneut und sucht einen noch nicht bestätigten Datensatz. Die Abfrage verwendet eine Transaction, damit paral\-lele Bestätigungsaufrufe denselben Datensatz nicht gleichzeitig verarbeiten. Bei erfolgreicher Bestätigung wird das entsprechende Feld in der Datenbank gesetzt. Doppelte E-Mail-Adressen werden über einen Unique-Constraint der Datenbank abgefangen. Der Mailversand erfolgt nur nach erfolgreichem Insert.
-
-Die automatische Android-Sicherung ist für die App deaktiviert. Damit werden lokal gespeicherte Fortschrittsinformationen nicht über die allgemeine Gerätesicherung in weitere Cloud- oder Gerätekontexte übertragen. Diese Entscheidung ist für eine Gesundheitsanwendung mit Studiendaten angemessen, weil sie der lokalen Datenbegrenzung und den Schutzzielen Vertraulichkeit und Integrität entspricht \cite{bsi_tr03161_mobile_2024}.
+Die Registrierung wird über ein Double-Opt-In abgesichert. Das Formular in \texttt{index-de.php} beziehungsweise \texttt{index-en.php} ein 256-Bit-Token und speichert einen SHA-256-Hash davon in der Datenbank. Anschließend wird eine E-Mail mit dem Klartext-Token im URL-Parameter eines Bestätigungslinks an die angegebene E-Mail-Adresse versendet. Für den Mailversand wird PHPMailer mit einem SMTP-Zugang des Do\-main-Post\-fachs verwendet. Betreff und Nachrichtentext sind serverseitig vorgegeben, damit das Formular nicht als Mailversender verwendet werden kann. Die SMTP-Zugangsdaten liegen wie die MySQL-Zugangsdaten in Konfigurationsdateien im geschützten Verzeichnis \texttt{config}.
 
 \section{Qualitätssicherung und Testbarkeit}
+
 Für die Web-Anwendung wurde eine PHPUnit-basierte Testumgebung ergänzt. Die Entwicklungsabhängigkeiten umfassen PHPUnit und eine WebDriver-Bibliothek. Eine Testsuite prüft, ob die deutschen und englischen Registrierungsformulare per GET ohne Datenbankverbindung geladen werden können, keinen Serverfehler erzeugen und ein Formular enthalten. Ein browserbasierter Test startet bei erreichbarer lokaler Testumgebung einen WebDriver, setzt eine typische mobile Fenstergröße und prüft die deutsche Pflichtfeldmeldung für eine fehlende E-Mail-Adresse sowohl im nativen Validierungszustand des Feldes als auch im sichtbaren Validierungselement der Seite. Die Testkonfiguration ist außerdem so angelegt, dass sie in einer lokalen Umgebung mit abweichender Host-Konfiguration ausgeführt werden kann.
 
+Die Backendtests decken Methodenprüfung, JSON-Validierung und Feldgrenzen ab. Für Aktivierung, Feedback, Datenschutz und Freigabelogik existieren MariaDB-Integrationstests, die temporäre Tabellen verwenden. Sie prüfen unter anderem den zweistufigen Aktivierungsablauf, das Überschreiben alter ausstehender Tokens, abgelaufene Bestätigungen, die Trennung der Hashkontexte, den Feedbackgrenzwert und die idempotente Datenschutzannahme.
+
+Unit-Tests und Tests auf einem Emulator prüfen unter anderem Controllerzustände, Infofeed-Filterung, Keystore-Verschlüsselung, fehlende Schlüssel, Compose-Oberflächen und Notification Channels. Die Erinnerungslogik testet explizit die Situationen eins, neunzehn und zwanzig, frühe Worker-Ausführung, veraltete Aufgaben, doppelte Benachrichtigungen, ausstehende Übertragungen und fehlende Aktivierung.
+
 \section{Backup}
-Die Studiendatenbanken für Teilnahmedaten und pseudonymisierte Selbstberichte sind bei United Domains auf Servern in Deutschland gehostet. Der Zugriff auf die MySQL-Instanzen ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenpro\-gramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
 
-Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Studie wird damit wöchentlich ein manuelles Backup durchgeführt. Die SQL-Skripte, die dabei für jede Datenbanktabelle entstehen, werden mit AES-256 verschlüsselt als ZIP-Datei bei Infomaniak abgelegt. Die folgende Tabelle zeigt den Backup-Zeitplan:
+Der Zugriff auf die MySQL-Instanzen bei United Domains ist nur aus dem Webspace heraus möglich. Externe Software wie das MySQL-Kommandozeilenpro\-gramm können nicht verwendet werden, um ein automatisiertes Backup einzurichten. Dabei handelt es sich um ein sinnvolles Sicherheitsfeature, das auch nicht durch einen PHP-Endpoint umgangen werden sollte.
 
-\vspace{2em}
-  \label{tab:Backup-Zeitplan}
-\begin{tabularx}{.9\textwidth} {
- >{\centering\arraybackslash}p{3cm}
- >{\raggedright\arraybackslash}X
-}
-  \toprule
-\textbf{Datum} & \textbf{Dateien} \\
-\midrule
-15.6.2026 & register-2026-06-15.zip \\
-22.6.2026 & register-2026-06-22.zip \\
-29.6.2026 & register-2026-06-29.zip \\
-6.7.2026 & register-2026-07-06.zip \\
-13.7.2026 & register-2026-07-13.zip \\
-20.7.2026 & register-2026-07-20.zip \\
-27.7.2026 & register-2026-07-27.zip \\
-3.8.2026 & dbs15716843-2026-08-03.zip \\
- & dbs15741593-2026-08-03.zip \\
-10.8.2026 & dbs15716843-2026-08-11.zip \\
- & dbs15741593-2026-08-11.zip \\
-17.8.2026 & dbs15716843-2026-08-17.zip \\
- & dbs15741593-2026-08-17.zip \\
-24.8.2026 & dbs15716843-2026-08-24.zip \\
- & dbs15741593-2026-08-24.zip \\
-31.8.2026 & dbs15716843-2026-08-31.zip \\
- & dbs15741593-2026-08-31.zip \\
-\bottomrule
-\end{tabularx}
+Für manuelle Backups steht PHPMyAdmin zur Verfügung. Bis zum Abschluss der Studie wird damit wöchentlich manuell ein Backup durchgeführt. Die SQL-Skripte, die dabei für jede Datenbanktabelle entstehen, werden mit AES-256 verschlüsselt als ZIP-Datei bei Infomaniak abgelegt. 
+
+Die folgende Tabelle zeigt den Backup-Zeitplan:
+
+%\vspace{2em}
+%\label{tab:Backup-Zeitplan}
+%\begin{tabularx}{.9\textwidth} {
+% >{\centering\arraybackslash}p{3cm}
+% >{\raggedright\arraybackslash}X
+%}
+%  \toprule
+%\textbf{Datum} & \textbf{Dateien} \\
+%\midrule
+%15.6.2026 & register-2026-06-15.zip \\
+%22.6.2026 & register-2026-06-22.zip \\
+%29.6.2026 & register-2026-06-29.zip \\
+%6.7.2026 & register-2026-07-06.zip \\
+%13.7.2026 & register-2026-07-13.zip \\
+%20.7.2026 & register-2026-07-20.zip \\
+%27.7.2026 & register-2026-07-27.zip \\
+%3.8.2026 & dbs15716843-2026-08-03.zip \\
+% & dbs15741593-2026-08-03.zip \\
+%10.8.2026 & dbs15716843-2026-08-11.zip \\
+% & dbs15741593-2026-08-11.zip \\
+%17.8.2026 & dbs15716843-2026-08-17.zip \\
+% & dbs15741593-2026-08-17.zip \\
+%24.8.2026 & dbs15716843-2026-08-24.zip \\
+% & dbs15741593-2026-08-24.zip \\
+%31.8.2026 & dbs15716843-2026-08-31.zip \\
+% & dbs15741593-2026-08-31.zip \\
+%8.9.2026 & dbs15716843-2026-09-08.zip \\
+% & dbs15741593-2026-09-08.zip \\
+%14.9.2026 & dbs15716843-2026-09-14.zip \\
+% & dbs15741593-2026-09-14.zip \\
+%22.9.2026 & dbs15716843-2026-09-22.zip \\
+% & dbs15741593-2026-09-22.zip \\
+%\bottomrule
+%\end{tabularx}
 \captionof{table}{Backup-Zeitplan}
-
-\vspace{2em}
-
-\small
-\label{tab:cuelens-datenfluss}
-\begin{tabularx}{\textwidth} {
- >{\raggedright\arraybackslash}p{5cm}
- >{\raggedright\arraybackslash}X
- >{\raggedright\arraybackslash}p{5cm} }
-  \toprule
-\textbf{Artefakt} & \textbf{Herkunft} & \textbf{Speicherort / Übertragung} \\
-\midrule
-Cue-Bilder & lokal gebündelte App-Ressourcen & innerhalb des APK \\
-Cue-Matching-Zuordnungen & KI-unterstützt erstellt und manuell gesichtet & App-Ressourcen und Aufgabenlogik \\
-Cue-Labeling-Wortoptionen & KI-unterstützt erstellt und manuell gesichtet & fest codierte Zuordnungsliste in der App \\
-Lokaler Studienfortschritt & App-Logik & \texttt{SharedPreferences}; enthält bestätigte Situation, Sperrzeit, Matching-Reihenfolge und ausstehende Übertragungszustände \\
-App-Token & Server bei erfolgreicher Aktivierung & lokale Speicherung in der App; keine dauerhafte Speicherung in \texttt{register} oder \texttt{self\_reports} \\
-Pseudonyme Teilnehmerkennung & Server aus normalisiertem App-Token & SHA-256-Hash als \texttt{participant\_id} in \texttt{self\_reports} \\
-Craving-Wert & Slider in der Android-App & lokal bis zur Serverantwort als \texttt{pending\_submission\_craving}; final in \texttt{self\_reports} \\
-Experimentelle Bedingung und Durchgangsindex & Server aus Anzahl vorhandener Selbstberichte pro \texttt{participant\_id} & Speicherung als \texttt{condition\_code}; keine vertrauenswürdige App-Eingabe \\
-Abrechnungscode & Server nach zwanzigstem gültigem Selbstbericht & Tabelle \texttt{compensation\_code} und lokale Anzeige in der App bis zur Bestätigung \\
-Registrierungsdaten & Webformular & Tabelle \texttt{register} \\
-Bestätigung von Studieninformation und Datenschutzerklärung & Pflicht-Checkboxen im Webformular & Felder \texttt{studyinfo} und \texttt{dataprot} in Tabelle \texttt{register} \\
-Double-Opt-In-Token & serverseitig mit \texttt{random\_bytes(32)} erzeugt & Klartext im E-Mail-Link,\newline SHA-256-Hash in \texttt{doi\_token} \\
-CSRF-Token & PHP-Session & Hidden Field im Formular,\newline Session-Speicher des Webservers \\
-SMTP-Zugangsdaten & Serverkonfiguration & Konfigurationsdatei \texttt{noreply-smtp.php} \\
-Datenbankzugangsdaten & Serverkonfiguration & Konfigurationsdateien im geschützten Verzeichnis \texttt{config} \\
-Host-Konfiguration & Umgebungskonfiguration & Platzhalter im VCS, angepasste Werte in lokaler Testumgebung und Produktivsystem \\
-technische Logs & Android-Logcat und Webserver/PHP & Gerätelog beziehungsweise Server-Logs; kein produktives Logging sensibler Payloads vorgesehen \\
-\bottomrule
-\end{tabularx}
-\captionof{table}{Datenherkunft und Speicherorte}
-
-\vspace{2em}
-
-\label{tab:cuelens-android-bibliotheken}
-\begin{tabularx}{\textwidth} {
-  >{\raggedright\arraybackslash}X
-  >{\raggedright\arraybackslash}p{3cm} }
- \toprule
-\textbf{Bibliothek / Plugin} & \textbf{Version} \\
-\midrule
-Android Gradle Plugin & 9.1.1 \\
-Kotlin Compose Plugin & 2.2.10 \\
-\texttt{androidx.core:core-ktx} & 1.18.0 \\
-\texttt{androidx.lifecycle:lifecycle-runtime-ktx} & 2.10.0 \\
-\texttt{androidx.activity:activity-compose} & 1.13.0 \\
-Compose BOM & 2026.02.01 \\
-\texttt{PHPMailer} & 7.1.1 \\
-\bottomrule
-\end{tabularx}
-\captionof{table}{Verwendete Bibliotheken und Plugins}
 
 \section{Systemarchitektur}
 
@@ -248,10 +194,6 @@ Der produktive Build verwendet die Application-ID \path{de.eachandevery.cuelens}
 
 Die Webseite enthält eine sprachneutrale Auswahlseite sowie deutsche und englische Installationsanleitungen mit Screenshots. Nach erfolgreichem Double-Opt-In verweist die Bestätigungsseite direkt auf die Installationsanleitung.
 
-\section{Erweiterte Qualitätssicherung}
-Die Backendtests decken Methodenprüfung, JSON-Validierung, Feldgrenzen und Fehlerfälle ab, bevor eine Datenbankverbindung erforderlich ist. Für Aktivierung, Feedback, Datenschutz und Freigabelogik existieren zusätzliche MariaDB-Integrationstests, die temporäre Tabellen verwenden. Sie prüfen unter anderem den zweistufigen Aktivierungsablauf, das Überschreiben alter ausstehender Tokens, abgelaufene Bestätigungen, die Trennung der Hashkontexte, den Feedbackgrenzwert und die idempotente Datenschutzannahme. Fehlen die notwendigen Testdatenbankvariablen, werden die Integrationstests übersprungen und dürfen nicht fälschlich als ausgeführt bewertet werden.
-
-Android-Unit-Tests prüfen Controllerzustände, HTTP-Protokolle, Infofeedfilterung, Feature-Fehlerverhalten und Erinnerungsentscheidungen. Tests auf einem Android-Gerät beziehungsweise Emulator prüfen unter anderem die Keystore-Verschlüsselung, wechselnde Initialisierungsvektoren, manipulierte Chiffrate, fehlende Schlüssel, Entfernung alter Klartextwerte, Compose-Oberflächen und Notification Channels. Die Erinnerungslogik testet explizit die Situationen eins, neunzehn und zwanzig, frühe Worker-Ausführung, veraltete Aufgaben, doppelte Benachrichtigungen, ausstehende Übertragungen und fehlende Aktivierung.
 
 \section{Duale Registrierung und Teilnehmeridentifikatoren}
 
@@ -886,3 +828,6 @@ Zu diesen offenen Gates gehören insbesondere reale Tests von Gerätesperre und 
 Für den Langzeittest liegt bereits ein datensparsames Protokoll vor. Vorgesehen sind 20 Situationen mit produktivem dreistündigem Cooldown über mindestens 14 Kalendertage, App- und Geräteneustarts, Sprachwechsel, Notification-Erlaubnis und -Entzug, Hintergrundphasen, kontrollierte Netzwerkunterbrechung nach persistiertem Pending-Wert, manueller Retry sowie beide administrativen Abschlusswege auf mindestens zwei Geräten beziehungsweise Geräteläufen. Zum dokumentierten Stand ist dieses Protokoll mit \enquote{NICHT DURCHGEFÜHRT} gekennzeichnet. Die Existenz des Testplans wird daher nicht als Testergebnis ausgegeben.
 
 Diese Trennung verhindert eine Überinterpretation automatisierter Testzahlen. Die iOS-Portierung besitzt einen umfangreichen und reproduzierbaren technischen Nachweis auf Quellcode-, Simulator- und Build-Ebene. Aussagen über reale Langzeitstabilität, Distribution, tatsächliche Notification-Zustellung oder vollständige Ende-zu-Ende-Integration werden dagegen erst nach den dafür vorgesehenen manuellen beziehungsweise externen Prüfungen gerechtfertigt. Für die Masterarbeit ist damit sowohl der erreichte technische Reifegrad als auch dessen Grenze nachvollziehbar dokumentiert.
+
+
+dokumentiert

@@ -2371,7 +2371,6 @@
   <!-- SECTION 0 -->
   <bcf:bibdata section="0">
     <bcf:datasource type="file" datatype="bibtex" glob="false">bhtThesis.bib</bcf:datasource>
-    <bcf:datasource type="file" datatype="bibtex" glob="false">revision/kapitel1_sources.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
     <bcf:citekey order="1" intorder="1">effertz_viarisio_kosten_rauchens_2015</bcf:citekey>
@@ -2388,51 +2387,42 @@
     <bcf:citekey order="12" intorder="1">who_tobacco_cessation_guideline_2024</bcf:citekey>
     <bcf:citekey order="13" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
     <bcf:citekey order="14" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="15" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="16" intorder="1">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="17" intorder="1">dougan_ar_smoking_cessation_2025</bcf:citekey>
-    <bcf:citekey order="18" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="19" intorder="1">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="20" intorder="1">giner_sorolla_power_2024</bcf:citekey>
-    <bcf:citekey order="21" intorder="1">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="22" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="22" intorder="2">pericot_valverde_vr_smoking_cessation_2019</bcf:citekey>
-    <bcf:citekey order="22" intorder="3">dougan_ar_smoking_cessation_2025</bcf:citekey>
-    <bcf:citekey order="23" intorder="1">ho_diffusion_2020</bcf:citekey>
-    <bcf:citekey order="24" intorder="1">rombach_latent_diffusion_2022</bcf:citekey>
-    <bcf:citekey order="25" intorder="1">james_islr_2021</bcf:citekey>
-    <bcf:citekey order="26" intorder="1">pan_transfer_learning_2010</bcf:citekey>
-    <bcf:citekey order="27" intorder="1">howard_mobilenetv3_2019</bcf:citekey>
-    <bcf:citekey order="27" intorder="2">tan_efficientnet_2019</bcf:citekey>
-    <bcf:citekey order="28" intorder="1">manning_ir_2008</bcf:citekey>
-    <bcf:citekey order="28" intorder="2">james_islr_2021</bcf:citekey>
-    <bcf:citekey order="29" intorder="1">who_tobacco_cessation_guideline_2024</bcf:citekey>
-    <bcf:citekey order="30" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="31" intorder="1">james_islr_2021</bcf:citekey>
-    <bcf:citekey order="32" intorder="1">manning_ir_2008</bcf:citekey>
-    <bcf:citekey order="33" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="34" intorder="1">google_litert_android_2026</bcf:citekey>
-    <bcf:citekey order="35" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="35" intorder="2">bsi_tr03161_web_2024</bcf:citekey>
-    <bcf:citekey order="35" intorder="3">bsi_tr03161_backend_2024</bcf:citekey>
-    <bcf:citekey order="36" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
-    <bcf:citekey order="37" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="37" intorder="2">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="38" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="39" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="39" intorder="2">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="40" intorder="1">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="40" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="40" intorder="3">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="41" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="42" intorder="1">bruhnEstimatingSitePerformance2019</bcf:citekey>
-    <bcf:citekey order="42" intorder="2">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="43" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="43" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="44" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="44" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="45" intorder="1">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="45" intorder="2">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">dougan_ar_smoking_cessation_2025</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">ho_diffusion_2020</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">rombach_latent_diffusion_2022</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">pan_transfer_learning_2010</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">howard_mobilenetv3_2019</bcf:citekey>
+    <bcf:citekey order="23" intorder="2">tan_efficientnet_2019</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">prolificVerificationOnboardingGuide2026</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">prolific_researcher_terms</bcf:citekey>
+    <bcf:citekey order="25" intorder="2">testable_processing_data</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">james_islr_2021</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">deng2009imagenet</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">google_litert_android_2026</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">bsi_tr03161_mobile_2024</bcf:citekey>
+    <bcf:citekey order="29" intorder="2">bsi_tr03161_web_2024</bcf:citekey>
+    <bcf:citekey order="29" intorder="3">bsi_tr03161_backend_2024</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="30" intorder="2">weinfurt_clinically_meaningful_2019</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="32" intorder="2">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">parker2024press2protocol</bcf:citekey>
+    <bcf:citekey order="33" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="33" intorder="3">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">bruhnEstimatingSitePerformance2019</bcf:citekey>
+    <bcf:citekey order="35" intorder="2">parker2024press2protocol</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="36" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="37" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">cohen_power_2013</bcf:citekey>
+    <bcf:citekey order="38" intorder="2">giner_sorolla_power_2024</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
