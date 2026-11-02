@@ -2408,21 +2408,11 @@
     <bcf:citekey order="29" intorder="3">bsi_tr03161_backend_2024</bcf:citekey>
     <bcf:citekey order="30" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
     <bcf:citekey order="30" intorder="2">weinfurt_clinically_meaningful_2019</bcf:citekey>
-    <bcf:citekey order="31" intorder="1">tabibnia_cuelabeling_2026</bcf:citekey>
-    <bcf:citekey order="32" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="32" intorder="2">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="33" intorder="1">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="33" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="33" intorder="3">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="34" intorder="1">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="35" intorder="1">bruhnEstimatingSitePerformance2019</bcf:citekey>
-    <bcf:citekey order="35" intorder="2">parker2024press2protocol</bcf:citekey>
-    <bcf:citekey order="36" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="36" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="37" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
-    <bcf:citekey order="37" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
-    <bcf:citekey order="38" intorder="1">cohen_power_2013</bcf:citekey>
-    <bcf:citekey order="38" intorder="2">giner_sorolla_power_2024</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">parker2024press2protocol</bcf:citekey>
+    <bcf:citekey order="31" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
+    <bcf:citekey order="31" intorder="3">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">anastasiRecruitmentRetentionClinical2024</bcf:citekey>
+    <bcf:citekey order="32" intorder="2">klompstraChallengesStrategiesEffective2025</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

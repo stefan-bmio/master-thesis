@@ -1,17 +1,17 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'main.blg'
-[28] biber-darwin:342> INFO - === Mo. Okt. 26, 2026, 19:11:34
-[34] Biber.pm:421> INFO - Reading 'main.bcf'
-[60] Biber.pm:1002> INFO - Found 32 citekeys in bib section 0
-[65] Biber.pm:4487> INFO - Processing section 0
-[69] Biber.pm:4678> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
-[70] bibtex.pm:1713> INFO - LaTeX decoding ...
-[83] bibtex.pm:1519> INFO - Found BibTeX data source 'bhtThesis.bib'
-[178] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
-[178] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[178] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'de-DE'
-[178] Biber.pm:4313> INFO - No sort tailoring available for locale 'de-DE'
-[187] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[194] bbl.pm:779> INFO - Output to main.bbl
-[194] Biber.pm:132> WARN - ISBN '978-1-0716-1417-4 978-1-0716-1418-1' in entry 'james_islr_2021' is invalid - run biber with '--validate_datamodel' for details.
-[194] Biber.pm:134> INFO - WARNINGS: 1
+[31] biber-darwin:342> INFO - === Mo. Nov.  2, 2026, 18:35:25
+[38] Biber.pm:421> INFO - Reading 'main.bcf'
+[68] Biber.pm:1002> INFO - Found 31 citekeys in bib section 0
+[74] Biber.pm:4487> INFO - Processing section 0
+[79] Biber.pm:4678> INFO - Looking for bibtex file 'bhtThesis.bib' for section 0
+[80] bibtex.pm:1713> INFO - LaTeX decoding ...
+[94] bibtex.pm:1519> INFO - Found BibTeX data source 'bhtThesis.bib'
+[196] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[196] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[196] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'de-DE'
+[196] Biber.pm:4313> INFO - No sort tailoring available for locale 'de-DE'
+[207] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[214] bbl.pm:779> INFO - Output to main.bbl
+[214] Biber.pm:132> WARN - ISBN '978-1-0716-1417-4 978-1-0716-1418-1' in entry 'james_islr_2021' is invalid - run biber with '--validate_datamodel' for details.
+[214] Biber.pm:134> INFO - WARNINGS: 1
