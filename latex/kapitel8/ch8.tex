@@ -1,10 +1,35 @@
 % !TeX root = ../main.tex
-
-%%
-%% Berliner Hochschule für Technik --  Abschlussarbeit
-%%
-%% Kapitel 8
-%%
-%%
+%% Berliner Hochschule für Technik -- Abschlussarbeit
 
 \chapter{Fazit und Ausblick}
+\begingroup
+\raggedbottom
+\setlength{\emergencystretch}{1em}
+
+\section{Fazit}
+
+Die vorliegende Arbeit verbindet die Entwicklung einer mobilen Studienanwendung mit der empirischen Prüfung von Cue-Labeling. CueLens übersetzt den Vergleich zwischen sprachlicher Benennung und bildlicher Zuordnung von Rauchreizen in einen digital durchführbaren Aufgabenablauf. Der medizinisch-informatische Beitrag liegt in der Verbindung von Benutzerinteraktion, Zustandsverwaltung, datensparsamer Datenverarbeitung und reproduzierbarer Auswertung. Die technische Umsetzbarkeit begründet jedoch noch keinen Nachweis der Wirksamkeit.
+
+Die empirische Forschungsfrage erhält für die Testable-Erhebung eine zurückhaltende Antwort. Bei \TestableN{} vollständigen Teilnahmen beträgt die mittlere Differenz zwischen Labeling und Matching \TestableDiff{} Punkte auf der Skala von 0 bis 100. Das 95\,\%-Konfidenzintervall reicht von \TestableLower{} bis \TestableUpper{} Punkten; der gepaarte Vergleich ergibt $p=\TestableP$. Die Daten liefern somit keinen statistisch belastbaren Nachweis eines mittleren Unterschieds im untersuchten Ablauf. Die kleine Punktschätzung liegt in der erwarteten Richtung; das Intervall umfasst jedoch auch null und geringfügig höheres Rauchverlangen nach Labeling. Der Befund belegt weder die Gleichwertigkeit der Bedingungen noch eine generelle Wirkungslosigkeit des Ansatzes.
+
+Die Reichweite dieses Ergebnisses bleibt auf den konkreten Aufgabenvergleich begrenzt. Die Testable-Erhebung unterscheidet sich von der mehrtägigen Android-Studie insbesondere durch den blockweisen Wechsel der Bedingungen und die kürzeren Pausen. Ihre Ergebnisse erlauben daher keine unmittelbare Aussage über den Nutzen der App im Alltag. Zudem erfassen die Selbstberichte das aktuelle Rauchverlangen nach den Aufgaben, jedoch keine Veränderung gegenüber einer unmittelbar vorausgehenden Ausgangsmessung. Aussagen über Rauchstopp, Rückfallvermeidung oder langfristigen Versorgungsnutzen sind damit nicht möglich. In der App fällt die feste Abfolge von zunächst Matching und anschließend Labeling außerdem mit dem zeitlichen Studienverlauf zusammen. Dadurch bleiben Bedingungseffekte und zeitliche Einflüsse nur eingeschränkt voneinander unterscheidbar.
+
+Technisch zeigt die Arbeit, wie sich kurze Zuordnungsaufgaben mit wiederholten Selbstberichten und einer organisierten Teilnahme verbinden lassen. Lokale Fortschrittsspeicherung, definierte Schnittstellen, Eingabevalidierung und die Behandlung ausstehender Übertragungen unterstützen einen nachvollziehbaren Ablauf. Die Trennung unmittelbar identifizierender Registrierungsdaten von pseudonymisierten Berichten folgt dem Ziel der Datensparsamkeit. Die Tests prüfen ausgewählte Zustände und Fehlerfälle, belegen aber keinen fehlerfreien Betrieb auf allen Geräten. Entscheidend bleibt die korrekte Zuordnung von Person, Bedingung und Messwert auch bei Unterbrechungen.
+
+Der eigenständige KI-Prototyp ergänzt diese Architektur um ein Verfahren zur Bewertung rauchbezogener Bildklassifikation. Gemeinsame Testdaten, eine definierte Vorverarbeitung und klassenbezogene Kennzahlen schaffen eine Grundlage für den Vergleich von ML-Kit, MobileNetV3Small und EfficientNet-Lite0. Der Android-Benchmark berücksichtigt zusätzlich die Inferenzlaufzeit. Die vorliegende Darstellung enthält allerdings keine vollständigen numerischen Benchmarkresultate, die eine Überlegenheit eines Modells belegen. Auch eine belastbare Aussage zur Erkennung beliebiger Alltagsbilder oder zum Energiebedarf fehlt. Die Eignung für eine integrierte Intervention bleibt daher offen.
+
+\section{Ausblick}
+
+Für die Weiterentwicklung hat zunächst die Absicherung der vorhandenen Verarbeitungskette Vorrang. Besonders relevant sind Verbindungsabbrüche, wiederholte Übertragungen, App-Neustarts und widersprüchliche Fortschrittsstände zwischen Client und Server. Als nächster technischer Schritt bietet sich eine eindeutige Kennung je Studiensituation an, mit der das Backend wiederholte Übermittlungen desselben Berichts zuverlässig erkennt. Durchgängige Tests prüfen den Weg vom Aufgabenabschluss bis zum gespeicherten Messwert. Die Erfassung von Installationsproblemen, Abbrüchen und Supportfällen ergänzt diese technische Prüfung.
+
+Für die Reizerkennung steht anschließend eine geräteübergreifende Evaluation im Vordergrund. Ein aussagekräftiger Vergleich umfasst neben Präzision, Sensitivität und F1-Score auch Modellgröße, Speicherbedarf sowie typische und hohe Inferenzlaufzeiten. Aussagen zum Energieverbrauch benötigen eigene Messungen. Zusätzliche Testbilder aus realen Nutzungssituationen erlauben die Prüfung von Beleuchtungswechseln, uneindeutigen Motiven und mehreren gleichzeitig sichtbaren Objekten. Für unsichere Vorhersagen ist eine verständliche Rückmeldung oder der Verzicht auf eine automatische Zuordnung sinnvoll. Erst die gemeinsame Bewertung von Erkennungsfehlern, Ressourcenbedarf und Bedienbarkeit begründet die Auswahl eines Modells für die App.
+
+Studienmethodisch liegt die wichtigste Verbesserung in einer zufälligen Zuweisung zu unterschiedlichen, ausbalancierten Bedingungsreihenfolgen. Sie begrenzt die systematische Überlagerung von Aufgabenbedingung und Studienverlauf. Eine zusätzliche neutrale Vergleichsbedingung erleichtert die Einordnung der Reizwirkung. Eine Ausgangsmessung vor jedem Block macht kurzfristige Veränderungen besser untersuchbar. Ihr Aufwand und ihr möglicher Einfluss auf das Antwortverhalten gehören in die Pilotierung. Gezielte Kontextangaben, etwa zur Zeit seit der letzten Zigarette, ergänzen die Interpretation unter Beachtung der Datensparsamkeit.
+
+Eine Folgestudie benötigt außerdem einen vor Beginn der Datenauswertung festgelegten Analyseplan. Eine Präregistrierung hält den primären Endpunkt, die Ausschlussregeln und den zentralen Bedingungsvergleich transparent fest. Die Stichprobenplanung orientiert sich an einer fachlich begründeten relevanten Differenz und der Unsicherheit ihrer Schätzung. Wiederholte Messungen ersetzen dabei keine ausreichende Zahl unabhängiger Teilnehmender. Altersbezogene Fragestellungen erfordern eine gezielte Planung und ausreichende Präzision; eine nachträgliche Suche nach günstigen Untergruppen liefert keinen bestätigenden Wirksamkeitsnachweis.
+
+Ein möglicher Versorgungseinsatz setzt über diese Schritte hinaus belastbare Erkenntnisse zu längerfristigen Endpunkten, Akzeptanz und unerwünschten Wirkungen voraus. Verständliche Einwilligung, eine angemessene ethische Prüfung und der Schutz gesundheitsbezogener Daten gehören bereits zur Planung weiterer Erhebungen. CueLens stellt gegenwärtig eine technische und methodische Grundlage für diese Forschung dar. Sein Potenzial liegt in einer kurzen, mobil verfügbaren Interaktion; ob daraus ein für Betroffene relevanter Nutzen entsteht, bleibt eine offene empirische Frage.
+
+\par
+\clearpage
+\endgroup
