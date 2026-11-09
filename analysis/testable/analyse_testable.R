@@ -90,11 +90,15 @@ p$primary <- with(p, identified & complete & eligible & good_time)
 main <- p[p$primary, ]; d <- main$difference
 stopifnot(nrow(main) >= 2, all(is.finite(d)))
 # Participant means are the independent observations, not individual reports.
-contrast <- function(x, name) {
-  x <- x[is.finite(x)]; tt <- t.test(x, mu = 0, alternative = "two.sided")
+# Directional t-tests: Labeling < Matching; two-sided 95% estimation intervals.
+# The last-minus-first contrast is descriptive, without a hypothesis test.
+contrast <- function(x, name, test = TRUE) {
+  x <- x[is.finite(x)]; tt <- t.test(x, mu = 0, alternative = "less")
+  se <- sd(x) / sqrt(length(x))
+  half <- qt(.975, length(x)-1) * se
   data.frame(analysis = name, n = length(x), mean = mean(x), sd = sd(x),
-    lower = tt$conf.int[1], upper = tt$conf.int[2], t = unname(tt$statistic),
-    df = unname(tt$parameter), p = tt$p.value, dz = mean(x)/sd(x))
+    lower = mean(x)-half, upper = mean(x)+half, t = unname(tt$statistic),
+    df = unname(tt$parameter), p = if (test) tt$p.value else NA_real_, dz = mean(x)/sd(x))
 }
 analyses <- rbind(contrast(d, "primary_complete_identified"),
   contrast(p$difference[p$complete & p$eligible & p$good_time], "include_unidentified_older_session"),
@@ -103,7 +107,7 @@ analyses <- rbind(contrast(d, "primary_complete_identified"),
   contrast(main$difference[main$below300 == 0], "all_report_intervals_at_least_300s"),
   contrast(main$beta_block, "person_specific_linear_block_adjustment"),
   contrast(main$beta_time, "person_specific_linear_time_adjustment"),
-  contrast(main$last - main$first, "last_minus_first_descriptive"))
+  contrast(main$last - main$first, "last_minus_first_descriptive", test = FALSE))
 wt <- wilcox.test(d, exact = FALSE, correct = TRUE)
 set.seed(20260921)
 boot <- replicate(10000, mean(sample(d, length(d), replace = TRUE)))
@@ -122,7 +126,8 @@ desc <- do.call(rbind, lapply(vars, function(v)
 write.csv(desc, file.path(out, "descriptives.csv"), row.names = FALSE)
 ml <- long[long$session %in% main$session, ]
 blocks <- do.call(rbind, lapply(split(ml, ml$block), function(a) {
-  ci <- t.test(a$value)$conf.int
+  half <- qt(.975, nrow(a)-1) * sd(a$value) / sqrt(nrow(a))
+  ci <- mean(a$value) + c(-half, half)
   data.frame(block = a$block[1], condition = a$condition[1],
              mean = mean(a$value), sd = sd(a$value), lower = ci[1], upper = ci[2])
 }))
@@ -167,7 +172,7 @@ labels <- c("Hauptanalyse", "Mit älterer Sitzung ohne Kennung", "Verfügbare Bl
   "Linearer Blocktrend je Person", "Linearer Zeittrend je Person")
 eol <- paste0(intToUtf8(92), intToUtf8(92))
 tab <- c("\\begin{tabular}{p{.38\\linewidth}rrrr}", "\\toprule",
-         paste0("Analyse & $n$ & Differenz & 95\\,\\%-KI & $p$ ", eol), "\\midrule")
+         paste0("Analyse & $n$ & Differenz & 95\\,\\%-KI (zweis.) & $p$ (eins.) ", eol), "\\midrule")
 for (j in 1:7) tab <- c(tab, paste0(labels[j], " & ", analyses$n[j], " & ",
   fmt(analyses$mean[j]), " & [", fmt(analyses$lower[j]), "; ",
   fmt(analyses$upper[j]), "] & ", fmt(analyses$p[j], 3), " ", eol))
@@ -200,3 +205,4 @@ legend("topleft", c("Matching", "Labeling"), pch = c(16,17),
 dev.off()
 print(flow, row.names = FALSE); print(desc, row.names = FALSE)
 print(analyses, row.names = FALSE); print(wt); print(bci)
+

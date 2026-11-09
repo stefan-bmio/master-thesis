@@ -1,55 +1,99 @@
 % !TeX root = ../main.tex
-
-%%
-%% Berliner Hochschule für Technik --  Abschlussarbeit
-%%
-%% Kapitel 7
-%%
-%%
-
 \chapter{Auswertung der Berichte}
-\section{Explorative Auswertung der Testable-Erhebung}
-\label{sec:testable-auswertung}
+\label{chap:auswertung}
+\input{../analysis/app/output/numbers.tex}
 \input{../analysis/testable/output/numbers.tex}
 
-\subsection{Analysestichprobe und Datenqualität}
+\section{Auswertungsstrategie und gerichtete Hypothese}
+Die mehrtägige App-Studie und die über Prolific rekrutierte, browserbasierte Testable-Erhebung untersuchen den Vergleich von Cue-Labeling mit Cue-Matching. Wegen der unterschiedlichen Zeitabstände und Aufgabenabfolgen werden beide Erhebungen getrennt ausgewertet. Die statistische Untersuchungseinheit ist jeweils die Person, nicht der einzelne Selbstbericht.
 
-Von den 68 Ergebnisdateien der Testable-Studie besitzt eine keine Teilnehmerkennung, da sie aus einem Testlauf stammt, und eine andere Sitzung einen zusätzlichen Craving-Wert. Diese Ergebnisse gehen nicht in die Analyse ein. Die Analyse umfasst daher \TestableN{} Personen mit jeweils zwanzig eindeutig zugeordneten und gültigen Berichten und insgesamt 1320 Messwerten. Alle erfüllen die im Trial-File implementierten Screening-Grenzen von mindestens 30 Jahren und mindestens zehn Zigaretten pro Tag. Das mittlere Alter der Teilnehmenden beträgt \TestableAge{} Jahre (Spannweite 30--67), die angegebene tägliche Zigarettenzahl im Mittel \TestableCigs{} (Spannweite 10--25).
-
-\subsection{Statistisches Vorgehen}
-Die Berechnungen werden mit R 4.3.3 und den mitgelieferten Paketen durchgeführt.
-
-Für jede Person $i$ werden zunächst die zehn Matching- und zehn Labeling-Werte gemittelt. Der zentrale Kontrast ist
+Für jede vollständig teilnehmende Person $i$ werden die zehn Matching- und die zehn Labeling-Werte zunächst gemittelt. Der zentrale Kontrast lautet
 \begin{equation}
  D_i=\overline{Y}_{i,L}-\overline{Y}_{i,M},\qquad
  \widehat{\Delta}=\frac{1}{n}\sum_{i=1}^{n}D_i.
 \end{equation}
-Negative Werte bedeuten geringeres Rauchverlangen nach Labeling. Jede Person erhält dasselbe Gewicht. Die 1320 Einzelberichte werden nicht als unabhängige Beobachtungen behandelt. Der Ein-Stichproben-$t$-Test der Personendifferenzen gegen null ist rechnerisch identisch mit einem gepaarten $t$-Test der beiden Personenmittelwerte. Berichtet werden außerdem die Standardabweichung $s_D$, das Intervall
+Negative Differenzen bedeuten geringeres Rauchverlangen nach Labeling. Jede Person erhält dasselbe Gewicht. Der Ein-Stichproben-$t$-Test der Personendifferenzen gegen null ist rechnerisch identisch mit einem gepaarten $t$-Test der beiden Personenmittelwerte.
+
+Die Forschungsfrage richtet sich auf geringeres Rauchverlangen nach Cue-Labeling. Diese Erwartung wurde aus dem Laborbefund von Tabibnia et al. abgeleitet \cite{tabibnia_cuelabeling_2026}. Bereits das Exposé vom 10.~Mai~2026 sieht in Abschnitt~6.3 eine einseitige Fallzahlplanung mit \texttt{pwr.t.test}, \texttt{type="paired"} und \texttt{alternative="greater"} für eine positiv ausgedrückte Reduktion vor. Für die hier verwendete Differenz Labeling minus Matching kehrt sich das Vorzeichen um. Deshalb wird ein linksseitiger Test mit
 \begin{equation}
- \widehat{\Delta}\ \pm\ t_{n-1;0{,}975}\frac{s_D}{\sqrt{n}}
- \quad\text{und}\quad d_z=\frac{\widehat{\Delta}}{s_D}.
+ H_0:\mu_D\geq 0\qquad\text{gegen}\qquad H_1:\mu_D<0
 \end{equation}
+bei $\alpha=0{,}05$ verwendet; in R entspricht dies \texttt{alternative="less"}. Die zuvor zweiseitige Testable-Auswertung wird entsprechend ersetzt. Diese Anpassung erfolgt nach Kenntnis der Testable-Ergebnisse und ist keine nachträgliche Präregistrierung; die Testable-Auswertung bleibt explorativ. Die App-Auswahlregeln und die gerichtete Testentscheidung wurden vor der hier berichteten Berechnung des App-Effekts festgelegt.
+
+Berichtet werden die mittlere Differenz, ihre Standardabweichung $s_D$, der einseitige $p$-Wert und die standardisierte Differenz $d_z=\widehat{\Delta}/s_D$. Zusätzlich wird zur Darstellung der Schätzunsicherheit ein \emph{zweiseitiges} 95\,\%-Konfidenzintervall angegeben:
+\begin{equation}
+ \widehat{\Delta}\ \pm\ t_{n-1;0{,}975}\frac{s_D}{\sqrt{n}}.
+\end{equation}
+Dieses Schätzintervall ist kein zweiseitiger Hypothesentest. Seine Nullüberdeckung ist nicht das Entscheidungskriterium des einseitigen Tests bei $\alpha=0{,}05$. Der Test setzt unabhängige Personendifferenzen und eine hinreichende Angemessenheit der Normalverteilungsannahme für diese Differenzen voraus. Ohne zusätzliche Ausgangsmessung beschreibt der Kontrast einen Unterschied zwischen Bedingungen, keine direkt gemessene Abnahme gegenüber einem individuellen Ausgangszustand.
+
+\section{Auswertung der mehrtägigen App-Studie}
+\label{sec:app-auswertung}
+\subsection{Analysestichprobe und Datenqualität}
+Der Export \texttt{self\_reports.csv} enthält \AppRawRows{} Zeilen ohne Kopfzeile. Seine vier Spalten enthalten die Teilnehmerkennung, die Studienbedingung, den Craving-Wert und eine Testkennzeichnung. Zunächst werden alle \AppTestRows{} Zeilen mit Testkennzeichnung~1 ausgeschlossen. Die verbleibenden \AppNonTestRows{} Berichte gehören zu \AppNonTestIds{} Kennungen. Anschließend werden ausschließlich Kennungen mit genau zehn Cue-Matching- und zehn Cue-Labeling-Einträgen berücksichtigt. So verbleiben \AppN{} vollständige Teilnahmen mit \AppCompleteRows{} Berichten. Die übrigen \AppIncompleteIds{} Kennungen umfassen zusammen \AppExcludedRows{} Berichte, ausschließlich nach Matching, und gehen nicht in den Bedingungsvergleich ein. Fehlende Werte werden nicht imputiert; es erfolgt kein Ausschluss aufgrund der Richtung oder Größe einer Personendifferenz.
+
+Alle berücksichtigten Craving-Werte liegen im zulässigen Bereich von 0 bis 100. Der Export enthält weder Alter noch Zeitstempel oder eindeutige Situationsnummern. Eine Altersgruppenanalyse, die Prüfung der dreistündigen Mindestabstände und eine unabhängige Erkennung mehrfach übertragener Situationen sind anhand dieser Datei nicht möglich. Die Vollständigkeitsprüfung bezieht sich daher auf die Anzahl der exportierten Einträge je Kennung und Bedingung. Die Prüfung der Teilnahmevoraussetzungen ist nicht aus diesem Export rekonstruierbar. Die \AppN{} vollständigen Teilnahmen liegen unter dem im Exposé angestrebten Umfang von 68 auswertbaren Personen.
 
 \subsection{Ergebnisse}
-Die personenbezogenen Mittelwerte des Rauchverlangens betragen nach Matching \TestableM{} Punkte (SD \TestableSDM{}) und nach Labeling \TestableL{} Punkte (SD \TestableSDL{}). Die mittlere Differenz Labeling minus Matching ist \TestableDiff{} Punkte (SD der Differenzen \TestableSDDiff{}; 95\,\%-KI [\TestableLower{}; \TestableUpper{}]). Der gepaarte Vergleich ergibt $t(65)=\TestableT$, $p=\TestableP$ und $d_z=\TestableDz$. Damit liefern die Daten keinen statistisch belastbaren Nachweis eines mittleren Unterschieds zwischen den Bedingungen in diesem Ablauf.
+Das mittlere personenbezogene Rauchverlangen beträgt nach Matching \AppM{} Punkte (SD \AppSDM{}) und nach Labeling \AppL{} Punkte (SD \AppSDL{}). Die mittlere Differenz Labeling minus Matching beträgt \AppDiff{} Punkte (SD der Differenzen \AppSDDiff{}; zweiseitiges 95\,\%-KI [\AppLower{}; \AppUpper{}]). Der einseitige gepaarte Vergleich ergibt $t(\AppDF)=\AppT$, $p=\AppP$ und $d_z=\AppDz$. Die Daten liefern somit keinen statistisch signifikanten Nachweis geringeren Rauchverlangens nach Cue-Labeling.
 
-Bei 32 Personen ist der Mittelwert nach Labeling niedriger, bei 32 höher. rei zwei Personen sind beide Mittelwerte gleich. Der Median der Personendifferenzen beträgt null. Abbildung \ref{fig:testable-paired} zeigt die Personendifferenzen. Null ist gestrichelt, der Mittelwert farbig markiert.
+Bei \AppNegative{} Personen liegt der Mittelwert nach Labeling niedriger, bei \AppPositive{} höher; gleiche Bedingungsmittelwerte treten nicht auf. Die kleine negative Punktschätzung ist mit erheblicher Unsicherheit verbunden. Das Konfidenzintervall umfasst sowohl niedrigere als auch höhere mittlere Werte nach Labeling. Der nicht signifikante Befund belegt weder Gleichwertigkeit noch Wirkungslosigkeit.
+
+\subsection{Aussagegrenzen}
+In der App folgen zehn Matching-Situationen auf zehn Labeling-Situationen. Die Bedingung ist damit an die Studienphase gekoppelt. Zeitliche Veränderungen, Gewöhnung an die Reize oder Veränderungen der Rauchgewohnheiten können zum beobachteten Unterschied beitragen. Der gepaarte Test kontrolliert diese Reihenfolgeeinflüsse nicht. Zudem beschreibt die Analyse nur die vollständigen Teilnahmen; mögliche Unterschiede zu Personen mit unvollständigen Berichten bleiben offen. Die geringe Stichprobe und die Streuung der Personendifferenzen begrenzen die Präzision. Aussagen über längerfristige Abstinenz oder einen klinisch bedeutsamen Nutzen lassen sich daraus nicht ableiten.
+
+\section{Explorative Auswertung der Testable-Erhebung}
+\label{sec:testable-auswertung}
+\subsection{Analysestichprobe und Datenqualität}
+Von den 68 Ergebnisdateien der Testable-Studie besitzt eine keine Teilnehmerkennung, da sie aus einem Testlauf stammt; eine andere Sitzung enthält einen zusätzlichen Craving-Wert und keinen Bericht für eine vorgesehene Trial-Zeile. Beide gehen nicht in die Hauptanalyse ein. Diese umfasst \TestableN{} Personen mit jeweils zwanzig eindeutig zugeordneten und gültigen Berichten, insgesamt 1320 Messwerte. Alle erfüllen die im Trial-File implementierten Screening-Grenzen von mindestens 30 Jahren und mindestens zehn Zigaretten pro Tag. Das mittlere Alter beträgt \TestableAge{} Jahre (Spannweite 30--67), die angegebene tägliche Zigarettenzahl im Mittel \TestableCigs{} (Spannweite 10--25). Die obere App-Altersgrenze von 65 Jahren war im Testable-Screening nicht umgesetzt.
+
+\subsection{Ergebnisse}
+Die personenbezogenen Mittelwerte des Rauchverlangens betragen nach Matching \TestableM{} Punkte (SD \TestableSDM{}) und nach Labeling \TestableL{} Punkte (SD \TestableSDL{}). Die mittlere Differenz Labeling minus Matching ist \TestableDiff{} Punkte (SD der Differenzen \TestableSDDiff{}; zweiseitiges 95\,\%-KI [\TestableLower{}; \TestableUpper{}]). Der einseitige gepaarte Vergleich ergibt $t(65)=\TestableT$, $p=\TestableP$ und $d_z=\TestableDz$. Damit liefern auch diese Daten keinen statistisch signifikanten Nachweis geringeren Rauchverlangens nach Labeling.
+
+Bei 32 Personen ist der Mittelwert nach Labeling niedriger, bei 32 höher; bei zwei Personen sind beide Mittelwerte gleich. Der Median der Personendifferenzen beträgt null. Abbildung~\ref{fig:testable-paired} zeigt die Personendifferenzen; null ist gestrichelt, der Mittelwert farbig markiert.
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=\linewidth]{individuelle_differenzen.png}
- \caption{Craving nach Matching und Labeling bei 66 vollständigen Teilnahmen}
+ \caption{Personendifferenzen des Cravings (Labeling minus Matching) bei 66 vollständigen Testable-Teilnahmen}
  \label{fig:testable-paired}
 \end{figure}
 
-Die Punktschätzung liegt zwar in der erwarteten Richtung eines geringeren Rauchverlangens nach Labeling, ist jedoch klein und mit null sowie mit geringfügig höherem Rauchverlangen vereinbar. Aus medizinisch-informatischer Sicht zeigt die Auswertung, dass die Rekonstruktion der Messbedingungen und die reproduzierbare Analyse mit einem zeitgemäßen, agilen Verfahren möglich sind.
+\section{Vergleichende Einordnung der Erhebungen}
+\label{sec:vergleich-erhebungen}
+Tabelle~\ref{tab:app-testable} stellt die getrennt berechneten Ergebnisse gegenüber. Die Mittelwerte und Differenzen beziehen sich auf die gemeinsame Skala von 0 bis 100.
+\begin{table}[htbp]
+ \centering
+ \caption{Getrennte Ergebnisse von App- und Testable-Erhebung}
+ \label{tab:app-testable}
+ \begin{tabular}{lrr}
+ \toprule
+ Kennzahl & App & Testable \\
+ \midrule
+ Vollständige Teilnahmen & \AppN & \TestableN \\
+ Mittelwert Matching & \AppM & \TestableM \\
+ Mittelwert Labeling & \AppL & \TestableL \\
+ Differenz Labeling minus Matching & \AppDiff & \TestableDiff \\
+ Zweiseitiges 95\,\%-KI & [\AppLower; \AppUpper] & [\TestableLower; \TestableUpper] \\
+ Einseitiger $p$-Wert & \AppP & \TestableP \\
+ Effektgröße $d_z$ & \AppDz & \TestableDz \\
+ \bottomrule
+ \end{tabular}
+\end{table}
 
-\subsection{Reproduzierbarer R-Quelltext}
+Beide Punktschätzungen liegen in der erwarteten Richtung, ohne einen statistisch signifikanten Vorteil von Cue-Labeling nachzuweisen. Das breitere App-Konfidenzintervall verdeutlicht die größere Unsicherheit dieser Schätzung. Die App sieht mehrtägige Nutzung mit mindestens drei Stunden Abstand und zwei aufeinanderfolgenden Bedingungsphasen vor. Testable verwendet alternierende Blöcke mit fünfminütigen Pausen. Unterschiede in Ablauf, Nutzungskontext und Stichproben verhindern eine einfache Gleichsetzung. Die Daten werden deshalb nicht zu einer gemeinsamen Stichprobe zusammengelegt. Auch ein Unterschied zwischen den Erhebungseffekten ist durch diese Gegenüberstellung nicht nachgewiesen. Die Ergebnisse erlauben insbesondere keine Gleichwertigkeits- oder Abstinenzaussage.
+
+\section{Reproduzierbare Berechnung}
 \label{sec:testable-r-code}
-Listing~\ref{lst:testable-r} enthält den vollständigen ausführbaren Quelltext. Das Skript erzeugt aggregierte CSV-Ergebnisse, eine Vektorabbildung und die direkt eingebundenen LaTeX-Zahlen.
+Die App-Auswertung erfolgt mit Python und SciPy. Das Skript \path{analysis/app/analyse_app.py} liest den unveränderten privaten Export, wendet zunächst den Testausschluss und danach die Vollständigkeitsregel an und erzeugt ausschließlich aggregierte Ergebnisdateien. Es prüft die Übereinstimmung des Ein-Stichproben-Tests der Differenzen mit dem gepaarten Test der Personenmittelwerte. Aufruf aus dem Repository-Hauptverzeichnis:
+\begin{lstlisting}[basicstyle=\ttfamily\small,breaklines=true]
+python analysis/app/analyse_app.py /pfad/zu/self_reports.csv
+\end{lstlisting}
+Die CSV-Dateien, die LaTeX-Zahlen sowie Quelldateiprüfsumme und Softwareversionen liegen unter \path{analysis/app/output/}. Personenkennungen und App-Rohdaten werden nicht im Repository veröffentlicht.
+
+Die Testable-Auswertung ist im R-Skript in Listing~\ref{lst:testable-r} reproduzierbar dokumentiert. Die ursprüngliche Berechnung erfolgte mit R~4.3.3. Die einseitigen Testable-Ergebnisse wurden mit SciPy anhand der gespeicherten Teststatistiken aktualisiert und für die Hauptanalyse unabhängig aus den Rohdaten bestätigt. Softwarestände und Änderungen sind in den jeweiligen Analyseverzeichnissen dokumentiert.
 
 \lstinputlisting[language=R,basicstyle=\ttfamily\scriptsize,
  numbers=left,numberstyle=\tiny,numbersep=6pt,stepnumber=1,
  breaklines=true,breakatwhitespace=false,columns=fullflexible,
  keepspaces=true,showstringspaces=false,frame=single,
- caption={Vollständige R-Auswertung der Testable-Exporte},label={lst:testable-r}]
+ caption={R-Auswertung der Testable-Exporte mit einseitigen Bedingungstests},label={lst:testable-r}]
  {../analysis/testable/analyse_testable.R}

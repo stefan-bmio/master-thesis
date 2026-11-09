@@ -34,3 +34,10 @@
 - Der Nutzer hat die Veröffentlichung des vorbereiteten Änderungspakets ausdrücklich freigegeben und `pdf-update` als separaten Veröffentlichungsbranch festgelegt.
 - Der Remote-Branch `pdf-update` steht vor der Veröffentlichung auf dem Ausgangscommit b0ac28be3ab0c29d6643f073cb555f087769a8f2. Die vorbereiteten Änderungen bauen unmittelbar darauf auf.
 - Veröffentlichung erfolgt auf `pdf-update`; keine Zusammenführung mit `main`.
+
+
+## 2026-11-09: Gerichtete Auswertung und Ergänzung der App-Studie
+
+Auf ausdrückliche Entscheidung des Autors ersetzen einseitige t-Tests (Labeling minus Matching < 0) die zweiseitigen Bedingungstests. Das Exposé vom 10. Mai 2026 enthält in Abschnitt 6.3 eine einseitige Powerplanung (`alternative="greater"` bei positiver Reduktion). Der neue Kontrast verwendet das umgekehrte Vorzeichen und deshalb `alternative="less"`. Die Änderung der Testable-Testseite erfolgt nach Kenntnis der Ergebnisse; die historische Festlegung oben bleibt als Protokoll erhalten. Der explorative Status wird nicht aufgehoben. Zweiseitige 95%-Schätzintervalle werden beibehalten. Der Zeitkontrast letzte minus erste Messung bleibt rein deskriptiv und erhält keinen p-Wert.
+
+Die App-Analyse schließt zunächst alle Zeilen mit Testflag 1 aus und verwendet danach ausschließlich Kennungen mit genau zehn Matching- und zehn Labeling-Berichten. Rohdaten und Kennungen werden nicht ins Repository übernommen. Die App erhält einen getrennten Analysepfad unter `analysis/app/`; beide Erhebungen werden in Kapitel 7 getrennt ausgewertet und vergleichend interpretiert.

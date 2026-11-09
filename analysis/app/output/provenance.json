@@ -1,0 +1,11 @@
+{
+  "sha256": "d51c99cb5f410f7a4ba335c8cd274a1b3a56e275dddb0b422012626ada15cde0",
+  "python": "3.12.14",
+  "scipy": "1.17.0",
+  "alternative": "less",
+  "alpha": 0.05,
+  "contrast": "Labeling minus Matching",
+  "confidence_interval": "two-sided 95%",
+  "filter_order": "exclude test flag 1, then exactly 10 records per condition",
+  "raw_data_published": false
+}
